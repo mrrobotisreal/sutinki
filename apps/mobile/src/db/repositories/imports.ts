@@ -5,7 +5,7 @@ import { base64ToBytes, bytesToBase64 } from '@/lib/base64';
 
 import { importedPacks, importRequests } from '../schema';
 import type { ImportRequestStatus } from '../schema/user';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 export type ImportRequestRow = typeof importRequests.$inferSelect;
 export type ImportedPackRow = typeof importedPacks.$inferSelect;
@@ -27,7 +27,7 @@ export function gunzipPackJson(b64: string): string {
  * table so backup/restore round-trips them). All import DB access lives
  * here; the wired flows are in `features/import/`.
  */
-export function createImportsRepo(db: SumrakDB) {
+export function createImportsRepo(db: SutinkiDB) {
   return {
     // ——— import requests ———
 

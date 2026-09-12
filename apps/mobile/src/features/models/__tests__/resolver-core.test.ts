@@ -1,4 +1,4 @@
-import type { ModelsManifest } from '@sumrak/schema';
+import type { ModelsManifest } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
 import {

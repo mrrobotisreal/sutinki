@@ -7,7 +7,7 @@ import {
   type NodeAudio,
   type Pack,
   type Sentence,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import { DEFAULT_MODEL_ID, isV3Model, type ElevenLabsClient } from './elevenlabs.ts';
 import { buildNarrationFromSentences, type NarrationText } from './narration.ts';
 import { encodeOpus, probeDurationMs } from './opus.ts';

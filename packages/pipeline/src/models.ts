@@ -15,7 +15,7 @@ import {
   ModelsManifestSchema,
   type ModelsManifest,
   type ModelsManifestEntry,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 
 /**
  * `pipeline models mirror` (T23, V2 §2): copy the exact speech-model archives
@@ -184,7 +184,7 @@ export async function runModelsMirror(
 
   const models = opts.models ?? MIRROR_MODELS;
   const download = opts.download ?? fetchDownloader;
-  const tmpDir = mkdtempSync(join(tmpdir(), 'sumrak-models-'));
+  const tmpDir = mkdtempSync(join(tmpdir(), 'sutinki-models-'));
   const reports: MirrorModelReport[] = [];
 
   try {

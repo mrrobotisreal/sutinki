@@ -1,13 +1,13 @@
-import type { Pack } from '@sumrak/schema';
-import { SchemaValidationError } from '@sumrak/schema';
+import type { Pack } from '@sutinki/schema';
+import { SchemaValidationError } from '@sutinki/schema';
 import { sql } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 
-import hallwayJson from '@sumrak/schema/fixtures/packs/a1-course-unit-090/pack.json';
-import greenhouseJson from '@sumrak/schema/fixtures/packs/a1-course-unit-093/pack.json';
-import pack1Json from '@sumrak/schema/fixtures/packs/a1-creepypasta-001/pack.json';
-import pack2Json from '@sumrak/schema/fixtures/packs/a1-creepypasta-002/pack.json';
-import familyJson from '@sumrak/schema/fixtures/packs/a2-family-090/pack.json';
+import hallwayJson from '@sutinki/schema/fixtures/packs/a1-course-unit-090/pack.json';
+import greenhouseJson from '@sutinki/schema/fixtures/packs/a1-course-unit-093/pack.json';
+import pack1Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-001/pack.json';
+import pack2Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-002/pack.json';
+import familyJson from '@sutinki/schema/fixtures/packs/a2-family-090/pack.json';
 
 import { importPack, removePack } from '../importer';
 import { createBankRepo } from '../repositories/bank';

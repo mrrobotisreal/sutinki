@@ -9,7 +9,7 @@ import {
   type Pack,
   type Sentence,
   type Story,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import { annotateDrafts } from './annotate.ts';
 import {
   planDialogueItems,
@@ -315,7 +315,7 @@ async function renderDirection(
   // runs to the narrator runs' mean level, concatenate sample-accurately, and
   // offset every run's stamps by the accumulated duration of the runs before
   // it so word stamps stay exact across each seam.
-  const work = mkdtempSync(join(tmpdir(), 'sumrak-runs-'));
+  const work = mkdtempSync(join(tmpdir(), 'sutinki-runs-'));
   try {
     const parts = rendered.map(({ run, result }, i) => {
       const mp3 = join(work, `run${i}.mp3`);

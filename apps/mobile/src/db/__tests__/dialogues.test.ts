@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
-import type { Pack } from '@sumrak/schema';
-import dialoguePackJson from '@sumrak/schema/fixtures/packs/a2-dialogue-001/pack.json';
+import type { Pack } from '@sutinki/schema';
+import dialoguePackJson from '@sutinki/schema/fixtures/packs/a2-dialogue-001/pack.json';
 
 import { importPack, removePack } from '../importer';
 import { createDialoguesRepo, DialogueRunPathSchema } from '../repositories/dialogues';

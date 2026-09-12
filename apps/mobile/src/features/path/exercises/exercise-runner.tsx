@@ -1,4 +1,4 @@
-import type { ExerciseSpec } from '@sumrak/schema';
+import type { ExerciseSpec } from '@sutinki/schema';
 import * as React from 'react';
 import { Alert, BackHandler } from 'react-native';
 

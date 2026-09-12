@@ -24,7 +24,7 @@ import {
   syncState,
   unitProgress,
 } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 
 import { BackupPayloadSchema, PAYLOAD_VERSION, type BackupPayload } from './payload-schema';
 
@@ -53,7 +53,7 @@ export interface ExportResult {
 }
 
 export async function exportUserData(
-  db: SumrakDB,
+  db: SutinkiDB,
   opts: { appVersion?: string; now?: Date } = {},
 ): Promise<ExportResult> {
   await db.run(sql`BEGIN`);
@@ -102,7 +102,7 @@ export async function exportUserData(
   // check narrows plain-string DB columns (e.g. sync_state.source) into the
   // payload's enum domains, and any drift fails loudly here.
   const payload: BackupPayload = BackupPayloadSchema.parse({
-    format: 'sumrak-backup-payload',
+    format: 'sutinki-backup-payload',
     payloadVersion: PAYLOAD_VERSION,
     exportedAt: (opts.now ?? new Date()).getTime(),
     ...(opts.appVersion ? { appVersion: opts.appVersion } : {}),

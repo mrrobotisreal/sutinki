@@ -3,7 +3,7 @@ import { index, integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlit
 
 /**
  * Content tables — the denormalized form of a validated `Pack` from
- * `@sumrak/schema` (design §4.3/§5). Rebuilt wholesale by the importer:
+ * `@sutinki/schema` (design §4.3/§5). Rebuilt wholesale by the importer:
  * every row carries `packId`, and reimporting/removing a pack deletes all
  * rows for that pack id (FK cascade from `packs`). Content is disposable;
  * user tables (see ./user.ts) never live here and never reference these

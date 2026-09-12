@@ -1,4 +1,4 @@
-import { parsePack, type NodeAudio, type Pack, type Sentence, type Token } from '@sumrak/schema';
+import { parsePack, type NodeAudio, type Pack, type Sentence, type Token } from '@sutinki/schema';
 import { eq, sql } from 'drizzle-orm';
 
 import { normalizeRu } from './normalize';
@@ -22,7 +22,7 @@ import {
 import { createImportsRepo, gunzipPackJson } from './repositories/imports';
 import type { PackSource } from './repositories/sync-state';
 import { createSyncStateRepo } from './repositories/sync-state';
-import type { SumrakDB } from './types';
+import type { SutinkiDB } from './types';
 
 export type ImportAction = 'installed' | 'updated' | 'unchanged' | 'skipped-older';
 
@@ -76,7 +76,7 @@ function effectiveSpaceBefore(tok: Token, index: number): boolean {
  * know what should be present even after content tables are wiped.
  */
 export async function importPack(
-  db: SumrakDB,
+  db: SutinkiDB,
   rawPack: unknown,
   opts: ImportOptions = {},
 ): Promise<ImportResult> {
@@ -124,7 +124,7 @@ export async function importPack(
  * (bank_items, encounters, cards, …) is untouched by design — its content
  * refs simply stop resolving until the pack is reinstalled.
  */
-export async function removePack(db: SumrakDB, packId: string): Promise<void> {
+export async function removePack(db: SutinkiDB, packId: string): Promise<void> {
   const syncStateRepo = createSyncStateRepo(db);
   await db.delete(packs).where(eq(packs.id, packId));
   await syncStateRepo.removeInstalled(packId);
@@ -139,7 +139,7 @@ export async function removePack(db: SumrakDB, packId: string): Promise<void> {
  * readable automatically).
  */
 export async function reimportLocalPacks(
-  db: SumrakDB,
+  db: SutinkiDB,
 ): Promise<{ reimported: string[]; failed: string[] }> {
   const importsRepo = createImportsRepo(db);
   const rows = await importsRepo.listImportedPacks();
@@ -192,7 +192,7 @@ function countContent(pack: Pack) {
   };
 }
 
-async function insertPackRows(db: SumrakDB, pack: Pack, opts: ImportOptions): Promise<void> {
+async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): Promise<void> {
   const now = Date.now();
   await db.insert(packs).values({
     id: pack.id,
@@ -380,7 +380,7 @@ async function insertPackRows(db: SumrakDB, pack: Pack, opts: ImportOptions): Pr
 /** Shared sentence + token insertion — story sentences and dialogue lines
  * are identical rows (dialogue lines carry the dialogue id as storyId). */
 async function insertSentenceRows(
-  db: SumrakDB,
+  db: SutinkiDB,
   packId: string,
   storyId: string,
   sentence: Sentence,

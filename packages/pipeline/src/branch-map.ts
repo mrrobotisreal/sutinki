@@ -1,4 +1,4 @@
-import { analyzeDialogueGraph, type Choice, type Dialogue } from '@sumrak/schema';
+import { analyzeDialogueGraph, type Choice, type Dialogue } from '@sutinki/schema';
 
 /**
  * Branch map (T25, design V2 §3.2): a plain-text tree of a dialogue's graph

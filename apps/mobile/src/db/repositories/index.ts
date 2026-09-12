@@ -1,6 +1,6 @@
 import { emitMotivationEvent } from '@/services/motivation-bus';
 
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import { createBankRepo } from './bank';
 import { createBookmarksRepo } from './bookmarks';
 import { createContentRepo } from './content';
@@ -25,7 +25,7 @@ import { createSyncStateRepo } from './sync-state';
  * is idempotent, and running it on deduped adds too quietly heals items
  * that predate T06.
  */
-export function createRepositories(db: SumrakDB) {
+export function createRepositories(db: SutinkiDB) {
   const reviews = createReviewsRepo(db);
   return {
     content: createContentRepo(db),

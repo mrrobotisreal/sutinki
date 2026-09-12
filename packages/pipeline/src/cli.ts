@@ -15,7 +15,7 @@ import { runValidate } from './validate.ts';
  * Exit codes: 0 success, 1 validation failure, 2 usage.
  */
 
-const USAGE = `Sumrak authoring pipeline
+const USAGE = `Sutinki authoring pipeline
 
 Usage:
   pipeline annotate [draft.md ...] [--extras <extras.md>] [-o <pack.json>]
@@ -60,11 +60,11 @@ Usage:
       word stamps mapped + checked, pack.json written (merges with a previous
       run, so tracks/nodes can be finalized in batches).
 
-  pipeline publish <pack-dir> --content <sumrak-content-dir> [--push] [-m msg]
+  pipeline publish <pack-dir> --content <sutinki-content-dir> [--push] [-m msg]
       Copy the pack into the content repo, recompute hashes, update
       manifest.json, and commit. Pushes only with --push.
 
-  pipeline models mirror --content <sumrak-content-dir> [--push] [-m msg]
+  pipeline models mirror --content <sutinki-content-dir> [--push] [-m msg]
       Mirror the app's pinned speech-model archives (4 Piper TTS voices + the
       ASR model, ~330 MB) from the k2-fsa release assets into the content
       repo's models/{tts,asr}/, verifying each download against the pinned
@@ -72,7 +72,7 @@ Usage:
       commit. Idempotent: verified-present files are skipped, and model files
       are never deleted or overwritten. Pushes only with --push.
 
-Run from the Sumrak repo root:  pnpm pipeline annotate <draft.md> -o <out.json>
+Run from the Sutinki repo root:  pnpm pipeline annotate <draft.md> -o <out.json>
 (paths resolve against the repo root — pnpm runs scripts at the package root)`;
 
 function fail(message: string, code: 1 | 2): never {
@@ -344,7 +344,7 @@ function publishCommand(args: string[]): void {
     else fail(`publish takes exactly one <pack-dir>\n\n${USAGE}`, 2);
   }
   if (packDir === undefined) fail(`publish needs a <pack-dir>\n\n${USAGE}`, 2);
-  if (content === undefined) fail(`publish needs --content <sumrak-content-dir>\n\n${USAGE}`, 2);
+  if (content === undefined) fail(`publish needs --content <sutinki-content-dir>\n\n${USAGE}`, 2);
 
   try {
     const summary = runPublish(packDir, content, { push, message });
@@ -383,7 +383,7 @@ async function modelsCommand(args: string[]): Promise<void> {
     else fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
   }
   if (content === undefined)
-    fail(`models mirror needs --content <sumrak-content-dir>\n\n${USAGE}`, 2);
+    fail(`models mirror needs --content <sutinki-content-dir>\n\n${USAGE}`, 2);
 
   try {
     const summary = await runModelsMirror(content, { push, message });

@@ -28,7 +28,7 @@ import {
   syncState,
   unitProgress,
 } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 import { bytesToBase64 } from '@/lib/base64';
 
 import {
@@ -44,7 +44,7 @@ import { restoreUserData } from '../restore-core';
 const NOW = 1756000000000;
 
 /** Seed at least one row into EVERY user table + a matching content pack. */
-async function seedSource(db: SumrakDB) {
+async function seedSource(db: SutinkiDB) {
   await db.insert(packs).values({
     id: 'pack-a',
     version: 2,
@@ -309,7 +309,7 @@ async function seedSource(db: SumrakDB) {
   ]);
 }
 
-async function selectAllUserTables(db: SumrakDB) {
+async function selectAllUserTables(db: SutinkiDB) {
   return {
     bankItems: await db.select().from(bankItems),
     encounters: await db.select().from(encounters),
@@ -337,7 +337,7 @@ async function selectAllUserTables(db: SumrakDB) {
 }
 
 describe('export-core', () => {
-  let db: SumrakDB;
+  let db: SutinkiDB;
   beforeEach(async () => {
     db = createTestDb();
     await seedSource(db);
@@ -474,7 +474,7 @@ describe('restore-core (full pipeline: export → encrypt → decrypt → restor
     });
 
     const bad = {
-      format: 'sumrak-backup-payload',
+      format: 'sutinki-backup-payload',
       payloadVersion: 1,
       exportedAt: NOW,
       tables: { bankItems: [{ id: 'x', bogus: true }] }, // wrong row + missing tables

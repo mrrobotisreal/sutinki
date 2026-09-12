@@ -4,14 +4,14 @@ import { backupFileName, parseBackupFileName } from '../naming';
 import { planRetention, RETENTION_DAILY_DAYS } from '../retention';
 
 function nameFor(dateKey: string, time = '030000'): string {
-  return `sumrak-backup-${dateKey.replaceAll('-', '')}-${time}Z.json`;
+  return `sutinki-backup-${dateKey.replaceAll('-', '')}-${time}Z.json`;
 }
 
 describe('backup naming', () => {
   it('formats in UTC and round-trips through the parser', () => {
     const at = new Date('2026-08-23T03:07:09Z');
     const name = backupFileName(at);
-    expect(name).toBe('sumrak-backup-20260823-030709Z.json');
+    expect(name).toBe('sutinki-backup-20260823-030709Z.json');
     const parsed = parseBackupFileName(name);
     expect(parsed).toEqual({
       name,
@@ -23,7 +23,7 @@ describe('backup naming', () => {
 
   it('rejects non-backup names and impossible calendar values', () => {
     expect(parseBackupFileName('manifest.json')).toBeNull();
-    expect(parseBackupFileName('sumrak-backup-20260823-030709.json')).toBeNull(); // no Z
+    expect(parseBackupFileName('sutinki-backup-20260823-030709.json')).toBeNull(); // no Z
     expect(parseBackupFileName(nameFor('2026-13-01'))).toBeNull(); // month 13
     expect(parseBackupFileName(nameFor('2026-02-30'))).toBeNull(); // Feb 30
   });
@@ -78,7 +78,7 @@ describe('retention ring buffer (30 daily + one per older month)', () => {
       backupFileName(new Date(Date.UTC(2026, 7, 1 + i, 3))),
     );
     const plan = planRetention([...names.slice(0, 4), ...fresh]);
-    const olderKept = plan.keep.filter((n) => n < 'sumrak-backup-202608').sort();
+    const olderKept = plan.keep.filter((n) => n < 'sutinki-backup-202608').sort();
     expect(olderKept).toEqual([nameFor('2026-01-20', '020000'), nameFor('2026-02-27', '020000')]);
     expect(plan.prune.sort()).toEqual([
       nameFor('2026-01-05', '020000'),

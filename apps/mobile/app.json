@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "\u0421\u0443\u043c\u0440\u0430\u043a",
-    "slug": "sumrak",
-    "version": "1.2.0",
+    "name": "\u0421\u0443\u0442\u0456\u043d\u043a\u0438",
+    "slug": "sutinki",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "sumrak",
+    "scheme": "sutinki",
     "userInterfaceStyle": "automatic",
     "backgroundColor": "#0B0B0E",
     "android": {
-      "package": "io.winapps.sumrak",
+      "package": "io.winapps.sutinki",
       "adaptiveIcon": {
         "backgroundColor": "#0B0B0E",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -23,7 +23,7 @@
           "data": [{ "mimeType": "text/plain" }]
         }
       ],
-      "versionCode": 4
+      "versionCode": 1
     },
     "plugins": [
       "expo-router",

@@ -24,7 +24,7 @@ import { useThemeStore, type ThemeMode } from '@/store/theme';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 const MODES: { mode: ThemeMode; label: string; hint: string }[] = [
-  { mode: 'dark', label: 'Dark', hint: 'Сумрак — the default identity' },
+  { mode: 'dark', label: 'Dark', hint: 'Сутінки — the default identity' },
   { mode: 'light', label: 'Light', hint: 'Warm paper, for daylight reading' },
   { mode: 'system', label: 'System', hint: 'Follow the device setting' },
 ];
@@ -233,9 +233,9 @@ export default function SettingsScreen() {
           source={require('../../assets/images/icon.png')}
           style={{ width: 72, height: 72, borderRadius: 16 }}
           contentFit="cover"
-          accessibilityLabel="Сумрак app icon"
+          accessibilityLabel="Сутінки app icon"
         />
-        <Text className="font-display text-2xl text-accent">Сумрак</Text>
+        <Text className="font-display text-2xl text-accent">Сутінки</Text>
         <Text variant="caption">v{Constants.expoConfig?.version ?? '0.0.0'}</Text>
       </View>
     </ScrollView>

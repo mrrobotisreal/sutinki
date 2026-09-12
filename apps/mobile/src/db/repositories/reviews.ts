@@ -10,7 +10,7 @@ import {
 
 import { newId } from '../ids';
 import { bankItems, cards, reviewLog, type CardDirection } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 export type CardRow = typeof cards.$inferSelect;
 export type ReviewLogRow = typeof reviewLog.$inferSelect;
@@ -87,7 +87,7 @@ export interface GradeResult {
  * later tickets (T12–T14, T17–T19) call into — game modes differ only in
  * how they arrive at a `Grade`.
  */
-export function createReviewsRepo(db: SumrakDB) {
+export function createReviewsRepo(db: SutinkiDB) {
   return {
     /** Create missing cards for a bank item (idempotent per direction). */
     async ensureCards(

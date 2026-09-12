@@ -235,7 +235,7 @@ const analyticsEventRow = z.strictObject({
 
 export const BackupPayloadSchema = z.strictObject({
   /** Discriminator for the *decrypted* content (the envelope has its own). */
-  format: z.literal('sumrak-backup-payload'),
+  format: z.literal('sutinki-backup-payload'),
   payloadVersion: z.literal(PAYLOAD_VERSION),
   /** Epoch ms of the export moment. */
   exportedAt: int,

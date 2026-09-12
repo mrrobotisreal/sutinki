@@ -10,7 +10,7 @@ import {
   frozenDays,
   gameSessions,
 } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 export type DailyActivityRow = typeof dailyActivity.$inferSelect;
 export type GameSessionRow = typeof gameSessions.$inferSelect;
@@ -28,7 +28,7 @@ export function localDateKey(d: Date = new Date()): string {
  * and the local analytics event log. Downstream shapes (T13–T19) stay
  * minimal here — tables exist so later tickets aren't blocked on migrations.
  */
-export function createStatsRepo(db: SumrakDB) {
+export function createStatsRepo(db: SutinkiDB) {
   return {
     /** Increment today's counters (upsert). */
     async bumpDailyActivity(

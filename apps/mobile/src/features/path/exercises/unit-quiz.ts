@@ -1,4 +1,4 @@
-import { ExerciseSpecSchema, type ExerciseSpec } from '@sumrak/schema';
+import { ExerciseSpecSchema, type ExerciseSpec } from '@sutinki/schema';
 
 import type { Repositories } from '@/db/repositories';
 import { answersMatch } from '@/lib/text';

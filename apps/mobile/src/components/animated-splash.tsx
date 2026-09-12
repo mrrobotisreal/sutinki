@@ -63,7 +63,7 @@ export function AnimatedSplash({ onDone }: { onDone: () => void }) {
           { opacity: titleOpacity, transform: [{ translateY: titleShift }] },
         ]}
       >
-        Сумрак
+        Сутінки
       </Animated.Text>
     </Animated.View>
   );

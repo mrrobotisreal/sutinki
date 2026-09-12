@@ -4,7 +4,7 @@ import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { ModelsManifestSchema } from '@sumrak/schema';
+import { ModelsManifestSchema } from '@sutinki/schema';
 import {
   MIRROR_MODELS,
   MODELS_MANIFEST_FILE,

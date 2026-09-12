@@ -73,7 +73,7 @@ and non-v3 models alike (`stylePrompt` is only sent for narrator runs). An id
 not in the story is an error. Per-request character caps apply per run.
 
 **Inline notation in source docs (CT013):** a story doc may carry its cue
-script inline — an italic *Leading tag* line per part (→ `audioTag`), `{Имя}`
+script inline — an italic _Leading tag_ line per part (→ `audioTag`), `{Имя}`
 at the start of a dialogue paragraph (→ `sentenceVoices` on the one block that
 paragraph becomes), and `[tag]` immediately before a sentence (→ `audioCues` on
 that sentence's id; a cue at the head of a multi-sentence paragraph keys to the
@@ -84,7 +84,7 @@ sentence-text match, failing loudly on any mismatch. The reusable contract is
 `sumrak-content/series/lost-shadow/SERIES.md` §2.1.
 
 **Speech/narration split for inline-attributed dialogue (CT015):** when a
-story's dialogue carries attribution and action *inside* dash paragraphs
+story's dialogue carries attribution and action _inside_ dash paragraphs
 («— Да? — Голос у Рейнольдса низкий, мягкий и спокойный. — Кто это?»), the
 one-paragraph-one-block merge rule cannot express a second voice. Such a
 family authors one block per VOICE SEGMENT instead: a dash paragraph splits at

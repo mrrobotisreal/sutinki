@@ -8,7 +8,7 @@ import {
   type Manifest,
   type ManifestEntry,
   type Pack,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 
 /**
  * `pipeline publish` (T09, design §8 step 4): put a finished pack dir into

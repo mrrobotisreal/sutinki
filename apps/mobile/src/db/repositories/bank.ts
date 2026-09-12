@@ -5,7 +5,7 @@ import { STABILITY_MATURE_MIN, STABILITY_YOUNG_MIN, type MasteryBand } from '@/l
 import { newId } from '../ids';
 import { normalizePhrase, normalizeRu } from '../normalize';
 import { bankItems, encounters } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 export type BankItemRow = typeof bankItems.$inferSelect;
 export type EncounterRow = typeof encounters.$inferSelect;
@@ -122,7 +122,7 @@ function masteryCondition(mastery: MasteryFilter) {
  * normalized lemma, phrases by normalized text — adding a known lemma again
  * attaches a new encounter, never a duplicate item.
  */
-export function createBankRepo(db: SumrakDB, hooks: BankRepoHooks = {}) {
+export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
   async function insertEncounter(
     bankItemId: string,
     surface: string,

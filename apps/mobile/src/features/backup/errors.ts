@@ -65,7 +65,7 @@ export function friendlyBackupMessage(err: unknown): string {
     case 'syncd':
       return `Home server backup failed: ${e.message}. Check the host and token in Settings → Backup.`;
     case 'invalid-envelope':
-      return 'That file is not a Sumrak backup (or it is corrupted).';
+      return 'That file is not a Sutinki backup (or it is corrupted).';
     case 'decrypt-failed':
       return 'Could not decrypt the backup — wrong passphrase, or the file is corrupted. Nothing was changed.';
     case 'invalid-payload':

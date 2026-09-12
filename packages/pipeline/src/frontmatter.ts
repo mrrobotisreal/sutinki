@@ -3,7 +3,7 @@ import {
   LocalizedTextSchema,
   PackTypeSchema,
   StableIdSchema,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import { z } from 'zod';
 
 /**

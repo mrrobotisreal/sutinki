@@ -20,26 +20,26 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { join } from 'node:path';
 
-import hallway from '@sumrak/schema/fixtures/packs/a1-course-unit-090/pack.json';
-import kitchen from '@sumrak/schema/fixtures/packs/a1-course-unit-091/pack.json';
-import cellar from '@sumrak/schema/fixtures/packs/a1-course-unit-092/pack.json';
-import greenhouse from '@sumrak/schema/fixtures/packs/a1-course-unit-093/pack.json';
-import family from '@sumrak/schema/fixtures/packs/a2-family-090/pack.json';
+import hallway from '@sutinki/schema/fixtures/packs/a1-course-unit-090/pack.json';
+import kitchen from '@sutinki/schema/fixtures/packs/a1-course-unit-091/pack.json';
+import cellar from '@sutinki/schema/fixtures/packs/a1-course-unit-092/pack.json';
+import greenhouse from '@sutinki/schema/fixtures/packs/a1-course-unit-093/pack.json';
+import family from '@sutinki/schema/fixtures/packs/a2-family-090/pack.json';
 
 import { importPack } from '../src/db/importer';
 import * as schema from '../src/db/schema';
-import type { SumrakDB } from '../src/db/types';
+import type { SutinkiDB } from '../src/db/types';
 
 const dbPath = process.argv[2];
 if (!dbPath) {
-  console.error('usage: npx tsx scripts/stage-t30-fixtures.ts <path-to-pulled-sumrak.db>');
+  console.error('usage: npx tsx scripts/stage-t30-fixtures.ts <path-to-pulled-sutinki.db>');
   process.exit(1);
 }
 
 const sqlite = new Database(dbPath);
 sqlite.pragma('journal_mode = DELETE'); // device snapshot: no stray -wal on push
 sqlite.pragma('foreign_keys = ON');
-const db = drizzle(sqlite, { schema }) as unknown as SumrakDB;
+const db = drizzle(sqlite, { schema }) as unknown as SutinkiDB;
 
 // Same .sql files the device runs; no-op for already-applied entries.
 migrate(db as never, { migrationsFolder: join(__dirname, '..', 'drizzle') });

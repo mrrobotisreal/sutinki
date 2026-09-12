@@ -1,4 +1,4 @@
-import { parsePack } from '@sumrak/schema';
+import { parsePack } from '@sutinki/schema';
 
 import { db, importPack, removePack, repos } from '@/db';
 import { queryKeys } from '@/db/hooks';

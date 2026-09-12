@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 
 import { syncState } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 export type SyncStateRow = typeof syncState.$inferSelect;
 /**
@@ -17,7 +17,7 @@ export type PackSource = 'bundled' | 'github' | 'local-file' | 'local-import';
  * knows what to re-download, design §9). Written by the importer; read by
  * content sync (T07) to diff against the remote manifest.
  */
-export function createSyncStateRepo(db: SumrakDB) {
+export function createSyncStateRepo(db: SutinkiDB) {
   return {
     async getInstalled(packId: string): Promise<SyncStateRow | null> {
       const rows = await db.select().from(syncState).where(eq(syncState.packId, packId)).limit(1);

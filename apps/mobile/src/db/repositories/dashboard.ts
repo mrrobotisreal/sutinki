@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 import { STABILITY_MATURE_MIN, STABILITY_YOUNG_MIN } from '@/lib/mastery';
 import { computeStreak } from '@/lib/streak';
 
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 /**
  * Progress-dashboard aggregations (T18, design §7.6). Read-only: this repo
@@ -128,7 +128,7 @@ const REVIEWED_LEMMAS = sql`
       AND c.direction IN ('ru-en', 'en-ru') AND c.reps > 0
   )`;
 
-export function createDashboardRepo(db: SumrakDB) {
+export function createDashboardRepo(db: SutinkiDB) {
   return {
     /** Vocab-by-level rollup (§7.6) — one row per CEFR level with lemmas. */
     async getVocabByLevel(): Promise<VocabLevelStats[]> {

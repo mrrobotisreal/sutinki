@@ -6,12 +6,12 @@
  * names.
  */
 
-export const BACKUP_FILE_RE = /^sumrak-backup-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})Z\.json$/;
+export const BACKUP_FILE_RE = /^sutinki-backup-(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})Z\.json$/;
 
 export function backupFileName(at: Date): string {
   const p = (n: number, w = 2) => String(n).padStart(w, '0');
   return (
-    `sumrak-backup-${p(at.getUTCFullYear(), 4)}${p(at.getUTCMonth() + 1)}${p(at.getUTCDate())}` +
+    `sutinki-backup-${p(at.getUTCFullYear(), 4)}${p(at.getUTCMonth() + 1)}${p(at.getUTCDate())}` +
     `-${p(at.getUTCHours())}${p(at.getUTCMinutes())}${p(at.getUTCSeconds())}Z.json`
   );
 }
