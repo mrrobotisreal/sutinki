@@ -1,0 +1,83 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1787334776238,
+      "tag": "0000_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787334787992,
+      "tag": "0001_fts5-search",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787336459654,
+      "tag": "0002_story-progress",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787343337373,
+      "tag": "0003_sync-state-bytes",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1787442026190,
+      "tag": "0004_unit-progress",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1787459557189,
+      "tag": "0005_motivation",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787553023215,
+      "tag": "0006_perf-indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787680092715,
+      "tag": "0007_bookmarks",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787688257827,
+      "tag": "0008_dialogues",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1787715239118,
+      "tag": "0009_imports",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1787726713316,
+      "tag": "0010_path-theme-track",
+      "breakpoints": true
+    }
+  ]
+}
