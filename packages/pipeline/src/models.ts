@@ -20,7 +20,7 @@ import {
 /**
  * `pipeline models mirror` (T23, V2 §2): copy the exact speech-model archives
  * the app pins today from the public k2-fsa release assets into the private
- * `sumrak-content` repo (`models/{tts,asr}/`), and emit `models-manifest.json`
+ * `sutinki-content` repo (`models/{tts,asr}/`), and emit `models-manifest.json`
  * at the repo root. The app's catalogs then resolve model ids against that
  * manifest first, with the k2-fsa URLs kept as last-resort fallback.
  *
@@ -48,14 +48,15 @@ const TTS_RELEASE_BASE = 'https://github.com/k2-fsa/sherpa-onnx/releases/downloa
 
 function piperMirror(
   name: string,
+  quality: string,
   displayName: string,
   sha256: string,
   bytes: number,
 ): MirrorModel {
   return {
-    id: `piper-ru-${name}`,
+    id: `piper-uk-${name.replace(/_/g, '-')}`,
     kind: 'tts-voice',
-    upstreamUrl: `${TTS_RELEASE_BASE}/vits-piper-ru_RU-${name}-medium.tar.bz2`,
+    upstreamUrl: `${TTS_RELEASE_BASE}/vits-piper-uk_UA-${name}-${quality}.tar.bz2`,
     sha256,
     bytes,
     displayName,
@@ -63,35 +64,33 @@ function piperMirror(
 }
 
 /**
- * The exact five archives pinned in the app catalogs as of T23
- * (`features/tts/catalog.ts` 2026-08-21, `features/pronunciation/asr-catalog.ts`
- * 2026-08-22). A test in the app repo pins that both sources claim the same
- * sha256 per model id — change either side only in lockstep.
+ * The exact archives pinned in the app catalogs: the two Piper `uk_UA`
+ * voices (`features/tts/catalog.ts`, UT05 — hashes computed from the
+ * downloaded archives on 2026-09-13) plus the ASR model
+ * (`features/pronunciation/asr-catalog.ts`). A test in the app repo pins
+ * that both sources claim the same sha256 per model id — change either side
+ * only in lockstep.
+ *
+ * TODO(UT06): the ASR row is still the Russian Zipformer the app catalog
+ * pins at the fork. It stays here — not excluded — so the pin test keeps
+ * asserting the whole catalog ⇔ mirror pairing; UT06 replaces both sides
+ * together (and, per ADR-0005, the Ukrainian ASR is > 100 MB, so UT06 also
+ * decides whether an ASR row belongs in the mirror list at all).
  */
 export const MIRROR_MODELS: readonly MirrorModel[] = [
   piperMirror(
-    'ruslan',
-    'Руслан',
-    '0690b1cad01f86e8db9ba988af24898bdc1af774e23cb2e46b9c730269b6fd83',
-    67_210_684,
+    'lada',
+    'x_low',
+    'Лада',
+    '7a2228f249299d19016cd6ca170bf6916f8664231bcbd9e61f447b861a039cf5',
+    26_520_908,
   ),
   piperMirror(
-    'irina',
-    'Ирина',
-    '1fc0f54e5e084fe287c07909f2f6e0ba6d857864cf800e3ab80286a4e8233008',
-    67_153_308,
-  ),
-  piperMirror(
-    'denis',
-    'Денис',
-    'efa4c18e0b5e32b81d1b6df36b9d312831e5d545200e27848ef926a4cd930300',
-    67_190_991,
-  ),
-  piperMirror(
-    'dmitri',
-    'Дмитрий',
-    'c86d0803737de13d441923ff3b3f309482fab8d7af3ec85949942809eb9a3660',
-    67_188_551,
+    'ukrainian_tts',
+    'medium',
+    'Лада · Микита · Тетяна',
+    '92be6ff21ebb1cbcc0c71121a6437db8d060cee5785287aaa6a19a2548f59c03',
+    80_355_083,
   ),
   {
     id: 'zipformer-ru-int8',
@@ -115,7 +114,7 @@ export const MODELS_MANIFEST_FILE = 'models-manifest.json';
 export type Downloader = (url: string, destFile: string) => Promise<void>;
 
 /**
- * Default downloader. Buffering a ~67 MB archive in host memory is fine —
+ * Default downloader. Buffering an ~80 MB archive in host memory is fine —
  * only the DEVICE must stream (T11); the mirror runs on the Mac.
  */
 export const fetchDownloader: Downloader = async (url, destFile) => {

@@ -15,7 +15,7 @@ import { PIPER_VOICES } from '@/features/tts/catalog';
  */
 
 describe('mirror ↔ catalog pins', () => {
-  it('covers exactly the app catalogs: 4 Piper voices + 1 ASR model', () => {
+  it('covers exactly the app catalogs: 2 Piper uk_UA voices + 1 ASR model', () => {
     const mirrorIds = MIRROR_MODELS.map((m) => m.id).sort();
     const catalogIds = [...PIPER_VOICES.map((v) => v.id), ASR_MODEL.id].sort();
     expect(mirrorIds).toEqual(catalogIds);
@@ -33,6 +33,9 @@ describe('mirror ↔ catalog pins', () => {
     }
   });
 
+  // The ASR row is the fork-time Russian Zipformer until UT06 replaces both
+  // sides together (pipeline TODO(UT06)); keeping it paired here is what
+  // keeps this test meaningful for the whole catalog, not just the voices.
   it('both sources claim the same sha256/bytes/upstream URL for the ASR model', () => {
     const mirror = MIRROR_MODELS.find((m) => m.id === ASR_MODEL.id);
     expect(mirror).toBeDefined();

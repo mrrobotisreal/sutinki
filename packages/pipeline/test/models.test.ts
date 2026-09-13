@@ -75,16 +75,26 @@ const fakeDownloader: Downloader = async (url, dest) => {
 };
 
 describe('MIRROR_MODELS data', () => {
-  it('covers exactly the five pinned archives (4 TTS + 1 ASR), unique ids + hashes', () => {
-    expect(MIRROR_MODELS).toHaveLength(5);
-    expect(MIRROR_MODELS.filter((m) => m.kind === 'tts-voice')).toHaveLength(4);
+  it('covers exactly the three pinned archives (2 uk_UA TTS + 1 ASR), unique ids + hashes', () => {
+    expect(MIRROR_MODELS).toHaveLength(3);
+    expect(MIRROR_MODELS.filter((m) => m.kind === 'tts-voice')).toHaveLength(2);
     expect(MIRROR_MODELS.filter((m) => m.kind === 'asr')).toHaveLength(1);
-    expect(new Set(MIRROR_MODELS.map((m) => m.id)).size).toBe(5);
-    expect(new Set(MIRROR_MODELS.map((m) => m.sha256)).size).toBe(5);
+    expect(new Set(MIRROR_MODELS.map((m) => m.id)).size).toBe(3);
+    expect(new Set(MIRROR_MODELS.map((m) => m.sha256)).size).toBe(3);
     for (const m of MIRROR_MODELS) {
       expect(m.sha256).toMatch(/^[a-f0-9]{64}$/);
       // Every archive must clear GitHub's 100 MB hard per-file limit (ticket risk note).
       expect(m.bytes).toBeLessThan(100 * 1024 * 1024);
+    }
+  });
+
+  it('pins the two Piper uk_UA voices under piper-uk-* ids (UT05)', () => {
+    const tts = MIRROR_MODELS.filter((m) => m.kind === 'tts-voice');
+    expect(tts.map((m) => m.id)).toEqual(['piper-uk-lada', 'piper-uk-ukrainian-tts']);
+    for (const m of tts) {
+      expect(m.upstreamUrl).toMatch(
+        /\/tts-models\/vits-piper-uk_UA-[a-z_]+-(x_low|low|medium|high)\.tar\.bz2$/,
+      );
     }
   });
 
