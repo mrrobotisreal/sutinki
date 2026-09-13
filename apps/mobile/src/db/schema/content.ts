@@ -20,7 +20,7 @@ export const packs = sqliteTable('packs', {
   type: text('type')
     .$type<'stories' | 'course-unit' | 'checkpoint' | 'prompts' | 'dialogue'>()
     .notNull(),
-  titleRu: text('title_ru').notNull(),
+  titleUk: text('title_uk').notNull(),
   titleEn: text('title_en').notNull(),
   level: text('level').$type<'A1' | 'A2' | 'B1' | 'B2' | 'C1'>().notNull(),
   tags: text('tags', { mode: 'json' }).$type<string[]>().notNull(),
@@ -60,7 +60,7 @@ export const stories = sqliteTable(
     /** Stable story id, unique within its pack. */
     id: text('id').notNull(),
     orderIdx: integer('order_idx').notNull(),
-    titleRu: text('title_ru').notNull(),
+    titleUk: text('title_uk').notNull(),
     titleEn: text('title_en').notNull(),
     level: text('level').$type<'A1' | 'A2' | 'B1' | 'B2' | 'C1'>().notNull(),
   },
@@ -78,7 +78,7 @@ export const sentences = sqliteTable(
     storyId: text('story_id').notNull(),
     /** Position within the story, reading order. */
     orderIdx: integer('order_idx').notNull(),
-    ru: text('ru').notNull(),
+    uk: text('uk').notNull(),
     en: text('en').notNull(),
     grammarTopics: text('grammar_topics', { mode: 'json' }).$type<string[]>(),
   },
@@ -100,15 +100,15 @@ export const tokens = sqliteTable(
     tokenIndex: integer('token_index').notNull(),
     /** Denormalized for story-scoped queries (cloze generation etc.). */
     storyId: text('story_id').notNull(),
-    /** Surface form exactly as authored (NFC, ё preserved). */
+    /** Surface form exactly as authored (NFC, apostrophe and ґ preserved). */
     text: text('text').notNull(),
-    /** ё/е-folded, lowercased shadow of `text` for tolerant matching. */
+    /** normalizeUk shadow of `text` (apostrophe→U+02BC, ґ→г, lowercased) for tolerant matching. */
     textNorm: text('text_norm').notNull(),
     isPunct: integer('is_punct', { mode: 'boolean' }).notNull().default(false),
     /** Effective space-before after applying schema defaults (reader reconstruction). */
     spaceBefore: integer('space_before', { mode: 'boolean' }).notNull(),
     lemma: text('lemma'),
-    /** ё/е-folded, lowercased shadow of `lemma`. */
+    /** normalizeUk shadow of `lemma` (ADR-0004). */
     lemmaNorm: text('lemma_norm'),
     translation: text('translation'),
     pos: text('pos'),
@@ -179,7 +179,7 @@ export const lessons = sqliteTable(
       .notNull()
       .references(() => packs.id, { onDelete: 'cascade' }),
     id: text('id').notNull(),
-    titleRu: text('title_ru').notNull(),
+    titleUk: text('title_uk').notNull(),
     titleEn: text('title_en').notNull(),
     /** Markdown lesson body. */
     body: text('body').notNull(),
@@ -196,7 +196,7 @@ export const journalPrompts = sqliteTable(
       .references(() => packs.id, { onDelete: 'cascade' }),
     id: text('id').notNull(),
     level: text('level').$type<'A1' | 'A2' | 'B1' | 'B2' | 'C1'>().notNull(),
-    promptRu: text('prompt_ru').notNull(),
+    promptUk: text('prompt_uk').notNull(),
     promptEn: text('prompt_en').notNull(),
     tags: text('tags', { mode: 'json' }).$type<string[]>(),
   },
@@ -210,7 +210,7 @@ export const journalPrompts = sqliteTable(
  */
 export interface DialogueCharacter {
   id: string;
-  name: { ru: string; en: string };
+  name: { uk: string; en: string };
   voice: string;
   style: string;
   audioTag?: string;
@@ -234,7 +234,7 @@ export const dialogues = sqliteTable(
     /** Stable dialogue id, unique within its pack. */
     id: text('id').notNull(),
     orderIdx: integer('order_idx').notNull(),
-    titleRu: text('title_ru').notNull(),
+    titleUk: text('title_uk').notNull(),
     titleEn: text('title_en').notNull(),
     level: text('level').$type<'A1' | 'A2' | 'B1' | 'B2' | 'C1'>().notNull(),
     startNodeId: text('start_node_id').notNull(),
@@ -291,7 +291,7 @@ export const dialogueChoices = sqliteTable(
     nextNodeId: text('next_node_id').notNull(),
     /** Alternate phrasings the ASR matcher also accepts. */
     asrAlternates: text('asr_alternates', { mode: 'json' }).$type<string[]>(),
-    hintRu: text('hint_ru'),
+    hintUk: text('hint_uk'),
     hintEn: text('hint_en'),
   },
   (t) => [
@@ -309,9 +309,9 @@ export const dialogueEndings = sqliteTable(
     dialogueId: text('dialogue_id').notNull(),
     /** Stable ending id, unique within its dialogue. */
     id: text('id').notNull(),
-    titleRu: text('title_ru').notNull(),
+    titleUk: text('title_uk').notNull(),
     titleEn: text('title_en').notNull(),
-    recapRu: text('recap_ru').notNull(),
+    recapUk: text('recap_uk').notNull(),
     recapEn: text('recap_en').notNull(),
     tone: text('tone').$type<'good' | 'bad' | 'strange'>().notNull(),
   },

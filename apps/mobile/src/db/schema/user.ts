@@ -19,7 +19,7 @@ import { sql } from 'drizzle-orm';
  */
 
 export type BankItemKind = 'word' | 'phrase';
-export type CardDirection = 'ru-en' | 'en-ru' | 'listening' | 'production';
+export type CardDirection = 'uk-en' | 'en-uk' | 'listening' | 'production';
 export type FeedbackStatus = 'none' | 'queued' | 'done';
 
 export const bankItems = sqliteTable(
@@ -29,11 +29,11 @@ export const bankItems = sqliteTable(
     kind: text('kind').$type<BankItemKind>().notNull(),
     /** Dictionary form — words only (identity for dedup); null for phrases. */
     lemma: text('lemma'),
-    /** ё/е-folded, lowercased, NFC lemma — the actual word-dedup key. */
+    /** normalizeUk lemma (NFC, lowercased, apostrophe→U+02BC, ґ→г) — the actual word-dedup key. */
     lemmaNorm: text('lemma_norm'),
     /** Surface form as first encountered / entered. */
     surface: text('surface').notNull(),
-    /** Normalized phrase text (NFC, casefold, ё→е, whitespace-collapsed) — phrase dedup key. */
+    /** Normalized phrase text (normalizeUk + whitespace-collapsed) — phrase dedup key (ADR-0004). */
     normalized: text('normalized').notNull(),
     translation: text('translation').notNull(),
     grammar: text('grammar'),
@@ -145,7 +145,7 @@ export const journalEntries = sqliteTable(
     id: text('id').primaryKey(),
     /** Stable prompt id from a prompts pack (unenforced ref). */
     promptId: text('prompt_id'),
-    ru: text('ru').notNull(),
+    uk: text('uk').notNull(),
     aiFeedback: text('ai_feedback'),
     feedbackStatus: text('feedback_status').$type<FeedbackStatus>().notNull().default('none'),
     createdAt: integer('created_at').notNull(),
