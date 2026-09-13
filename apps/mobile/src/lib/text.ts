@@ -1,11 +1,12 @@
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 
 /**
  * Tolerant answer matching for typed game input (T13; design §7.3 mode 3:
- * "lenient diacritic/ё-tolerant matching"). Builds on the app-wide
- * `normalizeRu` (NFC, lowercase, ё→е — T03) and additionally strips stress
- * accents and collapses whitespace, so a typed answer is judged on the word
- * itself, never on casing, ё vs е, or a pasted stress mark.
+ * "lenient diacritic-tolerant matching"). Builds on the app-wide
+ * `normalizeUk` (NFC, lowercase, apostrophe→U+02BC, ґ→г — ADR-0004) and
+ * additionally strips stress accents and collapses whitespace, so a typed
+ * answer is judged on the word itself, never on casing, which apostrophe
+ * the keyboard produced, ґ vs г, or a pasted stress mark.
  *
  * Shared, standalone, and unit-tested per the T13 ticket — any future typed
  * mode (T14 listening) compares through here rather than growing its own
@@ -14,15 +15,15 @@ import { normalizeRu } from '@/db/normalize';
  * input has no such excuse, so equality here is exact after folding.
  */
 
-/** Fold text to its tolerant comparison form: NFC → strip stress accents → normalizeRu → collapse whitespace. */
+/** Fold text to its tolerant comparison form: NFC → strip stress accents → normalizeUk → collapse whitespace. */
 export function foldForAnswer(text: string): string {
-  // U+0300/U+0301 = combining grave/acute (Russian stress marks). NFC keeps
-  // й/ё precomposed, so stripping these never mangles a real letter.
+  // U+0300/U+0301 = combining grave/acute (stress marks). NFC keeps й/ї
+  // precomposed, so stripping these never mangles a real letter.
   const stripped = text.normalize('NFC').replace(/[̀́]/g, '');
-  return normalizeRu(stripped).replace(/\s+/g, ' ').trim();
+  return normalizeUk(stripped).replace(/\s+/g, ' ').trim();
 }
 
-/** Case-insensitive, ё/е- and stress-mark-tolerant equality for typed answers. */
+/** Case-insensitive, apostrophe-, ґ/г- and stress-mark-tolerant equality for typed answers. */
 export function answersMatch(expected: string, typed: string): boolean {
   return foldForAnswer(expected) === foldForAnswer(typed);
 }
