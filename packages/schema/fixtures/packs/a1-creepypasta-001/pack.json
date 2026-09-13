@@ -3,7 +3,7 @@
   "version": 1,
   "type": "stories",
   "title": {
-    "ru": "Стук в стене",
+    "uk": "Стук в стене",
     "en": "The Knock in the Wall"
   },
   "level": "A1",
@@ -18,7 +18,7 @@
     {
       "id": "knock-in-the-wall",
       "title": {
-        "ru": "Стук в стене",
+        "uk": "Стук в стене",
         "en": "The Knock in the Wall"
       },
       "level": "A1",
@@ -390,7 +390,7 @@
       "sentences": [
         {
           "id": "knock-s01",
-          "ru": "Я живу один в старой квартире.",
+          "uk": "Я живу один в старой квартире.",
           "en": "I live alone in an old apartment.",
           "grammarTopics": [
             "present-tense",
@@ -453,7 +453,7 @@
         },
         {
           "id": "knock-s02",
-          "ru": "Ночью я слышу стук в стене.",
+          "uk": "Ночью я слышу стук в стене.",
           "en": "At night I hear a knocking in the wall.",
           "grammarTopics": [
             "present-tense",
@@ -517,7 +517,7 @@
         },
         {
           "id": "knock-s03",
-          "ru": "Стук тихий, но он не останавливается.",
+          "uk": "Стук тихий, но он не останавливается.",
           "en": "The knocking is quiet, but it does not stop.",
           "grammarTopics": [
             "adjective-agreement",
@@ -583,7 +583,7 @@
         },
         {
           "id": "knock-s04",
-          "ru": "Я думаю: «Это соседи».",
+          "uk": "Я думаю: «Это соседи».",
           "en": "I think: \"It's the neighbours.\"",
           "grammarTopics": [
             "present-tense",
@@ -644,7 +644,7 @@
         },
         {
           "id": "knock-s05",
-          "ru": "Но сосед говорит: «За этой стеной нет квартиры».",
+          "uk": "Но сосед говорит: «За этой стеной нет квартиры».",
           "en": "But the neighbour says: \"There is no apartment behind that wall.\"",
           "grammarTopics": [
             "instrumental-case",
@@ -737,7 +737,7 @@
         },
         {
           "id": "knock-s06",
-          "ru": "Сегодня ночью стук очень громкий.",
+          "uk": "Сегодня ночью стук очень громкий.",
           "en": "Tonight the knocking is very loud.",
           "grammarTopics": [
             "adjective-agreement",
@@ -790,7 +790,7 @@
         },
         {
           "id": "knock-s07",
-          "ru": "Я стою у стены и слушаю.",
+          "uk": "Я стою у стены и слушаю.",
           "en": "I stand at the wall and listen.",
           "grammarTopics": [
             "present-tense",
@@ -852,7 +852,7 @@
         },
         {
           "id": "knock-s08",
-          "ru": "Вдруг стук останавливается.",
+          "uk": "Вдруг стук останавливается.",
           "en": "Suddenly the knocking stops.",
           "grammarTopics": [
             "reflexive-verbs"
@@ -889,7 +889,7 @@
         },
         {
           "id": "knock-s09",
-          "ru": "Потом я слышу тихий голос: «Ты дома».",
+          "uk": "Потом я слышу тихий голос: «Ты дома».",
           "en": "Then I hear a quiet voice: \"You are home.\"",
           "grammarTopics": [
             "accusative-case",
@@ -973,7 +973,7 @@
         },
         {
           "id": "knock-s10",
-          "ru": "Голос не в стене.",
+          "uk": "Голос не в стене.",
           "en": "The voice is not in the wall.",
           "grammarTopics": [
             "negation",
@@ -1019,7 +1019,7 @@
         },
         {
           "id": "knock-s11",
-          "ru": "Он в моей комнате.",
+          "uk": "Он в моей комнате.",
           "en": "It is in my room.",
           "grammarTopics": [
             "prepositional-case",

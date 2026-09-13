@@ -3,9 +3,9 @@
  * trailing/leading punctuation mark its own token. Only for building
  * structurally valid test sentences — real content is authored by hand.
  */
-export function makeSentence(id: string, ru: string): Record<string, unknown> {
+export function makeSentence(id: string, uk: string): Record<string, unknown> {
   const tokens: Record<string, unknown>[] = [];
-  for (const chunk of ru.split(' ')) {
+  for (const chunk of uk.split(' ')) {
     const m = /^([«]*)([^«»]*?)([.,!?…»]*)$/u.exec(chunk)!;
     for (const p of m[1] ?? '') tokens.push({ text: p, isPunct: true });
     if (m[2]) {
@@ -23,22 +23,22 @@ export function makeSentence(id: string, ru: string): Record<string, unknown> {
   }
   const first = tokens[0];
   if (first && first.isPunct !== true) delete first.spaceBefore;
-  return { id, ru, en: 'test', tokens };
+  return { id, uk, en: 'test', tokens };
 }
 
 /** A dialogue node for tests: one of `next`/`endingId`/`choices` via `rest`. */
 export function makeNode(
   id: string,
   speakerId: string,
-  ru: string,
+  uk: string,
   rest: Record<string, unknown>,
 ): Record<string, unknown> {
-  return { id, speakerId, sentence: makeSentence(id, ru), ...rest };
+  return { id, speakerId, sentence: makeSentence(id, uk), ...rest };
 }
 
 /** A choice for tests (sentence id = choice id, the pipeline convention). */
-export function makeChoice(id: string, ru: string, next: string): Record<string, unknown> {
-  return { id, sentence: makeSentence(id, ru), next };
+export function makeChoice(id: string, uk: string, next: string): Record<string, unknown> {
+  return { id, sentence: makeSentence(id, uk), next };
 }
 
 /**
@@ -50,25 +50,25 @@ export function makeValidDialoguePack(): Record<string, unknown> {
     id: 'test-dialogue-001',
     version: 1,
     type: 'dialogue',
-    title: { ru: 'Тест', en: 'Test' },
+    title: { uk: 'Тест', en: 'Test' },
     level: 'A1',
     tags: ['test', 'dialogue'],
     stories: [],
     dialogues: [
       {
         id: 'test-dlg',
-        title: { ru: 'Тест', en: 'Test' },
+        title: { uk: 'Тест', en: 'Test' },
         level: 'A1',
         characters: [
           {
             id: 'mama',
-            name: { ru: 'Мама', en: 'Mama' },
+            name: { uk: 'Мама', en: 'Mama' },
             voice: 'elevenlabs:Mariia',
             style: 'warm',
           },
           {
             id: 'player',
-            name: { ru: 'Ты', en: 'You' },
+            name: { uk: 'Ты', en: 'You' },
             voice: 'elevenlabs:Ivan',
             style: 'neutral',
           },
@@ -88,14 +88,14 @@ export function makeValidDialoguePack(): Record<string, unknown> {
         endings: [
           {
             id: 'e-good',
-            title: { ru: 'Хорошо', en: 'Good' },
-            recap: { ru: 'Всё хорошо.', en: 'All good.' },
+            title: { uk: 'Хорошо', en: 'Good' },
+            recap: { uk: 'Всё хорошо.', en: 'All good.' },
             tone: 'good',
           },
           {
             id: 'e-bad',
-            title: { ru: 'Плохо', en: 'Bad' },
-            recap: { ru: 'Всё плохо.', en: 'All bad.' },
+            title: { uk: 'Плохо', en: 'Bad' },
+            recap: { uk: 'Всё плохо.', en: 'All bad.' },
             tone: 'bad',
           },
         ],
@@ -110,19 +110,19 @@ export function makeValidPack(): Record<string, unknown> {
     id: 'test-pack-001',
     version: 1,
     type: 'stories',
-    title: { ru: 'Тест', en: 'Test' },
+    title: { uk: 'Тест', en: 'Test' },
     level: 'A1',
     tags: ['test'],
     stories: [
       {
         id: 'test-story',
-        title: { ru: 'Тест', en: 'Test' },
+        title: { uk: 'Тест', en: 'Test' },
         level: 'A1',
         audio: [],
         sentences: [
           {
             id: 'test-s01',
-            ru: 'Я дома.',
+            uk: 'Я дома.',
             en: 'I am home.',
             tokens: [
               {

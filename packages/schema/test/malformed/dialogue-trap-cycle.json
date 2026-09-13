@@ -3,7 +3,7 @@
   "version": 1,
   "type": "dialogue",
   "title": {
-    "ru": "Тест",
+    "uk": "Тест",
     "en": "Test"
   },
   "level": "A1",
@@ -13,7 +13,7 @@
     {
       "id": "test-dlg",
       "title": {
-        "ru": "Тест",
+        "uk": "Тест",
         "en": "Test"
       },
       "level": "A1",
@@ -21,7 +21,7 @@
         {
           "id": "mama",
           "name": {
-            "ru": "Мама",
+            "uk": "Мама",
             "en": "Mama"
           },
           "voice": "elevenlabs:Mariia",
@@ -30,7 +30,7 @@
         {
           "id": "player",
           "name": {
-            "ru": "Ты",
+            "uk": "Ты",
             "en": "You"
           },
           "voice": "elevenlabs:Ivan",
@@ -44,7 +44,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "dlg-n1",
-            "ru": "Привет.",
+            "uk": "Привет.",
             "en": "test",
             "tokens": [
               {
@@ -67,7 +67,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "dlg-n2",
-            "ru": "Ты голодный?",
+            "uk": "Ты голодный?",
             "en": "test",
             "tokens": [
               {
@@ -95,7 +95,7 @@
               "id": "dlg-n2-c1",
               "sentence": {
                 "id": "dlg-n2-c1",
-                "ru": "Да.",
+                "uk": "Да.",
                 "en": "test",
                 "tokens": [
                   {
@@ -117,7 +117,7 @@
               "id": "dlg-n2-c2",
               "sentence": {
                 "id": "dlg-n2-c2",
-                "ru": "Нет.",
+                "uk": "Нет.",
                 "en": "test",
                 "tokens": [
                   {
@@ -142,7 +142,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "dlg-n3",
-            "ru": "Хорошо.",
+            "uk": "Хорошо.",
             "en": "test",
             "tokens": [
               {
@@ -165,7 +165,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "dlg-n4",
-            "ru": "Ладно.",
+            "uk": "Ладно.",
             "en": "test",
             "tokens": [
               {
@@ -188,11 +188,11 @@
         {
           "id": "e-good",
           "title": {
-            "ru": "Хорошо",
+            "uk": "Хорошо",
             "en": "Good"
           },
           "recap": {
-            "ru": "Всё хорошо.",
+            "uk": "Всё хорошо.",
             "en": "All good."
           },
           "tone": "good"
@@ -200,11 +200,11 @@
         {
           "id": "e-bad",
           "title": {
-            "ru": "Плохо",
+            "uk": "Плохо",
             "en": "Bad"
           },
           "recap": {
-            "ru": "Всё плохо.",
+            "uk": "Всё плохо.",
             "en": "All bad."
           },
           "tone": "bad"

@@ -171,8 +171,8 @@ describe('dialogue graph — reachability & endings', () => {
     const pack = makeValidDialoguePack() as any;
     dlg(pack).endings.push({
       id: 'e-strange',
-      title: { ru: 'Странно', en: 'Strange' },
-      recap: { ru: 'Очень странно.', en: 'Very strange.' },
+      title: { uk: 'Странно', en: 'Strange' },
+      recap: { uk: 'Очень странно.', en: 'Very strange.' },
       tone: 'strange',
     });
     expectIssue(
@@ -255,17 +255,17 @@ describe('dialogue sentences — pack-wide sentence ids & invariants', () => {
     expectIssue(pack, 'dialogues[0].nodes[0].sentence.tokens', 'do not reconstruct');
   });
 
-  it('dialogue sentences enforce NFC (ё never decomposed)', () => {
+  it('dialogue sentences enforce NFC (ї never decomposed)', () => {
     const pack = makeValidDialoguePack() as any;
     const s = dlg(pack).nodes[0].sentence;
-    s.ru = 'Всё.'.normalize('NFD');
+    s.uk = 'Її.'.normalize('NFD');
     s.tokens = [{ text: 'x', isPunct: true }];
-    expectIssue(pack, 'dialogues[0].nodes[0].sentence.ru', 'NFC');
+    expectIssue(pack, 'dialogues[0].nodes[0].sentence.uk', 'NFC');
   });
 
   it('asrAlternates must be NFC-normalized', () => {
     const pack = makeValidDialoguePack() as any;
-    dlg(pack).nodes[1].choices[0].asrAlternates = ['Всё хорошо.'.normalize('NFD')];
+    dlg(pack).nodes[1].choices[0].asrAlternates = ['Її немає.'.normalize('NFD')];
     expectIssue(pack, 'dialogues[0].nodes[1].choices[0].asrAlternates[0]', 'NFC');
   });
 });

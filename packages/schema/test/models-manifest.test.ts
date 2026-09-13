@@ -7,12 +7,12 @@ import {
 } from '../src/index';
 
 const validEntry = {
-  id: 'piper-ru-ruslan',
+  id: 'piper-uk-lada',
   kind: 'tts-voice' as const,
-  file: 'models/tts/vits-piper-ru_RU-ruslan-medium.tar.bz2',
+  file: 'models/tts/vits-piper-uk_UA-lada-x_low.tar.bz2',
   bytes: 67_210_684,
   sha256: '0690b1cad01f86e8db9ba988af24898bdc1af774e23cb2e46b9c730269b6fd83',
-  displayName: 'Руслан',
+  displayName: 'Лада',
   meta: { upstreamUrl: 'https://example.com/archive.tar.bz2' },
 };
 
@@ -22,12 +22,12 @@ const validManifest = {
   models: [
     validEntry,
     {
-      id: 'zipformer-ru-int8',
+      id: 'zipformer-uk-int8',
       kind: 'asr' as const,
-      file: 'models/asr/sherpa-onnx-zipformer-ru-int8-2025-04-20.tar.bz2',
+      file: 'models/asr/sherpa-onnx-zipformer-uk-int8-2025-04-20.tar.bz2',
       bytes: 60_239_942,
       sha256: 'd6a651569aacc9a177259fa54705dd76acae23f6a4d62ea6797bd220d4b57163',
-      displayName: 'Russian speech recognition',
+      displayName: 'Ukrainian speech recognition',
     },
   ],
 };
@@ -55,7 +55,7 @@ describe('ModelsManifestSchema', () => {
     });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.message).toContain('duplicate model id "piper-ru-ruslan"');
+      expect(result.message).toContain('duplicate model id "piper-uk-lada"');
       expect(result.issues[0]!.path).toBe('models[1].id');
     }
   });

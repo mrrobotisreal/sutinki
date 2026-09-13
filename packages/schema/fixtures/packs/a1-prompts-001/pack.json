@@ -3,7 +3,7 @@
   "version": 1,
   "type": "prompts",
   "title": {
-    "ru": "Первые страницы",
+    "uk": "Первые страницы",
     "en": "First Pages"
   },
   "level": "A1",
@@ -14,7 +14,7 @@
       "id": "moy-den",
       "level": "A1",
       "prompt": {
-        "ru": "Опиши свой день. Что ты делал утром, днём и вечером?",
+        "uk": "Опиши свой день. Что ты делал утром, днём и вечером?",
         "en": "Describe your day. What did you do in the morning, afternoon, and evening?"
       },
       "tags": ["daily-life"]
@@ -23,7 +23,7 @@
       "id": "moya-komnata-nochyu",
       "level": "A1",
       "prompt": {
-        "ru": "Опиши свою комнату ночью. Что ты видишь и слышишь?",
+        "uk": "Опиши свою комнату ночью. Что ты видишь и слышишь?",
         "en": "Describe your room at night. What do you see and hear?"
       },
       "tags": ["horror", "home"]
@@ -32,7 +32,7 @@
       "id": "moya-semya",
       "level": "A1",
       "prompt": {
-        "ru": "Расскажи о своей семье. Кто они? Где они живут?",
+        "uk": "Расскажи о своей семье. Кто они? Где они живут?",
         "en": "Tell about your family. Who are they? Where do they live?"
       },
       "tags": ["family"]
@@ -41,7 +41,7 @@
       "id": "lyubimaya-eda",
       "level": "A1",
       "prompt": {
-        "ru": "Что ты любишь есть? Что ты ел сегодня?",
+        "uk": "Что ты любишь есть? Что ты ел сегодня?",
         "en": "What do you like to eat? What did you eat today?"
       },
       "tags": ["food", "daily-life"]
@@ -50,7 +50,7 @@
       "id": "strannyy-son",
       "level": "A1",
       "prompt": {
-        "ru": "Расскажи про странный сон. Что ты видел во сне?",
+        "uk": "Расскажи про странный сон. Что ты видел во сне?",
         "en": "Tell about a strange dream. What did you see in the dream?"
       },
       "tags": ["dreams", "horror"]
@@ -59,7 +59,7 @@
       "id": "za-oknom",
       "level": "A1",
       "prompt": {
-        "ru": "Посмотри в окно. Что там? Опиши, что ты видишь.",
+        "uk": "Посмотри в окно. Что там? Опиши, что ты видишь.",
         "en": "Look out the window. What is there? Describe what you see."
       },
       "tags": ["daily-life", "observation"]
@@ -68,7 +68,7 @@
       "id": "moy-dom",
       "level": "A1",
       "prompt": {
-        "ru": "Опиши свой дом. Какая комната самая тёмная?",
+        "uk": "Опиши свой дом. Какая комната самая тёмная?",
         "en": "Describe your home. Which room is the darkest?"
       },
       "tags": ["home", "horror"]
@@ -77,7 +77,7 @@
       "id": "pogoda-segodnya",
       "level": "A1",
       "prompt": {
-        "ru": "Какая сегодня погода? Что ты чувствуешь?",
+        "uk": "Какая сегодня погода? Что ты чувствуешь?",
         "en": "What is the weather today? How do you feel?"
       },
       "tags": ["weather", "daily-life"]
@@ -86,7 +86,7 @@
       "id": "lyubimoe-mesto",
       "level": "A1",
       "prompt": {
-        "ru": "Опиши любимое место. Почему тебе там хорошо?",
+        "uk": "Опиши любимое место. Почему тебе там хорошо?",
         "en": "Describe a favorite place. Why do you feel good there?"
       },
       "tags": ["places"]
@@ -95,7 +95,7 @@
       "id": "zvuk-nochyu",
       "level": "A1",
       "prompt": {
-        "ru": "Ты слышишь звук ночью. Что это? Напиши три предложения.",
+        "uk": "Ты слышишь звук ночью. Что это? Напиши три предложения.",
         "en": "You hear a sound at night. What is it? Write three sentences."
       },
       "tags": ["horror"]
@@ -104,7 +104,7 @@
       "id": "moi-plany",
       "level": "A1",
       "prompt": {
-        "ru": "Что ты будешь делать завтра? Напиши свои планы.",
+        "uk": "Что ты будешь делать завтра? Напиши свои планы.",
         "en": "What will you do tomorrow? Write your plans."
       },
       "tags": ["daily-life", "future"]
@@ -113,7 +113,7 @@
       "id": "staraya-fotografiya",
       "level": "A1",
       "prompt": {
-        "ru": "Опиши старую фотографию. Кто на ней? Что странно?",
+        "uk": "Опиши старую фотографию. Кто на ней? Что странно?",
         "en": "Describe an old photograph. Who is in it? What is strange?"
       },
       "tags": ["horror", "memory"]
@@ -122,7 +122,7 @@
       "id": "pismo-drugu",
       "level": "A2",
       "prompt": {
-        "ru": "Напиши короткое письмо другу о твоей неделе.",
+        "uk": "Напиши короткое письмо другу о твоей неделе.",
         "en": "Write a short letter to a friend about your week."
       },
       "tags": ["letters", "daily-life"]
@@ -131,7 +131,7 @@
       "id": "istoriya-o-sosede",
       "level": "A2",
       "prompt": {
-        "ru": "Твой сосед ведёт себя странно. Напиши, что он делает.",
+        "uk": "Твой сосед ведёт себя странно. Напиши, что он делает.",
         "en": "Your neighbor is acting strangely. Write what he does."
       },
       "tags": ["horror", "neighbors"]
@@ -140,7 +140,7 @@
       "id": "detskoe-vospominanie",
       "level": "A2",
       "prompt": {
-        "ru": "Расскажи о воспоминании из детства. Почему ты его помнишь?",
+        "uk": "Расскажи о воспоминании из детства. Почему ты его помнишь?",
         "en": "Tell about a childhood memory. Why do you remember it?"
       },
       "tags": ["memory"]
@@ -149,7 +149,7 @@
       "id": "temnota",
       "level": "A2",
       "prompt": {
-        "ru": "Ты боишься темноты? Почему да или почему нет?",
+        "uk": "Ты боишься темноты? Почему да или почему нет?",
         "en": "Are you afraid of the dark? Why or why not?"
       },
       "tags": ["horror", "feelings"]

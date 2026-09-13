@@ -65,7 +65,7 @@ export const LessonSchema = z.strictObject({
   id: StableIdSchema,
   /** Bilingual lesson title. */
   title: LocalizedTextSchema,
-  /** Lesson content as markdown (Russian examples inline, English explanations). */
+  /** Lesson content as markdown (Ukrainian examples inline, English explanations). */
   body: z.string().min(1),
   /** Grammar topics this lesson covers — same vocabulary as `Sentence.grammarTopics`. */
   grammarTopics: z.array(z.string().min(1)).optional(),
@@ -82,8 +82,8 @@ const MultipleChoiceSpec = z.strictObject({
   id: StableIdSchema,
   kind: z.literal('multiple-choice'),
   /** Translation direction being tested. */
-  direction: z.enum(['ru-en', 'en-ru']),
-  /** The prompt shown (a RU or EN word/sentence per `direction`). */
+  direction: z.enum(['uk-en', 'en-uk']),
+  /** The prompt shown (a UK or EN word/sentence per `direction`). */
   prompt: z.string().min(1),
   /** Answer choices; 2–6 of them. */
   choices: z.array(z.string().min(1)).min(2).max(6),
@@ -94,8 +94,8 @@ const MultipleChoiceSpec = z.strictObject({
 const ClozeSpec = z.strictObject({
   id: StableIdSchema,
   kind: z.literal('cloze'),
-  /** Russian sentence with the blank marked as "___". */
-  sentenceRu: z.string().min(1),
+  /** Ukrainian sentence with the blank marked as "___". */
+  sentenceUk: z.string().min(1),
   /** The word that fills the blank. */
   answer: z.string().min(1),
   /** Optional tile choices (tile-pick variant); typed variant when absent. */
@@ -107,7 +107,7 @@ const SentenceBuilderSpec = z.strictObject({
   kind: z.literal('sentence-builder'),
   /** English sentence given as the prompt. */
   en: z.string().min(1),
-  /** Correct Russian tiles in order. */
+  /** Correct Ukrainian tiles in order. */
   tokens: z.array(z.string().min(1)).min(2),
   /** Extra wrong tiles mixed in at higher levels. */
   distractors: z.array(z.string().min(1)).optional(),
@@ -116,7 +116,7 @@ const SentenceBuilderSpec = z.strictObject({
 const ListeningSpec = z.strictObject({
   id: StableIdSchema,
   kind: z.literal('listening'),
-  /** Russian text to synthesize/play; the learner picks or types what they heard. */
+  /** Ukrainian text to synthesize/play; the learner picks or types what they heard. */
   text: z.string().min(1),
   /** Optional pick-from choices; typed variant when absent. */
   choices: z.array(z.string().min(1)).min(2).optional(),
@@ -125,7 +125,7 @@ const ListeningSpec = z.strictObject({
 const PronunciationSpec = z.strictObject({
   id: StableIdSchema,
   kind: z.literal('pronunciation'),
-  /** Russian phrase the learner must say aloud (scored by ASR alignment). */
+  /** Ukrainian phrase the learner must say aloud (scored by ASR alignment). */
   text: z.string().min(1),
 });
 
@@ -145,10 +145,10 @@ export const ExerciseSpecSchema = z
         message: `correctIndex ${spec.correctIndex} is out of range for ${spec.choices.length} choices`,
       });
     }
-    if (spec.kind === 'cloze' && !spec.sentenceRu.includes('___')) {
+    if (spec.kind === 'cloze' && !spec.sentenceUk.includes('___')) {
       ctx.addIssue({
         code: 'custom',
-        path: ['sentenceRu'],
+        path: ['sentenceUk'],
         message: 'cloze sentence must contain the blank marker "___"',
       });
     }
@@ -171,7 +171,7 @@ export const JournalPromptSchema = z.strictObject({
   id: StableIdSchema,
   /** CEFR level this prompt suits. */
   level: CefrLevelSchema,
-  /** The prompt itself: ru is what's shown to write about; en clarifies. */
+  /** The prompt itself: uk is what's shown to write about; en clarifies. */
   prompt: LocalizedTextSchema,
   /** Free-form tags ("daily-life", "horror", ...). */
   tags: z.array(z.string().min(1)).optional(),
@@ -198,7 +198,7 @@ export type PackTheme = z.infer<typeof PackThemeSchema>;
 
 /**
  * The content pack (design §4.2 `Pack`) — the unit of authoring, sync, and
- * versioning. Everything the app knows about Russian arrives in a pack.
+ * versioning. Everything the app knows about Ukrainian arrives in a pack.
  *
  * Cross-cutting invariants enforced here:
  * - story ids and dialogue ids unique within the pack; sentence ids unique

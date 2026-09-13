@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "ru": "Кухня",
+    "uk": "Кухня",
     "en": "The Kitchen"
   },
   "level": "A1",
@@ -16,14 +16,14 @@
     {
       "id": "kitchen-knives",
       "title": {
-        "ru": "Ножи на кухне",
+        "uk": "Ножи на кухне",
         "en": "The Knives in the Kitchen"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "kitch-s01",
-          "ru": "Утром я иду на кухню.",
+          "uk": "Утром я иду на кухню.",
           "en": "In the morning I go to the kitchen.",
           "tokens": [
             {
@@ -73,7 +73,7 @@
         },
         {
           "id": "kitch-s02",
-          "ru": "Ножи лежат не так.",
+          "uk": "Ножи лежат не так.",
           "en": "The knives are not lying the same way.",
           "tokens": [
             {
@@ -114,7 +114,7 @@
         },
         {
           "id": "kitch-s03",
-          "ru": "Кто был здесь ночью?",
+          "uk": "Кто был здесь ночью?",
           "en": "Who was here at night?",
           "tokens": [
             {
@@ -160,7 +160,7 @@
   "lesson": {
     "id": "u091-lesson",
     "title": {
-      "ru": "Что ты видишь?",
+      "uk": "Что ты видишь?",
       "en": "What do you see?"
     },
     "body": "## Что ты видишь?\n\nWhat you see, take, put — the accusative case marks the direct object.\n",

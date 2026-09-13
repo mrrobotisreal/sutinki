@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   ExerciseSpecSchema,
   PackSchema,
-  reconstructSentenceRu,
+  reconstructSentenceUk,
   safeParsePack,
   type Token,
 } from '../src';
@@ -42,15 +42,15 @@ describe('PackSchema', () => {
     const pack = makeValidPack() as any;
     pack.stories[0].sentences[0] = {
       id: 'test-s01',
-      ru: 'Он говорит: «Я дома».',
+      uk: 'Він каже: «Я вдома».',
       en: 'He says: "I am home."',
       tokens: [
-        { text: 'Он', lemma: 'он', translation: 'he', pos: 'pron', level: 'A1' },
-        { text: 'говорит', lemma: 'говорить', translation: 'says', pos: 'verb', level: 'A1' },
+        { text: 'Він', lemma: 'він', translation: 'he', pos: 'pron', level: 'A1' },
+        { text: 'каже', lemma: 'казати', translation: 'says', pos: 'verb', level: 'A1' },
         { text: ':', isPunct: true },
         { text: '«', isPunct: true, spaceBefore: true },
         { text: 'Я', lemma: 'я', translation: 'I', pos: 'pron', level: 'A1', spaceBefore: false },
-        { text: 'дома', lemma: 'дома', translation: 'at home', pos: 'adv', level: 'A1' },
+        { text: 'вдома', lemma: 'вдома', translation: 'at home', pos: 'adv', level: 'A1' },
         { text: '»', isPunct: true },
         { text: '.', isPunct: true },
       ],
@@ -59,12 +59,12 @@ describe('PackSchema', () => {
     expect(result.success).toBe(true);
   });
 
-  it('rejects non-NFC Russian text', () => {
+  it('rejects non-NFC Ukrainian text', () => {
     const pack = makeValidPack() as any;
-    // ё composed as е + U+0308 (NFD) instead of the single NFC codepoint
-    pack.stories[0].sentences[0].ru = 'Всё хорошо.'.normalize('NFD');
+    // ї decomposed as і + U+0308 (NFD) instead of the single NFC codepoint
+    pack.stories[0].sentences[0].uk = 'Її немає.'.normalize('NFD');
     pack.stories[0].sentences[0].tokens = [{ text: 'x', isPunct: true }];
-    expectIssue(pack, 'ru', 'NFC');
+    expectIssue(pack, 'uk', 'NFC');
   });
 
   it('rejects duplicate sentence ids across stories', () => {
@@ -168,10 +168,10 @@ describe('PackSchema', () => {
   });
 });
 
-describe('reconstructSentenceRu', () => {
+describe('reconstructSentenceUk', () => {
   it('joins words with spaces and attaches punctuation', () => {
-    const tokens = [{ text: 'Я' }, { text: 'дома' }, { text: '.', isPunct: true }] as Token[];
-    expect(reconstructSentenceRu(tokens)).toBe('Я дома.');
+    const tokens = [{ text: 'Я' }, { text: 'вдома' }, { text: '.', isPunct: true }] as Token[];
+    expect(reconstructSentenceUk(tokens)).toBe('Я вдома.');
   });
 });
 
@@ -181,12 +181,12 @@ describe('ExerciseSpecSchema', () => {
       {
         id: 'ex-1',
         kind: 'multiple-choice',
-        direction: 'ru-en',
+        direction: 'uk-en',
         prompt: 'дом',
         choices: ['house', 'wall'],
         correctIndex: 0,
       },
-      { id: 'ex-2', kind: 'cloze', sentenceRu: 'Я ___ дома.', answer: 'сижу' },
+      { id: 'ex-2', kind: 'cloze', sentenceUk: 'Я ___ вдома.', answer: 'сиджу' },
       { id: 'ex-3', kind: 'sentence-builder', en: 'I am home.', tokens: ['Я', 'дома'] },
       { id: 'ex-4', kind: 'listening', text: 'Я дома.' },
       { id: 'ex-5', kind: 'pronunciation', text: 'Я дома.' },
@@ -200,7 +200,7 @@ describe('ExerciseSpecSchema', () => {
     const mc = ExerciseSpecSchema.safeParse({
       id: 'ex-1',
       kind: 'multiple-choice',
-      direction: 'ru-en',
+      direction: 'uk-en',
       prompt: 'дом',
       choices: ['house', 'wall'],
       correctIndex: 5,
@@ -209,8 +209,8 @@ describe('ExerciseSpecSchema', () => {
     const cloze = ExerciseSpecSchema.safeParse({
       id: 'ex-2',
       kind: 'cloze',
-      sentenceRu: 'Я дома.',
-      answer: 'дома',
+      sentenceUk: 'Я вдома.',
+      answer: 'вдома',
     });
     expect(cloze.success).toBe(false);
   });

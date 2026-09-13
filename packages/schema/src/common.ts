@@ -26,23 +26,23 @@ export const PackTypeSchema = z.enum([
 export type PackType = z.infer<typeof PackTypeSchema>;
 
 /**
- * A bilingual text pair: `ru` is the Russian content, `en` the natural English
+ * A bilingual text pair: `uk` is the Ukrainian content, `en` the natural English
  * counterpart. Used for pack/story titles and anywhere both languages ship
  * together (design §4.2 `title: LocalizedText`).
  */
 export const LocalizedTextSchema = z
   .strictObject({
-    /** Russian text (UTF-8 NFC, ё preserved as authored). */
-    ru: z.string().min(1),
+    /** Ukrainian text (UTF-8 NFC, apostrophe kept exactly as authored). */
+    uk: z.string().min(1),
     /** English text. */
     en: z.string().min(1),
   })
   .superRefine((t, ctx) => {
-    if (t.ru !== t.ru.normalize('NFC')) {
+    if (t.uk !== t.uk.normalize('NFC')) {
       ctx.addIssue({
         code: 'custom',
-        path: ['ru'],
-        message: 'Russian text must be UTF-8 NFC-normalized',
+        path: ['uk'],
+        message: 'Ukrainian text must be UTF-8 NFC-normalized',
       });
     }
   });

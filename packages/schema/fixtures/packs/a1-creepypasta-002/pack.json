@@ -2,19 +2,19 @@
   "id": "a1-creepypasta-002",
   "version": 1,
   "type": "stories",
-  "title": { "ru": "Фотография", "en": "The Photograph" },
+  "title": { "uk": "Фотография", "en": "The Photograph" },
   "level": "A1",
   "tags": ["creepypasta", "horror", "family", "grammar:genitive", "grammar:past-tense"],
   "stories": [
     {
       "id": "the-photograph",
-      "title": { "ru": "Фотография", "en": "The Photograph" },
+      "title": { "uk": "Фотография", "en": "The Photograph" },
       "level": "A1",
       "audio": [],
       "sentences": [
         {
           "id": "photo-s01",
-          "ru": "У меня есть старая фотография.",
+          "uk": "У меня есть старая фотография.",
           "en": "I have an old photograph.",
           "grammarTopics": ["possession-u-genitive"],
           "tokens": [
@@ -63,7 +63,7 @@
         },
         {
           "id": "photo-s02",
-          "ru": "На ней мой дом и моя семья.",
+          "uk": "На ней мой дом и моя семья.",
           "en": "In it are my house and my family.",
           "grammarTopics": ["prepositional-case", "possessive-pronouns"],
           "tokens": [
@@ -121,7 +121,7 @@
         },
         {
           "id": "photo-s03",
-          "ru": "Мама, папа, я и бабушка.",
+          "uk": "Мама, папа, я и бабушка.",
           "en": "Mom, dad, me, and grandma.",
           "grammarTopics": ["family-vocabulary"],
           "tokens": [
@@ -165,7 +165,7 @@
         },
         {
           "id": "photo-s04",
-          "ru": "Но есть проблема.",
+          "uk": "Но есть проблема.",
           "en": "But there is a problem.",
           "grammarTopics": ["existential-est"],
           "tokens": [
@@ -191,7 +191,7 @@
         },
         {
           "id": "photo-s05",
-          "ru": "В окне дома стоит человек.",
+          "uk": "В окне дома стоит человек.",
           "en": "In the window of the house stands a man.",
           "grammarTopics": ["prepositional-case", "genitive-case", "word-order"],
           "tokens": [
@@ -240,7 +240,7 @@
         },
         {
           "id": "photo-s06",
-          "ru": "Мы не знаем его.",
+          "uk": "Мы не знаем его.",
           "en": "We do not know him.",
           "grammarTopics": ["negation", "accusative-case"],
           "tokens": [
@@ -274,7 +274,7 @@
         },
         {
           "id": "photo-s07",
-          "ru": "Его лицо белое, а глаза чёрные.",
+          "uk": "Его лицо белое, а глаза чёрные.",
           "en": "His face is white, and his eyes are black.",
           "grammarTopics": ["adjective-agreement", "contrast-a"],
           "tokens": [
@@ -332,7 +332,7 @@
         },
         {
           "id": "photo-s08",
-          "ru": "Каждый год он ближе к стеклу.",
+          "uk": "Каждый год он ближе к стеклу.",
           "en": "Every year he is closer to the glass.",
           "grammarTopics": ["comparative", "dative-case", "time-expressions"],
           "tokens": [
@@ -389,7 +389,7 @@
         },
         {
           "id": "photo-s09",
-          "ru": "Вчера я снова смотрел на фотографию.",
+          "uk": "Вчера я снова смотрел на фотографию.",
           "en": "Yesterday I looked at the photograph again.",
           "grammarTopics": ["past-tense", "accusative-case"],
           "tokens": [
@@ -444,7 +444,7 @@
         },
         {
           "id": "photo-s10",
-          "ru": "Окно на ней пустое.",
+          "uk": "Окно на ней пустое.",
           "en": "The window in it is empty.",
           "grammarTopics": ["adjective-agreement", "prepositional-case"],
           "tokens": [
@@ -485,7 +485,7 @@
         },
         {
           "id": "photo-s11",
-          "ru": "А сегодня утром я слышал шаги в моём доме.",
+          "uk": "А сегодня утром я слышал шаги в моём доме.",
           "en": "And this morning I heard footsteps in my house.",
           "grammarTopics": ["past-tense", "time-expressions", "prepositional-case"],
           "tokens": [

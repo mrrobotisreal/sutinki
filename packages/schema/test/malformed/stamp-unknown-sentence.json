@@ -3,7 +3,7 @@
   "version": 1,
   "type": "stories",
   "title": {
-    "ru": "Тест",
+    "uk": "Тест",
     "en": "Test"
   },
   "level": "A1",
@@ -12,7 +12,7 @@
     {
       "id": "bad-story",
       "title": {
-        "ru": "Тест",
+        "uk": "Тест",
         "en": "Test"
       },
       "level": "A1",
@@ -36,7 +36,7 @@
       "sentences": [
         {
           "id": "bad-s01",
-          "ru": "Я дома.",
+          "uk": "Я дома.",
           "en": "I am home.",
           "tokens": [
             {

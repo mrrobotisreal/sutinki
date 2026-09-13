@@ -51,7 +51,7 @@ describe('manifest schema edge cases', () => {
     version: 1,
     type: 'stories',
     level: 'A1',
-    title: { ru: 'Тест', en: 'Test' },
+    title: { uk: 'Тест', en: 'Test' },
     bytes: 100,
     files: [{ path: 'pack.json', sha256: 'a'.repeat(64) }],
   };

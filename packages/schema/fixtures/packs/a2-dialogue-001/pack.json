@@ -3,7 +3,7 @@
   "version": 1,
   "type": "dialogue",
   "title": {
-    "ru": "Ужин у мамы",
+    "uk": "Ужин у мамы",
     "en": "Dinner at Mama's"
   },
   "level": "A2",
@@ -16,7 +16,7 @@
     {
       "id": "dinner-mini",
       "title": {
-        "ru": "Ужин у мамы",
+        "uk": "Ужин у мамы",
         "en": "Dinner at Mama's"
       },
       "level": "A2",
@@ -24,7 +24,7 @@
         {
           "id": "mama",
           "name": {
-            "ru": "Мама",
+            "uk": "Мама",
             "en": "Mama"
           },
           "voice": "elevenlabs:Mariia",
@@ -34,7 +34,7 @@
         {
           "id": "babushka",
           "name": {
-            "ru": "Бабушка",
+            "uk": "Бабушка",
             "en": "Grandmother"
           },
           "voice": "elevenlabs:Kate",
@@ -44,7 +44,7 @@
         {
           "id": "player",
           "name": {
-            "ru": "Ты",
+            "uk": "Ты",
             "en": "You"
           },
           "voice": "elevenlabs:Ivan",
@@ -57,7 +57,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n01",
-            "ru": "Проходи, дорогой!",
+            "uk": "Проходи, дорогой!",
             "en": "Come in, dear!",
             "tokens": [
               {
@@ -96,7 +96,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n02",
-            "ru": "Ты голодный?",
+            "uk": "Ты голодный?",
             "en": "Are you hungry?",
             "tokens": [
               {
@@ -129,7 +129,7 @@
               "id": "din-n02-c1",
               "sentence": {
                 "id": "din-n02-c1",
-                "ru": "Да, я очень голодный.",
+                "uk": "Да, я очень голодный.",
                 "en": "Yes, I'm very hungry.",
                 "tokens": [
                   {
@@ -181,7 +181,7 @@
               "id": "din-n02-c2",
               "sentence": {
                 "id": "din-n02-c2",
-                "ru": "Нет, спасибо, я не голодный.",
+                "uk": "Нет, спасибо, я не голодный.",
                 "en": "No, thank you, I'm not hungry.",
                 "tokens": [
                   {
@@ -238,7 +238,7 @@
               },
               "next": "din-n04",
               "hint": {
-                "ru": "Вежливый отказ — но мама не сдастся.",
+                "uk": "Вежливый отказ — но мама не сдастся.",
                 "en": "A polite refusal — but Mama won't take no for an answer."
               }
             },
@@ -246,7 +246,7 @@
               "id": "din-n02-c3",
               "sentence": {
                 "id": "din-n02-c3",
-                "ru": "А что это на стене?",
+                "uk": "А что это на стене?",
                 "en": "And what is that on the wall?",
                 "tokens": [
                   {
@@ -306,7 +306,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n03",
-            "ru": "Отлично, я сделала борщ!",
+            "uk": "Отлично, я сделала борщ!",
             "en": "Great, I made borscht!",
             "tokens": [
               {
@@ -362,7 +362,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n04",
-            "ru": "Ничего, борщ уже на столе.",
+            "uk": "Ничего, борщ уже на столе.",
             "en": "No matter, the borscht is already on the table.",
             "tokens": [
               {
@@ -425,7 +425,7 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n05",
-            "ru": "Наш борщ — самый вкусный.",
+            "uk": "Наш борщ — самый вкусный.",
             "en": "Our borscht is the tastiest.",
             "tokens": [
               {
@@ -481,7 +481,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n06",
-            "ru": "Хочешь ещё борща?",
+            "uk": "Хочешь ещё борща?",
             "en": "Do you want more borscht?",
             "tokens": [
               {
@@ -521,7 +521,7 @@
               "id": "din-n06-c1",
               "sentence": {
                 "id": "din-n06-c1",
-                "ru": "Да, можно ещё немного.",
+                "uk": "Да, можно ещё немного.",
                 "en": "Yes, a little more, please.",
                 "tokens": [
                   {
@@ -572,7 +572,7 @@
               "id": "din-n06-c2",
               "sentence": {
                 "id": "din-n06-c2",
-                "ru": "Спасибо, я сыт, всё было очень вкусно.",
+                "uk": "Спасибо, я сыт, всё было очень вкусно.",
                 "en": "Thank you, I'm full, everything was very tasty.",
                 "tokens": [
                   {
@@ -653,7 +653,7 @@
                 "Спасибо, было очень вкусно."
               ],
               "hint": {
-                "ru": "Скажи спасибо и похвали еду.",
+                "uk": "Скажи спасибо и похвали еду.",
                 "en": "Say thank you and praise the food."
               }
             },
@@ -661,7 +661,7 @@
               "id": "din-n06-c3",
               "sentence": {
                 "id": "din-n06-c3",
-                "ru": "Нет.",
+                "uk": "Нет.",
                 "en": "No.",
                 "tokens": [
                   {
@@ -686,7 +686,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n07",
-            "ru": "Кушай, кушай!",
+            "uk": "Кушай, кушай!",
             "en": "Eat, eat!",
             "tokens": [
               {
@@ -726,7 +726,7 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n08",
-            "ru": "Молодец, приходи к нам ещё.",
+            "uk": "Молодец, приходи к нам ещё.",
             "en": "Good boy, come visit us again.",
             "tokens": [
               {
@@ -790,7 +790,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n09",
-            "ru": "Там ничего нет.",
+            "uk": "Там ничего нет.",
             "en": "There is nothing there.",
             "tokens": [
               {
@@ -832,7 +832,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n10",
-            "ru": "Ну ладно.",
+            "uk": "Ну ладно.",
             "en": "Well, alright.",
             "tokens": [
               {
@@ -862,7 +862,7 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n11",
-            "ru": "Она тоже это видит.",
+            "uk": "Она тоже это видит.",
             "en": "She sees it too.",
             "tokens": [
               {
@@ -913,11 +913,11 @@
         {
           "id": "end-good",
           "title": {
-            "ru": "Отличное впечатление",
+            "uk": "Отличное впечатление",
             "en": "A great impression"
           },
           "recap": {
-            "ru": "Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.",
+            "uk": "Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.",
             "en": "You ate well, praised the borscht, and Grandmother is pleased with you."
           },
           "tone": "good"
@@ -925,11 +925,11 @@
         {
           "id": "end-awkward",
           "title": {
-            "ru": "Неловкий вечер",
+            "uk": "Неловкий вечер",
             "en": "An awkward evening"
           },
           "recap": {
-            "ru": "Ты сказал нет — и за столом стало очень тихо.",
+            "uk": "Ты сказал нет — и за столом стало очень тихо.",
             "en": "You said no — and the table went very quiet."
           },
           "tone": "bad"
@@ -937,11 +937,11 @@
         {
           "id": "end-strange",
           "title": {
-            "ru": "Она тоже видит",
+            "uk": "Она тоже видит",
             "en": "She sees it too"
           },
           "recap": {
-            "ru": "На стене что-то есть, и бабушка это знает.",
+            "uk": "На стене что-то есть, и бабушка это знает.",
             "en": "There is something on the wall, and Grandmother knows it."
           },
           "tone": "strange"

@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "ru": "Знакомство",
+    "uk": "Знакомство",
     "en": "Meeting the Family"
   },
   "level": "A2",
@@ -16,14 +16,14 @@
     {
       "id": "family-arrival",
       "title": {
-        "ru": "Приезд",
+        "uk": "Приезд",
         "en": "The Arrival"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "fam-s01",
-          "ru": "Очень приятно познакомиться.",
+          "uk": "Очень приятно познакомиться.",
           "en": "Very nice to meet you.",
           "tokens": [
             {
@@ -56,7 +56,7 @@
         },
         {
           "id": "fam-s02",
-          "ru": "Мама Алины готовит ужин.",
+          "uk": "Мама Алины готовит ужин.",
           "en": "Alina's mom is cooking dinner.",
           "tokens": [
             {
@@ -98,7 +98,7 @@
         },
         {
           "id": "fam-s03",
-          "ru": "Мы говорим о семье.",
+          "uk": "Мы говорим о семье.",
           "en": "We talk about family.",
           "tokens": [
             {
@@ -145,7 +145,7 @@
   "lesson": {
     "id": "fam090-lesson",
     "title": {
-      "ru": "Вы и ты",
+      "uk": "Вы и ты",
       "en": "Formal and informal you"
     },
     "body": "## Вы и ты\n\nPoliteness formulas: «вы» for the parents until they offer «ты».\n",
@@ -158,7 +158,7 @@
       "id": "fam090-p1",
       "level": "A2",
       "prompt": {
-        "ru": "Напишите тост для семьи.",
+        "uk": "Напишите тост для семьи.",
         "en": "Write a toast for the family."
       },
       "tags": [

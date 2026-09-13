@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "ru": "Оранжерея",
+    "uk": "Оранжерея",
     "en": "The Greenhouse"
   },
   "level": "A1",
@@ -15,14 +15,14 @@
     {
       "id": "greenhouse-flowers",
       "title": {
-        "ru": "Ночные цветы",
+        "uk": "Ночные цветы",
         "en": "The Night Flowers"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "green-s01",
-          "ru": "За домом стоит оранжерея.",
+          "uk": "За домом стоит оранжерея.",
           "en": "A greenhouse stands behind the house.",
           "tokens": [
             {
@@ -64,7 +64,7 @@
         },
         {
           "id": "green-s02",
-          "ru": "Цветы там растут ночью.",
+          "uk": "Цветы там растут ночью.",
           "en": "The flowers there grow at night.",
           "tokens": [
             {
@@ -111,7 +111,7 @@
   "lesson": {
     "id": "u093-lesson",
     "title": {
-      "ru": "За домом",
+      "uk": "За домом",
       "en": "Behind the house"
     },
     "body": "## За домом\n\nA scene the app does not know yet — the unit must render like any other.\n",

@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "ru": "Прихожая",
+    "uk": "Прихожая",
     "en": "The Entryway"
   },
   "level": "A1",
@@ -16,14 +16,14 @@
     {
       "id": "hallway-coats",
       "title": {
-        "ru": "Чужие куртки",
+        "uk": "Чужие куртки",
         "en": "The Coats That Belong to No One"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "hall-s01",
-          "ru": "Это наша прихожая.",
+          "uk": "Это наша прихожая.",
           "en": "This is our entryway.",
           "grammarTopics": [
             "nominative-subject"
@@ -59,7 +59,7 @@
         },
         {
           "id": "hall-s02",
-          "ru": "Здесь висит куртка.",
+          "uk": "Здесь висит куртка.",
           "en": "A jacket hangs here.",
           "tokens": [
             {
@@ -92,7 +92,7 @@
         },
         {
           "id": "hall-s03",
-          "ru": "Это не моя куртка.",
+          "uk": "Это не моя куртка.",
           "en": "It is not my jacket.",
           "tokens": [
             {
@@ -137,7 +137,7 @@
   "lesson": {
     "id": "u090-lesson",
     "title": {
-      "ru": "Что здесь?",
+      "uk": "Что здесь?",
       "en": "What is here?"
     },
     "body": "## Что здесь?\n\nNaming what you see in the dark: «Это куртка.» — the nominative case names things.\n",

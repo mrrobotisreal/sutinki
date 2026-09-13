@@ -18,7 +18,7 @@ export const ModelKindSchema = z.enum(['tts-voice', 'asr']);
 export type ModelKind = z.infer<typeof ModelKindSchema>;
 
 export const ModelsManifestEntrySchema = z.strictObject({
-  /** Stable model id — matches the app catalog ids (e.g. "piper-ru-ruslan"). */
+  /** Stable model id — matches the app catalog ids (e.g. "piper-uk-lada"). */
   id: StableIdSchema,
   kind: ModelKindSchema,
   /** Repo-relative archive path, always under "models/" (e.g. "models/tts/<archive>.tar.bz2"). */

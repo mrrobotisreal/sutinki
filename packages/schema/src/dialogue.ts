@@ -421,7 +421,7 @@ export function analyzeDialogueGraph(dialogue: DialogueGraphInput): DialogueGrap
  * - `startNodeId` and every `next`/choice-target/`endingId` resolves;
  * - every node reachable from `startNodeId`;
  * - no dead traps: from every reachable node an ending stays reachable
- *   (cycles are allowed — «Ещё борща?» loops — but every cycle needs an
+ *   (cycles are allowed — «Ще борщу?» loops — but every cycle needs an
  *   exit path; this also guarantees ≥1 reachable ending);
  * - every ending is referenced by at least one node;
  * - if any node ships audio, every non-player node must (packs are either

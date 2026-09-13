@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "ru": "Подвал",
+    "uk": "Подвал",
     "en": "The Cellar"
   },
   "level": "A1",
@@ -16,14 +16,14 @@
     {
       "id": "cellar-wait",
       "title": {
-        "ru": "В подвале",
+        "uk": "В подвале",
         "en": "In the Cellar"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "cell-s01",
-          "ru": "В доме есть подвал.",
+          "uk": "В доме есть подвал.",
           "en": "The house has a cellar.",
           "tokens": [
             {
@@ -64,7 +64,7 @@
         },
         {
           "id": "cell-s02",
-          "ru": "Там всегда темно.",
+          "uk": "Там всегда темно.",
           "en": "It is always dark there.",
           "tokens": [
             {
@@ -96,7 +96,7 @@
         },
         {
           "id": "cell-s03",
-          "ru": "Я там не один.",
+          "uk": "Я там не один.",
           "en": "I am not alone there.",
           "tokens": [
             {
@@ -141,7 +141,7 @@
   "lesson": {
     "id": "u092-lesson",
     "title": {
-      "ru": "С кем ты?",
+      "uk": "С кем ты?",
       "en": "With whom are you?"
     },
     "body": "## С кем ты?\n\nWith what — and with whom: the instrumental case walks down the stairs with you.\n",

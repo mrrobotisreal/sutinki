@@ -15,12 +15,12 @@ import { CefrLevelSchema, StableIdSchema } from './common';
  * `isPunct: true`, and punctuation tokens must not carry linguistic
  * annotations (lemma/translation/pos/grammar/level). Word tokens leave
  * `isPunct` unset. This keeps `tokens` a faithful, ordered decomposition of
- * the sentence — `reconstructSentenceRu(tokens)` must reproduce
- * `Sentence.ru` exactly, which the Sentence schema enforces.
+ * the sentence — `reconstructSentenceUk(tokens)` must reproduce
+ * `Sentence.uk` exactly, which the Sentence schema enforces.
  */
 export const TokenSchema = z
   .strictObject({
-    /** Surface form exactly as it appears in the sentence (NFC, ё preserved). */
+    /** Surface form exactly as it appears in the sentence (NFC, apostrophe kept as authored). */
     text: z.string().min(1),
     /**
      * Punctuation flag: `true` marks this token as punctuation («, », —, ., …).
@@ -40,7 +40,7 @@ export const TokenSchema = z
     translation: z.string().min(1).optional(),
     /** Part of speech: noun/verb/adj/adv/pron/prep/conj/part/num/name/... */
     pos: z.string().min(1).optional(),
-    /** Compact grammar notes: "gen.pl.", "pf. of говорить", "1sg. pres.", ... */
+    /** Compact grammar notes: "gen.pl.", "pf. of говорити", "1sg. pres.", ... */
     grammar: z.string().min(1).optional(),
     /** CEFR tag of the LEMMA (not the surface form) — drives the progress model. */
     level: CefrLevelSchema.optional(),
@@ -70,12 +70,12 @@ export const TokenSchema = z
 export type Token = z.infer<typeof TokenSchema>;
 
 /**
- * Rebuild the Russian sentence text from its tokens using the `spaceBefore`
+ * Rebuild the Ukrainian sentence text from its tokens using the `spaceBefore`
  * defaults documented on {@link TokenSchema}. The Sentence schema requires
- * this to equal `Sentence.ru` exactly, so token annotations can never drift
+ * this to equal `Sentence.uk` exactly, so token annotations can never drift
  * from the sentence they annotate.
  */
-export function reconstructSentenceRu(tokens: readonly Token[]): string {
+export function reconstructSentenceUk(tokens: readonly Token[]): string {
   let out = '';
   tokens.forEach((tok, i) => {
     const space = tok.spaceBefore ?? (i > 0 && !tok.isPunct);
@@ -85,7 +85,7 @@ export function reconstructSentenceRu(tokens: readonly Token[]): string {
 }
 
 /**
- * One sentence of a story (design §4.2 `Sentence`): the Russian text, its
+ * One sentence of a story (design §4.2 `Sentence`): the Ukrainian text, its
  * natural English translation (for the reader's reveal), and its tokens.
  * Dialogue nodes and choices (T25) carry the same structure verbatim, so
  * every dialogue line is tap-word explorable and feeds the progress model
@@ -95,29 +95,29 @@ export const SentenceSchema = z
   .strictObject({
     /** Stable id, unique across the whole pack (user data references it). */
     id: StableIdSchema,
-    /** Full sentence text, Russian, NFC, ё preserved. */
-    ru: z.string().min(1),
+    /** Full sentence text, Ukrainian, NFC, apostrophe kept as authored. */
+    uk: z.string().min(1),
     /** Natural English translation (for the sentence-reveal toggle). */
     en: z.string().min(1),
-    /** Ordered decomposition of `ru` — words and punctuation. */
+    /** Ordered decomposition of `uk` — words and punctuation. */
     tokens: z.array(TokenSchema).min(1),
     /** Grammar topics exercised: "past-tense", "genitive-plural", ... Feeds grammar coverage. */
     grammarTopics: z.array(z.string().min(1)).optional(),
   })
   .superRefine((sentence, ctx) => {
-    if (sentence.ru !== sentence.ru.normalize('NFC')) {
+    if (sentence.uk !== sentence.uk.normalize('NFC')) {
       ctx.addIssue({
         code: 'custom',
-        path: ['ru'],
+        path: ['uk'],
         message: 'sentence text must be UTF-8 NFC-normalized',
       });
     }
-    const rebuilt = reconstructSentenceRu(sentence.tokens);
-    if (rebuilt !== sentence.ru) {
+    const rebuilt = reconstructSentenceUk(sentence.tokens);
+    if (rebuilt !== sentence.uk) {
       ctx.addIssue({
         code: 'custom',
         path: ['tokens'],
-        message: `tokens do not reconstruct the sentence: expected "${sentence.ru}", got "${rebuilt}"`,
+        message: `tokens do not reconstruct the sentence: expected "${sentence.uk}", got "${rebuilt}"`,
       });
     }
   });

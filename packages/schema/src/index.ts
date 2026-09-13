@@ -15,7 +15,7 @@ export {
   SentenceSchema,
   TokenSchema,
   WordStampSchema,
-  reconstructSentenceRu,
+  reconstructSentenceUk,
   type Sentence,
   type Token,
   type WordStamp,
