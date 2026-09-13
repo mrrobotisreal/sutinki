@@ -1,12 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { localDayKey, selectDailyPrompt, type PromptRow } from '../prompt-rotation';
+import {
+  BUILTIN_PROMPT_PACK_ID,
+  BUILTIN_PROMPTS,
+  localDayKey,
+  PromptRowSchema,
+  selectDailyPrompt,
+  type PromptRow,
+} from '../prompt-rotation';
 
 const prompt = (id: string, level: PromptRow['level']): PromptRow => ({
   packId: 'a1-prompts-001',
   id,
   level,
-  promptUk: `ру-${id}`,
+  promptUk: `ук-${id}`,
   promptEn: `en-${id}`,
   tags: null,
 });
@@ -54,6 +61,32 @@ describe('selectDailyPrompt', () => {
 
   it('empty pool returns null', () => {
     expect(selectDailyPrompt([], 'A1', 0, 0)).toBeNull();
+  });
+});
+
+describe('BUILTIN_PROMPTS (UT04 fallback)', () => {
+  it('is a valid, unique, A1-only Ukrainian set of 10–14 prompts', () => {
+    expect(BUILTIN_PROMPTS.length).toBeGreaterThanOrEqual(10);
+    expect(BUILTIN_PROMPTS.length).toBeLessThanOrEqual(14);
+    const ids = new Set<string>();
+    for (const p of BUILTIN_PROMPTS) {
+      expect(PromptRowSchema.safeParse(p).success).toBe(true);
+      expect(p.packId).toBe(BUILTIN_PROMPT_PACK_ID);
+      expect(p.level).toBe('A1');
+      expect(ids.has(p.id)).toBe(false);
+      ids.add(p.id);
+      // Ukrainian only: never a Russian-only letter, never Latin
+      expect(p.promptUk).not.toMatch(/[ёыэъЁЫЭЪa-zA-Z]/);
+      expect(p.promptUk.split(/\s+/).length).toBeLessThanOrEqual(6);
+    }
+  });
+
+  it('rotates through every built-in prompt at A1', () => {
+    const seen = new Set<string>();
+    for (let day = 0; day < BUILTIN_PROMPTS.length; day++) {
+      seen.add(selectDailyPrompt([...BUILTIN_PROMPTS], 'A1', day, 0)!.id);
+    }
+    expect(seen.size).toBe(BUILTIN_PROMPTS.length);
   });
 });
 

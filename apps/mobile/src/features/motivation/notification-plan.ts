@@ -63,7 +63,7 @@ export function planReminders(input: ReminderPlanInput): PlannedNotification[] {
     plan.push({
       id: `${T19_ID_PREFIX}morning-${dayKeyOf(fireAt)}`,
       date: fireAt,
-      title: 'Ваши карточки ждут',
+      title: 'Твої картки чекають',
       body:
         dueCount === 1 ? '1 card is ready to review.' : `${dueCount} cards are ready to review.`,
       screen: 'today',
@@ -90,7 +90,7 @@ export function planReminders(input: ReminderPlanInput): PlannedNotification[] {
       plan.push({
         id: `${T19_ID_PREFIX}evening-${dayKeyOf(candidate)}`,
         date: fireAt,
-        title: 'Серия под угрозой',
+        title: 'Серія під загрозою',
         body:
           streakDays === 1
             ? 'Your streak is at risk — meet today’s goal to keep it alive.'
@@ -115,7 +115,7 @@ export function planNewContent(input: {
   return {
     id: `${T19_ID_PREFIX}new-content-${now.getTime()}`,
     date: now,
-    title: 'Новые истории',
+    title: 'Нові історії',
     body:
       installedCount === 1
         ? 'A new content pack was installed — fresh reading awaits.'

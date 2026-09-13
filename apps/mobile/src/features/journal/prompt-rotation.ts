@@ -28,6 +28,37 @@ export const PathPositionSchema = z.object({ level: z.enum(CEFR) }).loose();
 
 export const DEFAULT_LEVEL: Cefr = 'A1';
 
+/** Pack id of the built-in prompts; never collides with a real pack (ids are `<level>-…`). */
+export const BUILTIN_PROMPT_PACK_ID = 'builtin-prompts';
+
+/**
+ * Built-in fallback prompts (UT04), used only while no prompts pack is
+ * installed so the journal never sits promptless on a fresh install. Very
+ * early A1 Ukrainian: 2–5 words, high-frequency verbs, concrete things in
+ * the room — exposure, not a test. A prompts pack replaces them wholesale.
+ */
+export const BUILTIN_PROMPTS: readonly PromptRow[] = [
+  ['01', 'Що ти бачиш зараз?', 'What do you see right now?'],
+  ['02', 'Опиши свою кімнату.', 'Describe your room.'],
+  ['03', 'Що ти їв сьогодні?', 'What did you eat today?'],
+  ['04', 'Хто твоя сім’я?', 'Who is your family?'],
+  ['05', 'Яка сьогодні погода?', 'What is the weather today?'],
+  ['06', 'Що ти любиш робити?', 'What do you like to do?'],
+  ['07', 'Що ти чуєш зараз?', 'What do you hear right now?'],
+  ['08', 'Де ти живеш?', 'Where do you live?'],
+  ['09', 'Що ти робив учора?', 'What did you do yesterday?'],
+  ['10', 'Що є на твоєму столі?', 'What is on your table?'],
+  ['11', 'Чого ти боїшся?', 'What are you afraid of?'],
+  ['12', 'Напиши три слова про ніч.', 'Write three words about the night.'],
+].map(([n, promptUk, promptEn]) => ({
+  packId: BUILTIN_PROMPT_PACK_ID,
+  id: `builtin-${n}`,
+  level: 'A1' as const,
+  promptUk: promptUk!,
+  promptEn: promptEn!,
+  tags: null,
+}));
+
 /** Stable per-local-day number — +1 every calendar day, drives rotation. */
 export function localDayKey(now = new Date()): number {
   return now.getFullYear() * 372 + now.getMonth() * 31 + (now.getDate() - 1);

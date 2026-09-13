@@ -6,6 +6,7 @@ import { SETTING_KEYS } from '@/db/repositories/settings';
 import { track } from '@/services/analytics';
 
 import {
+  BUILTIN_PROMPTS,
   DEFAULT_LEVEL,
   localDayKey,
   PathPositionSchema,
@@ -19,16 +20,18 @@ export type { Cefr, PromptRow };
 
 /**
  * Daily journal prompt surfacing (T15, design §7.4): level-appropriate,
- * rotating by day, skippable. Selection logic lives in `prompt-rotation.ts`
+ * rotating by day, skippable; built-in A1 fallback when no pack is installed. Selection logic lives in `prompt-rotation.ts`
  * (pure + unit-tested); this file layers React Query and settings on top.
  */
 
+/** Installed prompts-pack rows, or the built-in Ukrainian A1 set when no pack is installed (UT04). */
 async function loadPrompts(): Promise<PromptRow[]> {
   const rows = await repos.content.listJournalPrompts();
-  return rows.flatMap((row) => {
+  const valid = rows.flatMap((row) => {
     const parsed = PromptRowSchema.safeParse(row);
     return parsed.success ? [parsed.data] : [];
   });
+  return valid.length > 0 ? valid : [...BUILTIN_PROMPTS];
 }
 
 async function loadUserLevel(): Promise<Cefr> {

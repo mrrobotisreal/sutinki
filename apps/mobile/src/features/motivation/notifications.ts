@@ -42,12 +42,12 @@ let channelsReady = false;
 async function ensureChannels(): Promise<void> {
   if (channelsReady) return;
   await Notifications.setNotificationChannelAsync(CHANNEL_REMINDERS, {
-    name: 'Reminders',
+    name: 'Нагадування',
     importance: Notifications.AndroidImportance.DEFAULT,
     sound: undefined,
   });
   await Notifications.setNotificationChannelAsync(CHANNEL_CONTENT, {
-    name: 'New content',
+    name: 'Новий контент',
     importance: Notifications.AndroidImportance.LOW,
   });
   channelsReady = true;
