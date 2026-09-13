@@ -231,8 +231,27 @@ class SherpaSpeechModule : Module() {
             }
           } else {
             // Drain: generation is done, wait for the buffer to play out.
+            // playbackHeadPosition can stall a few frames short of
+            // totalFrames (the mixer's resampler keeps the tail — seen on
+            // the S25 with the 16 kHz uk_UA voice after a one-word
+            // utterance, UT05). That used to park this executor forever:
+            // every later loadVoice/speak queued behind it until a stop()
+            // bumped the sequence. So the drain also ends once the head has
+            // stopped advancing for DRAIN_STALL_MS.
             val t = track!!
-            while (utteranceSeq.get() == myId && t.playbackHeadPosition < totalFrames) {
+            var lastHead = -1
+            var lastAdvanceAt = SystemClock.elapsedRealtime()
+            while (utteranceSeq.get() == myId) {
+              val head = t.playbackHeadPosition
+              if (head >= totalFrames) break
+              val now = SystemClock.elapsedRealtime()
+              if (head != lastHead) {
+                lastHead = head
+                lastAdvanceAt = now
+              } else if (now - lastAdvanceAt > DRAIN_STALL_MS) {
+                Log.w(TAG, "playback head stalled at $head/$totalFrames frames — ending drain")
+                break
+              }
               SystemClock.sleep(40)
             }
           }
@@ -830,6 +849,8 @@ class SherpaSpeechModule : Module() {
 
   private companion object {
     const val TAG = "SherpaSpeech"
+    /** Drain ends when the playback head has not moved for this long (all audio is written by then). */
+    const val DRAIN_STALL_MS = 750L
   }
 
   private fun asCoded(code: String, t: Throwable): CodedException =
