@@ -14,6 +14,14 @@ vi.mock('../manager', () => ({
   voiceModelPaths: vi.fn(),
 }));
 
+describe('system speech speaks Ukrainian (UT05)', () => {
+  it('asks expo-speech for the uk-UA locale', async () => {
+    await speakWithInfo('п’ять');
+    const opts = vi.mocked(Speech.speak).mock.calls.at(-1)![1]!;
+    expect(opts.language).toBe('uk-UA');
+  });
+});
+
 describe('system speech suppresses study music', () => {
   beforeEach(async () => {
     await stopSpeaking();

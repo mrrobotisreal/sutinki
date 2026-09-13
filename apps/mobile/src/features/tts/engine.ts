@@ -1,4 +1,4 @@
-import { getVoice, SYSTEM_VOICE_ID } from './catalog';
+import { getVoice, hasSpeaker, SYSTEM_VOICE_ID } from './catalog';
 
 /**
  * Pure engine routing (T11): which TTS actually speaks a request. Kept
@@ -31,6 +31,24 @@ export function pickEngine(
     return { engine: 'piper', voiceId: candidate };
   }
   return { engine: 'system', voiceId: SYSTEM_VOICE_ID };
+}
+
+/**
+ * Which speaker of `voiceId` speaks (UT05 multi-speaker voices): an explicit
+ * request wins; otherwise the app selection's sid applies only when the
+ * voice is the selected one (a different voice's sid means nothing here).
+ * Anything the voice does not declare → speaker 0, never a native error.
+ */
+export function pickSpeaker(
+  voiceId: string,
+  requestedSid: number | undefined,
+  selectedVoiceId: string,
+  selectedSid: number,
+): number {
+  const voice = getVoice(voiceId);
+  if (!voice) return 0;
+  const candidate = requestedSid ?? (voiceId === selectedVoiceId ? selectedSid : 0);
+  return hasSpeaker(voice, candidate) ? candidate : 0;
 }
 
 /** Clamp a user/UI rate multiplier to what both engines handle sanely. */

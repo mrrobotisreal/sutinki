@@ -54,11 +54,13 @@ i.e. the `sumrak-content` directory at the workspace root).
 
 Everything is on-device and on-demand; nothing ships in the APK.
 
-- **TTS voice**: Settings → Voices & speech → download (Руслан / Ирина /
-  Денис / Дмитрий, ~67 MB each, sha256-verified from the public k2-fsa release
-  assets). Select the active voice in the same section; delete any voice to
-  reclaim ~77 MB. At zero installed voices the app silently falls back to the
-  Android system Russian voice.
+- **TTS voice**: Settings → Голоси → «Завантажити» (Лада, 26.5 MB, one
+  speaker; or the three-speaker Лада · Микита · Тетяна voice, 80.4 MB — each
+  speaker is its own row once installed), sha256-verified from the content
+  mirror or the public k2-fsa release assets. Select the active voice/speaker
+  in the same section; delete any voice to reclaim its storage. At zero
+  installed voices the app silently falls back to the Android system
+  Ukrainian (`uk-UA`) voice — install Google TTS Ukrainian if the phone has none.
 - **ASR model** (pronunciation practice): Settings → Speech recognition →
   download (~60 MB, same verified-download mechanics). Delete/re-install any
   time; the pronunciation game gates itself with a "model needed" state.

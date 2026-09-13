@@ -19,7 +19,7 @@ import { useTtsStore, type InstalledVoice } from './store';
  * present. Downloads follow the T07 pattern — fetch with progress, verify
  * a pinned sha256 BEFORE anything is used, contain failures per voice —
  * but run through the native module for hashing/extraction because the
- * ~67 MB archives must never transit JS memory. T23: the archive source is
+ * ~80 MB archives must never transit JS memory. T23: the archive source is
  * resolved through the shared model resolver (content repo first, pinned
  * k2-fsa URL as fallback); everything from extraction down is unchanged.
  */

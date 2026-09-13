@@ -10,6 +10,8 @@ import { track } from './analytics';
 export interface SpeakOptions {
   /** Implementation-defined voice id (T11 Piper voices). */
   voiceId?: string;
+  /** Speaker within a multi-speaker voice (UT05); omitted = the app's selected speaker. */
+  sid?: number;
   /** Playback rate multiplier, 1 = normal. */
   rate?: number;
 }

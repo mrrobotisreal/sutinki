@@ -6,23 +6,32 @@ import { SETTING_KEYS } from '@/db/repositories/settings';
 import { track } from '@/services/analytics';
 import { setSpeechService, type SpeakOptions } from '@/services/speech';
 
-import { getVoice, parseTtsVoiceSetting, SYSTEM_VOICE_ID } from './catalog';
-import { clampRate, pickEngine, type EngineChoice, type TtsEngine } from './engine';
+import {
+  getVoice,
+  parseTtsVoiceSetting,
+  SYSTEM_VOICE_ID,
+  toTtsVoiceSetting,
+  type TtsVoiceSelection,
+} from './catalog';
+import { clampRate, pickEngine, pickSpeaker, type EngineChoice, type TtsEngine } from './engine';
 import { isVoiceInstalled, refreshInstalledVoices, voiceModelPaths } from './manager';
 import { useTtsStore } from './store';
 
 /**
  * The real SpeechService (T11, design §6/§11): Piper via sherpa-onnx when
  * the selected voice is installed, transparent fallback to the Android
- * system TTS (expo-speech) otherwise — so speech-dependent UI (word popup,
- * readback) never hard-fails, with zero voices installed or after any
- * native error.
+ * system TTS (expo-speech, `uk-UA`) otherwise — so speech-dependent UI
+ * (word popup, readback) never hard-fails, with zero voices installed or
+ * after any native error. UT05: a selection is a (voice, speaker) pair —
+ * Piper archives may carry several speakers addressed by `sid`.
  */
 
 export type { TtsEngine } from './engine';
 
 export interface SpeakOutcome {
   engine: TtsEngine;
+  /** Piper only: the speaker id that spoke. */
+  sid?: number;
   /** Piper only: measured call→first-audio latency (design §6 budget). */
   firstAudioMs?: number;
 }
@@ -59,7 +68,7 @@ function speakSystem(text: string, rate: number): void {
   useTtsStore.getState().setSystemSpeaking(true);
   try {
     Speech.speak(text, {
-      language: 'ru-RU',
+      language: 'uk-UA',
       rate,
       onDone: finish,
       onStopped: finish,
@@ -82,16 +91,19 @@ export async function speakWithInfo(text: string, opts?: SpeakOptions): Promise<
   const { engine, voiceId } = resolveEngine(opts?.voiceId);
 
   if (engine === 'piper') {
+    const { selectedVoiceId, selectedSid } = useTtsStore.getState();
+    const sid = pickSpeaker(voiceId, opts?.sid, selectedVoiceId, selectedSid);
     try {
       await ensureVoiceLoaded(voiceId);
-      const result = await SherpaSpeech.speak(text, rate);
+      const result = await SherpaSpeech.speak(text, sid, rate);
       track('tts_spoken', {
         engine: 'piper',
         voiceId,
+        sid,
         chars: text.length,
         firstAudioMs: result.firstAudioMs ?? -1,
       });
-      return { engine: 'piper', firstAudioMs: result.firstAudioMs };
+      return { engine: 'piper', sid, firstAudioMs: result.firstAudioMs };
     } catch (err) {
       // A broken voice must never mute the app — fall through to system TTS.
       console.warn(`[tts] piper speak failed (${voiceId}), falling back to system`, err);
@@ -114,11 +126,15 @@ export async function stopSpeaking(): Promise<void> {
   if (generation === systemSpeechGeneration) useTtsStore.getState().setSystemSpeaking(false);
 }
 
-/** Change the active voice (Settings). Persists + warm-loads Piper voices. */
-export async function setSelectedVoice(voiceId: string): Promise<void> {
-  useTtsStore.getState().setSelectedVoiceId(voiceId);
-  await repos.settings.set(SETTING_KEYS.ttsVoice, { selectedVoiceId: voiceId });
-  track('tts_voice_selected', { voiceId });
+/**
+ * Change the active voice + speaker (Settings). Persists + warm-loads
+ * Piper voices. `sid` defaults to speaker 0 (every voice has one).
+ */
+export async function setSelectedVoice(voiceId: string, sid = 0): Promise<void> {
+  const selection: TtsVoiceSelection = { selectedVoiceId: voiceId, selectedSid: sid };
+  useTtsStore.getState().setSelectedVoice(voiceId, sid);
+  await repos.settings.set(SETTING_KEYS.ttsVoice, toTtsVoiceSetting(selection));
+  track('tts_voice_selected', { voiceId, sid });
   if (voiceId !== SYSTEM_VOICE_ID) {
     // Fire-and-forget preload so the first tap speaks inside the §6 budget.
     void ensureVoiceLoaded(voiceId).catch((err) =>
@@ -139,14 +155,15 @@ export async function hydrateTtsFromDb(): Promise<void> {
   const installed = await refreshInstalledVoices();
 
   const stored = await repos.settings.get(SETTING_KEYS.ttsVoice);
-  let { selectedVoiceId } = parseTtsVoiceSetting(stored);
+  let { selectedVoiceId, selectedSid } = parseTtsVoiceSetting(stored);
   if (selectedVoiceId !== SYSTEM_VOICE_ID && !installed[selectedVoiceId]) {
     // Selected voice's files are gone (deleted externally / failed install):
     // heal the stored setting instead of silently misbehaving forever.
     selectedVoiceId = SYSTEM_VOICE_ID;
+    selectedSid = 0;
     await repos.settings.set(SETTING_KEYS.ttsVoice, { selectedVoiceId });
   }
-  useTtsStore.getState().setSelectedVoiceId(selectedVoiceId);
+  useTtsStore.getState().setSelectedVoice(selectedVoiceId, selectedSid);
 
   if (!listenerBound) {
     listenerBound = true;

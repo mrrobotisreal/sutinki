@@ -1,9 +1,9 @@
 # sherpa-speech — local Expo module (T11 + T12)
 
-On-device Russian speech for Сумрак, wrapping [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx):
+On-device Ukrainian speech for Сутінки, wrapping [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx):
 
-- **TTS (T11)**: Piper VITS Russian voices (Руслан / Ирина / Денис / Дмитрий), streamed to an `AudioTrack` as synthesis chunks arrive.
-- **ASR (T12)**: offline Zipformer transducer (Russian, int8) + mic capture (AudioRecord → 16 kHz mono PCM16 WAV — the exact input format the recognizer wants, since Android's MediaRecorder can't produce WAV). TTS and ASR run on separate single-thread executors so neither queues behind the other.
+- **TTS (T11 / UT05)**: Piper VITS Ukrainian voices (`uk_UA` Лада x_low, single speaker; `ukrainian_tts` medium, three speakers Лада / Микита / Тетяна addressed by `sid`), streamed to an `AudioTrack` as synthesis chunks arrive. An out-of-range `sid` is clamped to 0 natively (`clampSid`) so a stale selection can never crash synthesis.
+- **ASR (T12)**: offline Zipformer transducer (still the Russian int8 model until UT06) + mic capture (AudioRecord → 16 kHz mono PCM16 WAV — the exact input format the recognizer wants, since Android's MediaRecorder can't produce WAV). TTS and ASR run on separate single-thread executors so neither queues behind the other.
 
 The JS surface is `index.ts` (typed `requireNativeModule` binding). App-level logic — voice catalog, downloads, engine routing, `expo-speech` fallback — lives in `apps/mobile/src/features/tts/`, not here. This module stays a thin native wrapper.
 
@@ -34,15 +34,15 @@ Reproduced from scratch this session (2026-08-21): `npx expo prebuild --platform
 | `transcribeFile(wavPath)`                            | Mono/stereo PCM16 WAV → `{text, words[{word,startMs,endMs}], decodeMs, audioMs}`. Words aggregated from BPE tokens (leading `▁`/space starts a word).                |
 | `startRecording(outPath)`                            | Mic → 16 kHz mono PCM16 WAV. Requires RECORD_AUDIO already granted (JS owns the flow). Emits `onRecordingLevel` (~8/s RMS) for the level ring.                       |
 | `stopRecording()` / `cancelRecording()`              | Finalize the WAV header and return `{path, durationMs}` / abort and delete. Both idempotent-safe on teardown.                                                        |
-| `sha256File(path)`                                   | Streaming hash — 67 MB archives never enter JS memory.                                                                                                               |
+| `sha256File(path)`                                   | Streaming hash — 80 MB archives never enter JS memory.                                                                                                               |
 | `extractTarBz2(archivePath, destDir)`                | commons-compress, path-traversal-safe, returns top-level dir + bytes written.                                                                                        |
 | `dirSize(path)`                                      | Recursive bytes, for Settings storage accounting.                                                                                                                    |
 
-Measured on the S24 Ultra (medium fp32 voices, rate 1×): sentence first-audio 302–374 ms, single word ~60 ms, voice cold load 675–835 ms — comfortably inside the design §6 "< ~1 s" budget.
+Measured on the S24 Ultra with the Russian medium fp32 voices at the fork (rate 1×): sentence first-audio 302–374 ms, single word ~60 ms, voice cold load 675–835 ms — comfortably inside the design §6 "< ~1 s" budget. UT05 S25 numbers for the Ukrainian voices are in `docs-ua/SUTINKI_TICKETS.md`.
 
 ## Voice models
 
-Not bundled in the APK (design §6). Downloaded on demand by `src/features/tts/manager.ts` from the official k2-fsa `tts-models` release assets, sha256-pinned in `src/features/tts/catalog.ts`, verified before extraction, installed under `documentDirectory/tts-voices/<dirName>/`. Each voice is self-contained (model + tokens + its own `espeak-ng-data`), ~77 MB installed.
+Not bundled in the APK (design §6). Downloaded on demand by `src/features/tts/manager.ts` from the official k2-fsa `tts-models` release assets, sha256-pinned in `src/features/tts/catalog.ts`, verified before extraction, installed under `documentDirectory/tts-voices/<dirName>/`. Each voice is self-contained (model + tokens + its own `espeak-ng-data`, `espeak.voice = uk`); the two `uk_UA` archives are 26.5 MB / 80.4 MB.
 
 ## ASR model (T12)
 

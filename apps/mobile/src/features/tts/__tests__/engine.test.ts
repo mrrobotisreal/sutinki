@@ -1,47 +1,68 @@
 import { describe, expect, it } from 'vitest';
 
 import { SYSTEM_VOICE_ID } from '../catalog';
-import { clampRate, pickEngine } from '../engine';
+import { clampRate, pickEngine, pickSpeaker } from '../engine';
 
-const RUSLAN = 'piper-ru-ruslan';
-const IRINA = 'piper-ru-irina';
+const LADA = 'piper-uk-lada';
+const MEDIUM = 'piper-uk-ukrainian-tts';
 
 describe('pickEngine', () => {
   it('uses the selected piper voice when installed', () => {
-    expect(pickEngine(undefined, RUSLAN, [RUSLAN])).toEqual({
+    expect(pickEngine(undefined, LADA, [LADA])).toEqual({
       engine: 'piper',
-      voiceId: RUSLAN,
+      voiceId: LADA,
     });
   });
 
   it('falls back to system with zero voices installed (ticket acceptance)', () => {
-    expect(pickEngine(undefined, RUSLAN, [])).toEqual({
+    expect(pickEngine(undefined, LADA, [])).toEqual({
       engine: 'system',
       voiceId: SYSTEM_VOICE_ID,
     });
   });
 
   it('routes the system selection to system even with voices installed', () => {
-    expect(pickEngine(undefined, SYSTEM_VOICE_ID, [RUSLAN])).toEqual({
+    expect(pickEngine(undefined, SYSTEM_VOICE_ID, [LADA])).toEqual({
       engine: 'system',
       voiceId: SYSTEM_VOICE_ID,
     });
   });
 
   it('lets an explicit request override the app selection', () => {
-    expect(pickEngine(IRINA, RUSLAN, [RUSLAN, IRINA])).toEqual({
+    expect(pickEngine(MEDIUM, LADA, [LADA, MEDIUM])).toEqual({
       engine: 'piper',
-      voiceId: IRINA,
+      voiceId: MEDIUM,
     });
-    expect(pickEngine(SYSTEM_VOICE_ID, RUSLAN, [RUSLAN])).toEqual({
+    expect(pickEngine(SYSTEM_VOICE_ID, LADA, [LADA])).toEqual({
       engine: 'system',
       voiceId: SYSTEM_VOICE_ID,
     });
   });
 
   it('routes unknown or uninstalled requests to system', () => {
-    expect(pickEngine('piper-ru-vanished', RUSLAN, [RUSLAN]).engine).toBe('system');
-    expect(pickEngine(IRINA, RUSLAN, [RUSLAN]).engine).toBe('system');
+    expect(pickEngine('piper-uk-vanished', LADA, [LADA]).engine).toBe('system');
+    expect(pickEngine(MEDIUM, LADA, [LADA]).engine).toBe('system');
+  });
+});
+
+describe('pickSpeaker (UT05 multi-speaker voices)', () => {
+  it('uses the selected speaker when the voice is the selected one', () => {
+    expect(pickSpeaker(MEDIUM, undefined, MEDIUM, 2)).toBe(2);
+  });
+
+  it('ignores the selected sid when a different voice is requested', () => {
+    expect(pickSpeaker(LADA, undefined, MEDIUM, 2)).toBe(0);
+  });
+
+  it('lets an explicit request override the app selection', () => {
+    expect(pickSpeaker(MEDIUM, 1, MEDIUM, 2)).toBe(1);
+  });
+
+  it('never returns a speaker the voice does not declare', () => {
+    expect(pickSpeaker(LADA, 1, LADA, 1)).toBe(0);
+    expect(pickSpeaker(MEDIUM, 3, MEDIUM, 0)).toBe(0);
+    expect(pickSpeaker(MEDIUM, undefined, MEDIUM, 7)).toBe(0);
+    expect(pickSpeaker('piper-uk-vanished', 1, MEDIUM, 1)).toBe(0);
   });
 });
 

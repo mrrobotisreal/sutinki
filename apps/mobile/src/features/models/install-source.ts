@@ -29,7 +29,7 @@ export type ModelDownloadSpec =
       /**
        * Content-repo downloads resolve their URL just in time: a signed,
        * short-lived raw.githubusercontent.com URL from the contents API
-       * (streaming ~67 MB through api.github.com itself gets the HTTP/2
+       * (streaming ~80 MB through api.github.com itself gets the HTTP/2
        * stream reset on-device — see getFileDownloadUrl). The resolved URL
        * embeds a token: pass it only into the download call, never log it.
        */

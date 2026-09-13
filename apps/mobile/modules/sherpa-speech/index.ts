@@ -17,6 +17,8 @@ export interface SpeakResult {
 export interface LoadVoiceResult {
   loadMs: number;
   alreadyLoaded: boolean;
+  /** The loaded model's declared speaker count (UT05; ≥ 1). */
+  numSpeakers: number;
 }
 
 export interface SynthesizeResult {
@@ -72,9 +74,15 @@ declare class SherpaSpeechNativeModule extends NativeModule<SherpaSpeechEvents> 
   ): Promise<LoadVoiceResult>;
   unloadVoice(): Promise<void>;
   getLoadedVoiceId(): string | null;
-  speak(text: string, rate: number): Promise<SpeakResult>;
+  /** `sid` = speaker id within the loaded voice (0 for single-speaker models). */
+  speak(text: string, sid: number, rate: number): Promise<SpeakResult>;
   stop(): void;
-  synthesizeToFile(text: string, rate: number, outPath: string): Promise<SynthesizeResult>;
+  synthesizeToFile(
+    text: string,
+    sid: number,
+    rate: number,
+    outPath: string,
+  ): Promise<SynthesizeResult>;
   loadAsr(
     asrId: string,
     encoderPath: string,

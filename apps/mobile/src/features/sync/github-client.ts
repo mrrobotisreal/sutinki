@@ -135,7 +135,7 @@ export class GithubContentClient {
 
   /**
    * Resolve a short-lived signed download URL for one file, for handing to
-   * a NATIVE downloader (T23 model archives: ~67 MB must stream straight
+   * a NATIVE downloader (T23 model archives: ~80 MB must stream straight
    * to disk, never through JS memory). Streaming that much raw content
    * THROUGH api.github.com dies on-device (HTTP/2 RST_STREAM CANCEL,
    * observed reproducibly on 64 MB archives — S25, 2026-08-25); the

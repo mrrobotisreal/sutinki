@@ -25,6 +25,8 @@ export interface InstalledVoice {
 interface TtsState {
   /** SYSTEM_VOICE_ID or an installed Piper voice id. */
   selectedVoiceId: string;
+  /** Speaker of the selected voice (0 for single-speaker voices / system). */
+  selectedSid: number;
   /** Installed voices by id, with on-disk size. */
   installed: Record<string, InstalledVoice>;
   /** In-flight downloads by voice id. */
@@ -37,7 +39,7 @@ interface TtsState {
   systemSpeaking: boolean;
   setSystemSpeaking: (speaking: boolean) => void;
 
-  setSelectedVoiceId: (id: string) => void;
+  setSelectedVoice: (id: string, sid: number) => void;
   setInstalled: (installed: Record<string, InstalledVoice>) => void;
   setDownload: (voiceId: string, download: VoiceDownload | null) => void;
   setDownloadError: (voiceId: string, message: string | null) => void;
@@ -46,6 +48,7 @@ interface TtsState {
 
 export const useTtsStore = create<TtsState>((set) => ({
   selectedVoiceId: SYSTEM_VOICE_ID,
+  selectedSid: 0,
   installed: {},
   downloads: {},
   downloadErrors: {},
@@ -53,7 +56,7 @@ export const useTtsStore = create<TtsState>((set) => ({
   systemSpeaking: false,
   setSystemSpeaking: (systemSpeaking) => set({ systemSpeaking }),
 
-  setSelectedVoiceId: (id) => set({ selectedVoiceId: id }),
+  setSelectedVoice: (id, sid) => set({ selectedVoiceId: id, selectedSid: sid }),
   setInstalled: (installed) => set({ installed }),
   setDownload: (voiceId, download) =>
     set((s) => {

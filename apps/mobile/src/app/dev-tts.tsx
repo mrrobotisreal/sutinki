@@ -15,39 +15,52 @@ const RATES = [0.7, 0.85, 1, 1.25] as const;
 
 /**
  * Dev "read any text" screen (T11 ticket item 7): manual QA for voices +
- * the on-record latency measurement surface. Speaks arbitrary Russian text
- * through any installed Piper voice or the system fallback and shows which
+ * the on-record latency measurement surface. Speaks arbitrary Ukrainian text
+ * through any installed Piper voice/speaker or the system fallback and shows which
  * engine ran and the measured call→first-audio latency.
  */
 export default function DevTtsScreen() {
   const { tokens } = useAppTheme();
-  const { selectedVoiceId, installed, speaking } = useTtsStore();
+  const { selectedVoiceId, selectedSid, installed, speaking } = useTtsStore();
 
   const [text, setText] = React.useState(SAMPLE_TEXT);
-  const [voiceId, setVoiceId] = React.useState<string | null>(null); // null = app selection
+  // null = app selection; otherwise an explicit (voice, speaker) pair.
+  const [choice, setChoice] = React.useState<{ voiceId: string; sid: number } | null>(null);
   const [rate, setRate] = React.useState<number>(1);
   const [lastOutcome, setLastOutcome] = React.useState<(SpeakOutcome & { at: number }) | null>(
     null,
   );
   const [busy, setBusy] = React.useState(false);
 
-  const effectiveVoice = voiceId ?? selectedVoiceId;
+  const effectiveVoice = choice?.voiceId ?? selectedVoiceId;
+  const effectiveSid = choice?.sid ?? selectedSid;
 
   const speak = React.useCallback(() => {
     setBusy(true);
-    track('dev_tts_speak', { voiceId: effectiveVoice, rate, chars: text.length });
-    void speakWithInfo(text, { voiceId: effectiveVoice, rate })
+    track('dev_tts_speak', {
+      voiceId: effectiveVoice,
+      sid: effectiveSid,
+      rate,
+      chars: text.length,
+    });
+    void speakWithInfo(text, { voiceId: effectiveVoice, sid: effectiveSid, rate })
       .then((outcome) => setLastOutcome({ ...outcome, at: Date.now() }))
       .finally(() => setBusy(false));
-  }, [text, effectiveVoice, rate]);
+  }, [text, effectiveVoice, effectiveSid, rate]);
 
+  // One chip per (voice, speaker): a multi-speaker voice fans out (UT05).
   const voiceOptions = [
-    { id: SYSTEM_VOICE_ID, label: 'System', enabled: true },
-    ...PIPER_VOICES.map((v) => ({
-      id: v.id,
-      label: v.displayName,
-      enabled: !!installed[v.id],
-    })),
+    { key: SYSTEM_VOICE_ID, voiceId: SYSTEM_VOICE_ID, sid: 0, label: 'System', enabled: true },
+    ...PIPER_VOICES.flatMap((v) =>
+      v.speakers.map((s) => ({
+        key: `${v.id}:${s.sid}`,
+        voiceId: v.id,
+        sid: s.sid,
+        label:
+          v.speakers.length > 1 ? `${s.displayName} (${v.sampleRate / 1000} kHz)` : v.displayName,
+        enabled: !!installed[v.id],
+      })),
+    ),
   ];
 
   return (
@@ -74,11 +87,17 @@ export default function DevTtsScreen() {
       </Text>
       <View className="flex-row flex-wrap gap-2">
         {voiceOptions.map((option) => {
-          const active = effectiveVoice === option.id;
+          const active =
+            effectiveVoice === option.voiceId &&
+            (option.voiceId === SYSTEM_VOICE_ID || effectiveSid === option.sid);
           return (
             <Pressable
-              key={option.id}
-              onPress={option.enabled ? () => setVoiceId(option.id) : undefined}
+              key={option.key}
+              onPress={
+                option.enabled
+                  ? () => setChoice({ voiceId: option.voiceId, sid: option.sid })
+                  : undefined
+              }
               disabled={!option.enabled}
               accessibilityRole="radio"
               accessibilityState={{ selected: active, disabled: !option.enabled }}
@@ -98,7 +117,7 @@ export default function DevTtsScreen() {
         })}
       </View>
       <Text variant="caption" className="mt-2">
-        Uninstalled voices are dimmed — install them in Settings → Voices &amp; speech.
+        Uninstalled voices are dimmed — install them in Settings → Голоси.
       </Text>
 
       <Text variant="caption" className="mb-2 mt-6 uppercase tracking-wider">
@@ -164,6 +183,12 @@ export default function DevTtsScreen() {
           </Text>
           <Text className="mt-1">
             Engine: <Text className="font-ui-medium">{lastOutcome.engine}</Text>
+            {lastOutcome.engine === 'piper' && lastOutcome.sid !== undefined && (
+              <Text>
+                {' '}
+                · sid <Text className="font-ui-medium">{lastOutcome.sid}</Text>
+              </Text>
+            )}
             {lastOutcome.engine === 'piper' && lastOutcome.firstAudioMs !== undefined && (
               <Text>
                 {' '}

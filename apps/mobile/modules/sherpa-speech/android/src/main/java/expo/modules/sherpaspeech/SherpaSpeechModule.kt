@@ -6,6 +6,7 @@ import android.media.AudioRecord
 import android.media.AudioTrack
 import android.media.MediaRecorder
 import android.os.SystemClock
+import android.util.Log
 import com.k2fsa.sherpa.onnx.FeatureConfig
 import com.k2fsa.sherpa.onnx.OfflineModelConfig
 import com.k2fsa.sherpa.onnx.OfflineRecognizer
@@ -37,9 +38,12 @@ import kotlin.math.sqrt
 /**
  * Sumrak's sherpa-onnx speech module (T11 TTS + T12 ASR, design §6).
  *
- * TTS: Piper Russian VITS voices, one loaded at a time; `speak` streams
- * synthesis chunks to an AudioTrack as they are generated, `synthesizeToFile`
- * renders a WAV for caching.
+ * TTS: Piper Ukrainian VITS voices (UT05), one loaded at a time; `speak`
+ * streams synthesis chunks to an AudioTrack as they are generated,
+ * `synthesizeToFile` renders a WAV for caching. A loaded voice may declare
+ * several speakers (`num_speakers` > 1) — callers pick one via `sid`; an
+ * out-of-range sid is clamped to 0 here so a stale JS selection can never
+ * crash synthesis.
  *
  * ASR (T12): offline Zipformer transducer (Russian), one recognizer loaded at
  * a time on its own executor so recognition never queues behind synthesis.
@@ -95,8 +99,11 @@ class SherpaSpeechModule : Module() {
     AsyncFunction("loadVoice") { voiceId: String, modelPath: String, tokensPath: String, dataDir: String, promise: Promise ->
       ttsExecutor.execute {
         try {
-          if (loadedVoiceId == voiceId && tts != null) {
-            promise.resolve(mapOf("loadMs" to 0, "alreadyLoaded" to true))
+          val loaded = tts
+          if (loadedVoiceId == voiceId && loaded != null) {
+            promise.resolve(
+              mapOf("loadMs" to 0, "alreadyLoaded" to true, "numSpeakers" to loaded.numSpeakers()),
+            )
             return@execute
           }
           cancelPlayback()
@@ -124,10 +131,17 @@ class SherpaSpeechModule : Module() {
               provider = "cpu",
             ),
           )
-          tts = OfflineTts(config = config)
+          val engine = OfflineTts(config = config)
+          tts = engine
           loadedVoiceId = voiceId
+          val loadMs = SystemClock.elapsedRealtime() - t0
+          Log.i(TAG, "voice loaded: $voiceId speakers=${engine.numSpeakers()} sampleRate=${engine.sampleRate()} loadMs=$loadMs")
           promise.resolve(
-            mapOf("loadMs" to (SystemClock.elapsedRealtime() - t0), "alreadyLoaded" to false),
+            mapOf(
+              "loadMs" to loadMs,
+              "alreadyLoaded" to false,
+              "numSpeakers" to engine.numSpeakers(),
+            ),
           )
         } catch (t: Throwable) {
           promise.reject(asCoded("ERR_VOICE_LOAD", t))
@@ -153,12 +167,13 @@ class SherpaSpeechModule : Module() {
      * measured first-audio latency — the design §6 "< ~1s" number. Playback
      * completion is signaled via onSpeakingStateChanged.
      */
-    AsyncFunction("speak") { text: String, rate: Double, promise: Promise ->
+    AsyncFunction("speak") { text: String, sid: Int, rate: Double, promise: Promise ->
       val engine = tts
       if (engine == null) {
         promise.reject(CodedException("ERR_NO_VOICE", "no voice loaded", null))
         return@AsyncFunction
       }
+      val speaker = clampSid(engine, sid)
       val myId = utteranceSeq.incrementAndGet()
       cancelPlayback() // halt whatever was speaking; new utterance owns audio out
 
@@ -174,7 +189,7 @@ class SherpaSpeechModule : Module() {
         try {
           engine.generateWithCallback(
             text = text,
-            sid = 0,
+            sid = speaker,
             speed = rate.toFloat(),
           ) { samples ->
             if (utteranceSeq.get() != myId) return@generateWithCallback 0
@@ -250,18 +265,19 @@ class SherpaSpeechModule : Module() {
      * Render text to a WAV file (sherpa's native writer). For caching
      * repeat plays and future readback features (T15).
      */
-    AsyncFunction("synthesizeToFile") { text: String, rate: Double, outPath: String, promise: Promise ->
+    AsyncFunction("synthesizeToFile") { text: String, sid: Int, rate: Double, outPath: String, promise: Promise ->
       val engine = tts
       if (engine == null) {
         promise.reject(CodedException("ERR_NO_VOICE", "no voice loaded", null))
         return@AsyncFunction
       }
+      val speaker = clampSid(engine, sid)
       ttsExecutor.execute {
         try {
           val dest = File(stripFileUri(outPath))
           dest.parentFile?.mkdirs()
           val t0 = SystemClock.elapsedRealtime()
-          val audio = engine.generate(text = text, sid = 0, speed = rate.toFloat())
+          val audio = engine.generate(text = text, sid = speaker, speed = rate.toFloat())
           val synthMs = SystemClock.elapsedRealtime() - t0
           if (audio.samples.isEmpty()) {
             throw CodedException("ERR_TTS_EMPTY", "synthesis produced no audio", null)
@@ -798,6 +814,23 @@ class SherpaSpeechModule : Module() {
 
   private fun stripFileUri(path: String): String =
     if (path.startsWith("file://")) path.removePrefix("file://") else path
+
+  /**
+   * Speaker id guard (UT05): sherpa passes `sid` straight into the VITS
+   * graph, so an id the model does not declare must never reach it. A
+   * stale JS selection (voice re-pinned to fewer speakers) degrades to
+   * speaker 0 with a warning instead of a native crash.
+   */
+  private fun clampSid(engine: OfflineTts, sid: Int): Int {
+    val n = engine.numSpeakers()
+    if (sid in 0 until n) return sid
+    Log.w(TAG, "speaker id $sid out of range for a $n-speaker voice — using 0")
+    return 0
+  }
+
+  private companion object {
+    const val TAG = "SherpaSpeech"
+  }
 
   private fun asCoded(code: String, t: Throwable): CodedException =
     if (t is CodedException) t else CodedException(code, t.message ?: t.javaClass.simpleName, t)
