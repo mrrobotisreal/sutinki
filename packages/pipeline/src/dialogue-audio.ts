@@ -222,7 +222,7 @@ export async function runDialogueAudition(
   const representatives = new Map<string, DialogueRenderItem>();
   for (const item of items) {
     const cur = representatives.get(item.group);
-    if (!cur || item.sentence.ru.length > cur.sentence.ru.length) {
+    if (!cur || item.sentence.uk.length > cur.sentence.uk.length) {
       representatives.set(item.group, item);
     }
   }

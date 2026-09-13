@@ -670,13 +670,13 @@ export function planAudioRun(
     const longestPerGroup = new Map<string, number>();
     for (const item of dialogueItems) {
       const cur = longestPerGroup.get(item.group) ?? -1;
-      if (item.sentence.ru.length > cur) longestPerGroup.set(item.group, item.sentence.ru.length);
+      if (item.sentence.uk.length > cur) longestPerGroup.set(item.group, item.sentence.uk.length);
     }
     dialogueRequests = longestPerGroup.size;
     dialogueChars = [...longestPerGroup.values()].reduce((n, c) => n + c, 0);
   } else {
     dialogueRequests = dialogueItems.length;
-    dialogueChars = dialogueItems.reduce((n, i) => n + i.sentence.ru.length, 0);
+    dialogueChars = dialogueItems.reduce((n, i) => n + i.sentence.uk.length, 0);
   }
 
   const takes = opts.audition ? (opts.takes ?? 3) : 1;

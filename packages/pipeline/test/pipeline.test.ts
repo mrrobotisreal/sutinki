@@ -3,7 +3,13 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { annotateDrafts, DraftError, parseDraft, runValidate } from '../src/index.ts';
+import {
+  annotateDrafts,
+  DraftError,
+  parseDraft,
+  runValidate,
+  type DraftIssue,
+} from '../src/index.ts';
 
 const pkgDir = join(__dirname, '..');
 const fixture = (...p: string[]) => join(pkgDir, 'fixtures', ...p);
@@ -39,18 +45,18 @@ const minimalDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '  id: test-pack',
     '  version: 1',
     '  type: stories',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     '  tags: ["test"]',
     'story:',
     '  id: test-story',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     '---',
     '',
     '## test-s01',
     '',
-    'RU: Всё хорошо.',
+    'UK: Всё хорошо.',
     'EN: Everything is fine.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -83,20 +89,20 @@ describe('reference draft round-trip', () => {
   it('composes decomposed ё (е + combining diaeresis) to NFC without folding to е', () => {
     const eWithDiaeresis = 'ё'; // NFD: е + U+0308, two code points; NFC must compose it back to ё
     const draft = minimalDraft((lines) => {
-      lines[16] = `RU: Вс${eWithDiaeresis} хорошо.`;
+      lines[16] = `UK: Вс${eWithDiaeresis} хорошо.`;
       lines[21] = `| Вс${eWithDiaeresis} | весь | everything | pron | n.sg. nom. | A1 |  |`;
     });
     const pack = annotate(draft);
-    const ru = pack.stories[0]!.sentences[0]!.ru;
-    expect(ru).toBe('Всё хорошо.'); // composed ё, single code point
-    expect(ru.normalize('NFC')).toBe(ru);
+    const uk = pack.stories[0]!.sentences[0]!.uk;
+    expect(uk).toBe('Всё хорошо.'); // composed ё, single code point
+    expect(uk.normalize('NFC')).toBe(uk);
   });
 });
 
 describe('spaceBefore derivation («» quoting)', () => {
   it('derives spaceBefore overrides from the sentence text', () => {
     const draft = minimalDraft((lines) => {
-      lines[16] = 'RU: Я думаю: «Это соседи».';
+      lines[16] = 'UK: Я думаю: «Это соседи».';
       lines[17] = 'EN: I think: "It is the neighbors."';
       lines.splice(
         21,
@@ -174,7 +180,7 @@ describe('fail-loud gap checks', () => {
 
 describe('draft grammar errors', () => {
   it('a draft without frontmatter fails immediately', () => {
-    const issues = issuesOf(() => parseDraft('x.md', '## s01\nRU: Привет.\n'));
+    const issues = issuesOf(() => parseDraft('x.md', '## s01\nUK: Привіт.\n'));
     expect(issues[0]!.message).toContain('frontmatter');
   });
 
@@ -262,7 +268,7 @@ describe('validate command', () => {
     try {
       const bad = JSON.parse(readFileSync(samplePackPath, 'utf8'));
       bad.stories[0].sentences[0].tokens[0].lemma = undefined;
-      bad.stories[0].sentences[0].ru = 'Другой текст.'; // breaks reconstruction too
+      bad.stories[0].sentences[0].uk = 'Інший текст.'; // breaks reconstruction too
       const badPath = join(dir, 'bad.json');
       require('node:fs').writeFileSync(badPath, JSON.stringify(bad));
       const result = runValidate(badPath);
@@ -322,5 +328,93 @@ describe('CLI end-to-end', () => {
     const result = cli(['frobnicate'], true);
     expect(result.code).toBe(2);
     expect(result.out).toContain('Usage:');
+  });
+});
+
+describe('Ukrainian apostrophe rules (UT02, ADR-0004)', () => {
+  const apostropheDraft = (sentence: string, token: string) =>
+    minimalDraft((lines) => {
+      lines[16] = `UK: ${sentence}`;
+      lines[17] = 'EN: Five.';
+      lines.splice(
+        21,
+        3,
+        `| ${token} | п'ять | five | num |  | A1 |  |`,
+        '| . |  |  |  |  |  |  |',
+      );
+    });
+
+  it("a plain U+0027 apostrophe («п'ять») passes with no warning", () => {
+    const warnings: DraftIssue[] = [];
+    const pack = annotateDrafts(
+      [{ path: 'a.md', source: apostropheDraft("П'ять.", "П'ять") }],
+      undefined,
+      warnings,
+    );
+    expect(pack.stories[0]!.sentences[0]!.uk).toBe("П'ять.");
+    expect(pack.stories[0]!.sentences[0]!.tokens[0]!.text).toBe("П'ять"); // never rewritten
+    expect(warnings).toEqual([]);
+  });
+
+  it('a typographic U+2019 apostrophe («п’ять») is accepted as authored, never folded', () => {
+    const warnings: DraftIssue[] = [];
+    const pack = annotateDrafts(
+      [{ path: 'a.md', source: apostropheDraft('П’ять.', 'П’ять') }],
+      undefined,
+      warnings,
+    );
+    expect(pack.stories[0]!.sentences[0]!.uk).toBe('П’ять.');
+    expect(warnings).toEqual([]);
+  });
+
+  it('a UK: line mixing apostrophe code points in one sentence is a warning, not an error', () => {
+    const draft = minimalDraft((lines) => {
+      lines[16] = "UK: П'ять і дев’ять.";
+      lines[17] = 'EN: Five and nine.';
+      lines.splice(
+        21,
+        3,
+        "| П'ять | п'ять | five | num |  | A1 |  |",
+        '| і | і | and | conj |  | A1 |  |',
+        '| дев’ять | дев’ять | nine | num |  | A1 |  |',
+        '| . |  |  |  |  |  |  |',
+      );
+    });
+    const warnings: DraftIssue[] = [];
+    const pack = annotateDrafts([{ path: 'mixed.md', source: draft }], undefined, warnings);
+    expect(pack.stories[0]!.sentences[0]!.tokens).toHaveLength(4);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatchObject({ file: 'mixed.md', line: 17 });
+    expect(warnings[0]!.message).toContain('mixes apostrophe code points');
+    expect(warnings[0]!.message).toContain("U+0027 '");
+    expect(warnings[0]!.message).toContain('U+2019 ’');
+    expect(warnings[0]!.message).toContain('U+0027 is the convention');
+  });
+
+  it('a token whose apostrophe differs from the sentence is an "apostrophe mismatch" error', () => {
+    const issues = issuesOf(() => annotate(apostropheDraft("П'ять.", 'П’ять'), 'mismatch.md'));
+    expect(issues).toHaveLength(1);
+    expect(issues[0]!.line).toBe(22);
+    expect(issues[0]!.message).toContain('apostrophe mismatch');
+    expect(issues[0]!.message).toContain('token "П’ять" uses U+2019 ’');
+    expect(issues[0]!.message).toContain("has U+0027 '");
+  });
+
+  it('the modifier-letter U+02BC apostrophe is recognized in both directions', () => {
+    const issues = issuesOf(() => annotate(apostropheDraft('Пʼять.', "П'ять")));
+    expect(issues[0]!.message).toContain('apostrophe mismatch');
+    expect(issues[0]!.message).toContain('U+02BC ʼ');
+  });
+
+  it('a sentence line still written as RU: is rejected by name, pointing at UK:', () => {
+    const issues = issuesOf(() =>
+      annotate(minimalDraft((lines) => (lines[16] = 'UK: Все добре.'.replace('UK:', 'RU:')))),
+    );
+    const ruIssue = issues.find((i) => i.message.includes('RU: is not a Sutinki draft line'));
+    expect(ruIssue).toBeDefined();
+    expect(ruIssue!.line).toBe(17);
+    expect(ruIssue!.message).toContain('"UK:"');
+    // …and the block is then also reported as having no UK: line at all.
+    expect(issues.some((i) => i.message.includes('has no UK: line'))).toBe(true);
   });
 });

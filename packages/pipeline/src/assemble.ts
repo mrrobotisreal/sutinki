@@ -113,7 +113,7 @@ function assembleSentence(file: string, draft: DraftSentence, issues: DraftIssue
 
   const sentence: Sentence = {
     id: draft.id,
-    ru: draft.ru,
+    uk: draft.uk,
     en: draft.en,
     tokens: draft.rows.map((row, i) => rowToToken(file, row, spaceBefore[i] ?? false, i, issues)),
   };
@@ -233,7 +233,7 @@ function assembleDialogue(draft: ParsedDialogueDraft, issues: DraftIssue[]): Dia
           next: draftChoice.targetId,
         };
         if (draftChoice.alts.length > 0) choice.asrAlternates = draftChoice.alts.map((a) => a.text);
-        if (draftChoice.hint) choice.hint = { ru: draftChoice.hint.ru, en: draftChoice.hint.en };
+        if (draftChoice.hint) choice.hint = { uk: draftChoice.hint.uk, en: draftChoice.hint.en };
         return choice;
       });
     }

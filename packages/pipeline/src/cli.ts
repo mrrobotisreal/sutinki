@@ -123,6 +123,7 @@ function annotateCommand(args: string[]): void {
         `${summary.sentences} sentences, ${summary.tokens} tokens` +
         `${extraBits.length > 0 ? ` + ${extraBits.join(', ')}` : ''} — schema-valid`,
     );
+    for (const w of summary.warnings) console.warn(`warning: ${formatIssue(w)}`);
     for (const dialogue of summary.pack.dialogues ?? []) {
       console.log(`\n${renderBranchMap(dialogue)}`);
     }

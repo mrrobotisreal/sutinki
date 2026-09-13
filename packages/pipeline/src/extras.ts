@@ -27,16 +27,16 @@ import { PackMetaSchema, type PackMeta } from './frontmatter.ts';
  *   id: …          # the pack has no story drafts (checkpoint / prompts packs)
  * lesson:          # lesson meta — its `body` is the markdown BELOW the fence
  *   id: unit-1-lesson
- *   title: { ru: 'Урок', en: 'Lesson' }
+ *   title: { uk: 'Урок', en: 'Lesson' }
  *   grammarTopics: [prepositional-location]
  * theme:           # T30: ambient room theme (course units; V2 §5.2)
  *   scene: hallway # app-known set; unknown scenes are forward-compatible
  *   accent: '#C08A4A'
  * track: family    # T30: path track (V2 §6.1); absent = the main track
  * prompts:
- *   - { id: p1, level: A1, prompt: { ru: '…', en: '…' } }
+ *   - { id: p1, level: A1, prompt: { uk: '…', en: '…' } }
  * exercises:
- *   - { id: e1, kind: multiple-choice, direction: ru-en, prompt: '…',
+ *   - { id: e1, kind: multiple-choice, direction: uk-en, prompt: '…',
  *       choices: ['a', 'b'], correctIndex: 0 }
  * ---
  * ## Заголовок урока
@@ -114,7 +114,7 @@ export function parseExtras(file: string, source: string): PackExtras {
     });
   }
 
-  // Body = lesson markdown (NFC-normalized; ё preserved — NFC never folds it).
+  // Body = lesson markdown (NFC-normalized; the apostrophe is kept as authored — NFC never touches it).
   const body = lines
     .slice(fmEnd + 1)
     .join('\n')

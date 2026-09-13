@@ -79,6 +79,12 @@ export {
   type DraftTokenRow,
   type ParsedDraft,
 } from './draft.ts';
+export {
+  APOSTROPHE_CODE_POINTS,
+  apostrophesIn,
+  describeApostrophe,
+  foldApostrophes,
+} from './apostrophe.ts';
 export { DraftError, formatIssue, type DraftIssue } from './errors.ts';
 export { ExtrasFrontmatterSchema, loadExtras, parseExtras, type PackExtras } from './extras.ts';
 export {

@@ -12,6 +12,7 @@ import {
   runPublish,
   runValidate,
   sniffDraftKind,
+  type DraftIssue,
 } from '../src/index.ts';
 
 const pkgDir = join(__dirname, '..');
@@ -57,26 +58,26 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '  id: test-pack',
     '  version: 1',
     '  type: dialogue',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     '  tags: ["test"]',
     'dialogue:',
     '  id: test-dlg',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     'characters:',
     '  - id: mama',
-    '    name: { ru: "Мама", en: "Mama" }',
+    '    name: { uk: "Мама", en: "Mama" }',
     '    voice: elevenlabs:Mariia',
     '    style: warm',
     '  - id: player',
-    '    name: { ru: "Ты", en: "You" }',
+    '    name: { uk: "Ты", en: "You" }',
     '    voice: elevenlabs:Ivan',
     '    style: neutral',
     'endings:',
     '  - id: e-x',
-    '    title: { ru: "Конец", en: "End" }',
-    '    recap: { ru: "Всё.", en: "Done." }',
+    '    title: { uk: "Конец", en: "End" }',
+    '    recap: { uk: "Всё.", en: "Done." }',
     '    tone: good',
     '---',
     '',
@@ -84,7 +85,7 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     'SPEAKER: mama',
     '',
-    'RU: Привет.',
+    'UK: Привет.',
     'EN: Hello.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -98,7 +99,7 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     'SPEAKER: mama',
     '',
-    'RU: Ты дома?',
+    'UK: Ты дома?',
     'EN: Are you home?',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -111,7 +112,7 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     '### t-n2-c1 -> t-n3',
     '',
-    'RU: Да.',
+    'UK: Да.',
     'EN: Yes.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -121,7 +122,7 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     '### t-n2-c2 -> t-n3',
     '',
-    'RU: Нет.',
+    'UK: Нет.',
     'EN: No.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -133,7 +134,7 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     'SPEAKER: mama',
     '',
-    'RU: Пока.',
+    'UK: Пока.',
     'EN: Bye.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -156,18 +157,18 @@ const minimalStoryDraft = (sentenceId = 'story-s01') =>
     '  id: test-pack',
     '  version: 1',
     '  type: dialogue',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     '  tags: ["test"]',
     'story:',
     '  id: test-story',
-    '  title: { ru: "Тест", en: "Test" }',
+    '  title: { uk: "Тест", en: "Test" }',
     '  level: A1',
     '---',
     '',
     `## ${sentenceId}`,
     '',
-    'RU: Всё хорошо.',
+    'UK: Всё хорошо.',
     'EN: Everything is fine.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
@@ -296,12 +297,12 @@ describe('dialogue draft grammar errors', () => {
     expect(issues[0]!.message).toContain('ALT: is only allowed inside');
   });
 
-  it('a HINT without the "ru | en" shape is rejected', () => {
+  it('a HINT without the "uk | en" shape is rejected', () => {
     const draft = minimalDialogueDraft((lines) => {
-      lines.splice(lines.indexOf('RU: Да.') + 2, 0, 'HINT: only english');
+      lines.splice(lines.indexOf('UK: Да.') + 2, 0, 'HINT: only english');
     });
     const issues = issuesOf(() => annotate(draft));
-    expect(issues[0]!.message).toContain('HINT: must be "<ru nudge> | <en nudge>"');
+    expect(issues[0]!.message).toContain('HINT: must be "<uk nudge> | <en nudge>"');
   });
 
   it('a "###" heading outside CHOICES is rejected', () => {
@@ -322,7 +323,7 @@ describe('dialogue draft grammar errors', () => {
 
   it('sentence content directly after CHOICES: is rejected', () => {
     const draft = minimalDialogueDraft((lines) => {
-      lines.splice(lines.indexOf('CHOICES:') + 1, 0, 'RU: Что?');
+      lines.splice(lines.indexOf('CHOICES:') + 1, 0, 'UK: Что?');
     });
     const issues = issuesOf(() => annotate(draft));
     expect(issues[0]!.message).toContain('content after CHOICES: must start with a "###');
@@ -388,8 +389,8 @@ describe('branch map', () => {
     dialogue.nodes.push(orphan);
     dialogue.endings.push({
       id: 'end-lost',
-      title: { ru: 'Нигде', en: 'Nowhere' },
-      recap: { ru: 'Никак.', en: 'No way.' },
+      title: { uk: 'Нигде', en: 'Nowhere' },
+      recap: { uk: 'Никак.', en: 'No way.' },
       tone: 'strange',
     });
     const map = renderBranchMap(dialogue);
@@ -479,5 +480,48 @@ describe('CLI + validate + publish on the audio-less fixture pack', () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe('Ukrainian apostrophe rules apply to dialogue lines too (UT02)', () => {
+  const withNode1 = (sentence: string, rows: string[]) =>
+    minimalDialogueDraft((lines) => {
+      const idx = lines.indexOf('UK: Привет.');
+      lines[idx] = `UK: ${sentence}`;
+      lines[idx + 1] = 'EN: Five or nine?';
+      lines.splice(idx + 5, 2, ...rows);
+    });
+
+  it('a node line mixing apostrophe code points is a warning naming the node', () => {
+    const draft = withNode1("П'ять чи дев’ять?", [
+      "| П'ять | п'ять | five | num |  | A1 |  |",
+      '| чи | чи | or | conj |  | A1 |  |',
+      '| дев’ять | дев’ять | nine | num |  | A1 |  |',
+      '| ? |  |  |  |  |  |  |',
+    ]);
+    const warnings: DraftIssue[] = [];
+    const pack = annotateDrafts([{ path: 'd.dialogue.md', source: draft }], undefined, warnings);
+    expect(pack.dialogues![0]!.nodes[0]!.sentence.uk).toBe("П'ять чи дев’ять?");
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]!.message).toContain('node "t-n1" mixes apostrophe code points');
+  });
+
+  it('a token/sentence apostrophe mismatch in a node is an error', () => {
+    const draft = withNode1("П'ять?", [
+      '| П’ять | п’ять | five | num |  | A1 |  |',
+      '| ? |  |  |  |  |  |  |',
+    ]);
+    const issues = issuesOf(() => annotateDrafts([{ path: 'd.dialogue.md', source: draft }]));
+    expect(issues.some((i) => i.message.includes('apostrophe mismatch'))).toBe(true);
+  });
+
+  it('a RU: line in a dialogue draft is rejected by name', () => {
+    const draft = minimalDialogueDraft((lines) => {
+      const idx = lines.indexOf('UK: Привет.');
+      lines[idx] = 'RU: Привет.';
+    });
+    const issues = issuesOf(() => annotateDrafts([{ path: 'd.dialogue.md', source: draft }]));
+    expect(issues.some((i) => i.message.includes('RU: is not a Sutinki draft line'))).toBe(true);
+    expect(issues.some((i) => i.message.includes('node "t-n1" has no UK: line'))).toBe(true);
   });
 });

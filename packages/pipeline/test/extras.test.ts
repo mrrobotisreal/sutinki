@@ -25,12 +25,12 @@ function issuesOf(fn: () => unknown) {
 const unitExtras = `---
 lesson:
   id: unit-lesson
-  title: { ru: 'Где стоит?', en: 'Where does it stand?' }
+  title: { uk: 'Где стоит?', en: 'Where does it stand?' }
   grammarTopics: [prepositional-location]
 prompts:
   - id: unit-prompt-1
     level: A1
-    prompt: { ru: 'Опишите вашу комнату.', en: 'Describe your room.' }
+    prompt: { uk: 'Опишите вашу комнату.', en: 'Describe your room.' }
 ---
 ## Где стоит?
 
@@ -42,19 +42,19 @@ pack:
   id: a1-checkpoint-test
   version: 1
   type: checkpoint
-  title: { ru: 'Тест', en: 'Test' }
+  title: { uk: 'Тест', en: 'Test' }
   level: A1
   tags: ['checkpoint']
 exercises:
   - id: ex-mc-1
     kind: multiple-choice
-    direction: ru-en
+    direction: uk-en
     prompt: 'дверь'
     choices: ['door', 'window']
     correctIndex: 0
   - id: ex-cloze-1
     kind: cloze
-    sentenceRu: 'В комнате стоит ___.'
+    sentenceUk: 'В комнате стоит ___.'
     answer: 'зеркало'
     choices: ['зеркало', 'окно', 'стол']
 ---

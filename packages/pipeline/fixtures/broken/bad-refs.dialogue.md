@@ -3,22 +3,22 @@ pack:
   id: broken-dlg-003
   version: 1
   type: dialogue
-  title: { ru: 'Тест', en: 'Test' }
+  title: { uk: 'Тест', en: 'Test' }
   level: A1
   tags: ['test']
 dialogue:
   id: bad-refs-dlg
-  title: { ru: 'Тест', en: 'Test' }
+  title: { uk: 'Тест', en: 'Test' }
   level: A1
 characters:
   - id: mama
-    name: { ru: 'Мама', en: 'Mama' }
+    name: { uk: 'Мама', en: 'Mama' }
     voice: elevenlabs:Mariia
     style: warm
 endings:
   - id: end-x
-    title: { ru: 'Конец', en: 'End' }
-    recap: { ru: 'Всё.', en: 'Done.' }
+    title: { uk: 'Конец', en: 'End' }
+    recap: { uk: 'Всё.', en: 'Done.' }
     tone: good
 ---
 
@@ -26,7 +26,7 @@ endings:
 
 SPEAKER: ghost
 
-RU: Привет.
+UK: Привет.
 EN: Hello.
 
 | text   | lemma  | translation | pos    | grammar | level | note |
@@ -40,7 +40,7 @@ NEXT: br-missing
 
 SPEAKER: mama
 
-RU: Пока.
+UK: Пока.
 EN: Bye.
 
 | text | lemma | translation | pos    | grammar | level | note |

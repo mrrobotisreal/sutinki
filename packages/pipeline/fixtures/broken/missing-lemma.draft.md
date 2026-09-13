@@ -3,18 +3,18 @@ pack:
   id: broken-missing-lemma
   version: 1
   type: stories
-  title: { ru: "Сломанный черновик", en: "Broken draft" }
+  title: { uk: "Сломанный черновик", en: "Broken draft" }
   level: A1
   tags: ["test"]
 story:
   id: broken-story
-  title: { ru: "Сломанный черновик", en: "Broken draft" }
+  title: { uk: "Сломанный черновик", en: "Broken draft" }
   level: A1
 ---
 
 ## broken-s01
 
-RU: Я слышу голос.
+UK: Я слышу голос.
 EN: I hear a voice.
 
 | text | lemma | translation | pos | grammar | level | note |

@@ -4,6 +4,7 @@ import type { Pack } from '@sutinki/schema';
 import { assemblePack } from './assemble.ts';
 import { parseDialogueDraft, sniffDraftKind, type ParsedDialogueDraft } from './dialogue-draft.ts';
 import { parseDraft, type ParsedDraft } from './draft.ts';
+import type { DraftIssue } from './errors.ts';
 import { loadExtras, type PackExtras } from './extras.ts';
 
 /**
@@ -15,18 +16,27 @@ import { loadExtras, type PackExtras } from './extras.ts';
  * an extras file (`--extras`, T17) carrying lesson / prompts / exercises.
  */
 
-/** Parse + assemble, no file output. Throws DraftError on any problem. */
+/**
+ * Parse + assemble, no file output. Throws DraftError on any problem.
+ * Non-fatal draft findings (e.g. mixed apostrophes) are pushed to `warnings`
+ * when a sink is given — the pack is still produced.
+ */
 export function annotateDrafts(
   files: readonly { path: string; source: string }[],
   extras?: PackExtras,
+  warnings?: DraftIssue[],
 ): Pack {
   const storyDrafts: ParsedDraft[] = [];
   const dialogueDrafts: ParsedDialogueDraft[] = [];
   for (const f of files) {
     if (sniffDraftKind(f.path, f.source) === 'dialogue') {
-      dialogueDrafts.push(parseDialogueDraft(f.path, f.source));
+      const draft = parseDialogueDraft(f.path, f.source);
+      dialogueDrafts.push(draft);
+      warnings?.push(...draft.warnings);
     } else {
-      storyDrafts.push(parseDraft(f.path, f.source));
+      const draft = parseDraft(f.path, f.source);
+      storyDrafts.push(draft);
+      warnings?.push(...draft.warnings);
     }
   }
   return assemblePack(storyDrafts, extras, dialogueDrafts);
@@ -39,6 +49,8 @@ export interface AnnotateSummary {
   dialogues: number;
   sentences: number;
   tokens: number;
+  /** Non-fatal draft findings, printed by the CLI after the success line. */
+  warnings: DraftIssue[];
 }
 
 /** Every sentence of a pack — story sentences plus dialogue node/choice lines. */
@@ -57,9 +69,11 @@ export function runAnnotate(
   outFile: string,
   extrasPath?: string,
 ): AnnotateSummary {
+  const warnings: DraftIssue[] = [];
   const pack = annotateDrafts(
     draftPaths.map((path) => ({ path, source: readFileSync(path, 'utf8') })),
     extrasPath === undefined ? undefined : loadExtras(extrasPath),
+    warnings,
   );
   mkdirSync(dirname(outFile), { recursive: true });
   writeFileSync(outFile, `${JSON.stringify(pack, null, 2)}\n`, 'utf8');
@@ -71,5 +85,6 @@ export function runAnnotate(
     dialogues: pack.dialogues?.length ?? 0,
     sentences: sentences.length,
     tokens: sentences.reduce((n, s) => n + s.tokens.length, 0),
+    warnings,
   };
 }

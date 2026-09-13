@@ -20,19 +20,19 @@ import { z } from 'zod';
  * ```
  * ## <node-id>
  * SPEAKER: <characterId>
- * RU: … / EN: … / GRAMMAR: … + token table   (the T08 sentence block, reused)
+ * UK: … / EN: … / GRAMMAR: … + token table   (the T08 sentence block, reused)
  * NEXT: <node-id>            ← or ENDING: <ending-id>, or:
  * CHOICES:
  * ### <choice-id> -> <node-id>
- * RU/EN + token table
+ * UK/EN + token table
  * ALT: <alternate phrasing>          (repeatable → asrAlternates)
- * HINT: <ru nudge> | <en nudge>      (optional)
+ * HINT: <uk nudge> | <en nudge>      (optional)
  * ```
  *
  * Ids double as sentence ids (node id → node sentence id, choice id → choice
  * sentence id), which is how draft-authored packs keep sentence ids pack-wide
  * unique. All T08 error conventions hold: collected errors, `file:line:`,
- * derived isPunct/spaceBefore, NFC, ё preserved.
+ * derived isPunct/spaceBefore, NFC, apostrophe kept as authored.
  */
 
 /** `dialogue:` frontmatter section. `startNodeId` defaults to the first scene block. */
@@ -67,7 +67,7 @@ export interface DraftDialogueChoice {
   /** The player's line (sentence id = choice id). */
   sentence: DraftSentence;
   alts: DraftChoiceAlt[];
-  hint?: { line: number; ru: string; en: string };
+  hint?: { line: number; uk: string; en: string };
 }
 
 export type DraftNodeTerminator =
@@ -92,6 +92,8 @@ export interface ParsedDialogueDraft {
   file: string;
   frontmatter: DialogueFrontmatter;
   nodes: DraftDialogueNode[];
+  /** Non-fatal findings (e.g. mixed apostrophes in one `UK:` line); the draft still assembles. */
+  warnings: DraftIssue[];
 }
 
 /**
@@ -115,7 +117,7 @@ const CHOICE_HEADING = /^###\s+(.+)$/;
 const CHOICE_HEADING_FULL = /^###\s+(\S+)\s+->\s+(\S+)$/;
 const NODE_KEY = /^(SPEAKER|NEXT|ENDING|ALT|HINT|CHOICES):\s*(.*)$/;
 
-/** Split a `HINT: ru | en` value on its unescaped `|` (same `\|` escape as tables). */
+/** Split a `HINT: uk | en` value on its unescaped `|` (same `\|` escape as tables). */
 function splitHint(value: string): string[] {
   const ESC = '\u0000';
   return value
@@ -143,6 +145,7 @@ interface OpenNode {
  */
 export function parseDialogueDraft(file: string, source: string): ParsedDialogueDraft {
   const issues: DraftIssue[] = [];
+  const warnings: DraftIssue[] = [];
   const { fmText, lines, fmEnd } = splitFrontmatter(file, source);
   const frontmatter = parseFrontmatterWith(file, fmText, DialogueFrontmatterSchema, issues);
 
@@ -213,7 +216,7 @@ export function parseDialogueDraft(file: string, source: string): ParsedDialogue
           id,
           sentence: undefined as unknown as DraftSentence, // set right below
         },
-        collector: new SentenceBlockCollector(file, issues, lineNo, id, `node "${id}"`),
+        collector: new SentenceBlockCollector(file, issues, lineNo, id, `node "${id}"`, warnings),
         inChoices: false,
         openChoice: null,
       };
@@ -252,7 +255,14 @@ export function parseDialogueDraft(file: string, source: string): ParsedDialogue
       closeChoice(cur);
       const id = full[1]!.normalize('NFC');
       const targetId = full[2]!.normalize('NFC');
-      const collector = new SentenceBlockCollector(file, issues, lineNo, id, `choice "${id}"`);
+      const collector = new SentenceBlockCollector(
+        file,
+        issues,
+        lineNo,
+        id,
+        `choice "${id}"`,
+        warnings,
+      );
       const choice: DraftDialogueChoice = {
         line: lineNo,
         id,
@@ -374,11 +384,11 @@ export function parseDialogueDraft(file: string, source: string): ParsedDialogue
             issues.push({
               file,
               line: lineNo,
-              message: 'HINT: must be "<ru nudge> | <en nudge>" (escape a literal | as \\|)',
+              message: 'HINT: must be "<uk nudge> | <en nudge>" (escape a literal | as \\|)',
             });
             break;
           }
-          cur.openChoice.choice.hint = { line: lineNo, ru: parts[0]!, en: parts[1]! };
+          cur.openChoice.choice.hint = { line: lineNo, uk: parts[0]!, en: parts[1]! };
           break;
         }
       }
@@ -403,7 +413,7 @@ export function parseDialogueDraft(file: string, source: string): ParsedDialogue
     issues.push({
       file,
       line: lineNo,
-      message: `unrecognized line (expected "## <node-id>", "SPEAKER:", "RU:", "EN:", "GRAMMAR:", a "|" table row, "NEXT:", "ENDING:", "CHOICES:", "### <choice-id> -> <node-id>", "ALT:", "HINT:", or a blank line): "${line}"`,
+      message: `unrecognized line (expected "## <node-id>", "SPEAKER:", "UK:", "EN:", "GRAMMAR:", a "|" table row, "NEXT:", "ENDING:", "CHOICES:", "### <choice-id> -> <node-id>", "ALT:", "HINT:", or a blank line): "${line}"`,
     });
   }
   closeNode();
@@ -413,5 +423,5 @@ export function parseDialogueDraft(file: string, source: string): ParsedDialogue
   }
   if (issues.length > 0) throw new DraftError(issues);
 
-  return { file, frontmatter: frontmatter as DialogueFrontmatter, nodes };
+  return { file, frontmatter: frontmatter as DialogueFrontmatter, nodes, warnings };
 }

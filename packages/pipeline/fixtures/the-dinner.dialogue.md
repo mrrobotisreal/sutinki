@@ -3,51 +3,51 @@ pack:
   id: a2-dialogue-001
   version: 1
   type: dialogue
-  title: { ru: 'Ужин у мамы', en: "Dinner at Mama's" }
+  title: { uk: 'Ужин у мамы', en: "Dinner at Mama's" }
   level: A2
   tags: ['dialogue', 'family']
 dialogue:
   id: dinner-mini
-  title: { ru: 'Ужин у мамы', en: "Dinner at Mama's" }
+  title: { uk: 'Ужин у мамы', en: "Dinner at Mama's" }
   level: A2
   startNodeId: din-n01
 characters:
   - id: mama
-    name: { ru: 'Мама', en: 'Mama' }
+    name: { uk: 'Мама', en: 'Mama' }
     voice: elevenlabs:Mariia
     style: warm
     audioTag: '[warm]'
   - id: babushka
-    name: { ru: 'Бабушка', en: 'Grandmother' }
+    name: { uk: 'Бабушка', en: 'Grandmother' }
     voice: elevenlabs:Kate
     style: gentle
     audioTag: '[gentle]'
   - id: player
-    name: { ru: 'Ты', en: 'You' }
+    name: { uk: 'Ты', en: 'You' }
     voice: elevenlabs:Ivan
     style: neutral
 endings:
   - id: end-good
-    title: { ru: 'Отличное впечатление', en: 'A great impression' }
+    title: { uk: 'Отличное впечатление', en: 'A great impression' }
     recap:
       {
-        ru: 'Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.',
+        uk: 'Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.',
         en: 'You ate well, praised the borscht, and Grandmother is pleased with you.',
       }
     tone: good
   - id: end-awkward
-    title: { ru: 'Неловкий вечер', en: 'An awkward evening' }
+    title: { uk: 'Неловкий вечер', en: 'An awkward evening' }
     recap:
       {
-        ru: 'Ты сказал нет — и за столом стало очень тихо.',
+        uk: 'Ты сказал нет — и за столом стало очень тихо.',
         en: 'You said no — and the table went very quiet.',
       }
     tone: bad
   - id: end-strange
-    title: { ru: 'Она тоже видит', en: 'She sees it too' }
+    title: { uk: 'Она тоже видит', en: 'She sees it too' }
     recap:
       {
-        ru: 'На стене что-то есть, и бабушка это знает.',
+        uk: 'На стене что-то есть, и бабушка это знает.',
         en: 'There is something on the wall, and Grandmother knows it.',
       }
     tone: strange
@@ -59,7 +59,7 @@ endings:
 
 SPEAKER: mama
 
-RU: Проходи, дорогой!
+UK: Проходи, дорогой!
 EN: Come in, dear!
 GRAMMAR: imperative
 
@@ -76,7 +76,7 @@ NEXT: din-n02
 
 SPEAKER: mama
 
-RU: Ты голодный?
+UK: Ты голодный?
 EN: Are you hungry?
 GRAMMAR: adjective-predicate
 
@@ -90,7 +90,7 @@ CHOICES:
 
 ### din-n02-c1 -> din-n03
 
-RU: Да, я очень голодный.
+UK: Да, я очень голодный.
 EN: Yes, I'm very hungry.
 
 | text     | lemma    | translation | pos  | grammar    | level | note |
@@ -106,7 +106,7 @@ ALT: Да, очень.
 
 ### din-n02-c2 -> din-n04
 
-RU: Нет, спасибо, я не голодный.
+UK: Нет, спасибо, я не голодный.
 EN: No, thank you, I'm not hungry.
 
 | text     | lemma    | translation | pos    | grammar    | level | note |
@@ -124,7 +124,7 @@ HINT: Вежливый отказ — но мама не сдастся. | A pol
 
 ### din-n02-c3 -> din-n09
 
-RU: А что это на стене?
+UK: А что это на стене?
 EN: And what is that on the wall?
 GRAMMAR: prepositional-location
 
@@ -141,7 +141,7 @@ GRAMMAR: prepositional-location
 
 SPEAKER: mama
 
-RU: Отлично, я сделала борщ!
+UK: Отлично, я сделала борщ!
 EN: Great, I made borscht!
 GRAMMAR: past-tense, accusative-direct-object
 
@@ -160,7 +160,7 @@ NEXT: din-n05
 
 SPEAKER: mama
 
-RU: Ничего, борщ уже на столе.
+UK: Ничего, борщ уже на столе.
 EN: No matter, the borscht is already on the table.
 GRAMMAR: prepositional-location
 
@@ -180,7 +180,7 @@ NEXT: din-n05
 
 SPEAKER: babushka
 
-RU: Наш борщ — самый вкусный.
+UK: Наш борщ — самый вкусный.
 EN: Our borscht is the tastiest.
 GRAMMAR: superlative
 
@@ -199,7 +199,7 @@ NEXT: din-n06
 
 SPEAKER: mama
 
-RU: Хочешь ещё борща?
+UK: Хочешь ещё борща?
 EN: Do you want more borscht?
 GRAMMAR: genitive-partitive
 
@@ -214,7 +214,7 @@ CHOICES:
 
 ### din-n06-c1 -> din-n07
 
-RU: Да, можно ещё немного.
+UK: Да, можно ещё немного.
 EN: Yes, a little more, please.
 
 | text    | lemma   | translation  | pos  | grammar    | level | note |
@@ -230,7 +230,7 @@ ALT: Да, ещё немного, пожалуйста.
 
 ### din-n06-c2 -> din-n08
 
-RU: Спасибо, я сыт, всё было очень вкусно.
+UK: Спасибо, я сыт, всё было очень вкусно.
 EN: Thank you, I'm full, everything was very tasty.
 GRAMMAR: short-adjectives, past-tense
 
@@ -252,7 +252,7 @@ HINT: Скажи спасибо и похвали еду. | Say thank you and pr
 
 ### din-n06-c3 -> din-n10
 
-RU: Нет.
+UK: Нет.
 EN: No.
 
 | text | lemma | translation | pos  | grammar | level | note |
@@ -264,7 +264,7 @@ EN: No.
 
 SPEAKER: mama
 
-RU: Кушай, кушай!
+UK: Кушай, кушай!
 EN: Eat, eat!
 GRAMMAR: imperative
 
@@ -281,7 +281,7 @@ NEXT: din-n06
 
 SPEAKER: babushka
 
-RU: Молодец, приходи к нам ещё.
+UK: Молодец, приходи к нам ещё.
 EN: Good boy, come visit us again.
 GRAMMAR: imperative, dative-direction
 
@@ -301,7 +301,7 @@ ENDING: end-good
 
 SPEAKER: mama
 
-RU: Там ничего нет.
+UK: Там ничего нет.
 EN: There is nothing there.
 GRAMMAR: genitive-negation
 
@@ -318,7 +318,7 @@ NEXT: din-n11
 
 SPEAKER: mama
 
-RU: Ну ладно.
+UK: Ну ладно.
 EN: Well, alright.
 
 | text  | lemma | translation | pos  | grammar | level | note |
@@ -333,7 +333,7 @@ ENDING: end-awkward
 
 SPEAKER: babushka
 
-RU: Она тоже это видит.
+UK: Она тоже это видит.
 EN: She sees it too.
 GRAMMAR: accusative-direct-object
 

@@ -3,7 +3,7 @@ import type { Sentence, Story } from '@sutinki/schema';
 /**
  * Narration text construction (T09). The text sent to ElevenLabs is built
  * from the story's sentences using the exact same spacing rules the schema's
- * `reconstructSentenceRu` enforces, so every token's character span in the
+ * `reconstructSentenceUk` enforces, so every token's character span in the
  * narration text is known precisely at build time — timestamp mapping never
  * has to *search* for a token, only to look up what the synthesizer said
  * about characters we placed ourselves.
@@ -51,8 +51,8 @@ export function buildNarrationFromSentences(sentenceList: readonly Sentence[]): 
   sentenceList.forEach((sentence, si) => {
     if (si > 0) text += SENTENCE_SEPARATOR;
     sentence.tokens.forEach((token, ti) => {
-      // Mirror of reconstructSentenceRu's spacing defaults — the schema
-      // guarantees the tokens rebuild `ru` exactly under these rules.
+      // Mirror of reconstructSentenceUk's spacing defaults — the schema
+      // guarantees the tokens rebuild `uk` exactly under these rules.
       const space = token.spaceBefore ?? (ti > 0 && !token.isPunct);
       if (space) text += ' ';
       const start = text.length;

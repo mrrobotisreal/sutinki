@@ -13,10 +13,10 @@ import { analyzeDialogueGraph, type Choice, type Dialogue } from '@sutinki/schem
 /** A node's shortest-from-start depth past this is flagged as an outlier. */
 const DEPTH_OUTLIER = 30;
 
-const MAX_RU_PREVIEW = 40;
+const MAX_UK_PREVIEW = 40;
 
-function preview(ru: string): string {
-  return ru.length <= MAX_RU_PREVIEW ? ru : `${ru.slice(0, MAX_RU_PREVIEW - 1)}…`;
+function preview(uk: string): string {
+  return uk.length <= MAX_UK_PREVIEW ? uk : `${uk.slice(0, MAX_UK_PREVIEW - 1)}…`;
 }
 
 export function renderBranchMap(dialogue: Dialogue): string {
@@ -26,7 +26,7 @@ export function renderBranchMap(dialogue: Dialogue): string {
 
   const choicePoints = dialogue.nodes.filter((n) => n.choices !== undefined).length;
   out.push(
-    `Branch map — «${dialogue.title.ru}» (${dialogue.id}, ${dialogue.level})`,
+    `Branch map — «${dialogue.title.uk}» (${dialogue.id}, ${dialogue.level})`,
     `  ${dialogue.nodes.length} nodes · ${choicePoints} choice point${choicePoints === 1 ? '' : 's'} · ` +
       `${dialogue.endings.length} ending${dialogue.endings.length === 1 ? '' : 's'} (${analysis.reachableEndings.length} reachable)`,
     '',
@@ -38,7 +38,7 @@ export function renderBranchMap(dialogue: Dialogue): string {
     const node = byId.get(id);
     if (!node) return `${id} (missing!)`;
     const ending = node.endingId !== undefined ? `  ⇒ ${node.endingId}` : '';
-    return `${id} ${node.speakerId}: «${preview(node.sentence.ru)}»${ending}`;
+    return `${id} ${node.speakerId}: «${preview(node.sentence.uk)}»${ending}`;
   };
 
   const renderNode = (id: string, prefix: string, branch: string): void => {
@@ -58,7 +58,7 @@ export function renderBranchMap(dialogue: Dialogue): string {
       node.choices.forEach((choice: Choice, i: number) => {
         const last = i === node.choices!.length - 1;
         const choiceBranch = last ? '└─ ' : '├─ ';
-        out.push(`${childPrefix}${choiceBranch}[${choice.id}] «${preview(choice.sentence.ru)}»`);
+        out.push(`${childPrefix}${choiceBranch}[${choice.id}] «${preview(choice.sentence.uk)}»`);
         renderNode(choice.next, childPrefix + (last ? '   ' : '│  '), '└─ ');
       });
     }

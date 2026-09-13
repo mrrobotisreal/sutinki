@@ -33,12 +33,12 @@ pack:
   id: test-audio-pack
   version: 1
   type: stories
-  title: { ru: 'Тест', en: 'Test' }
+  title: { uk: 'Тест', en: 'Test' }
   level: A1
   tags: ['test']
 story:
   id: test-story
-  title: { ru: 'Тест', en: 'Test' }
+  title: { uk: 'Тест', en: 'Test' }
   level: A1
 voice:
   - id: test-track-anton
@@ -52,7 +52,7 @@ voice:
 
 ## t-s01
 
-RU: Ночь.
+UK: Ночь.
 EN: Night.
 
 | text | lemma | translation | pos  | grammar    | level | note |
@@ -62,7 +62,7 @@ EN: Night.
 
 ## t-s02
 
-RU: Дом молчит, но кто-то ходит наверху.
+UK: Дом молчит, но кто-то ходит наверху.
 EN: The house is silent, but someone is walking upstairs.
 
 | text    | lemma   | translation | pos  | grammar            | level | note |
@@ -467,7 +467,7 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
   const DRAFT3 = `${DRAFT}
 ## t-s03
 
-RU: Тишина.
+UK: Тишина.
 EN: Silence.
 
 | text   | lemma  | translation | pos  | grammar    | level | note |

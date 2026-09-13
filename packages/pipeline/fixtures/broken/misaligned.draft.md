@@ -3,12 +3,12 @@ pack:
   id: broken-misaligned
   version: 1
   type: stories
-  title: { ru: "Сломанный черновик", en: "Broken draft" }
+  title: { uk: "Сломанный черновик", en: "Broken draft" }
   level: A1
   tags: ["test"]
 story:
   id: broken-story
-  title: { ru: "Сломанный черновик", en: "Broken draft" }
+  title: { uk: "Сломанный черновик", en: "Broken draft" }
   level: A1
 ---
 
@@ -16,7 +16,7 @@ story:
 
 <!-- The table below skips the word "тихий" and misorders the last two words. -->
 
-RU: Ночью я слышу тихий стук в стене.
+UK: Ночью я слышу тихий стук в стене.
 EN: At night I hear a quiet knocking in the wall.
 
 | text | lemma | translation | pos | grammar | level | note |

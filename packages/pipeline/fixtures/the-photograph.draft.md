@@ -3,12 +3,12 @@ pack:
   id: a1-creepypasta-002
   version: 1
   type: stories
-  title: { ru: "Фотография", en: "The Photograph" }
+  title: { uk: "Фотография", en: "The Photograph" }
   level: A1
   tags: ["creepypasta", "horror", "family", "grammar:genitive", "grammar:past-tense"]
 story:
   id: the-photograph
-  title: { ru: "Фотография", en: "The Photograph" }
+  title: { uk: "Фотография", en: "The Photograph" }
   level: A1
 voice:
   - id: photo-anton-creepy
@@ -26,7 +26,7 @@ voice:
 
 ## photo-s01
 
-RU: У меня есть старая фотография.
+UK: У меня есть старая фотография.
 EN: I have an old photograph.
 GRAMMAR: possession-u-genitive
 
@@ -41,7 +41,7 @@ GRAMMAR: possession-u-genitive
 
 ## photo-s02
 
-RU: На ней мой дом и моя семья.
+UK: На ней мой дом и моя семья.
 EN: In it are my house and my family.
 GRAMMAR: prepositional-case, possessive-pronouns
 
@@ -58,7 +58,7 @@ GRAMMAR: prepositional-case, possessive-pronouns
 
 ## photo-s03
 
-RU: Мама, папа, я и бабушка.
+UK: Мама, папа, я и бабушка.
 EN: Mom, dad, me, and grandma.
 GRAMMAR: family-vocabulary
 
@@ -75,7 +75,7 @@ GRAMMAR: family-vocabulary
 
 ## photo-s04
 
-RU: Но есть проблема.
+UK: Но есть проблема.
 EN: But there is a problem.
 GRAMMAR: existential-est
 
@@ -88,7 +88,7 @@ GRAMMAR: existential-est
 
 ## photo-s05
 
-RU: В окне дома стоит человек.
+UK: В окне дома стоит человек.
 EN: In the window of the house stands a man.
 GRAMMAR: prepositional-case, genitive-case, word-order
 
@@ -103,7 +103,7 @@ GRAMMAR: prepositional-case, genitive-case, word-order
 
 ## photo-s06
 
-RU: Мы не знаем его.
+UK: Мы не знаем его.
 EN: We do not know him.
 GRAMMAR: negation, accusative-case
 
@@ -117,7 +117,7 @@ GRAMMAR: negation, accusative-case
 
 ## photo-s07
 
-RU: Его лицо белое, а глаза чёрные.
+UK: Его лицо белое, а глаза чёрные.
 EN: His face is white, and his eyes are black.
 GRAMMAR: adjective-agreement, contrast-a
 
@@ -134,7 +134,7 @@ GRAMMAR: adjective-agreement, contrast-a
 
 ## photo-s08
 
-RU: Каждый год он ближе к стеклу.
+UK: Каждый год он ближе к стеклу.
 EN: Every year he is closer to the glass.
 GRAMMAR: comparative, dative-case, time-expressions
 
@@ -150,7 +150,7 @@ GRAMMAR: comparative, dative-case, time-expressions
 
 ## photo-s09
 
-RU: Вчера я снова смотрел на фотографию.
+UK: Вчера я снова смотрел на фотографию.
 EN: Yesterday I looked at the photograph again.
 GRAMMAR: past-tense, accusative-case
 
@@ -166,7 +166,7 @@ GRAMMAR: past-tense, accusative-case
 
 ## photo-s10
 
-RU: Окно на ней пустое.
+UK: Окно на ней пустое.
 EN: The window in it is empty.
 GRAMMAR: adjective-agreement, prepositional-case
 
@@ -180,7 +180,7 @@ GRAMMAR: adjective-agreement, prepositional-case
 
 ## photo-s11
 
-RU: А сегодня утром я слышал шаги в моём доме.
+UK: А сегодня утром я слышал шаги в моём доме.
 EN: And this morning I heard footsteps in my house.
 GRAMMAR: past-tense, time-expressions, prepositional-case
 

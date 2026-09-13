@@ -1,8 +1,9 @@
+import { apostrophesIn, describeApostrophe } from './apostrophe.ts';
 import type { DraftIssue } from './errors.ts';
 
 /**
  * The sentence-block grammar shared by story drafts (T08) and dialogue drafts
- * (T25): `RU:` / `EN:` / optional `GRAMMAR:` lines followed by the 7-column
+ * (T25): `UK:` / `EN:` / optional `GRAMMAR:` lines followed by the 7-column
  * token table. Extracted from `draft.ts` so the dialogue draft parser reuses
  * the exact same grammar (per the T25 ticket: reuse, never fork) — node lines
  * and choice lines are annotated with the identical table format as story
@@ -13,7 +14,7 @@ import type { DraftIssue } from './errors.ts';
 export interface DraftTokenRow {
   /** 1-based line number of this row in the draft file. */
   line: number;
-  /** Surface form (NFC-normalized, ё preserved). */
+  /** Surface form (NFC-normalized, apostrophe kept as authored). */
   text: string;
   lemma?: string;
   translation?: string;
@@ -29,9 +30,9 @@ export interface DraftSentence {
   /** 1-based line number of the heading that opened this block. */
   line: number;
   id: string;
-  ru: string;
-  /** Line the RU: text sits on (alignment errors point here). */
-  ruLine: number;
+  uk: string;
+  /** Line the UK: text sits on (alignment errors point here). */
+  ukLine: number;
   en: string;
   grammarTopics?: string[];
   rows: DraftTokenRow[];
@@ -62,14 +63,17 @@ function isSeparatorRow(cells: string[]): boolean {
   return cells.every((c) => /^:?-+:?$/.test(c));
 }
 
-const KEY_LINE = /^(RU|EN|GRAMMAR):\s*(.*)$/;
+const KEY_LINE = /^(UK|EN|GRAMMAR):\s*(.*)$/;
+/** Sumrak's sentence line. Sutinki drafts say `UK:` (ADR-0003); name the rename instead of "unrecognized line". */
+const LEGACY_RU_LINE = /^RU:/;
 
 /**
  * Accumulates one sentence block line by line. The owning parser feeds it
  * every line it does not recognize itself; `tryLine` returns whether the line
- * belonged to the sentence grammar (RU/EN/GRAMMAR or a table row). Call
+ * belonged to the sentence grammar (UK/EN/GRAMMAR or a table row). Call
  * `finish()` when the block closes — it pushes completeness issues and
- * returns the collected sentence.
+ * returns the collected sentence. Non-fatal findings (a `UK:` line mixing
+ * apostrophe code points) go to `warnings` when the caller provides a sink.
  */
 export class SentenceBlockCollector {
   readonly sentence: DraftSentence;
@@ -83,12 +87,23 @@ export class SentenceBlockCollector {
     id: string,
     /** How error messages name this block: 'sentence "x"', 'node "x"', 'choice "x"'. */
     private readonly describe: string,
+    /** Optional sink for non-fatal findings (drafts still assemble). */
+    private readonly warnings: DraftIssue[] = [],
   ) {
-    this.sentence = { line: headingLine, id, ru: '', ruLine: headingLine, en: '', rows: [] };
+    this.sentence = { line: headingLine, id, uk: '', ukLine: headingLine, en: '', rows: [] };
   }
 
   /** Try to consume one body line as part of this sentence block. */
   tryLine(raw: string, line: string, lineNo: number): boolean {
+    if (LEGACY_RU_LINE.test(line)) {
+      this.issues.push({
+        file: this.file,
+        line: lineNo,
+        message:
+          'RU: is not a Sutinki draft line — the Ukrainian sentence line is "UK:" (the target-language key is uk, ADR-0003)',
+      });
+      return true;
+    }
     const key = KEY_LINE.exec(line);
     if (key) {
       const value = key[2]!.trim().normalize('NFC');
@@ -100,13 +115,23 @@ export class SentenceBlockCollector {
         });
         return true;
       }
-      if (key[1] === 'RU') {
-        if (this.sentence.ru !== '')
-          this.issues.push({ file: this.file, line: lineNo, message: 'duplicate RU: line' });
+      if (key[1] === 'UK') {
+        if (this.sentence.uk !== '')
+          this.issues.push({ file: this.file, line: lineNo, message: 'duplicate UK: line' });
         if (value === '')
-          this.issues.push({ file: this.file, line: lineNo, message: 'RU: line is empty' });
-        this.sentence.ru = value;
-        this.sentence.ruLine = lineNo;
+          this.issues.push({ file: this.file, line: lineNo, message: 'UK: line is empty' });
+        this.sentence.uk = value;
+        this.sentence.ukLine = lineNo;
+        const apostrophes = apostrophesIn(value);
+        if (apostrophes.length > 1) {
+          this.warnings.push({
+            file: this.file,
+            line: lineNo,
+            message:
+              `${this.describe} mixes apostrophe code points (${apostrophes.map(describeApostrophe).join(', ')}) — ` +
+              'use one apostrophe throughout; U+0027 is the convention',
+          });
+        }
       } else if (key[1] === 'EN') {
         if (this.sentence.en !== '')
           this.issues.push({ file: this.file, line: lineNo, message: 'duplicate EN: line' });
@@ -195,11 +220,11 @@ export class SentenceBlockCollector {
 
   /** Close the block: push completeness issues, return the collected sentence. */
   finish(): DraftSentence {
-    if (this.sentence.ru === '') {
+    if (this.sentence.uk === '') {
       this.issues.push({
         file: this.file,
         line: this.sentence.line,
-        message: `${this.describe} has no RU: line`,
+        message: `${this.describe} has no UK: line`,
       });
     }
     if (this.sentence.en === '') {

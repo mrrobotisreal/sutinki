@@ -11,7 +11,7 @@ import { SentenceBlockCollector, type DraftSentence } from './sentence-block.ts'
  * error, never silently skipped — because drafts are written by Claude
  * sessions and silent tolerance would hide authoring mistakes.
  *
- * The sentence-block grammar itself (RU/EN/GRAMMAR + token table) lives in
+ * The sentence-block grammar itself (UK/EN/GRAMMAR + token table) lives in
  * `sentence-block.ts`, shared verbatim with the dialogue draft parser (T25).
  */
 
@@ -25,9 +25,11 @@ export interface ParsedDraft {
   file: string;
   frontmatter: Frontmatter;
   sentences: DraftSentence[];
+  /** Non-fatal findings (e.g. mixed apostrophes in one `UK:` line); the draft still assembles. */
+  warnings: DraftIssue[];
 }
 
-/** NFC-normalize every string in a parsed YAML value (ё is preserved: NFC never folds ё→е). */
+/** NFC-normalize every string in a parsed YAML value (the apostrophe is kept as authored: NFC never rewrites U+0027, U+2019 or U+02BC). */
 export function normalizeDeep(value: unknown): unknown {
   if (typeof value === 'string') return value.normalize('NFC');
   if (Array.isArray(value)) return value.map(normalizeDeep);
@@ -104,6 +106,7 @@ export function parseFrontmatterWith<T>(
  */
 export function parseDraft(file: string, source: string): ParsedDraft {
   const issues: DraftIssue[] = [];
+  const warnings: DraftIssue[] = [];
   const { fmText, lines, fmEnd } = splitFrontmatter(file, source);
   const frontmatter = parseFrontmatterWith(file, fmText, FrontmatterSchema, issues);
 
@@ -138,7 +141,7 @@ export function parseDraft(file: string, source: string): ParsedDraft {
       }
       closeSentence();
       const id = heading[1]!.trim().normalize('NFC');
-      open = new SentenceBlockCollector(file, issues, lineNo, id, `sentence "${id}"`);
+      open = new SentenceBlockCollector(file, issues, lineNo, id, `sentence "${id}"`, warnings);
       continue;
     }
 
@@ -156,7 +159,7 @@ export function parseDraft(file: string, source: string): ParsedDraft {
     issues.push({
       file,
       line: lineNo,
-      message: `unrecognized line (expected "## <id>", "RU:", "EN:", "GRAMMAR:", a "|" table row, or a blank line): "${line}"`,
+      message: `unrecognized line (expected "## <id>", "UK:", "EN:", "GRAMMAR:", a "|" table row, or a blank line): "${line}"`,
     });
   }
   closeSentence();
@@ -167,5 +170,5 @@ export function parseDraft(file: string, source: string): ParsedDraft {
   if (issues.length > 0) throw new DraftError(issues);
 
   // frontmatter is defined here: its failure always pushes issues.
-  return { file, frontmatter: frontmatter as Frontmatter, sentences };
+  return { file, frontmatter: frontmatter as Frontmatter, sentences, warnings };
 }
