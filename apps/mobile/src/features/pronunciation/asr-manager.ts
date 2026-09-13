@@ -19,7 +19,10 @@ import { useAsrStore } from './asr-store';
  * extraction, failures leave no partial install behind, and the ~60 MB
  * archive never transits JS memory (native hash + extract). T23: the
  * archive source resolves through the same shared model resolver the TTS
- * manager uses (content repo first, pinned k2-fsa URL as fallback).
+ * manager uses (content repo first, pinned k2-fsa URL as fallback) — for
+ * the Ukrainian model that resolver finds no manifest entry (`mirrored:
+ * false`, > 100 MB) and proceeds straight to the pinned upstream URL; that
+ * is the intended path, not a degraded one (UT06, ADR-0005).
  */
 
 const ASR_DIR = 'asr-models';
@@ -32,7 +35,7 @@ export function asrModelDir(): Directory {
   return new Directory(Paths.document, ASR_DIR, ASR_MODEL.dirName);
 }
 
-/** The four paths sherpa-onnx needs to load the transducer recognizer. */
+/** The four paths sherpa-onnx needs to load a transducer recognizer (Zipformer or NeMo). */
 export function asrModelPaths() {
   const dir = asrModelDir();
   return {
@@ -99,6 +102,7 @@ async function doInstall(): Promise<void> {
       modelId: ASR_MODEL.id,
       bytes: ASR_MODEL.archiveBytes,
       source: specs[0]!.source,
+      mirrored: ASR_MODEL.mirrored,
     });
 
     const downloaded = await downloadModelArchive(specs, archiveFile, (phase, progress) => {

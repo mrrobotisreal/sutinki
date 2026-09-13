@@ -17,9 +17,11 @@ import { SessionShell } from '@/features/review/session-shell';
 import { SummaryView } from '@/features/review/summary-view';
 import { ratingCountsAsCorrect } from '@/features/review/mapping';
 import { track } from '@/services/analytics';
+import { formatBytes } from '@/features/tts/catalog';
 import { logError } from '@/services/error-log';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { ASR_MODEL } from './asr-catalog';
 import { isAsrInstalled } from './asr-manager';
 import { preloadAsr } from './asr-service';
 import { PronunciationView } from './pronunciation-view';
@@ -222,10 +224,11 @@ export function PronunciationSessionScreen() {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
         <Ionicons name="cloud-download-outline" size={40} color={tokens.textMuted} />
-        <Text className="text-center font-ui-medium text-lg">Speech recognition needed</Text>
+        <Text className="text-center font-ui-medium text-lg">Потрібна модель розпізнавання</Text>
         <Text variant="muted" className="text-center">
-          Pronunciation practice runs fully offline, but the Ukrainian recognition model (~60 MB)
-          has to be downloaded once in Settings → Voices &amp; speech.
+          Тренування вимови працює без інтернету, але модель розпізнавання українського мовлення (~
+          {formatBytes(ASR_MODEL.archiveBytes)}) треба один раз завантажити в Налаштуваннях →
+          Розпізнавання мовлення.
         </Text>
         <Pressable
           onPress={() => {
@@ -235,7 +238,7 @@ export function PronunciationSessionScreen() {
           accessibilityRole="button"
           className="mt-2 rounded-full bg-accent px-5 py-2.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Open settings</Text>
+          <Text className="font-ui-medium text-bg">Відкрити налаштування</Text>
         </Pressable>
       </View>
     );

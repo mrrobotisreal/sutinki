@@ -75,12 +75,12 @@ const fakeDownloader: Downloader = async (url, dest) => {
 };
 
 describe('MIRROR_MODELS data', () => {
-  it('covers exactly the three pinned archives (2 uk_UA TTS + 1 ASR), unique ids + hashes', () => {
-    expect(MIRROR_MODELS).toHaveLength(3);
+  it('covers exactly the two pinned uk_UA TTS archives (no ASR row: > 100 MB, ADR-0005), unique ids + hashes', () => {
+    expect(MIRROR_MODELS).toHaveLength(2);
     expect(MIRROR_MODELS.filter((m) => m.kind === 'tts-voice')).toHaveLength(2);
-    expect(MIRROR_MODELS.filter((m) => m.kind === 'asr')).toHaveLength(1);
-    expect(new Set(MIRROR_MODELS.map((m) => m.id)).size).toBe(3);
-    expect(new Set(MIRROR_MODELS.map((m) => m.sha256)).size).toBe(3);
+    expect(MIRROR_MODELS.filter((m) => m.kind === 'asr')).toHaveLength(0);
+    expect(new Set(MIRROR_MODELS.map((m) => m.id)).size).toBe(2);
+    expect(new Set(MIRROR_MODELS.map((m) => m.sha256)).size).toBe(2);
     for (const m of MIRROR_MODELS) {
       expect(m.sha256).toMatch(/^[a-f0-9]{64}$/);
       // Every archive must clear GitHub's 100 MB hard per-file limit (ticket risk note).

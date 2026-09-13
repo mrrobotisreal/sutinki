@@ -25,13 +25,18 @@ export async function ensureAsrLoaded(): Promise<void> {
   const paths = asrModelPaths();
   const result = await SherpaSpeech.loadAsr(
     ASR_MODEL.id,
+    ASR_MODEL.modelType,
     paths.encoderPath,
     paths.decoderPath,
     paths.joinerPath,
     paths.tokensPath,
   );
   if (!result.alreadyLoaded) {
-    track('asr_loaded', { modelId: ASR_MODEL.id, loadMs: result.loadMs });
+    track('asr_loaded', {
+      modelId: ASR_MODEL.id,
+      modelType: ASR_MODEL.modelType,
+      loadMs: result.loadMs,
+    });
   }
 }
 

@@ -66,16 +66,15 @@ function piperMirror(
 /**
  * The exact archives pinned in the app catalogs: the two Piper `uk_UA`
  * voices (`features/tts/catalog.ts`, UT05 — hashes computed from the
- * downloaded archives on 2026-09-13) plus the ASR model
- * (`features/pronunciation/asr-catalog.ts`). A test in the app repo pins
- * that both sources claim the same sha256 per model id — change either side
- * only in lockstep.
+ * downloaded archives on 2026-09-13). A test in the app repo pins that both
+ * sources claim the same sha256 per voice id — change either side only in
+ * lockstep.
  *
- * TODO(UT06): the ASR row is still the Russian Zipformer the app catalog
- * pins at the fork. It stays here — not excluded — so the pin test keeps
- * asserting the whole catalog ⇔ mirror pairing; UT06 replaces both sides
- * together (and, per ADR-0005, the Ukrainian ASR is > 100 MB, so UT06 also
- * decides whether an ASR row belongs in the mirror list at all).
+ * No ASR row (UT06, ADR-0005): every Ukrainian-capable sherpa-onnx ASR
+ * archive exceeds GitHub's 100 MB per-file cap, so the app's ASR catalog
+ * (`features/pronunciation/asr-catalog.ts`, `mirrored: false`) installs from
+ * the upstream k2-fsa release asset only. Moving it to a `sutinki-content`
+ * GitHub Release is a later, deliberate ticket — ADR-0005 "Hosting".
  */
 export const MIRROR_MODELS: readonly MirrorModel[] = [
   piperMirror(
@@ -92,15 +91,6 @@ export const MIRROR_MODELS: readonly MirrorModel[] = [
     '92be6ff21ebb1cbcc0c71121a6437db8d060cee5785287aaa6a19a2548f59c03',
     80_355_083,
   ),
-  {
-    id: 'zipformer-ru-int8',
-    kind: 'asr',
-    upstreamUrl:
-      'https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-zipformer-ru-int8-2025-04-20.tar.bz2',
-    sha256: 'd6a651569aacc9a177259fa54705dd76acae23f6a4d62ea6797bd220d4b57163',
-    bytes: 60_239_942,
-    displayName: 'Russian speech recognition',
-  },
 ] as const;
 
 /** Repo-relative path an archive mirrors to: models/{tts,asr}/<upstream filename>. */

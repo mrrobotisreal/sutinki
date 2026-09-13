@@ -45,8 +45,13 @@ import kotlin.math.sqrt
  * out-of-range sid is clamped to 0 here so a stale JS selection can never
  * crash synthesis.
  *
- * ASR (T12): offline Zipformer transducer (Russian), one recognizer loaded at
- * a time on its own executor so recognition never queues behind synthesis.
+ * ASR (T12 → UT06): one offline transducer recognizer loaded at a time on
+ * its own executor so recognition never queues behind synthesis. The model
+ * *family* is a parameter of loadAsr (`modelType`): "transducer" for the
+ * icefall Zipformer exports, "nemo_transducer" for NVIDIA NeMo
+ * fast-conformer exports — both use OfflineTransducerModelConfig, sherpa only
+ * needs to know which decoder/joiner conventions to apply. UT06's bake-off
+ * picked the NeMo multilingual fast-conformer int8 for Ukrainian (ADR-0005).
  * Mic capture is done here too (AudioRecord → 16 kHz mono PCM16 WAV): Android
  * has no WAV MediaRecorder output, and the ASR models want exactly this
  * format, so recording anywhere else would just add a transcode step.
@@ -319,11 +324,13 @@ class SherpaSpeechModule : Module() {
     // ---- ASR (T12, design §6) ----
 
     /**
-     * Load the offline Zipformer transducer recognizer. Same contract as
-     * loadVoice: resolves with load time, same-id reload is a no-op, one
-     * recognizer at a time.
+     * Load an offline transducer recognizer. Same contract as loadVoice:
+     * resolves with load time, same-id reload is a no-op, one recognizer at a
+     * time. `modelType` selects sherpa's transducer flavour ("transducer" =
+     * Zipformer, "nemo_transducer" = NeMo fast-conformer); anything else is
+     * rejected here rather than deep inside the JNI layer.
      */
-    AsyncFunction("loadAsr") { asrId: String, encoderPath: String, decoderPath: String, joinerPath: String, tokensPath: String, promise: Promise ->
+    AsyncFunction("loadAsr") { asrId: String, modelType: String, encoderPath: String, decoderPath: String, joinerPath: String, tokensPath: String, promise: Promise ->
       asrExecutor.execute {
         try {
           if (loadedAsrId == asrId && asr != null) {
@@ -334,6 +341,9 @@ class SherpaSpeechModule : Module() {
           asr = null
           loadedAsrId = null
 
+          if (modelType !in SUPPORTED_ASR_MODEL_TYPES) {
+            throw CodedException("ERR_ASR_MODEL_TYPE", "unsupported ASR model type '$modelType' for $asrId", null)
+          }
           val encoder = File(stripFileUri(encoderPath))
           val decoder = File(stripFileUri(decoderPath))
           val joiner = File(stripFileUri(joinerPath))
@@ -355,16 +365,16 @@ class SherpaSpeechModule : Module() {
               numThreads = 2,
               debug = false,
               provider = "cpu",
-              modelType = "transducer",
+              modelType = modelType,
             ),
             // greedy_search is the mode that emits per-token timestamps.
             decodingMethod = "greedy_search",
           )
           asr = OfflineRecognizer(config = config)
           loadedAsrId = asrId
-          promise.resolve(
-            mapOf("loadMs" to (SystemClock.elapsedRealtime() - t0), "alreadyLoaded" to false),
-          )
+          val loadMs = SystemClock.elapsedRealtime() - t0
+          Log.i(TAG, "asr loaded: $asrId type=$modelType loadMs=$loadMs")
+          promise.resolve(mapOf("loadMs" to loadMs, "alreadyLoaded" to false))
         } catch (t: Throwable) {
           promise.reject(asCoded("ERR_ASR_LOAD", t))
         }
@@ -577,12 +587,17 @@ class SherpaSpeechModule : Module() {
           ).use { tar ->
             while (true) {
               val entry = tar.nextEntry ?: break
-              val out = File(dest, entry.name)
+              // UT06: the k2-fsa NeMo archives are packed as `./<dir>/…` (the
+              // Piper ones as `<dir>/…`) — normalize so rootDir is the real
+              // directory, not ".".
+              val name = normalizeTarEntryName(entry.name)
+              if (name.isEmpty()) continue
+              val out = File(dest, name)
               if (!out.canonicalPath.startsWith(destCanonical + File.separator)) {
                 throw CodedException("ERR_EXTRACT", "archive entry escapes destination: ${entry.name}", null)
               }
               if (rootDir == null) {
-                rootDir = entry.name.trimStart('/').substringBefore('/')
+                rootDir = name.substringBefore('/')
               }
               if (entry.isDirectory) {
                 out.mkdirs()
@@ -766,11 +781,19 @@ class SherpaSpeechModule : Module() {
   ): List<Map<String, Any>> {
     data class W(val text: StringBuilder, val startMs: Long)
     val words = mutableListOf<W>()
+    // NeMo BPE vocabularies emit a standalone " " piece between some words
+    // (the following piece then carries no marker of its own) — remember it
+    // so the next piece opens a new word instead of gluing onto the last.
+    var pendingBoundary = false
     for (i in tokens.indices) {
       val raw = tokens[i]
-      val isBoundary = raw.startsWith("▁") || raw.startsWith(" ")
+      val isBoundary = raw.startsWith("▁") || raw.startsWith(" ") || pendingBoundary
       val text = raw.trimStart('▁', ' ')
-      if (text.isEmpty()) continue
+      if (text.isEmpty()) {
+        pendingBoundary = true
+        continue
+      }
+      pendingBoundary = false
       val ts = if (i < timestamps.size) (timestamps[i] * 1000).toLong() else audioMs
       if (isBoundary || words.isEmpty()) {
         words.add(W(StringBuilder(text), ts))
@@ -849,8 +872,17 @@ class SherpaSpeechModule : Module() {
 
   private companion object {
     const val TAG = "SherpaSpeech"
+    /** Transducer flavours the loadAsr path supports (both via OfflineTransducerModelConfig). */
+    val SUPPORTED_ASR_MODEL_TYPES = setOf("transducer", "nemo_transducer")
     /** Drain ends when the playback head has not moved for this long (all audio is written by then). */
     const val DRAIN_STALL_MS = 750L
+  }
+
+  /** Strip leading "/" and any number of leading "./" segments from a tar entry name. */
+  private fun normalizeTarEntryName(raw: String): String {
+    var name = raw.trimStart('/')
+    while (name.startsWith("./")) name = name.removePrefix("./").trimStart('/')
+    return name.trimEnd('/')
   }
 
   private fun asCoded(code: String, t: Throwable): CodedException =

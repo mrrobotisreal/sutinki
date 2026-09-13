@@ -80,6 +80,7 @@ export type AnalyticsEvent =
   | 'asr_model_deleted'
   | 'asr_loaded'
   | 'asr_transcribed'
+  | 'dev_asr_probe'
   | 'pron_mic_permission_denied'
   | 'pron_session_needs_model'
   | 'pron_session_empty'

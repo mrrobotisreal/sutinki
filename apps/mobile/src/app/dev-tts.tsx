@@ -1,8 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
+import { File } from 'expo-file-system';
 import * as React from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
+import { transcribeWav } from '@/features/pronunciation/asr-service';
+import { isAsrInstalled } from '@/features/pronunciation/asr-manager';
+import { scoreAttempt } from '@/features/pronunciation/scoring';
 import { formatBytes, PIPER_VOICES, SYSTEM_VOICE_ID } from '@/features/tts/catalog';
 import { speakWithInfo, stopSpeaking, type SpeakOutcome } from '@/features/tts/service';
 import { useTtsStore } from '@/features/tts/store';
@@ -31,6 +35,45 @@ export default function DevTtsScreen() {
     null,
   );
   const [busy, setBusy] = React.useState(false);
+
+  // UT06 dev ASR probe: transcribe any 16 kHz mono WAV already on the device
+  // (pushed via adb) with the installed recognizer and score it against the
+  // text box — the deterministic verification path when the speaker→mic
+  // round-trip is too noisy to trust.
+  const [wavPath, setWavPath] = React.useState('/data/local/tmp/probe.wav');
+  const [asrOutcome, setAsrOutcome] = React.useState<string>('');
+  const runAsr = React.useCallback(() => {
+    setAsrOutcome('…');
+    // Reference = a `<wav>.txt` sidecar when one exists (batch probing from
+    // adb without typing Cyrillic), else the text box.
+    let reference = text;
+    try {
+      const uri = wavPath.startsWith('file://') ? wavPath : `file://${wavPath}`;
+      const sidecar = new File(`${uri}.txt`);
+      if (sidecar.exists) reference = sidecar.textSync().trim();
+    } catch {
+      // no sidecar — fall back to the text box
+    }
+    void transcribeWav(wavPath)
+      .then((r) => {
+        const scored = scoreAttempt(reference, r.text);
+        const words = r.words.map((w) => `${w.word}@${w.startMs}`).join(' ');
+        const line = `«${r.text.trim()}» · decode ${r.decodeMs} ms / audio ${r.audioMs} ms · ${r.words.length} words · score vs «${reference}» ${scored.score}% (${scored.matchedCount}/${scored.totalCount})`;
+        track('dev_asr_probe', {
+          wav: wavPath,
+          reference,
+          transcript: r.text.trim(),
+          score: scored.score,
+          matched: scored.matchedCount,
+          total: scored.totalCount,
+          decodeMs: r.decodeMs,
+          audioMs: r.audioMs,
+          words: r.words.length,
+        });
+        setAsrOutcome(`${line}\n${words}`);
+      })
+      .catch((err) => setAsrOutcome(`error: ${err instanceof Error ? err.message : String(err)}`));
+  }, [wavPath, text]);
 
   const effectiveVoice = choice?.voiceId ?? selectedVoiceId;
   const effectiveSid = choice?.sid ?? selectedSid;
@@ -221,6 +264,35 @@ export default function DevTtsScreen() {
           ))
         )}
       </View>
+
+      <Text variant="caption" className="mb-2 mt-8 uppercase tracking-wider">
+        ASR probe (UT06)
+      </Text>
+      <TextInput
+        value={wavPath}
+        onChangeText={setWavPath}
+        className="rounded-xl border border-border bg-surface px-4 py-3 text-text"
+        placeholder="/data/local/tmp/probe.wav"
+        placeholderTextColor={tokens.textMuted}
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+      <Pressable
+        onPress={runAsr}
+        disabled={!isAsrInstalled()}
+        accessibilityRole="button"
+        accessibilityLabel="Transcribe WAV"
+        className="mt-3 items-center rounded-full bg-surface-2 px-5 py-3 active:bg-border"
+      >
+        <Text className="font-ui-medium text-accent">
+          {isAsrInstalled() ? 'Transcribe WAV + score vs text' : 'ASR model not installed'}
+        </Text>
+      </Pressable>
+      {asrOutcome.length > 0 && (
+        <Text variant="caption" className="mt-2 font-mono">
+          {asrOutcome}
+        </Text>
+      )}
     </ScrollView>
   );
 }

@@ -35,6 +35,9 @@ export interface ExtractResult {
   bytes: number;
 }
 
+/** Transducer flavours the native loadAsr accepts (UT06; mirrors SUPPORTED_ASR_MODEL_TYPES). */
+export type AsrModelType = 'transducer' | 'nemo_transducer';
+
 export interface LoadAsrResult {
   loadMs: number;
   alreadyLoaded: boolean;
@@ -83,8 +86,10 @@ declare class SherpaSpeechNativeModule extends NativeModule<SherpaSpeechEvents> 
     rate: number,
     outPath: string,
   ): Promise<SynthesizeResult>;
+  /** `modelType` = sherpa transducer flavour: 'transducer' (Zipformer) | 'nemo_transducer' (NeMo). */
   loadAsr(
     asrId: string,
+    modelType: AsrModelType,
     encoderPath: string,
     decoderPath: string,
     joinerPath: string,
