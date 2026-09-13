@@ -2,7 +2,9 @@
 
 **This document is self-contained.** If you are a Claude session asked to author a new Ukrainian story draft, everything you need is here: the draft file grammar, the annotation rules, the lemma conventions, the apostrophe rule, the grammar-tag canon, the gotchas, and a complete worked example. You do not need the app, the design doc, or network access — only this doc and the `pipeline` CLI.
 
-Sutinki is the Ukrainian twin of Сумрак (Sumrak). The draft format is Sumrak's with the target-language key renamed `ru` → `uk` end to end (ADR-0003): the sentence line is `UK:`, every bilingual field is `{ uk, en }`, and the text rules are Ukrainian (ADR-0004). A `RU:` line is an error, never silently accepted.
+Sutinki is the Ukrainian twin of Сумрак (Sumrak). The draft _format_ is Sumrak's with the target-language key renamed `ru` → `uk` end to end (ADR-0003): the sentence line is `UK:`, every bilingual field is `{ uk, en }`, and the text rules are Ukrainian (ADR-0004). A `RU:` line is an error, never silently accepted.
+
+The _conventions_ in this document — level, sentence shape, lemma rules, tag names — are calibrated to the Ukrainian sources Mitch had authored to his specification (`UkrainianStories/*/A1/*_UK.md` and the `*.uk.draft.md` annotations), **not** to Sumrak's Russian rungs. Where this doc and a Sumrak habit disagree, this doc wins; where this doc and one of those sources disagree, the source wins and this doc gets fixed.
 
 ## What a draft is
 
@@ -110,7 +112,7 @@ pack: # OPTIONAL next to drafts (must equal their pack meta);
 lesson: # lesson META — its `body` is the markdown BELOW the fence
   id: unit-lesson
   title: { uk: 'Урок', en: 'Lesson' }
-  grammarTopics: [prepositional-location]
+  grammarTopics: [locative-location]
 prompts:
   - id: prompt-1
     level: A1
@@ -231,7 +233,7 @@ Also allowed in the body: blank lines, single-line HTML comments (`<!-- … -->`
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
 | `text`        | **Required.** The surface form exactly as it appears in the sentence, capitalization and apostrophe included.                                                                                                                                                                                                                                                                                                                                             | The punctuation mark itself |
 | `lemma`       | **Required.** Dictionary form: nominative singular for nouns/adjectives, imperfective infinitive in **-ти** for verbs (see the lemma conventions below).                                                                                                                                                                                                                                                                                                  | Must be empty               |
-| `translation` | **Required.** Context-appropriate English gloss of _this occurrence_ («вдома» in «вікно вдома» → "at home" only if that is what it means _here_).                                                                                                                                                                                                                                                                                                         | Must be empty               |
+| `translation` | **Required.** Context-appropriate English gloss of _this occurrence_ («стоїть» in «Будинок стоїть за містом» is "stands", never "costs").                                                                                                                                                                                                                                                                                                                 | Must be empty               |
 | `pos`         | Recommended. `noun`, `verb`, `adj`, `adv`, `pron`, `prep`, `conj`, `part`, `pred`, `num`, `name`, `interj`. `pred` covers impersonal predicatives — «страшно», «холодно», «треба», «можна», «шкода» in dative-experiencer sentences («мені страшно»), and existential «є» / «немає». «мушу» / «мусити» (_must_) is a `verb`. A short-form adjective with an explicit subject stays `adj` with "short form" noted in `grammar` («я радий», «він готовий»). | Must be empty               |
 | `grammar`     | Recommended. Compact notes: `f.sg. nom.`, `1sg. pres. (impf.)`, `+ gen.`, `pf. of казати`, `m.sg. voc.`.                                                                                                                                                                                                                                                                                                                                                  | Must be empty               |
 | `level`       | Recommended. CEFR level **of the lemma** (`A1`–`C1`), not of the surface form or the sentence.                                                                                                                                                                                                                                                                                                                                                            | Must be empty               |
@@ -245,17 +247,17 @@ Also allowed in the body: blank lines, single-line HTML comments (`<!-- … -->`
 
 Ukrainian has seven cases; abbreviate them consistently — the column renders in the tap-word popup:
 
-| Case             | Abbrev.  | Example row                                           |
-| ---------------- | -------- | ----------------------------------------------------- |
-| називний (nom.)  | `nom.`   | «кіт» → `m.sg. nom.`                                  |
-| родовий (gen.)   | `gen.`   | «кота» in «немає кота» → `m.sg. gen. (after немає)`   |
-| давальний (dat.) | `dat.`   | «мені» → `dat. (experiencer)`                         |
-| знахідний (acc.) | `acc.`   | «кота» in «бачу кота» → `m.sg. acc. (animate = gen.)` |
-| орудний (instr.) | `instr.` | «з дружиною» → `f.sg. instr. (after з)`               |
-| місцевий (loc.)  | `loc.`   | «у квартирі» → `f.sg. loc. (after у)`                 |
-| кличний (voc.)   | `voc.`   | «Мамо!» → `f.sg. voc.`; «Девіде», «Дідусю»            |
+| Case             | Abbrev.  | Example row                                                                                                       |
+| ---------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| називний (nom.)  | `nom.`   | «кіт» → `m.sg. nom.`                                                                                              |
+| родовий (gen.)   | `gen.`   | «кота» in «немає кота» → `m.sg. gen. (after немає)`                                                               |
+| давальний (dat.) | `dat.`   | «мені» → `dat. (experiencer)`                                                                                     |
+| знахідний (acc.) | `acc.`   | «кота» in «бачу кота» → `m.sg. acc. (animate = gen.)`                                                             |
+| орудний (instr.) | `instr.` | «з дружиною» → `f.sg. instr. (after з)`                                                                           |
+| місцевий (loc.)  | `loc.`   | «у квартирі» → `f.sg. loc. (after у)`                                                                             |
+| кличний (voc.)   | `voc.`   | «Мамо!» → `f.sg. voc. (address)`; «Девіде», «Дідусю»; an indeclinable name in address → `voc. (address; indecl.)` |
 
-The **vocative** is real and frequent in dialogue («Лінн!», «Крісе!», «синку»); annotate it as `voc.` with the nominative as lemma and tag the sentence `vocative-case`. The locative is what Russian calls prepositional; the coverage **tag** stays `prepositional-location` (a dashboard key), while the **grammar cell** says `loc.`.
+The **vocative** is real and frequent in dialogue («Лінн!», «Крісе!», «синку»); annotate it as `voc.` with the nominative as lemma and tag the sentence `vocative-case`. The locative is what Russian calls prepositional; both the **grammar cell** (`loc.`) and the coverage **tag** (`locative-location`) use the Ukrainian name.
 
 ### The alignment rule (most important)
 
@@ -277,18 +279,21 @@ Ukrainian's apostrophe («п'ять», «ім'я», «м'ясо», «сім'я»
 
 ## Lemma conventions
 
-1. **Verbs → imperfective infinitive in -ти**, with the aspect noted in `grammar` (`1sg. pres. (impf.)`, `3sg. past m. (impf.)`). For a **perfective** form, the lemma is the **perfective infinitive** and `grammar` says `pf. of <impf.>`: «сказала» → lemma «сказати», grammar `3sg. past f.; pf. of казати`. **Reflexive -ся stays in the lemma**: «дивиться» → «дивитися», «усміхається» → «усміхатися», «з'явився» → «з'явитися» (`pf. of з'являтися`). Colloquial «-сь» surface forms («дивлюсь») still lemmatize to the «-ся» infinitive.
-2. **Nouns → nominative singular**; plurale tantum stays plural («двері», «окуляри», «гроші») with a `pl. only` note in `grammar`. **Adjectives → masculine nominative singular** («стара» → «старий», «моїй» → «мій»).
-3. **Personal pronoun forms → their nominative**: «мене», «мені», «мною» → «я»; «неї», «її» (_her_, object) → «вона»; «його» (_him_) → «він»; «нас» → «ми»; «їх» (_them_) → «вони».
-4. **Possessives**: non-declining «його / її / їх(ній)» (_his / her / their_) → itself, tagged `pron`; declining «мій / твій / наш / ваш / свій» → masculine nominative singular («моїй» → «мій», «своєї» → «свій»), tagged `pron`, with adjective-style grammar (`f.sg. loc.`).
-5. **Pronoun-adjectives** («цей», «той», «кожен», «весь», «такий», «який») → masculine nominative singular, tagged `pron`, adjective-style grammar (`m.sg. acc. (time expression)`).
-6. **Numerals**, cardinal and ordinal («п'ять», «дев'ятий», «п'ятсот») → tagged `num`, lemma = nominative («п'ять», «дев'ятий»); note the **case government on the governed noun's row**: «п'ятсот доларів» → the «доларів» row says `m.pl. gen. (after 5+)`; «два коти» → `m.pl. nom. (after 2–4)`.
-7. **Adverbs stay adverbs**, even when historically a frozen noun form: «вдома» → «вдома» (not «дім»), «вранці» → «вранці», «вночі» → «вночі», «додому» → «додому».
-8. **«як»** as comparison (_like_) → `conj`; «що» / «коли» / «де» / «бо» opening a subordinate clause → `conj`.
-9. **«є» / «немає» / «нема»** → `pred` (existential); «є» as the copula in «він є лікар» is rare and bookish — early-A1 Ukrainian drops the copula (`zero-copula`).
-10. **Modal «мушу / мусиш / мусить»** → lemma «мусити», `verb`, tag `modal-musyty`. «треба» / «можна» / «не можна» → `pred`.
-11. **Proper names** («Бен», «Лінн», «Аліна») → `name`, lemma = nominative with its capital; a vocative form («Крісе», «Лінн») keeps lemma «Кріс» / «Лінн» and grammar `voc.`.
-12. **Interjections and particles** («так», «ні», «ой», «ну», «же», «ж», «не») → `part` / `interj`, lemma = itself; `level` A1 as a rule.
+These are the conventions the existing Ukrainian drafts follow; copy their cells when in doubt.
+
+1. **Verbs → imperfective infinitive in -ти**, aspect in `grammar`. Cell formats used: `1sg. pres. (impf.)`, `3pl. pres. (impf.)`, `2sg. imper. (impf.)`, `infinitive (impf.)`; past = `1sg.m. past (impf.)` / `3sg.f. past (impf.)`. A **perfective** form takes the **perfective infinitive** as lemma and `pf. of <impf.>` in grammar: «закінчилася» → lemma «закінчитися», grammar `3sg.f. past; pf. of закінчуватися`; «минув» → «минути», `m.sg. past (pf. of минати)`. **Reflexive -ся stays in the lemma** and is named in the cell: «дивиться» → «дивитися», `3sg. pres. (impf., reflexive)`; «боюся» → «боятися»; «усміхається» → «усміхатися». Colloquial «-сь» surfaces («дивлюсь») still lemmatize to the «-ся» infinitive. «йду / йде / йдуть / іди» → lemma **«іти»** (not «йти»).
+2. **«Мене звати Бен.»** — the naming construction uses the infinitive: «звати» is a `verb`, grammar `infinitive (impf.); impersonal naming construction`; «Мене» is `pron`, lemma «я», `acc.`; note «also common: Мене звуть Бен».
+3. **Nouns → nominative singular**; plurale tantum stays plural («двері», «окуляри», «гроші») with `pl. nom.; pluralia tantum` in grammar. **Adjectives → masculine nominative singular** («стара» → «старий», «моїй» → «мій»). A substantivized adjective («у ванній») is a noun-like cell: `f.sg. loc. (substantivized adj)`.
+4. **Personal pronoun forms → their nominative**: «мене», «мені», «мною» → «я»; «неї», «її» (_her_, object; «її немає») → «вона» with `gen. (object of немає)`; «нього» → «він»; «нас» → «ми». «це» is `pron`, lemma «це», `n.sg. nom.` (add `(demonstrative)` when it opens a «Це …» sentence); «що» → `acc.` / `nom.` as used; «хтось» / «ніщо» stay themselves (`indefinite-pronouns`).
+5. **Possessives**: indeclinable «його / її / їх» (_his / her / their_) → itself, `pron`, grammar `possessive, indeclinable`; declining «мій / твій / наш / ваш / свій» → masculine nominative singular («моєї» → «мій», `f.sg. gen.`), `pron`, adjective-style grammar.
+6. **Pronoun-adjectives** («цей», «той», «кожен», «весь», «такий», «який», «сам») → masculine nominative singular, `pron`, adjective-style grammar (`m.sg. acc. (time expression)`, `m.sg. nom. (used predicatively = alone)`).
+7. **Numerals** («два», «три», «п'ять», «сорок», ordinals «другий») → `num`, lemma = nominative. **Ukrainian 2–4 take the NOMINATIVE plural** (unlike Russian's genitive singular): «два місяці» → the «місяці» row says `m.pl. nom. (after два/три/чотири)`; «три дні» → `m.pl. nom. (after три)`; tag `numbers-nominative-plural`. **5+ take the genitive plural**: «шість років» → `m.pl. gen. (after 5+)`, «сорок хвилин» → `f.pl. gen. (after сорок)`; tag `numbers-genitive`. «один» agrees like an adjective («одну годину» → `f.sg. acc. (duration expression)`). Put the case government on the **noun's** row; the numeral's own cell is just `nom.` / `m. nom.`.
+8. **Adverbs stay adverbs**, even when historically a frozen noun form: «вдома» → «вдома» (not «дім»), «увечері» → «увечері», «вночі», «додому»; «повільно» → «повільно» (never the adjective «повільний»).
+9. **Prepositions**: hyphenated «з-за» is one `prep` token, lemma «з-за», `+ gen. (spatial)`; «у / в», «на» take `+ loc. (location)` or `+ acc. (direction)` — write which; «з / зі / із» + instr. → `+ instr.`.
+10. **Conjunctions and particles**: «і / й / та» → `conj`; «як» as comparison → `conj`, grammar `comparison`; «що / коли / де / бо» opening a clause → `conj`; «не» → `part`, grammar `negation`; «тільки», «ж», «же», «ні» → `part`. `level` A1.
+11. **Predicatives → `pred`**: «немає» (`+ gen. = there is no …`), «є» (existential), «страшно / холодно / темно / дивно / погано» (`impersonal predicative`, add `+ dat. (мені страшно = I'm scared)` when the experiencer is present), «треба» (`impersonal predicate + dat. + infinitive`), «можна / не можна». «мушу / мусиш / мусить» → lemma «мусити», `verb`, tag `modal-musyty`.
+12. **Names → `name`, lemma = nominative with its capital, no `level`.** Declining names get real cases («Крісом» → «Кріс», `m.sg. instr. (ми з + instr. = Chris and I)`; «Крісе» → `voc.`). Indeclinable names («Лінн», «Бен», «Мар») say so: `nom.; indecl.`, and in address `voc. (address; indecl.)`. Either way the sentence gets the `vocative-case` tag when the name is an address.
+13. **Interjections and onomatopoeia → `interj`, no `level`**: «БАМ» → lemma «бам» (lowercase), note what it is; «Боже» → lemma «Бог», `vocative of Бог; exclamation "my God"`; a standalone «Добре.» reaction → `interj`, `standalone reaction, not modifying a verb`.
 
 ## Gotchas
 
@@ -298,26 +303,30 @@ Ukrainian's apostrophe («п'ять», «ім'я», «м'ясо», «сім'я»
 4. **Capitalization in `text`, lowercase in `lemma`.** Surface «У» keeps its capital; its lemma is «у». (Proper names keep their capital in the lemma too.)
 5. **Glosses are contextual.** `translation` is what the word means _here_, so «стоїть» in «У вікні стоїть людина» is "stands", not "costs". Add the general sense to `note` if it helps.
 6. **Sentence ids are pack-wide unique and permanent.** Prefix them with a story slug (`pwa1p1-s01`, `cat-s01`) so two stories in one pack can never collide.
-7. **Single spaces only** in `UK:` — a double space is an alignment error. Use « » for quotes (not " "), — for dashes, … for ellipsis; they're all just punctuation tokens. Direct speech opens with «— » (em dash, space) at the start of the line.
-8. **The grammar column is reader-facing.** Keep the compact-abbreviation style (`f.sg. nom.`, `m.pl. gen.`, `3sg. pres.`, `voc.`) consistent with existing packs — it renders in the tap-word popup.
-9. **«у» / «в» and «і» / «й» alternate for euphony** — author the form that sounds right after the preceding sound («у вікні», «в Одесі»; «Бен і Лінн», «вона й він»); the lemma is «у» / «в» and «і» / «й» as written, never normalized to one.
-10. **Vocative is not a typo.** «Мамо», «Бене», «синку» are correct addresses — annotate `voc.`, do not "correct" them to the nominative.
+7. **Single spaces only** in `UK:` — a double space is an alignment error. Use « » for quotes (not " "), — for dashes, … for ellipsis; they're all just punctuation tokens. Direct speech opens with «— » (em dash, space) at the start of the line. A line that ends in a colon before quoted speech («Я кажу:») is its own one-block sentence.
+8. **The em-dash copula is a punctuation token.** «Моя дружина — Лінн.», «Пітер — наркоман.», «Там — її обличчя.» are `zero-copula` sentences: the `—` row is punctuation, the subject and predicate are ordinary rows. Ukrainian A1 leans on this shape constantly — do not \"repair\" it with «є».
+9. **Fragments are sentences.** «Ніч.», «Я сам.», «З-за штор.», «Або ні?» each get their own `## id` block with a full table (a one-token sentence is two rows: the word and its period). Do not merge fragments into a neighbour to make a \"real\" sentence.
+10. **The grammar column is reader-facing.** Keep the compact-abbreviation style (`f.sg. nom.`, `m.pl. gen.`, `3sg. pres.`, `voc.`) consistent with existing packs — it renders in the tap-word popup.
+11. **«у» / «в» and «і» / «й» alternate for euphony** — author the form that sounds right after the preceding sound («у вікні», «в Одесі»; «Бен і Лінн», «вона й він»); the lemma is «у» / «в» and «і» / «й» as written, never normalized to one.
+12. **Vocative is not a typo.** «Мамо», «Бене», «синку» are correct addresses — annotate `voc.`, do not "correct" them to the nominative.
 
 ## Grammar tags (Ukrainian canon)
 
-`GRAMMAR:` topics and `grammar:<tag>` pack tags are the dashboard's coverage keys — spell them exactly as listed; a new spelling is a new (empty) coverage bucket. Sumrak's catalog tags apply unchanged except three deliberate renames (the Russian keyword in the tag becomes the Ukrainian one) and two additions.
+`GRAMMAR:` topics and `grammar:<tag>` pack tags are the dashboard's coverage keys — spell them exactly as listed; a new spelling is a new (empty) coverage bucket. The canon is the set the existing Ukrainian drafts use, named after **Ukrainian** grammar (the case is the locative, the preposition is «з», the copula is «є»), plus the Sumrak tags that carry over because they have no Russian keyword in them.
 
-**Unchanged from Sumrak:** `present-tense` · `past-tense` · `future-tense` · `zero-copula` · `dative-experiencer` · `genitive-negation` · `possession-u-genitive` · `direct-speech` · `question-intonation` · `imperative` · `imperative-negative` · `prepositional-location` (the locative case; the tag keeps Sumrak's name) · `instrumental-with-s` («з / зі / із» + instr.; the tag keeps Sumrak's name) · `numbers-genitive` · `ordinal-numbers` · `time-expressions` · `verbs-of-motion-unidirectional` · `verbs-of-motion-multidirectional` · `verbs-of-motion-prefixed` · `reflexive-verbs` · `short-adjectives` (rare in Ukrainian — keep for the «радий / готовий / повинен» class) · the six-case-journey unit tags `existential-est`, `gender`, `accusative-direct-object`, `animacy`, `dative-indirect-object`, `age-dative`, `instrumental-tool`.
+**Sentence shape:** `present-tense` · `past-tense` · `future-tense` · `zero-copula` (incl. the em-dash copula «X — Y.») · `direct-speech` · `question-intonation` · `imperative` · `imperative-negative` · `infinitive-complement` («хочу йти», «треба поговорити»).
 
-**Renamed:** `comparison-kak` → **`comparison-yak`** («як» comparisons) · `purpose-chtoby` → **`purpose-shchob`** («щоб» clauses) · `relative-kotoryj` → **`relative-yakyi`** («який / яка / яке / які» relatives).
+**Cases:** `locative-location` («у будинку», «на стіні» — the locative case; Sumrak's `prepositional-location` is **not** used) · `accusative-direct-object` · `accusative-direction` («на мене», «у кімнату») · `genitive-negation` («її немає») · `genitive-direction` («до будинку») · `possession-u-genitive` («у мене є») · `dative-experiencer` («мені страшно») · `dative-indirect-object` · `instrumental-with-z` («зі мною», «з Крісом»; Sumrak's `instrumental-with-s` is **not** used) · `instrumental-tool` · `instrumental-location` («за містом») · `vocative-case` («Лінн!», «Мамо», «Крісе»).
 
-**New:** **`modal-musyty`** («мушу / мусити» — must) · **`vocative-case`** (any sentence with a `voc.` token).
+**Words and forms:** `existential-ye` («є»; Sumrak's `existential-est` is **not** used) · `adjective-agreement` · `reflexive-verbs` · `verbs-of-motion-unidirectional` · `verbs-of-motion-multidirectional` · `verbs-of-motion-prefixed` · `indefinite-pronouns` («хтось», «щось») · `numbers-nominative-plural` (2–4 + nom. pl.) · `numbers-genitive` (5+ + gen. pl.) · `ordinal-numbers` · `time-expressions` · `comparison-yak` («як тварина») · `purpose-shchob` · `relative-yakyi` · `modal-musyty` · `short-adjectives` (rare — «радий / готовий / повинен»).
 
-Do not invent parallel spellings (`locative-location`, `instrumental-with-z`, `vocative` are **not** canon — the pre-UT02 drafts on disk use them and are re-authored by UCT001). Very-early-A1 stories will lean on a handful: `present-tense`, `zero-copula`, `possession-u-genitive`, `genitive-negation`, `dative-experiencer`, `direct-speech`, `question-intonation`, `prepositional-location`, `vocative-case`.
+Non-canon spellings seen in the older drafts and **not** to be reused: `vocative` (→ `vocative-case`), `genitive-locative-location` (pick the case that is actually there). A tag you need that is not listed above is a stop-and-ask: the coordinator adds it to the family bible **and** to this list in the same session, never silently.
+
+A very-early-A1 part usually needs only a handful: `present-tense`, `zero-copula`, `possession-u-genitive`, `genitive-negation`, `dative-experiencer`, `direct-speech`, `question-intonation`, `locative-location`, `accusative-direct-object`, `vocative-case`.
 
 ## Complete worked example
 
-A valid two-sentence draft, start to finish:
+A valid three-sentence draft, start to finish — a possession sentence, direct speech with genitive negation, and a dash-opened vocative question:
 
 ```markdown
 ---
@@ -347,7 +356,7 @@ voice:
 
 UK: У мене є кіт.
 EN: I have a cat.
-GRAMMAR: possession-u-genitive, present-tense
+GRAMMAR: possession-u-genitive, existential-ye, present-tense
 
 | text | lemma | translation     | pos  | grammar                   | level | note |
 | ---- | ----- | --------------- | ---- | ------------------------- | ----- | ---- |
@@ -373,6 +382,21 @@ GRAMMAR: genitive-negation, direct-speech
 | немає | немає  | is not      | pred | + gen. = there is no … | A1    | немає + genitive negates existence |
 | »     |        |             |      |                        |       |                                    |
 | .     |        |             |      |                        |       |                                    |
+
+## cat-s03
+
+UK: — Мамо, де кіт?
+EN: "Mom, where is the cat?"
+GRAMMAR: vocative-case, question-intonation, direct-speech, zero-copula
+
+| text | lemma | translation | pos  | grammar              | level | note |
+| ---- | ----- | ----------- | ---- | -------------------- | ----- | ---- |
+| —    |       |             |      |                      |       |      |
+| Мамо | мама  | Mom         | noun | f.sg. voc. (address) | A1    |      |
+| ,    |       |             |      |                      |       |      |
+| де   | де    | where       | adv  | interrogative        | A1    |      |
+| кіт  | кіт   | the cat     | noun | m.sg. nom.           | A1    |      |
+| ?    |       |             |      |                      |       |      |
 ```
 
 Run it:
@@ -380,7 +404,7 @@ Run it:
 ```bash
 env -u NODE_OPTIONS pnpm pipeline annotate the-cat.draft.md -o pack.json
 # ✓ a1-example-001 v1 → pack.json
-#   1 story, 2 sentences, 13 tokens — schema-valid
+#   1 story, 3 sentences, 19 tokens — schema-valid
 ```
 
 The same example with an apostrophe word, to see the rule in action — «У мене є п'ять котів.» tokenizes as `У`, `мене`, `є`, `п'ять` (`num`, lemma «п'ять»), `котів` (`noun`, lemma «кіт», grammar `m.pl. gen. (after 5+)`), `.` — six rows, the apostrophe inside `п'ять` written as U+0027 in `UK:`, `text`, and `lemma` alike.
@@ -546,12 +570,18 @@ No `SPEAKER:` in choices — choices always speak as `player`. A node with `CHOI
 
 ## Content guidance for Sutinki stories
 
-Target reader: an adult learner starting from **zero Ukrainian** who loves Dark-Somnium-style creepypasta. Sutinki's A1 is deliberately **very early A1** — far simpler than Sumrak's near-A2 Russian A1 rungs (ADR-0006). For A1 story packs:
+Target reader: an adult learner starting from **zero Ukrainian** who loves Dark-Somnium-style creepypasta. Sutinki's A1 is **very early A1** (ADR-0006) — this is the single most important calibration in this document, and it is _not_ the Russian rungs' A1 (those sit near A2 because Mitch has years of Russian). The measure is the existing Ukrainian sources: `UkrainianStories/*/A1/*_UK.md`, each headed «**Рівень:** дуже ранній A1» — read one part of one of them before authoring anything.
 
-- **Sentences of 3–6 words**, present tense throughout (a past-tense «сказала» / «побачив» may appear only where the horror needs it, tagged honestly). No participles, no verbal adverbs, no conditionals.
-- **Subordinate clauses only with «що», «коли», «де», «бо»** — one per sentence at most, never nested. Prefer two short sentences over one joined one.
-- **A tiny, repeating vocabulary.** A part reuses its own words relentlessly (the FSRS engine feeds on repeated encounters in fresh contexts); a new part adds a handful of new lemmas, drawn from the A1 core, and re-encounters last part's. Tag `level` per lemma honestly — an A2 word in an A1 story is fine _if it is tagged A2_; an A2 word tagged A1 corrupts the progress model.
-- **Dread from implication**, not syntax: what Mom says is _not_ there, who is standing where they shouldn't be, the sentence that repeats with one word changed. Short declaratives are scarier in Ukrainian than long ones — use the language's rhythm.
-- Sentences should be **narratable**: they become ElevenLabs audio, so favor rhythm and natural speech over textbook stiffness. Vocatives, «— » direct speech, and «…» pauses all narrate well.
-- **Honest `level` on the pack and story** — A1 means the rules above; if a part needs more, it is A2 and says so.
-- Tag grammar topics from the canon, consistently — they drive the "what needs work" recommendations.
+What "very early A1" looks like in those sources, and therefore in a draft:
+
+- **Sentences of 2–5 words.** The median is 3–4. One-word sentences («Ніч.») and two-word sentences («Я сам.», «Або ні?») are normal and _frequent_ — they are the rhythm of the genre. A 7-word sentence is the ceiling and should be rare; if you wrote one, split it.
+- **Present tense almost everywhere.** Past appears only where the horror needs it («Я знайшла тебе.», «Пітер був там.») and is tagged `past-tense` honestly. No future beyond «буде»-class one-offs, no conditionals, no participles, no verbal adverbs.
+- **No subordination as a rule.** Prefer two sentences, a colon plus direct speech («Я думаю: «Пітер — наркоман».»), or a dash. When a clause is unavoidable it is «що», «коли», «де», or «бо» — one per sentence, never nested, and the sentence still fits the length rule.
+- **The house shapes:** the em-dash copula («Пітер — наркоман.», «Моя дружина — Лінн.»); «Це …» sentences («Це просто будинок.»); «У мене є …» / «… немає»; «Мені страшно.»-class predicatives; «— » direct speech with a vocative («— Не йди туди.», «— Мамо, де кіт?»); the repeated sentence with one word changed. These are what the tags cover, and they are what the reader is being trained to see.
+- **A tiny, repeating vocabulary.** Each family names its _signature_ words in the source's EN note (peeking-wife: дивитися, усміхатися, ховатися, страшно, кричати; McDonald's: в'язниця, вікно, ґрати, стрибати, падати, тримати, кров, дружина) and repeats them relentlessly — the FSRS engine feeds on repeated encounters in fresh contexts. A part adds a handful of new lemmas and re-encounters last part's.
+- **It is fine to cut meaning.** The sources already trimmed dense passages (backstory, technical detail, long inner monologue) to a line or dropped them; the draft never re-expands them. The arc survives; the density does not.
+- **Honest `level` per lemma.** A word above A1 in an A1 story is fine _if it is tagged_ («з-за» is A2, «скриня» is B1 — the existing drafts tag them so). An A2 word tagged A1 corrupts the progress model; a sentence is never rewritten to hit a ratio.
+- **Dread from implication**, not syntax: what Mom says is _not_ there, who is standing where they should not be, the sentence that comes back with one word changed. Short declaratives are scarier in Ukrainian than long ones — use the language's rhythm.
+- **Narratable.** Every sentence becomes ElevenLabs audio, so favour natural speech over textbook stiffness. Vocatives, «— » openers, and «…» pauses all narrate well; very short character runs («— Так?») render fine on `eleven_v3`.
+- **Source text is verbatim.** A draft's `UK:` lines are the source part's sentences exactly — the annotation session never "improves" the Ukrainian. The glossary at the end of each source is consumed into `translation` / `note` cells.
+- **Honest `level` on the pack and story.** A1 means the rules above; if a part needs more, it is A2 and says so.
