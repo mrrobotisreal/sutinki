@@ -2,7 +2,6 @@ import type { Pack } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
 import pack1Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-001/pack.json';
-import pack2Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-002/pack.json';
 
 import { STABILITY_MATURE_MIN, STABILITY_YOUNG_MIN } from '@/lib/mastery';
 
@@ -15,7 +14,38 @@ import { createTestDb } from './helpers';
 import type { SutinkiDB } from '../types';
 
 const pack1 = pack1Json as unknown as Pack;
-const pack2 = pack2Json as unknown as Pack;
+
+/** UT03 / ADR-0004: a tiny Ukrainian pack — apostrophe (U+0027 as authored) + ґ. */
+const ukSearchPack = {
+  id: 'a1-uk-search-test',
+  version: 1,
+  type: 'stories',
+  title: { uk: 'Тест', en: 'Test' },
+  level: 'A1',
+  tags: [],
+  stories: [
+    {
+      id: 'st-1',
+      title: { uk: 'Історія', en: 'Story' },
+      level: 'A1',
+      audio: [],
+      sentences: [
+        {
+          id: 'sn-1',
+          uk: "П'ять хвилин на ґанку.",
+          en: 'Five minutes on the porch.',
+          tokens: [
+            { text: "П'ять", lemma: "п'ять", translation: 'five', pos: 'num', level: 'A1' },
+            { text: 'хвилин', lemma: 'хвилина', translation: 'minute', pos: 'noun', level: 'A1' },
+            { text: 'на', lemma: 'на', translation: 'on', pos: 'prep', level: 'A1' },
+            { text: 'ґанку', lemma: 'ґанок', translation: 'porch', pos: 'noun', level: 'A2' },
+            { text: '.', isPunct: true },
+          ],
+        },
+      ],
+    },
+  ],
+} as unknown as Pack;
 
 // --- global search (T24 item 3) --------------------------------------------
 
@@ -32,23 +62,31 @@ describe('content.searchSentences (global search)', () => {
     expect(new Set(ids).size).toBe(ids.length);
     const hit = hits[0]!;
     expect(hit.packId).toBe('a1-creepypasta-001');
-    expect(hit.storyTitleRu.length).toBeGreaterThan(0);
-    expect(hit.packTitleRu.length).toBeGreaterThan(0);
+    expect(hit.storyTitleUk.length).toBeGreaterThan(0);
+    expect(hit.packTitleUk.length).toBeGreaterThan(0);
     expect(hit.level).toBe('A1');
     expect(hit.orderIdx).toBeGreaterThanOrEqual(0);
-    expect(hit.ru.length).toBeGreaterThan(0);
+    expect(hit.uk.length).toBeGreaterThan(0);
     expect(hit.matchedTexts.length).toBeGreaterThan(0);
   });
 
-  it('is ё/е-tolerant in both directions', async () => {
+  it('is apostrophe- and ґ/г-tolerant in both directions (ADR-0004)', async () => {
     const db = createTestDb();
-    await importPack(db, pack2);
+    await importPack(db, ukSearchPack);
     const content = createContentRepo(db);
 
-    const viaE = await content.searchSentences('черный');
-    const viaYo = await content.searchSentences('чёрный');
-    expect(viaE.length).toBeGreaterThan(0);
-    expect(viaE.map((h) => h.sentenceId).sort()).toEqual(viaYo.map((h) => h.sentenceId).sort());
+    const viaAscii = await content.searchSentences("п'ять");
+    const viaTypographic = await content.searchSentences('п’ять');
+    expect(viaAscii.length).toBeGreaterThan(0);
+    expect(viaAscii.map((h) => h.sentenceId).sort()).toEqual(
+      viaTypographic.map((h) => h.sentenceId).sort(),
+    );
+    const viaHe = await content.searchSentences('ганок');
+    const viaGe = await content.searchSentences('ґанок');
+    expect(viaHe.length).toBeGreaterThan(0);
+    expect(viaHe.map((h) => h.sentenceId).sort()).toEqual(viaGe.map((h) => h.sentenceId).sort());
+    // The matched surface reported back keeps the author's letters.
+    expect(viaHe[0]!.matchedTexts).toContain('ґанку');
   });
 
   it('returns [] for empty/garbage queries and respects the limit', async () => {
@@ -137,12 +175,12 @@ async function seedCard(
   db: SutinkiDB,
   bankItemId: string,
   stability: number,
-  opts: { direction?: 'ru-en' | 'en-ru' | 'listening' | 'production'; reps?: number } = {},
+  opts: { direction?: 'uk-en' | 'en-uk' | 'listening' | 'production'; reps?: number } = {},
 ) {
   await db.insert(cards).values({
-    id: `card-${bankItemId}-${opts.direction ?? 'ru-en'}`,
+    id: `card-${bankItemId}-${opts.direction ?? 'uk-en'}`,
     bankItemId,
-    direction: opts.direction ?? 'ru-en',
+    direction: opts.direction ?? 'uk-en',
     dueAt: Date.now(),
     stability,
     difficulty: 5,
@@ -173,9 +211,9 @@ describe('bank mastery filter + counts', () => {
     await seedCard(db, shaky, STABILITY_YOUNG_MIN - 1);
     await seedCard(db, young, STABILITY_YOUNG_MIN);
     await seedCard(db, mature, STABILITY_MATURE_MIN + 10);
-    // Weakest link: one mature ru-en card, one shaky en-ru card → learning.
+    // Weakest link: one mature uk-en card, one shaky en-uk card → learning.
     await seedCard(db, weakestLink, STABILITY_MATURE_MIN + 5);
-    await seedCard(db, weakestLink, 2, { direction: 'en-ru' });
+    await seedCard(db, weakestLink, 2, { direction: 'en-uk' });
     // Only a production card reviewed → does not vouch → collected.
     await seedCard(db, nonCoreOnly, 50, { direction: 'production' });
     // An unreviewed core card (reps=0) also doesn't vouch.

@@ -17,8 +17,8 @@ import type { StoredFeedback } from './schemas';
 export function FeedbackView({ feedback }: { feedback: StoredFeedback }) {
   const { tokens: theme } = useAppTheme();
   const segments = React.useMemo(
-    () => diffWords(feedback.sourceRu, feedback.corrected),
-    [feedback.sourceRu, feedback.corrected],
+    () => diffWords(feedback.sourceUk, feedback.corrected),
+    [feedback.sourceUk, feedback.corrected],
   );
   const clean = segments != null && isUnchanged(segments);
 

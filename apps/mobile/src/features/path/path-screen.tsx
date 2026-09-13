@@ -166,7 +166,7 @@ function TrackSection({
         <View className="mb-3 mt-1 flex-row items-center gap-2">
           <Ionicons name="heart-outline" size={14} color={tokens.trackWarm} />
           <RNText className="font-reading text-lg text-track-warm">
-            {trackTitle(group.track).ru}
+            {trackTitle(group.track).uk}
           </RNText>
           <View className="h-px flex-1 bg-track-warm/30" />
         </View>
@@ -303,11 +303,11 @@ function UnitNode({
       <Pressable
         onPress={onToggle}
         accessibilityRole="button"
-        accessibilityLabel={`Unit ${unit.pack.titleRu}`}
+        accessibilityLabel={`Unit ${unit.pack.titleUk}`}
         className="flex-row items-center gap-3 p-4 active:bg-surface-2"
       >
         <View className="flex-1 gap-0.5">
-          <RNText className="font-reading text-xl text-text">{unit.pack.titleRu}</RNText>
+          <RNText className="font-reading text-xl text-text">{unit.pack.titleUk}</RNText>
           <Text variant="caption">
             {unit.pack.titleEn} · {unit.stepsDone}/{unit.stepsTotal} steps
           </Text>
@@ -347,7 +347,7 @@ function UnitSteps({ unit }: { unit: UnitState }) {
           key={story.storyId}
           icon="reader-outline"
           done={story.finished}
-          title={story.titleRu}
+          title={story.titleUk}
           subtitle={story.finished ? 'Finished' : story.started ? 'In progress' : story.titleEn}
           onPress={() => router.push(`/reader/${unit.pack.id}/${story.storyId}?from=path`)}
         />
@@ -447,7 +447,7 @@ function CheckpointNode({
       <Pressable
         onPress={onToggle}
         accessibilityRole="button"
-        accessibilityLabel={`Checkpoint ${checkpoint.pack.titleRu}`}
+        accessibilityLabel={`Checkpoint ${checkpoint.pack.titleUk}`}
         className="flex-row items-center gap-3 p-4 active:bg-surface-2"
       >
         <Ionicons
@@ -456,7 +456,7 @@ function CheckpointNode({
           color={checkpoint.passed ? tokens.accent : tokens.textMuted}
         />
         <View className="flex-1 gap-0.5">
-          <RNText className="font-reading text-xl text-text">{checkpoint.pack.titleRu}</RNText>
+          <RNText className="font-reading text-xl text-text">{checkpoint.pack.titleUk}</RNText>
           <Text variant="caption">
             {checkpoint.passed
               ? `Passed · best ${Math.round(checkpoint.bestScorePercent ?? 0)}%`

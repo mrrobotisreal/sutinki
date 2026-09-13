@@ -129,8 +129,8 @@ function BookmarkCard({
   onRemove: () => void;
 }) {
   const { tokens: theme } = useAppTheme();
-  const removed = row.storyTitleRu == null;
-  const title = row.storyTitleRu ?? row.storyId;
+  const removed = row.storyTitleUk == null;
+  const title = row.storyTitleUk ?? row.storyId;
   return (
     <View className="flex-row items-center gap-2 rounded-xl border border-border bg-surface p-3">
       <Pressable
@@ -152,11 +152,11 @@ function BookmarkCard({
         </View>
         {row.kind === 'sentence' && (
           <Text className="font-reading text-sm leading-5" numberOfLines={2}>
-            {row.sentenceRu ?? '—'}
+            {row.sentenceUk ?? '—'}
           </Text>
         )}
         <Text variant="caption" numberOfLines={1}>
-          {removed ? 'Контент удалён — the pack is no longer installed' : row.packTitleRu}
+          {removed ? 'Контент удалён — the pack is no longer installed' : row.packTitleUk}
         </Text>
       </Pressable>
       <Pressable

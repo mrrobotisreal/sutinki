@@ -11,11 +11,11 @@ import { useAppTheme } from '@/theme/use-app-theme';
  * (UI_DESIGN §3 — "toggleable, EN fallback strings maintained").
  */
 const TAB_TITLES = {
-  index: { ru: 'Сегодня', en: 'Today' },
-  path: { ru: 'Путь', en: 'Path' },
-  library: { ru: 'Библиотека', en: 'Library' },
-  dictionary: { ru: 'Словарь', en: 'Word bank' },
-  journal: { ru: 'Журнал', en: 'Journal' },
+  index: { uk: 'Сегодня', en: 'Today' },
+  path: { uk: 'Путь', en: 'Path' },
+  library: { uk: 'Библиотека', en: 'Library' },
+  dictionary: { uk: 'Словарь', en: 'Word bank' },
+  journal: { uk: 'Журнал', en: 'Journal' },
 } as const;
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -54,7 +54,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: TAB_TITLES.index.ru,
+          title: TAB_TITLES.index.uk,
           tabBarIcon: tabIcon('today-outline'),
           // Dashboard entry lives on the Today header (design §10 / UI_DESIGN §3).
           headerRight: () => (
@@ -81,12 +81,12 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="path"
-        options={{ title: TAB_TITLES.path.ru, tabBarIcon: tabIcon('trail-sign-outline') }}
+        options={{ title: TAB_TITLES.path.uk, tabBarIcon: tabIcon('trail-sign-outline') }}
       />
       <Tabs.Screen
         name="library"
         options={{
-          title: TAB_TITLES.library.ru,
+          title: TAB_TITLES.library.uk,
           tabBarIcon: tabIcon('library-outline'),
           headerRight: () => (
             <>
@@ -129,7 +129,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="dictionary"
         options={{
-          title: TAB_TITLES.dictionary.ru,
+          title: TAB_TITLES.dictionary.uk,
           tabBarIcon: tabIcon('bookmarks-outline'),
           headerRight: () => (
             <>
@@ -164,7 +164,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="journal"
         options={{
-          title: TAB_TITLES.journal.ru,
+          title: TAB_TITLES.journal.uk,
           tabBarIcon: tabIcon('create-outline'),
           headerRight: () => (
             <>

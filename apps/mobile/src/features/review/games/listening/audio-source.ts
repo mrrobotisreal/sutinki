@@ -1,4 +1,4 @@
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 
 import type { BankItemRow } from '@/db/repositories/bank';
 import type { Repositories } from '@/db/repositories';
@@ -90,7 +90,7 @@ export async function resolveListeningAudio(
   if (tracks.length === 0) return fallback;
 
   const tokens = await repos.content.getSentenceTokens(packId, sentenceId);
-  const norm = normalizeRu(item.lemma);
+  const norm = normalizeUk(item.lemma);
   const target = tokens.find((t) => !t.isPunct && t.lemmaNorm === norm);
   if (!target) return fallback;
 

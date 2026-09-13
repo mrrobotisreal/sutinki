@@ -7,7 +7,7 @@ import { LevelChip, type CefrLevel } from '@/components/level-chip';
 import { Text } from '@/components/ui/text';
 import { repos } from '@/db';
 import { queryKeys } from '@/db/hooks';
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 import type { TokenRow } from '@/db/repositories/content';
 import { track } from '@/services/analytics';
 import { getSpeechService, speak } from '@/services/speech';
@@ -74,7 +74,7 @@ function WordPopupSheet({
   const effectiveLemma = token.lemma ?? token.text;
 
   const bankStatus = useQuery({
-    queryKey: queryKeys.bankWordStatus(normalizeRu(effectiveLemma)),
+    queryKey: queryKeys.bankWordStatus(normalizeUk(effectiveLemma)),
     queryFn: () => repos.bank.findWordByLemma(effectiveLemma),
   });
 
@@ -140,7 +140,7 @@ function WordPopupSheet({
   }, [token, target, effectiveLemma, invalidateBank]);
 
   const inBank = !!bankStatus.data || justAdded;
-  const showLemma = token.lemma && normalizeRu(token.lemma) !== normalizeRu(token.text);
+  const showLemma = token.lemma && normalizeUk(token.lemma) !== normalizeUk(token.text);
 
   // Speaker: prefer the exact narration slice of THIS surface form (T10);
   // else the speech service (Piper once T11 lands). Neither → disabled look.

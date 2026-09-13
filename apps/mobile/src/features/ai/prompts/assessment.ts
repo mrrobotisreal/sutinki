@@ -13,7 +13,7 @@ import type { ChatMessage } from '../client';
 
 export interface AssessmentJournalSample {
   /** Entry text, already truncated by the caller. */
-  ru: string;
+  uk: string;
   /** AI-corrected version when feedback exists (shows error density). */
   corrected?: string;
   createdAt: number;
@@ -63,7 +63,7 @@ export function buildAssessmentMessages(bundle: AssessmentBundle): ChatMessage[]
           .map((entry, i) => {
             const date = new Date(entry.createdAt).toISOString().slice(0, 10);
             const corrected = entry.corrected ? `\nAI-corrected version:\n${entry.corrected}` : '';
-            return `Entry ${i + 1} (${date}):\n${entry.ru}${corrected}`;
+            return `Entry ${i + 1} (${date}):\n${entry.uk}${corrected}`;
           })
           .join('\n\n');
 

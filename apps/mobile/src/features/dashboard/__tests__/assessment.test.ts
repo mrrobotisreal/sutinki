@@ -68,7 +68,7 @@ describe('assessment prompt template', () => {
     const messages = buildAssessmentMessages({
       stats: { 'Total reviews completed': 65, 'Stories finished': 5 },
       journal: [
-        { ru: 'Я читаю книгу.', corrected: 'Я читаю книгу.', createdAt: Date.UTC(2026, 7, 21) },
+        { uk: 'Я читаю книгу.', corrected: 'Я читаю книгу.', createdAt: Date.UTC(2026, 7, 21) },
       ],
     });
     expect(messages[0]!.role).toBe('system');
@@ -117,7 +117,7 @@ describe('auto cadence gate', () => {
     expect(
       bundleHasEvidence({
         stats: { 'Total reviews completed': 0 },
-        journal: [{ ru: 'Привет.', createdAt: 0 }],
+        journal: [{ uk: 'Привет.', createdAt: 0 }],
       }),
     ).toBe(true);
   });

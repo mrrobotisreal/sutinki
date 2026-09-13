@@ -23,7 +23,7 @@ export interface EntryFeedbackState {
 export const RETRY_DELAYS_MS = [2_000, 8_000];
 
 export interface FeedbackQueueDeps {
-  listQueued: () => Promise<{ id: string; ru: string }[]>;
+  listQueued: () => Promise<{ id: string; uk: string }[]>;
   saveDone: (entryId: string, storedJson: string) => Promise<void>;
   chat: (req: ChatRequest) => Promise<ChatResult>;
   isOnline: () => Promise<boolean>;
@@ -36,7 +36,7 @@ export interface FeedbackQueueDeps {
 /** Parse the model's completion into the persisted feedback envelope. */
 export function parseFeedbackCompletion(
   content: string,
-  sourceRu: string,
+  sourceUk: string,
   model: string,
   now: number,
 ): StoredFeedback {
@@ -45,7 +45,7 @@ export function parseFeedbackCompletion(
   if (!parsed.success) {
     throw new AiError('invalid-response', 'feedback did not match the expected shape');
   }
-  return { v: 1, ...parsed.data, sourceRu, model, createdAt: now };
+  return { v: 1, ...parsed.data, sourceUk, model, createdAt: now };
 }
 
 /**
@@ -73,10 +73,10 @@ export async function processFeedbackQueue(deps: FeedbackQueueDeps): Promise<num
     for (let attempt = 0; attempt <= delays.length; attempt++) {
       try {
         const result = await deps.chat({
-          messages: buildJournalFeedbackMessages(entry.ru),
+          messages: buildJournalFeedbackMessages(entry.uk),
           maxTokens: 4096,
         });
-        const stored = parseFeedbackCompletion(result.content, entry.ru, result.model, deps.now());
+        const stored = parseFeedbackCompletion(result.content, entry.uk, result.model, deps.now());
         await deps.saveDone(entry.id, JSON.stringify(stored));
         deps.onPhase(entry.id, null);
         doneCount++;

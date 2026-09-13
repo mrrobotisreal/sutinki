@@ -83,7 +83,7 @@ export function DialogueRow({ item, onPress }: { item: DialogueListItem; onPress
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`Play dialogue ${item.titleRu}`}
+      accessibilityLabel={`Play dialogue ${item.titleUk}`}
       className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3.5 active:bg-surface-2"
     >
       <View className="h-11 w-11 items-center justify-center rounded-full bg-surface-2">
@@ -92,7 +92,7 @@ export function DialogueRow({ item, onPress }: { item: DialogueListItem; onPress
       <View className="flex-1 gap-0.5">
         <View className="flex-row items-center gap-2">
           <Text className="flex-1 font-reading text-base" numberOfLines={1}>
-            {item.titleRu}
+            {item.titleUk}
           </Text>
           {item.finishedRunCount > 0 && (
             <Ionicons name="checkmark-circle" size={16} color={theme.accent} />

@@ -11,12 +11,12 @@ export type NoteRow = typeof notes.$inferSelect;
 /** Journal entries + markdown study notes, with FTS search over both. */
 export function createJournalRepo(db: SutinkiDB) {
   return {
-    async createEntry(input: { ru: string; promptId?: string }): Promise<JournalEntryRow> {
+    async createEntry(input: { uk: string; promptId?: string }): Promise<JournalEntryRow> {
       const now = Date.now();
       const row: typeof journalEntries.$inferInsert = {
         id: newId(),
         promptId: input.promptId ?? null,
-        ru: input.ru,
+        uk: input.uk,
         aiFeedback: null,
         feedbackStatus: 'none',
         createdAt: now,
@@ -26,7 +26,7 @@ export function createJournalRepo(db: SutinkiDB) {
       return row as JournalEntryRow;
     },
 
-    async updateEntry(id: string, patch: { ru?: string; promptId?: string | null }) {
+    async updateEntry(id: string, patch: { uk?: string; promptId?: string | null }) {
       await db
         .update(journalEntries)
         .set({ ...patch, updatedAt: Date.now() })
@@ -67,7 +67,7 @@ export function createJournalRepo(db: SutinkiDB) {
       const match = toFtsQuery(query);
       if (!match) return [];
       return db.all<JournalEntryRow>(sql`
-        SELECT j.id, j.prompt_id AS promptId, j.ru, j.ai_feedback AS aiFeedback,
+        SELECT j.id, j.prompt_id AS promptId, j.uk, j.ai_feedback AS aiFeedback,
                j.feedback_status AS feedbackStatus, j.created_at AS createdAt,
                j.updated_at AS updatedAt
         FROM journal_fts f

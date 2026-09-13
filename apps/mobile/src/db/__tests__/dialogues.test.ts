@@ -215,7 +215,7 @@ describe('dialogues repository', () => {
     expect(graph.nodes).toHaveLength(11);
     expect(graph.nodes.map((n) => n.id)[0]).toBe('din-n01');
     const n02 = graph.nodes.find((n) => n.id === 'din-n02')!;
-    expect(n02.sentence!.ru).toBe('Ты голодный?');
+    expect(n02.sentence!.uk).toBe('Ты голодный?');
     expect(n02.sentence!.tokens.length).toBeGreaterThan(0);
     expect(n02.choices).toHaveLength(3);
     expect(n02.choices[0]!.sentence!.tokens.length).toBeGreaterThan(0);

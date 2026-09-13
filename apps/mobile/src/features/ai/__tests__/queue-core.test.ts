@@ -17,7 +17,7 @@ function makeDeps(overrides: Partial<FeedbackQueueDeps> = {}) {
   const saved: Record<string, string> = {};
   const phases: Record<string, (EntryFeedbackState | null)[]> = {};
   const deps: FeedbackQueueDeps = {
-    listQueued: async () => [{ id: 'e1', ru: 'Я идти домой.' }],
+    listQueued: async () => [{ id: 'e1', uk: 'Я идти домой.' }],
     saveDone: async (id, json) => {
       saved[id] = json;
     },
@@ -42,7 +42,7 @@ describe('processFeedbackQueue', () => {
     const stored = JSON.parse(saved.e1!);
     expect(stored).toMatchObject({
       v: 1,
-      sourceRu: 'Я идти домой.',
+      sourceUk: 'Я идти домой.',
       corrected: 'Я иду домой.',
       model: 'test-model',
       createdAt: 123,
@@ -106,8 +106,8 @@ describe('processFeedbackQueue', () => {
     });
     const { deps, phases } = makeDeps({
       listQueued: async () => [
-        { id: 'e1', ru: 'раз' },
-        { id: 'e2', ru: 'два' },
+        { id: 'e1', uk: 'раз' },
+        { id: 'e2', uk: 'два' },
       ],
       chat,
     });
@@ -135,8 +135,8 @@ describe('processFeedbackQueue', () => {
     const order: string[] = [];
     const { deps, saved } = makeDeps({
       listQueued: async () => [
-        { id: 'e1', ru: 'раз' },
-        { id: 'e2', ru: 'два' },
+        { id: 'e1', uk: 'раз' },
+        { id: 'e2', uk: 'два' },
       ],
       chat: async (req) => {
         order.push(req.messages.at(-1)!.content);

@@ -23,12 +23,12 @@ const STUB_INPUT = {
  * annotation envelopes; this fixture only needs to satisfy `parsePack`).
  */
 function buildStubPack(input: { packId: string; title: string; text: string }): unknown {
-  const title = { ru: input.title, en: input.title };
-  const sentence = (id: string, ru: string) => ({
+  const title = { uk: input.title, en: input.title };
+  const sentence = (id: string, uk: string) => ({
     id,
-    ru,
+    uk,
     en: '—',
-    tokens: ru.split(' ').flatMap((chunk) => {
+    tokens: uk.split(' ').flatMap((chunk) => {
       const m = /^(.*?)([.!?…]*)$/u.exec(chunk)!;
       const word = m[1]!;
       const punct = m[2]!;
@@ -52,7 +52,7 @@ function buildStubPack(input: { packId: string; title: string; text: string }): 
         level: 'A1',
         sentences: input.text
           .split(/(?<=[.!?…])\s+/u)
-          .map((ru, i) => sentence(`s1-${String(i + 1).padStart(3, '0')}`, ru)),
+          .map((uk, i) => sentence(`s1-${String(i + 1).padStart(3, '0')}`, uk)),
         audio: [],
       },
     ],

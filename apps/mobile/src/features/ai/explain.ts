@@ -13,7 +13,7 @@ import { ExplainResponseSchema } from './schemas';
 const cache = new Map<string, string>();
 
 export function cacheKey(target: ExplainTarget): string {
-  return target.kind === 'sentence' ? `s:${target.ru}` : `c:${target.headword}`;
+  return target.kind === 'sentence' ? `s:${target.uk}` : `c:${target.headword}`;
 }
 
 export async function explain(target: ExplainTarget): Promise<string> {

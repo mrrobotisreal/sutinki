@@ -125,7 +125,7 @@ function EntryResult({ entry, onPress }: { entry: JournalEntryRow; onPress: () =
         {formatDate(entry.createdAt)}
       </Text>
       <Text className="mt-1 font-reading text-sm leading-5" numberOfLines={2}>
-        {snippet(entry.ru)}
+        {snippet(entry.uk)}
       </Text>
     </Pressable>
   );

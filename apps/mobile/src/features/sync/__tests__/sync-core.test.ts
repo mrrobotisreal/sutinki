@@ -22,7 +22,7 @@ function entry(id: string, version: number, files?: ManifestEntry['files']): Man
     version,
     type: 'stories',
     level: 'A1',
-    title: { ru: id, en: id },
+    title: { uk: id, en: id },
     bytes: 1000,
     files: files ?? [{ path: 'pack.json', sha256: 'a'.repeat(64) }],
   };

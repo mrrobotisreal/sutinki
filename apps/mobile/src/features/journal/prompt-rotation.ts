@@ -13,7 +13,7 @@ export const PromptRowSchema = z.object({
   packId: z.string().min(1),
   id: z.string().min(1),
   level: z.enum(CEFR),
-  promptRu: z.string().min(1),
+  promptUk: z.string().min(1),
   promptEn: z.string().min(1),
   tags: z.array(z.string()).nullable(),
 });

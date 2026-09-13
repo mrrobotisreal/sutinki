@@ -1,4 +1,4 @@
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 import { packs, sentences, stories, tokens } from '@/db/schema';
 import type { SutinkiDB } from '@/db/types';
 
@@ -6,13 +6,13 @@ import type { SutinkiDB } from '@/db/types';
  * Direct content-table seeding for T13 game tests. Bypasses the importer on
  * purpose: these tests need tiny, precisely-shaped sentences (specific
  * lemmas, levels, word counts), not the fixture packs. Tokens are derived
- * from `ru.split(' ')` — pass `punct: '.'` to append a punctuation token.
+ * from `uk.split(' ')` — pass `punct: '.'` to append a punctuation token.
  */
 export interface SeedSentence {
   id: string;
-  ru: string;
+  uk: string;
   en: string;
-  /** One lemma per word of `ru`, aligned by index. */
+  /** One lemma per word of `uk`, aligned by index. */
   lemmas: string[];
   punct?: string;
 }
@@ -34,7 +34,7 @@ export async function seedStory(db: SutinkiDB, spec: SeedStory): Promise<void> {
       id: spec.packId,
       version: 1,
       type: 'stories',
-      titleRu: `Пак ${++packSeq}`,
+      titleUk: `Пак ${++packSeq}`,
       titleEn: `Pack ${packSeq}`,
       level,
       tags: [],
@@ -45,7 +45,7 @@ export async function seedStory(db: SutinkiDB, spec: SeedStory): Promise<void> {
     packId: spec.packId,
     id: spec.storyId,
     orderIdx: 0,
-    titleRu: spec.storyId,
+    titleUk: spec.storyId,
     titleEn: spec.storyId,
     level,
   });
@@ -56,11 +56,11 @@ export async function seedStory(db: SutinkiDB, spec: SeedStory): Promise<void> {
       id: s.id,
       storyId: spec.storyId,
       orderIdx: sIdx,
-      ru: s.ru,
+      uk: s.uk,
       en: s.en,
       grammarTopics: null,
     });
-    const words = s.ru.split(' ');
+    const words = s.uk.split(' ');
     if (words.length !== s.lemmas.length) {
       throw new Error(`seedStory: ${s.id} has ${words.length} words but ${s.lemmas.length} lemmas`);
     }
@@ -70,11 +70,11 @@ export async function seedStory(db: SutinkiDB, spec: SeedStory): Promise<void> {
       tokenIndex: i,
       storyId: spec.storyId,
       text: word,
-      textNorm: normalizeRu(word),
+      textNorm: normalizeUk(word),
       isPunct: false,
       spaceBefore: i > 0,
       lemma: s.lemmas[i]!,
-      lemmaNorm: normalizeRu(s.lemmas[i]!),
+      lemmaNorm: normalizeUk(s.lemmas[i]!),
       translation: `gloss-${i}`,
       pos: 'noun',
       grammar: null,
@@ -88,7 +88,7 @@ export async function seedStory(db: SutinkiDB, spec: SeedStory): Promise<void> {
         tokenIndex: words.length,
         storyId: spec.storyId,
         text: s.punct,
-        textNorm: normalizeRu(s.punct),
+        textNorm: normalizeUk(s.punct),
         isPunct: true,
         spaceBefore: false,
         lemma: null,

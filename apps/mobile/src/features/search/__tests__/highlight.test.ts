@@ -9,17 +9,16 @@ describe('highlightSnippet', () => {
     expect(marked).toEqual(['стук,', 'стук.']);
   });
 
-  it('is ё/е-tolerant in both directions', () => {
-    expect(highlightSnippet('Чёрный кот.', ['черный']).find((s) => s.matched)?.text).toBe('Чёрный');
-    expect(highlightSnippet('Черная стена.', ['чёрная']).find((s) => s.matched)?.text).toBe(
-      'Черная',
-    );
+  it('is apostrophe- and ґ/г-tolerant in both directions', () => {
+    expect(highlightSnippet("П'ять котів.", ['п’ять']).find((s) => s.matched)?.text).toBe("П'ять");
+    expect(highlightSnippet('Пʼять стін.', ["п'ять"]).find((s) => s.matched)?.text).toBe('Пʼять');
+    expect(highlightSnippet('Ґанок старий.', ['ганок']).find((s) => s.matched)?.text).toBe('Ґанок');
   });
 
   it('rebuilds the sentence exactly from its segments', () => {
-    const ru = 'Он  стоит   у стены.';
-    const segs = highlightSnippet(ru, []);
-    expect(segs.map((s) => s.text).join('')).toBe(ru);
+    const uk = 'Он  стоит   у стены.';
+    const segs = highlightSnippet(uk, []);
+    expect(segs.map((s) => s.text).join('')).toBe(uk);
   });
 
   it('never matches on empty cores (pure punctuation chunks)', () => {

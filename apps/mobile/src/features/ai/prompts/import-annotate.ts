@@ -18,7 +18,7 @@ export interface AnnotateSentenceInput {
   /** Envelope uid, echoed back so results join to the right sentence. */
   id: string;
   /** The sentence exactly as it will appear in the app (NFC, single spaces). */
-  ru: string;
+  uk: string;
 }
 
 const SYSTEM = `You are a Russian linguist annotating real-world Russian text (chat messages, articles, lyrics) for a learner's reading app. For each input sentence produce its natural English translation and a token table.
@@ -61,7 +61,7 @@ All output text must be Unicode NFC. Respond with ONLY a JSON object, no markdow
 Echo every input sentence id exactly once. Omit optional fields rather than filling them with placeholders.`;
 
 export function buildImportAnnotateMessages(sentences: AnnotateSentenceInput[]): ChatMessage[] {
-  const lines = sentences.map((s) => `${s.id}: ${s.ru}`);
+  const lines = sentences.map((s) => `${s.id}: ${s.uk}`);
   return [
     { role: 'system', content: SYSTEM },
     { role: 'user', content: `Annotate these sentences:\n\n${lines.join('\n')}` },

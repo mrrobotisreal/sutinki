@@ -3,7 +3,7 @@ import { and, desc, eq, inArray, like, ne, not, or, sql } from 'drizzle-orm';
 import { STABILITY_MATURE_MIN, STABILITY_YOUNG_MIN, type MasteryBand } from '@/lib/mastery';
 
 import { newId } from '../ids';
-import { normalizePhrase, normalizeRu } from '../normalize';
+import { normalizePhrase, normalizeUk } from '../normalize';
 import { bankItems, encounters } from '../schema';
 import type { SutinkiDB } from '../types';
 
@@ -54,7 +54,7 @@ export interface BankFilter {
   sourceStoryId?: string;
   needsEnrichment?: boolean;
   /**
-   * T24 mastery chips — band of the item's weakest reviewed ru-en/en-ru card
+   * T24 mastery chips — band of the item's weakest reviewed uk-en/en-uk card
    * (lib/mastery, the same definition the dashboard reconciles against).
    */
   mastery?: MasteryFilter;
@@ -94,13 +94,13 @@ export interface BankRepoHooks {
 
 /**
  * Weakest-link core stability per bank item (T18 definition via lib/mastery):
- * MIN stability over the item's reviewed ru-en/en-ru cards, NULL when none.
+ * MIN stability over the item's reviewed uk-en/en-uk cards, NULL when none.
  * Literal SQL with explicit qualification (the listPacks pitfall — see
  * content.ts): the correlated `bank_items.id` must stay qualified.
  */
 const MIN_CORE_STABILITY = sql`(SELECT MIN(c.stability) FROM cards c
   WHERE c.bank_item_id = bank_items.id
-    AND c.direction IN ('ru-en', 'en-ru') AND c.reps > 0)`;
+    AND c.direction IN ('uk-en', 'en-uk') AND c.reps > 0)`;
 
 /** WHERE fragment for one mastery chip. NULL comparisons are false in SQLite,
  * so band conditions implicitly exclude never-reviewed items. */
@@ -212,7 +212,7 @@ export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
       const rows = await db
         .select()
         .from(bankItems)
-        .where(and(eq(bankItems.kind, 'word'), eq(bankItems.lemmaNorm, normalizeRu(lemma))))
+        .where(and(eq(bankItems.kind, 'word'), eq(bankItems.lemmaNorm, normalizeUk(lemma))))
         .limit(1);
       return rows[0] ?? null;
     },
@@ -228,7 +228,7 @@ export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
 
     /** Add a word by lemma — dedup rule lives here. */
     async addWord(input: AddWordInput): Promise<AddResult> {
-      const lemmaNorm = normalizeRu(input.lemma);
+      const lemmaNorm = normalizeUk(input.lemma);
       const existingRows = await db
         .select()
         .from(bankItems)
@@ -415,7 +415,7 @@ export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
       >,
     ): Promise<BankItemRow | null> {
       const full: Record<string, unknown> = { ...patch };
-      if (patch.lemma !== undefined) full.lemmaNorm = patch.lemma ? normalizeRu(patch.lemma) : null;
+      if (patch.lemma !== undefined) full.lemmaNorm = patch.lemma ? normalizeUk(patch.lemma) : null;
       await db.update(bankItems).set(full).where(eq(bankItems.id, id));
       return getById(id);
     },

@@ -28,7 +28,7 @@ export function FlashcardView({ entry, onGrade }: FlashcardViewProps) {
   const front = promptText(entry.item, entry.direction);
   const back = answerText(entry.item, entry.direction);
   // The Russian side gets reading type; the English side UI type.
-  const frontIsRu = entry.direction !== 'en-ru';
+  const frontIsUk = entry.direction !== 'en-uk';
 
   const grade = (rating: Grade) => {
     Vibration.vibrate(8);
@@ -50,7 +50,7 @@ export function FlashcardView({ entry, onGrade }: FlashcardViewProps) {
       >
         <RNText
           className={
-            frontIsRu ? 'font-reading text-3xl text-text' : 'font-ui-medium text-2xl text-text'
+            frontIsUk ? 'font-reading text-3xl text-text' : 'font-ui-medium text-2xl text-text'
           }
           style={{ textAlign: 'center' }}
         >
@@ -62,7 +62,7 @@ export function FlashcardView({ entry, onGrade }: FlashcardViewProps) {
             <View className="my-5 h-px w-24 bg-border" />
             <RNText
               className={
-                frontIsRu ? 'font-ui-medium text-2xl text-text' : 'font-reading text-3xl text-text'
+                frontIsUk ? 'font-ui-medium text-2xl text-text' : 'font-reading text-3xl text-text'
               }
               style={{ textAlign: 'center' }}
             >

@@ -17,19 +17,19 @@ const pack = {
   id: 'a1-focus-test',
   version: 1,
   type: 'stories',
-  title: { ru: 'Тест', en: 'Test' },
+  title: { uk: 'Тест', en: 'Test' },
   level: 'A1',
   tags: [],
   stories: [
     {
       id: 'st-1',
-      title: { ru: 'История', en: 'Story' },
+      title: { uk: 'История', en: 'Story' },
       level: 'A1',
       audio: [],
       sentences: [
         {
           id: 'sn-1',
-          ru: 'Кровать стоит тихо.',
+          uk: 'Кровать стоит тихо.',
           en: 'The bed stands quietly.',
           tokens: [
             { text: 'Кровать', lemma: 'кровать', translation: 'bed', pos: 'noun', level: 'A1' },

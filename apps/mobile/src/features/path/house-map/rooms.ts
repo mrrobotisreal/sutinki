@@ -14,19 +14,19 @@ import type { UnitState } from '../path-model';
 export interface RoomDef {
   /** `theme.scene` value this room matches. */
   scene: string;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   /** Drawn below the ground line (darker interior, hatched earth). */
   belowGround?: boolean;
 }
 
 export const HOUSE_ROOMS: readonly RoomDef[] = [
-  { scene: 'hallway', titleRu: 'Прихожая', titleEn: 'The Entryway' },
-  { scene: 'living-room', titleRu: 'Гостиная', titleEn: 'The Living Room' },
-  { scene: 'kitchen', titleRu: 'Кухня', titleEn: 'The Kitchen' },
-  { scene: 'pantry', titleRu: 'Кладовая', titleEn: 'The Pantry' },
-  { scene: 'nursery', titleRu: 'Детская', titleEn: 'The Nursery' },
-  { scene: 'cellar', titleRu: 'Подвал', titleEn: 'The Cellar', belowGround: true },
+  { scene: 'hallway', titleUk: 'Прихожая', titleEn: 'The Entryway' },
+  { scene: 'living-room', titleUk: 'Гостиная', titleEn: 'The Living Room' },
+  { scene: 'kitchen', titleUk: 'Кухня', titleEn: 'The Kitchen' },
+  { scene: 'pantry', titleUk: 'Кладовая', titleEn: 'The Pantry' },
+  { scene: 'nursery', titleUk: 'Детская', titleEn: 'The Nursery' },
+  { scene: 'cellar', titleUk: 'Подвал', titleEn: 'The Cellar', belowGround: true },
 ];
 
 const ROOM_ORDER = new Map(HOUSE_ROOMS.map((room, i) => [room.scene, i]));

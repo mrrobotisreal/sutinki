@@ -81,7 +81,7 @@ export function useNodePlayback(
       return;
     }
     indexRef.current = buildKaraokeIndex(
-      [{ id: node.sentence.id, ru: node.sentence.ru }],
+      [{ id: node.sentence.id, uk: node.sentence.uk }],
       (stamps ?? []).map((s) => ({
         sentenceId: s.sentenceId,
         tokenIndex: s.tokenIndex,
@@ -97,7 +97,7 @@ export function useNodePlayback(
     const uri = node.audio?.localUri;
     if (!uri || !fileExists(uri)) {
       // Missing audio: speak the line, hand pacing to the screen (Далее).
-      if (node.sentence?.ru) void speak(node.sentence.ru);
+      if (node.sentence?.uk) void speak(node.sentence.uk);
       return () => {
         void getSpeechService().stop();
       };
@@ -108,7 +108,7 @@ export function useNodePlayback(
     try {
       player = createAudioPlayer({ uri }, { updateInterval: 250 });
     } catch {
-      if (node.sentence?.ru) void speak(node.sentence.ru);
+      if (node.sentence?.uk) void speak(node.sentence.uk);
       // Rare failure path (player creation threw): flip to the fallback
       // state on the next tick — never a synchronous set inside the effect.
       const t = setTimeout(() => setStatusOverride({ key: stepKey, status: 'unavailable' }), 0);
@@ -152,8 +152,8 @@ export function useNodePlayback(
     track('dialogue_line_replayed', { hasAudio: playerRef.current != null });
     const player = playerRef.current;
     if (!player) {
-      const ru = node?.sentence?.ru;
-      if (ru) void speak(ru);
+      const uk = node?.sentence?.uk;
+      if (uk) void speak(uk);
       return;
     }
     // T10 device finding: seek from ENDED auto-resumes — pause, seek, play.

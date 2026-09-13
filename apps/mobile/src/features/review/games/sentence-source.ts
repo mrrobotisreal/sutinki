@@ -1,4 +1,4 @@
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 import type { SentenceRow, TokenRow } from '@/db/repositories/content';
 import type { StoryProgressRow } from '@/db/repositories/reading';
 import type { Repositories } from '@/db/repositories';
@@ -81,7 +81,7 @@ export async function pickSentenceForLemma(
 ): Promise<SourcedSentence | null> {
   const { unseenAllowed = false, maxWords = Infinity } = opts;
   const candidates = await repos.content.findSentencesWithLemma(lemma);
-  const norm = normalizeRu(lemma);
+  const norm = normalizeUk(lemma);
 
   for (const sentence of shuffle(candidates)) {
     if (!sentenceEligible(sentence, index, unseenAllowed)) continue;

@@ -17,14 +17,14 @@ import { useAppTheme } from '@/theme/use-app-theme';
  */
 export function FamilyShelfHeader({
   slug,
-  titleRu,
+  titleUk,
   tags,
   rungs,
   selectedLevel,
   onSelectRung,
 }: {
   slug: string;
-  titleRu: string;
+  titleUk: string;
   tags: string[];
   rungs: RungState[];
   selectedLevel: CefrLevel;
@@ -47,7 +47,7 @@ export function FamilyShelfHeader({
   return (
     <View className="mb-2 mt-6 gap-1.5">
       <Text className="font-ui-medium text-lg" numberOfLines={1}>
-        {titleRu}
+        {titleUk}
       </Text>
       {tags.length > 0 && (
         <View className="flex-row flex-wrap gap-1.5">

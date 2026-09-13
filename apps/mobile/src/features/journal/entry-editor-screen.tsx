@@ -126,7 +126,7 @@ function EntryEditor({
   const insets = useSafeAreaInsets();
 
   const isNew = entry === null;
-  const [text, setText] = React.useState(entry?.ru ?? '');
+  const [text, setText] = React.useState(entry?.uk ?? '');
   /** The persisted row id — state so the UI reacts to first-save. */
   const [entryId, setEntryId] = React.useState<string | null>(entry?.id ?? null);
   const [readMode, setReadMode] = React.useState(false);
@@ -157,8 +157,8 @@ function EntryEditor({
   // Mutable bookkeeping for handlers/timers only — never read during render.
   const stateRef = React.useRef({
     entryId: entry?.id ?? null,
-    savedText: entry?.ru ?? '',
-    text: entry?.ru ?? '',
+    savedText: entry?.uk ?? '',
+    text: entry?.uk ?? '',
     attachPromptId: null as string | null,
     deleted: false,
   });
@@ -179,7 +179,7 @@ function EntryEditor({
     if (parsed.data === s.savedText) return;
     if (!s.entryId) {
       const row = await repos.journal.createEntry({
-        ru: parsed.data,
+        uk: parsed.data,
         promptId: s.attachPromptId ?? undefined,
       });
       s.entryId = row.id;
@@ -190,7 +190,7 @@ function EntryEditor({
         track('journal_prompt_used', { promptId: s.attachPromptId, from: 'editor' });
       }
     } else {
-      await repos.journal.updateEntry(s.entryId, { ru: parsed.data });
+      await repos.journal.updateEntry(s.entryId, { uk: parsed.data });
       track('journal_entry_autosaved', { chars: parsed.data.length });
     }
     s.savedText = parsed.data;
@@ -356,7 +356,7 @@ function EntryEditor({
                   </>
                 )}
               </View>
-              <Text className="mt-2 font-reading text-lg leading-7">{activePrompt.promptRu}</Text>
+              <Text className="mt-2 font-reading text-lg leading-7">{activePrompt.promptUk}</Text>
               <Text variant="caption" className="mt-1">
                 {activePrompt.promptEn}
               </Text>

@@ -13,6 +13,11 @@ import { z } from 'zod';
  * partial import). New user tables are added as defaulted fields so older
  * snapshots keep restoring (T24 precedent); PAYLOAD_VERSION bumps only for
  * changes an old restore path could misread.
+ *
+ * UT03 (ADR-0003): the payload carries `uk` where Sumrak's carried `ru`
+ * (journal entries, card directions). No compatibility shim for `ru`
+ * archives — a Sutinki install has never produced one, so there is nothing
+ * to migrate.
  */
 
 export const PAYLOAD_VERSION = 1;
@@ -51,7 +56,7 @@ const encounterRow = z.strictObject({
 const cardRow = z.strictObject({
   id: z.string(),
   bankItemId: z.string(),
-  direction: z.enum(['ru-en', 'en-ru', 'listening', 'production']),
+  direction: z.enum(['uk-en', 'en-uk', 'listening', 'production']),
   dueAt: int,
   stability: z.number(),
   difficulty: z.number(),
@@ -84,7 +89,7 @@ const reviewLogRow = z.strictObject({
 const journalEntryRow = z.strictObject({
   id: z.string(),
   promptId: z.string().nullable(),
-  ru: z.string(),
+  uk: z.string(),
   aiFeedback: z.string().nullable(),
   feedbackStatus: z.enum(['none', 'queued', 'done']),
   createdAt: int,

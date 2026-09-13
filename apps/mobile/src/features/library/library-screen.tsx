@@ -58,7 +58,7 @@ interface LibrarySection {
    */
   family?: {
     slug: string;
-    titleRu: string;
+    titleUk: string;
     tags: string[];
     rungs: RungState[];
     selectedLevel: CefrLevel;
@@ -185,7 +185,7 @@ export function LibraryScreen() {
         data: selected.data,
         family: {
           slug: group.slug,
-          titleRu: lowest.pack.titleRu,
+          titleUk: lowest.pack.titleUk,
           tags: sharedShelfTags(group.members.map((m) => m.pack.tags)),
           rungs,
           selectedLevel,
@@ -312,7 +312,7 @@ export function LibraryScreen() {
           {section.family ? (
             <FamilyShelfHeader
               slug={section.family.slug}
-              titleRu={section.family.titleRu}
+              titleUk={section.family.titleUk}
               tags={section.family.tags}
               rungs={section.family.rungs}
               selectedLevel={section.family.selectedLevel}
@@ -366,7 +366,7 @@ function PackHeader({
       <View className="flex-row items-center gap-2">
         <LevelChip level={pack.level} />
         <Text className="flex-1 font-ui-medium text-lg" numberOfLines={1}>
-          {pack.titleRu}
+          {pack.titleUk}
         </Text>
       </View>
       {importedMeta && (
@@ -410,7 +410,7 @@ function StoryRow({
       onPress={onPress}
       onLongPress={onLongPress}
       accessibilityRole="button"
-      accessibilityLabel={`Read ${story.titleRu}. Long press to ${bookmarked ? 'remove the' : 'add a'} bookmark`}
+      accessibilityLabel={`Read ${story.titleUk}. Long press to ${bookmarked ? 'remove the' : 'add a'} bookmark`}
       className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3.5 active:bg-surface-2"
     >
       <View className="flex-1 gap-0.5">
@@ -418,7 +418,7 @@ function StoryRow({
           className={`font-reading text-base ${state === 'finished' ? 'text-text-muted' : ''}`}
           numberOfLines={1}
         >
-          {story.titleRu}
+          {story.titleUk}
         </Text>
         <Text variant="caption" numberOfLines={1}>
           {story.titleEn} · {story.sentenceCount} sentences

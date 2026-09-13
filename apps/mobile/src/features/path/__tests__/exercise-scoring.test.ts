@@ -47,10 +47,10 @@ describe('scoreOutcomes', () => {
 });
 
 describe('typedTextMatches', () => {
-  it('ignores punctuation, case, ё and extra whitespace', () => {
+  it('ignores punctuation, case, apostrophe variant, ґ/г and extra whitespace', () => {
     expect(typedTextMatches('Кто там?', 'кто там')).toBe(true);
     expect(typedTextMatches('В комнате очень тихо.', 'в  комнате очень тихо')).toBe(true);
-    expect(typedTextMatches('Всё хорошо.', 'все хорошо')).toBe(true);
+    expect(typedTextMatches("П'ять на ґанку.", 'п’ять на ганку')).toBe(true);
   });
 
   it('keeps in-word hyphens significant and rejects real differences', () => {

@@ -16,7 +16,7 @@ export interface ListeningItem {
   item: BankItemRow;
   audio: ListeningAudio;
   /** The Russian actually spoken — the answer key (ё/casing as in source). */
-  answerRu: string;
+  answerUk: string;
   /** Gloss shown as post-answer feedback (null for unenriched captures). */
   translation: string | null;
   variant: ListeningVariant;
@@ -54,7 +54,7 @@ export async function buildListeningItemForCard(
     card,
     item,
     audio,
-    answerRu: spokenText(audio),
+    answerUk: spokenText(audio),
     translation: item.translation.trim() ? item.translation : null,
     variant: 'typed',
   };
@@ -79,12 +79,12 @@ async function buildListeningChoices(
   repos: Repositories,
   entry: ListeningItem,
 ): Promise<string[] | null> {
-  const answerOption = entry.answerRu.toLocaleLowerCase('ru-RU');
+  const answerOption = entry.answerUk.toLocaleLowerCase('uk-UA');
   const candidates = await repos.bank.findDistractors(entry.item, (LISTENING_CHOICE_COUNT - 1) * 3);
   const seen = new Set([foldForAnswer(answerOption)]);
   const distractors: string[] = [];
   for (const candidate of candidates) {
-    const text = candidate.surface.toLocaleLowerCase('ru-RU');
+    const text = candidate.surface.toLocaleLowerCase('uk-UA');
     const key = foldForAnswer(text);
     if (!text || text.includes(' ') || seen.has(key)) continue;
     seen.add(key);

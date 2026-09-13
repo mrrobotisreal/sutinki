@@ -26,7 +26,7 @@ function pack(
     id,
     version: 1,
     type,
-    titleRu: `Т-${id}`,
+    titleUk: `Т-${id}`,
     titleEn: `T-${id}`,
     level,
     tags: [],
@@ -43,8 +43,8 @@ function baseInput(overrides: Partial<BuildPathInput> = {}): BuildPathInput {
   return {
     packs: [pack('a1-unit-1', 'course-unit'), pack('a1-cp', 'checkpoint')],
     stories: [
-      { packId: 'a1-unit-1', id: 's1', orderIdx: 0, titleRu: 'Один', titleEn: 'One' },
-      { packId: 'a1-unit-1', id: 's2', orderIdx: 1, titleRu: 'Два', titleEn: 'Two' },
+      { packId: 'a1-unit-1', id: 's1', orderIdx: 0, titleUk: 'Один', titleEn: 'One' },
+      { packId: 'a1-unit-1', id: 's2', orderIdx: 1, titleUk: 'Два', titleEn: 'Two' },
     ],
     storyProgress: [],
     unitProgress: [],
@@ -192,7 +192,7 @@ describe('buildPathState', () => {
 
 describe('tracks (T30)', () => {
   const familyStories = [
-    { packId: 'a2-family-1', id: 'f1', orderIdx: 0, titleRu: 'Приезд', titleEn: 'Arrival' },
+    { packId: 'a2-family-1', id: 'f1', orderIdx: 0, titleUk: 'Приезд', titleEn: 'Arrival' },
   ];
 
   function twoTrackInput(overrides: Partial<BuildPathInput> = {}): BuildPathInput {
@@ -214,8 +214,8 @@ describe('tracks (T30)', () => {
   it('absent track resolves to main at the app layer', () => {
     expect(packTrack(pack('x', 'course-unit'))).toBe('main');
     expect(packTrack(pack('x', 'course-unit', 'A1', { track: 'family' }))).toBe('family');
-    expect(trackTitle('family').ru).toBe('Семья');
-    expect(trackTitle('mystery-guests')).toEqual({ ru: 'mystery-guests', en: 'mystery-guests' });
+    expect(trackTitle('family').uk).toBe('Семья');
+    expect(trackTitle('mystery-guests')).toEqual({ uk: 'mystery-guests', en: 'mystery-guests' });
   });
 
   it('groups main first, then other tracks in first-seen pack order; checkpoints close main', () => {

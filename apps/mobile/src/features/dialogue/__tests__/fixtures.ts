@@ -17,15 +17,15 @@ import type { SentenceWithTokens } from '@/db/repositories/content';
 const PACK = 'test-pack';
 const DIALOGUE = 'test-dialogue';
 
-export function sentence(id: string, ru: string, lemmas?: (string | null)[]): SentenceWithTokens {
-  const words = ru.split(/\s+/).filter(Boolean);
+export function sentence(id: string, uk: string, lemmas?: (string | null)[]): SentenceWithTokens {
+  const words = uk.split(/\s+/).filter(Boolean);
   return {
     packId: PACK,
     id,
     storyId: DIALOGUE,
     orderIdx: 0,
-    ru,
-    en: `EN of ${ru}`,
+    uk,
+    en: `EN of ${uk}`,
     grammarTopics: null,
     tokens: words.map((w, i) => {
       const text = w.replace(/[.,!?]/g, '');
@@ -53,7 +53,7 @@ export function sentence(id: string, ru: string, lemmas?: (string | null)[]): Se
 export function choice(
   id: string,
   nodeId: string,
-  ru: string,
+  uk: string,
   nextNodeId: string,
   opts: { asrAlternates?: string[]; hintEn?: string } = {},
 ): DialogueGraphChoice {
@@ -66,9 +66,9 @@ export function choice(
     sentenceId: `${id}-sent`,
     nextNodeId,
     asrAlternates: opts.asrAlternates ?? null,
-    hintRu: null,
+    hintUk: null,
     hintEn: opts.hintEn ?? null,
-    sentence: sentence(`${id}-sent`, ru),
+    sentence: sentence(`${id}-sent`, uk),
     audio: null,
   };
 }
@@ -76,7 +76,7 @@ export function choice(
 export function node(
   id: string,
   speakerId: string,
-  ru: string,
+  uk: string,
   cont: { next?: string; endingId?: string; choices?: DialogueGraphChoice[] },
 ): DialogueGraphNode {
   return {
@@ -89,7 +89,7 @@ export function node(
     kind: cont.choices ? 'choices' : cont.next ? 'next' : 'ending',
     nextNodeId: cont.next ?? null,
     endingId: cont.endingId ?? null,
-    sentence: sentence(`${id}-sent`, ru),
+    sentence: sentence(`${id}-sent`, uk),
     audio: null,
     choices: cont.choices ?? [],
   };
@@ -100,13 +100,13 @@ export const graph: DialogueGraph = {
     packId: PACK,
     id: DIALOGUE,
     orderIdx: 0,
-    titleRu: 'Ужин',
+    titleUk: 'Ужин',
     titleEn: 'Dinner',
     level: 'A2',
     startNodeId: 'n1',
     characters: [
-      { id: 'mama', name: { ru: 'Мама', en: 'Mama' }, voice: 'v1', style: 'warm' },
-      { id: 'player', name: { ru: 'Ты', en: 'You' }, voice: 'coach', style: 'neutral' },
+      { id: 'mama', name: { uk: 'Мама', en: 'Mama' }, voice: 'v1', style: 'warm' },
+      { id: 'player', name: { uk: 'Ты', en: 'You' }, voice: 'coach', style: 'neutral' },
     ],
   },
   nodes: [
@@ -135,9 +135,9 @@ export const graph: DialogueGraph = {
       packId: PACK,
       dialogueId: DIALOGUE,
       id: 'end-good',
-      titleRu: 'Хороший ужин',
+      titleUk: 'Хороший ужин',
       titleEn: 'A good dinner',
-      recapRu: 'Все довольны.',
+      recapUk: 'Все довольны.',
       recapEn: 'Everyone is happy.',
       tone: 'good',
     },

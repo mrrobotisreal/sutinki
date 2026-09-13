@@ -29,7 +29,7 @@ export interface QuizToken {
 
 export interface QuizSentence {
   id: string;
-  ru: string;
+  uk: string;
   en: string;
   tokens: QuizToken[];
 }
@@ -66,11 +66,11 @@ function contentWords(sentences: readonly QuizSentence[]): Candidate[] {
 
 /** Rebuild the sentence text with one token replaced by the cloze blank. */
 function clozeSentence(sentence: QuizSentence, tokenIndex: number): string {
-  let ru = '';
+  let uk = '';
   sentence.tokens.forEach((t, i) => {
-    ru += (t.spaceBefore ? ' ' : '') + (i === tokenIndex ? '___' : t.text);
+    uk += (t.spaceBefore ? ' ' : '') + (i === tokenIndex ? '___' : t.text);
   });
-  return ru;
+  return uk;
 }
 
 function wordTokens(sentence: QuizSentence): QuizToken[] {
@@ -124,7 +124,7 @@ export function generateUnitQuiz(
     return {
       id: `uq-cloze-${++n}`,
       kind: 'cloze',
-      sentenceRu: clozeSentence(c.sentence, c.tokenIndex),
+      sentenceUk: clozeSentence(c.sentence, c.tokenIndex),
       answer: c.token.text,
       choices: shuffle([c.token.text, ...distractors]),
     };
@@ -154,7 +154,7 @@ export function generateUnitQuiz(
     return {
       id: `uq-mc-${++n}`,
       kind: 'multiple-choice',
-      direction: 'ru-en',
+      direction: 'uk-en',
       prompt: c.token.lemma!,
       choices,
       correctIndex: choices.indexOf(correct),
@@ -194,12 +194,12 @@ export function generateUnitQuiz(
     const target = shuffle(pool).find((s) => !usedSentences.has(s.id)) ?? shuffle(pool)[0];
     if (!target) return null;
     usedSentences.add(target.id);
-    const seen = new Set([target.ru]);
+    const seen = new Set([target.uk]);
     const distractors: string[] = [];
     for (const other of shuffle(pool)) {
-      if (seen.has(other.ru)) continue;
-      seen.add(other.ru);
-      distractors.push(other.ru);
+      if (seen.has(other.uk)) continue;
+      seen.add(other.uk);
+      distractors.push(other.uk);
       if (distractors.length === 3) break;
     }
     if (distractors.length < 2) return null;
@@ -207,8 +207,8 @@ export function generateUnitQuiz(
     return {
       id: `uq-listen-${++n}`,
       kind: 'listening',
-      text: target.ru,
-      choices: shuffle([target.ru, ...distractors]),
+      text: target.uk,
+      choices: shuffle([target.uk, ...distractors]),
     };
   };
   const take0 = (sentenceId: string) => usedSentences.add(sentenceId);
@@ -250,7 +250,7 @@ export async function buildUnitQuizForPack(
     for (const s of detail.sentences) {
       sentences.push({
         id: s.id,
-        ru: s.ru,
+        uk: s.uk,
         en: s.en,
         tokens: s.tokens.map((t) => ({
           text: t.text,

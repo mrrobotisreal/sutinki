@@ -1,6 +1,6 @@
 import { Rating, type Grade } from 'ts-fsrs';
 
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk, RAW_WORD_SPLIT } from '@/db/normalize';
 
 /**
  * Pronunciation scoring (T12, design §6): normalize → token-align target vs
@@ -8,15 +8,16 @@ import { normalizeRu } from '@/db/normalize';
  * overall score. Deliberately Duolingo-style generous — this judges "did you
  * say that word", never phoneme accuracy (explicitly out of scope).
  *
- * Normalization reuses the app-wide tolerant matcher (`normalizeRu`: NFC,
- * lowercase, ё→е — T03, comparison only, storage never mutated). T13's typed
+ * Normalization reuses the app-wide tolerant matcher (`normalizeUk`: NFC,
+ * lowercase, apostrophe→U+02BC, ґ→г — ADR-0004, comparison only, storage
+ * never mutated). T13's typed
  * cloze should reuse `scoringTokens`/`wordsMatch` from here rather than
  * building a second tolerant matcher.
  */
 
 /** Tokenize for scoring: normalize, strip punctuation, keep in-word hyphens («кто-то»). */
 export function scoringTokens(text: string): string[] {
-  return normalizeRu(text)
+  return normalizeUk(text)
     .split(/[^\p{L}\p{N}-]+/u)
     .map((t) => t.replace(/^-+|-+$/g, ''))
     .filter((t) => t.length > 0);
@@ -63,7 +64,7 @@ export function wordsMatch(target: string, heard: string): boolean {
 }
 
 export interface WordScore {
-  /** Target word as displayed (surface casing/ё preserved for the UI). */
+  /** Target word as displayed (surface casing/apostrophe/ґ preserved for the UI). */
   display: string;
   /** Normalized form the match ran on. */
   target: string;
@@ -87,14 +88,16 @@ export interface PronunciationScore {
  * or wrong words fail their slot.
  */
 export function scoreAttempt(targetText: string, transcriptText: string): PronunciationScore {
-  // Display tokens keep original casing/ё; scoring tokens are normalized.
-  // Both come from the same splitter so they stay index-aligned.
+  // Display tokens keep original casing/apostrophe/ґ; scoring tokens are
+  // normalized. Both splitters treat apostrophes as in-word (a raw U+0027
+  // is punctuation to \p{L}, but «п'ять» must stay one word) so the two
+  // token lists stay index-aligned.
   const displayTokens = targetText
     .normalize('NFC')
-    .split(/[^\p{L}\p{N}-]+/u)
+    .split(RAW_WORD_SPLIT)
     .map((t) => t.replace(/^-+|-+$/g, ''))
     .filter((t) => t.length > 0);
-  const target = displayTokens.map((t) => normalizeRu(t));
+  const target = displayTokens.map((t) => normalizeUk(t));
   const heard = scoringTokens(transcriptText);
 
   const m = target.length;

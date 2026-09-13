@@ -12,9 +12,9 @@ import {
 } from '../karaoke';
 
 const sentences: KaraokeSentenceInput[] = [
-  { id: 's1', ru: 'Я слышу стук.' },
-  { id: 's2', ru: 'Кто-то стучит в стене каждую ночь.' },
-  { id: 's3', ru: 'Тук. Тук. Тук.' },
+  { id: 's1', uk: 'Я слышу стук.' },
+  { id: 's2', uk: 'Кто-то стучит в стене каждую ночь.' },
+  { id: 's3', uk: 'Тук. Тук. Тук.' },
 ];
 
 // Realistic shape: lead-in silence, tight words, inter-sentence pauses.

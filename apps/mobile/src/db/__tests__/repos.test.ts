@@ -29,12 +29,12 @@ describe('reviews repository (shape only — logic is T06)', () => {
     const reviews = createReviewsRepo(db);
 
     const { item } = await bank.addWord({ lemma: 'дом', surface: 'дом', translation: 'house' });
-    const first = await reviews.ensureCards(item.id, ['ru-en', 'en-ru']);
+    const first = await reviews.ensureCards(item.id, ['uk-en', 'en-uk']);
     expect(first).toHaveLength(2);
-    const again = await reviews.ensureCards(item.id, ['ru-en', 'en-ru', 'listening']);
+    const again = await reviews.ensureCards(item.id, ['uk-en', 'en-uk', 'listening']);
     expect(again).toHaveLength(3);
 
-    const card = await reviews.getCard(item.id, 'ru-en');
+    const card = await reviews.getCard(item.id, 'uk-en');
     expect(card).toMatchObject({ state: 0, reps: 0, lapses: 0, stability: 0 });
     expect(card!.dueAt).toBeLessThanOrEqual(Date.now());
   });

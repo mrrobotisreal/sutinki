@@ -129,8 +129,8 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
   const narration = useNarration({
     packId,
     storyId,
-    storyTitleRu: detail.data?.story.titleRu ?? '',
-    packTitleRu: detail.data?.pack.titleRu ?? '',
+    storyTitleUk: detail.data?.story.titleUk ?? '',
+    packTitleUk: detail.data?.pack.titleUk ?? '',
     sentences,
     tracks: detail.data?.audio ?? [],
   });
@@ -439,7 +439,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
         sentenceId,
         chunks: selection.range.end - selection.range.start + 1,
       });
-      setPhraseTarget({ selection, sentenceRu: sentence.ru, sentenceId, storyId });
+      setPhraseTarget({ selection, sentenceUk: sentence.uk, sentenceId, storyId });
     },
     [sentenceById, storyId],
   );
@@ -526,19 +526,19 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
             onExplain={() =>
               setExplainTarget({
                 kind: 'sentence',
-                ru: item.ru,
+                uk: item.uk,
                 en: item.en,
-                sourceTitle: detail.data?.story.titleRu,
+                sourceTitle: detail.data?.story.titleUk,
               })
             }
           />
         )}
         ListHeaderComponent={
           <StoryHeader
-            titleRu={story.titleRu}
+            titleUk={story.titleUk}
             titleEn={story.titleEn}
             level={story.level}
-            packTitleRu={detail.data.pack.titleRu}
+            packTitleUk={detail.data.pack.titleUk}
             sentenceCount={sentences.length}
             finished={finished}
           />

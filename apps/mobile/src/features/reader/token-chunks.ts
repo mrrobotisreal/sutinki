@@ -7,7 +7,7 @@ import type { TokenRow } from '@/db/repositories/content';
  * a word from its attached punctuation. The importer stored the *effective*
  * spaceBefore per token (schema defaults already applied), and the schema's
  * reconstruction invariant guarantees chunks joined with single spaces
- * reproduce `Sentence.ru` exactly.
+ * reproduce `Sentence.uk` exactly.
  */
 export interface TokenChunk {
   /** Index of this chunk within the sentence's chunk list. */

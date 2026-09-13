@@ -48,7 +48,7 @@ describe('journal feedback schemas', () => {
     const stored = {
       v: 1,
       ...valid,
-      sourceRu: 'Я идти домой.',
+      sourceUk: 'Я идти домой.',
       model: 'anthropic/claude-sonnet-5',
       createdAt: 1_700_000_000_000,
     };

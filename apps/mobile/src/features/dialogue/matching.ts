@@ -39,7 +39,7 @@ export const TAP_UNLOCK_AFTER_ATTEMPTS = 2;
 export interface MatchableChoice {
   id: string;
   /** The choice sentence's Russian text. */
-  ru: string;
+  uk: string;
   /** Acceptable alternate phrasings (normalized-ish authored text). */
   asrAlternates?: string[] | null;
 }
@@ -67,7 +67,7 @@ export interface ChoiceMatchResult {
 }
 
 function scoreChoice(transcript: string, choice: MatchableChoice): ChoiceCandidate {
-  const targets = [choice.ru, ...(choice.asrAlternates ?? [])];
+  const targets = [choice.uk, ...(choice.asrAlternates ?? [])];
   let best: ChoiceCandidate | null = null;
   for (const target of targets) {
     const detail = scoreAttempt(target, transcript);
@@ -75,7 +75,7 @@ function scoreChoice(transcript: string, choice: MatchableChoice): ChoiceCandida
       best = { choiceId: choice.id, score: detail.score, target, detail };
     }
   }
-  // targets is never empty (ru is required), so best is always set.
+  // targets is never empty (uk is required), so best is always set.
   return best!;
 }
 

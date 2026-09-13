@@ -32,7 +32,7 @@ import {
  *   top up with weak cards to stay playable.
  * - A card's direction decides what can serve it: `listening` cards are
  *   playable only by the listening quiz (that's the skill they schedule);
- *   ru-en/en-ru cards by flashcard/MC/cloze/sentence-builder.
+ *   uk-en/en-uk cards by flashcard/MC/cloze/sentence-builder.
  * - Weights set target counts per mode (largest-remainder apportionment).
  *   A mode that can't fill its slots — no listening cards due, no eligible
  *   sentence for cloze, distractor shortage for MC — hands them to the

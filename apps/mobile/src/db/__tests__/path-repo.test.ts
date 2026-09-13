@@ -15,24 +15,24 @@ const unitPack = {
   id: 'a1-unit-test',
   version: 1,
   type: 'course-unit',
-  title: { ru: 'Тест', en: 'Test' },
+  title: { uk: 'Тест', en: 'Test' },
   level: 'A1',
   tags: ['course-unit'],
   lesson: {
     id: 'unit-lesson',
-    title: { ru: 'Урок', en: 'Lesson' },
+    title: { uk: 'Урок', en: 'Lesson' },
     body: '## Урок\n\nГде? — в + prepositional.',
   },
   stories: [
     {
       id: 'st-1',
-      title: { ru: 'История', en: 'Story' },
+      title: { uk: 'История', en: 'Story' },
       level: 'A1',
       audio: [],
       sentences: [
         {
           id: 'sn-1',
-          ru: 'В подвале стоит кровать.',
+          uk: 'В подвале стоит кровать.',
           en: 'A bed stands in the cellar.',
           tokens: [
             { text: 'В', lemma: 'в', translation: 'in', pos: 'prep' },
@@ -44,7 +44,7 @@ const unitPack = {
         },
         {
           id: 'sn-2',
-          ru: 'Кровать стоит тихо.',
+          uk: 'Кровать стоит тихо.',
           en: 'The bed stands quietly.',
           tokens: [
             { text: 'Кровать', lemma: 'кровать', translation: 'bed', pos: 'noun' },
@@ -151,7 +151,7 @@ describe('path repo — unit facts', () => {
       id: 'a1-checkpoint-test',
       version: 1,
       type: 'checkpoint',
-      title: { ru: 'КП', en: 'CP' },
+      title: { uk: 'КП', en: 'CP' },
       level: 'A1',
       tags: [],
       stories: [],
@@ -159,7 +159,7 @@ describe('path repo — unit facts', () => {
         {
           id: 'e1',
           kind: 'multiple-choice',
-          direction: 'ru-en',
+          direction: 'uk-en',
           prompt: 'дом',
           choices: ['house', 'wall'],
           correctIndex: 0,

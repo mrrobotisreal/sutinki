@@ -67,7 +67,7 @@ export function EndingView({
         <Text variant="caption" className="uppercase tracking-wider">
           {TONE_LABEL[ending.tone]}
         </Text>
-        <RNText className="text-center font-reading text-3xl text-text">{ending.titleRu}</RNText>
+        <RNText className="text-center font-reading text-3xl text-text">{ending.titleUk}</RNText>
         <Text variant="muted">{ending.titleEn}</Text>
       </View>
 
@@ -81,7 +81,7 @@ export function EndingView({
       >
         <View className="flex-row items-start gap-2">
           <RNText className="flex-1 font-reading text-lg leading-7 text-text">
-            {ending.recapRu}
+            {ending.recapUk}
           </RNText>
           <Ionicons
             name={showEn ? 'language' : 'language-outline'}
@@ -112,7 +112,7 @@ export function EndingView({
                     color={theme.textMuted}
                   />
                   <RNText className="flex-1 font-reading text-base text-text" numberOfLines={2}>
-                    {entry.choice.sentence?.ru ?? '…'}
+                    {entry.choice.sentence?.uk ?? '…'}
                   </RNText>
                   {entry.score !== undefined && (
                     <Text variant="caption">{Math.round(entry.score)}%</Text>
@@ -140,7 +140,7 @@ export function EndingView({
                   color={isSeen ? theme.accent : theme.border}
                 />
                 <Text className={isSeen ? '' : 'text-text-muted'}>
-                  {isSeen ? e.titleRu : '???'}
+                  {isSeen ? e.titleUk : '???'}
                 </Text>
               </View>
             );

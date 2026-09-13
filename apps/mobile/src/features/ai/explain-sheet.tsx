@@ -25,7 +25,7 @@ export function ExplainSheet({
   onClose: () => void;
 }) {
   if (!target) return null;
-  const key = target.kind === 'sentence' ? target.ru : target.headword;
+  const key = target.kind === 'sentence' ? target.uk : target.headword;
   return <ExplainSheetInner key={key} target={target} onClose={onClose} />;
 }
 
@@ -54,7 +54,7 @@ function ExplainSheetInner({ target, onClose }: { target: ExplainTarget; onClose
     void fetchExplanation();
   }, [fetchExplanation]);
 
-  const heading = target.kind === 'sentence' ? target.ru : target.headword;
+  const heading = target.kind === 'sentence' ? target.uk : target.headword;
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>

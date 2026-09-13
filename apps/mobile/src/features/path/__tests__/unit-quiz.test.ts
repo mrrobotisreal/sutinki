@@ -31,7 +31,7 @@ function punct(text: string): QuizToken {
 function sentence(id: string, words: [string, string, string][], en: string): QuizSentence {
   const tokens = words.map(([t, l, g], i) => ({ ...word(t, l, g), spaceBefore: i > 0 }));
   tokens.push(punct('.'));
-  return { id, ru: words.map(([t]) => t).join(' ') + '.', en, tokens };
+  return { id, uk: words.map(([t]) => t).join(' ') + '.', en, tokens };
 }
 
 const SENTENCES: QuizSentence[] = [
@@ -100,7 +100,7 @@ describe('generateUnitQuiz', () => {
   it('cloze specs blank a real token and include the answer among choices', () => {
     const specs = generateUnitQuiz(SENTENCES);
     for (const spec of specs.filter((s) => s.kind === 'cloze')) {
-      expect(spec.sentenceRu).toContain('___');
+      expect(spec.sentenceUk).toContain('___');
       expect(spec.choices).toBeDefined();
       expect(spec.choices!).toContain(spec.answer);
       expect(new Set(spec.choices!.map((c) => c.toLowerCase())).size).toBe(spec.choices!.length);

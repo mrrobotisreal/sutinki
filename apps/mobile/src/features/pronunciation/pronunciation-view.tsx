@@ -73,7 +73,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
       const { path, durationMs } = await stopAttemptRecording();
       attemptPathRef.current = path;
       const transcript = await transcribeWav(path);
-      const scored = scoreAttempt(entry.promptRu, transcript.text);
+      const scored = scoreAttempt(entry.promptUk, transcript.text);
       attemptsRef.current += 1;
       bestScoreRef.current = Math.max(bestScoreRef.current, scored.score);
       setResult(scored);
@@ -92,7 +92,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
       setErrorMsg(err instanceof Error ? err.message : 'could not process the recording');
       setPhase('error');
     }
-  }, [entry.promptRu, entry.source]);
+  }, [entry.promptUk, entry.source]);
 
   const startRecording = React.useCallback(async () => {
     const permission = await requestMicPermission();
@@ -142,7 +142,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
           Say it aloud
         </Text>
         <RNText className="text-center font-reading text-3xl leading-snug text-text">
-          {entry.promptRu}
+          {entry.promptUk}
         </RNText>
         {entry.promptEn && (
           <Text variant="muted" className="text-center">
@@ -150,7 +150,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
           </Text>
         )}
         <Pressable
-          onPress={() => void speak(entry.promptRu)}
+          onPress={() => void speak(entry.promptUk)}
           accessibilityRole="button"
           accessibilityLabel="Hear the phrase"
           className="mt-1 flex-row items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 active:bg-surface-2"

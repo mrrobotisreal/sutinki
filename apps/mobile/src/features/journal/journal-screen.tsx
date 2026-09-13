@@ -96,7 +96,7 @@ export function JournalScreen() {
                       Prompt of the day
                     </Text>
                   </View>
-                  <Text className="mt-2 font-reading text-lg leading-7">{prompt.promptRu}</Text>
+                  <Text className="mt-2 font-reading text-lg leading-7">{prompt.promptUk}</Text>
                   <Text variant="caption" className="mt-1">
                     {prompt.promptEn}
                   </Text>
@@ -107,7 +107,7 @@ export function JournalScreen() {
               entries.isLoading ? null : (
                 <EmptyState
                   icon="book-outline"
-                  ru="Журнал ждёт твоих слов."
+                  uk="Журнал ждёт твоих слов."
                   en="No entries yet — write your first one, even three sentences count."
                 />
               )
@@ -136,7 +136,7 @@ export function JournalScreen() {
             notes.isLoading ? null : (
               <EmptyState
                 icon="document-text-outline"
-                ru="Пока ни одной заметки."
+                uk="Пока ни одной заметки."
                 en="Markdown study notes live here — grammar tables, mnemonics, anything."
               />
             )
@@ -226,7 +226,7 @@ function EntryRow({ entry, onPress }: { entry: JournalEntryRow; onPress: () => v
         <FeedbackBadge status={entry.feedbackStatus} />
       </View>
       <Text className="mt-1.5 font-reading text-base leading-6" numberOfLines={2}>
-        {snippet(entry.ru) || '—'}
+        {snippet(entry.uk) || '—'}
       </Text>
     </Pressable>
   );
@@ -256,18 +256,18 @@ function NoteRowView({ note, onPress }: { note: NoteRow; onPress: () => void }) 
 
 function EmptyState({
   icon,
-  ru,
+  uk,
   en,
 }: {
   icon: React.ComponentProps<typeof Ionicons>['name'];
-  ru: string;
+  uk: string;
   en: string;
 }) {
   const { tokens: theme } = useAppTheme();
   return (
     <View className="items-center px-8 pt-24">
       <Ionicons name={icon} size={40} color={theme.textMuted} />
-      <Text className="mt-4 text-center font-reading-italic text-lg text-text-muted">{ru}</Text>
+      <Text className="mt-4 text-center font-reading-italic text-lg text-text-muted">{uk}</Text>
       <Text variant="caption" className="mt-2 text-center">
         {en}
       </Text>

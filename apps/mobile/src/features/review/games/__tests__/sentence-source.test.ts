@@ -15,10 +15,10 @@ async function setup() {
     packId: 'p1',
     storyId: 'read-story',
     sentences: [
-      { id: 's1', ru: 'Я вижу дом', en: 'I see a house', lemmas: ['я', 'видеть', 'дом'] },
+      { id: 's1', uk: 'Я вижу дом', en: 'I see a house', lemmas: ['я', 'видеть', 'дом'] },
       {
         id: 's2',
-        ru: 'Дом стоит тихо',
+        uk: 'Дом стоит тихо',
         en: 'The house stands quietly',
         lemmas: ['дом', 'стоять', 'тихо'],
       },
@@ -30,7 +30,7 @@ async function setup() {
     sentences: [
       {
         id: 's3',
-        ru: 'Странный дом ждёт',
+        uk: 'Странный дом ждёт',
         en: 'A strange house waits',
         lemmas: ['странный', 'дом', 'ждать'],
       },
@@ -76,18 +76,20 @@ describe('pickSentenceForLemma', () => {
     expect(picked?.sentence.id).toBe('s3');
   });
 
-  it('matches lemmas ё/е-tolerantly', async () => {
+  it('matches lemmas apostrophe- and ґ/г-tolerantly', async () => {
     const { db, repos } = await setup();
     await seedStory(db, {
       packId: 'p2',
-      storyId: 'yo-story',
-      sentences: [{ id: 's4', ru: 'Ещё темно', en: 'Still dark', lemmas: ['ещё', 'тёмный'] }],
+      storyId: 'apos-story',
+      sentences: [{ id: 's4', uk: "П'ять ґанків", en: 'Five porches', lemmas: ["п'ять", 'ґанок'] }],
     });
-    await repos.reading.markFinished('p2', 'yo-story');
+    await repos.reading.markFinished('p2', 'apos-story');
     const index = await buildReadIndex(repos);
-    const picked = await pickSentenceForLemma(repos, 'еще', index);
+    const picked = await pickSentenceForLemma(repos, 'п’ять', index);
     expect(picked?.sentence.id).toBe('s4');
-    expect(picked?.tokens[picked.targetIndex]?.text).toBe('Ещё');
+    expect(picked?.tokens[picked.targetIndex]?.text).toBe("П'ять");
+    const viaHe = await pickSentenceForLemma(repos, 'ганок', index);
+    expect(viaHe?.tokens[viaHe.targetIndex]?.text).toBe('ґанків');
   });
 
   it('respects maxWords', async () => {

@@ -65,7 +65,7 @@ export type JournalFeedback = z.infer<typeof JournalFeedbackSchema>;
 export const StoredFeedbackSchema = JournalFeedbackSchema.extend({
   v: z.literal(1),
   /** The entry text that was corrected. */
-  sourceRu: z.string().min(1),
+  sourceUk: z.string().min(1),
   model: z.string(),
   createdAt: z.number(),
 });

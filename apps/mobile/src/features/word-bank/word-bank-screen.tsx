@@ -74,7 +74,7 @@ export function WordBankScreen() {
 
   const storyTitles = React.useMemo(() => {
     const map = new Map<string, string>();
-    for (const s of stories.data ?? []) map.set(s.id, s.titleRu);
+    for (const s of stories.data ?? []) map.set(s.id, s.titleUk);
     return map;
   }, [stories.data]);
 

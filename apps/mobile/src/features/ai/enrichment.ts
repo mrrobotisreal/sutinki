@@ -23,13 +23,13 @@ import type { EnrichmentProposal } from './schemas';
 export async function getEnrichmentContext(item: BankItemRow): Promise<string | undefined> {
   if (item.sourceSentenceId) {
     const resolved = await repos.content.resolveSentence(item.sourceSentenceId);
-    if (resolved) return resolved.sentence.ru;
+    if (resolved) return resolved.sentence.uk;
   }
   const detail = await repos.bank.getItemWithEncounters(item.id);
   const journalEncounter = detail?.encounters.find((e) => e.journalEntryId);
   if (journalEncounter?.journalEntryId) {
     const entry = await repos.journal.getEntry(journalEncounter.journalEntryId);
-    if (entry) return windowAround(entry.ru, item.surface);
+    if (entry) return windowAround(entry.uk, item.surface);
   }
   return undefined;
 }

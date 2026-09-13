@@ -22,10 +22,10 @@ describe('production direction activation', () => {
     });
     const cards = await repos.reviews.listCardsForItem(item.id);
     expect(cards.map((c) => c.direction).sort()).toEqual([
-      'en-ru',
+      'en-uk',
       'listening',
       'production',
-      'ru-en',
+      'uk-en',
     ]);
   });
 
@@ -68,7 +68,7 @@ describe('buildPronunciationSession', () => {
     for (const entry of session) {
       expect(entry.card.direction).toBe('production');
       expect(entry.card.bankItemId).toBe(entry.item.id);
-      expect(entry.promptRu.length).toBeGreaterThan(0);
+      expect(entry.promptUk.length).toBeGreaterThan(0);
     }
   });
 
@@ -79,11 +79,11 @@ describe('buildPronunciationSession', () => {
 
     const session = await buildPronunciationSession(repos);
     const phrase = session.find((s) => s.item.kind === 'phrase')!;
-    expect(phrase.promptRu).toBe('до свидания');
+    expect(phrase.promptUk).toBe('до свидания');
     expect(phrase.source).toBe('phrase');
 
     const word = session.find((s) => s.item.kind === 'word')!;
-    expect(word.promptRu).toBe('зеркало');
+    expect(word.promptUk).toBe('зеркало');
     expect(word.source).toBe('word');
   });
 
@@ -110,18 +110,18 @@ describe('buildPronunciationSession', () => {
     };
     repos.content.resolveSentence = async (id: string) =>
       ({
-        sentence: { id, ru: sentences[id]!, en: 'stub' },
+        sentence: { id, uk: sentences[id]!, en: 'stub' },
         story: null,
       }) as unknown as ResolvedSentence;
 
     const session = await buildPronunciationSession(repos);
     const short = session.find((s) => s.item.lemma === 'стена')!;
     expect(short.source).toBe('sentence');
-    expect(short.promptRu).toBe('Я слышу стук в стене.');
+    expect(short.promptUk).toBe('Я слышу стук в стене.');
 
     const long = session.find((s) => s.item.lemma === 'ночь')!;
     expect(long.source).toBe('word');
-    expect(long.promptRu).toBe('ночь');
+    expect(long.promptUk).toBe('ночь');
   });
 
   it('grading a production card reschedules it out of the due queue', async () => {

@@ -66,7 +66,7 @@ export function NodeBubble({
       >
         <View className="mb-1 flex-row items-center gap-2">
           <Text variant="caption" className="uppercase tracking-wider">
-            {isPlayer ? 'Ты' : (speaker?.name.ru ?? node.speakerId)}
+            {isPlayer ? 'Ты' : (speaker?.name.uk ?? node.speakerId)}
           </Text>
           <Pressable
             onPress={onReplay}

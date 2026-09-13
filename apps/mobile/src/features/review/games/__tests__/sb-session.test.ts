@@ -13,10 +13,10 @@ import { seedStory } from './seed';
 /** T13: sentence-builder session generation + arrangement validation. */
 
 describe('arrangementCorrect', () => {
-  it('accepts the canonical order, tolerant of case and ё/е per tile', () => {
-    const answer = ['Ещё', 'темно', 'здесь'];
-    expect(arrangementCorrect(['ещё', 'темно', 'здесь'], answer)).toBe(true);
-    expect(arrangementCorrect(['еще', 'темно', 'здесь'], answer)).toBe(true);
+  it('accepts the canonical order, tolerant of case and apostrophe/ґ per tile', () => {
+    const answer = ["П'ять", 'ґанків', 'тут'];
+    expect(arrangementCorrect(["п'ять", 'ґанків', 'тут'], answer)).toBe(true);
+    expect(arrangementCorrect(['п’ять', 'ганків', 'тут'], answer)).toBe(true);
   });
 
   it('rejects wrong order, wrong words, and wrong length', () => {
@@ -43,7 +43,7 @@ describe('buildSbSession', () => {
       sentences: [
         {
           id: 's0',
-          ru: 'Кто-то стучит в стену',
+          uk: 'Кто-то стучит в стену',
           en: 'Someone knocks on the wall',
           lemmas: ['кто-то', 'стучать', 'в', 'стена'],
           punct: '.',
@@ -73,7 +73,7 @@ describe('buildSbSession', () => {
       sentences: [
         {
           id: 's0',
-          ru: 'Зеркало помнит всё',
+          uk: 'Зеркало помнит всё',
           en: 'The mirror remembers everything',
           lemmas: ['зеркало', 'помнить', 'всё'],
         },
@@ -103,7 +103,7 @@ describe('buildSbSession', () => {
     const item = session[0]!;
     const distractors = item.tiles.filter((t) => t.distractor);
     expect(distractors).toHaveLength(SB_DISTRACTOR_COUNT.C1);
-    const sentenceWords = new Set(item.answerTokens.map((t) => t.text.toLocaleLowerCase('ru-RU')));
+    const sentenceWords = new Set(item.answerTokens.map((t) => t.text.toLocaleLowerCase('uk-UA')));
     for (const d of distractors) expect(sentenceWords.has(d.text)).toBe(false);
   });
 
@@ -115,15 +115,15 @@ describe('buildSbSession', () => {
       packId: 'p1',
       storyId: 'long',
       sentences: [
-        { id: 's0', ru: longWords.join(' '), en: 'long', lemmas: longWords },
-        { id: 's1', ru: 'тишина', en: 'silence', lemmas: ['тишина'] },
+        { id: 's0', uk: longWords.join(' '), en: 'long', lemmas: longWords },
+        { id: 's1', uk: 'тишина', en: 'silence', lemmas: ['тишина'] },
       ],
     });
     await seedStory(db, {
       packId: 'p1',
       storyId: 'unread',
       sentences: [
-        { id: 's2', ru: 'Он ждёт тебя', en: 'He waits for you', lemmas: ['он', 'ждать', 'ты'] },
+        { id: 's2', uk: 'Он ждёт тебя', en: 'He waits for you', lemmas: ['он', 'ждать', 'ты'] },
       ],
     });
     await repos.reading.markFinished('p1', 'long');

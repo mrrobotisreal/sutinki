@@ -53,7 +53,7 @@ export function SpecMcView({ spec, onDone }: SpecViewProps<'multiple-choice'>) {
   return (
     <View className="flex-1 px-4 pt-6">
       <Text variant="caption" className="text-center uppercase tracking-wider">
-        {spec.direction === 'ru-en' ? 'What does it mean?' : 'Как это по-русски?'}
+        {spec.direction === 'uk-en' ? 'What does it mean?' : 'Как это по-русски?'}
       </Text>
       <View className="mt-4 min-h-28 justify-center rounded-2xl border border-border bg-surface px-5 py-7">
         <RNText className="text-center font-reading text-3xl text-text">{spec.prompt}</RNText>
@@ -102,7 +102,7 @@ export function SpecClozeView({ spec, onDone }: SpecViewProps<'cloze'>) {
 
   const blank = answered ? answered.text : '______';
   const blankColor = answered ? (answered.correct ? theme.success : theme.danger) : theme.accent;
-  const parts = spec.sentenceRu.split('___');
+  const parts = spec.sentenceUk.split('___');
 
   return (
     <View className="flex-1 px-4 pt-6">

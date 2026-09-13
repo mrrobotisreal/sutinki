@@ -28,12 +28,12 @@ export function packTrack(pack: Pick<PackRow, 'track'>): string {
  * App-known track display names (packs carry data, never presentation).
  * Unknown tracks render their raw id — forward-compatible like scenes.
  */
-export const TRACK_TITLES: Record<string, { ru: string; en: string }> = {
-  family: { ru: 'Семья', en: 'The family track' },
+export const TRACK_TITLES: Record<string, { uk: string; en: string }> = {
+  family: { uk: 'Семья', en: 'The family track' },
 };
 
-export function trackTitle(track: string): { ru: string; en: string } {
-  return TRACK_TITLES[track] ?? { ru: track, en: track };
+export function trackTitle(track: string): { uk: string; en: string } {
+  return TRACK_TITLES[track] ?? { uk: track, en: track };
 }
 
 /**
@@ -50,7 +50,7 @@ export type UnitStepKind = 'lesson' | 'story' | 'goal' | 'quiz';
 
 export interface UnitStoryState {
   storyId: string;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   started: boolean;
   finished: boolean;
@@ -127,7 +127,7 @@ export interface BuildPathInput {
   /** course-unit + checkpoint packs (any order — sorted here). */
   packs: PackRow[];
   /** All stories of those packs (others are ignored). */
-  stories: Pick<StoryRow, 'packId' | 'id' | 'orderIdx' | 'titleRu' | 'titleEn'>[];
+  stories: Pick<StoryRow, 'packId' | 'id' | 'orderIdx' | 'titleUk' | 'titleEn'>[];
   storyProgress: Pick<StoryProgressRow, 'packId' | 'storyId' | 'finishedAt' | 'updatedAt'>[];
   unitProgress: Pick<
     UnitProgressRow,
@@ -156,7 +156,7 @@ export function buildUnitState(
     const p = progressByStory.get(s.id);
     return {
       storyId: s.id,
-      titleRu: s.titleRu,
+      titleUk: s.titleUk,
       titleEn: s.titleEn,
       started: p != null,
       finished: p?.finishedAt != null,

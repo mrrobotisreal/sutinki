@@ -45,7 +45,7 @@ export function pumpFeedbackQueue(): Promise<number> {
   pumpInFlight = processFeedbackQueue({
     listQueued: async () => {
       const rows = await repos.journal.listEntriesByStatus('queued');
-      return rows.map((r) => ({ id: r.id, ru: r.ru }));
+      return rows.map((r) => ({ id: r.id, uk: r.uk }));
     },
     saveDone: async (entryId, storedJson) => {
       await repos.journal.setFeedback(entryId, 'done', storedJson);

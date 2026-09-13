@@ -99,7 +99,7 @@ export function LessonScreen({ packId }: { packId: string }) {
 
   return (
     <View className="flex-1 bg-bg">
-      <Stack.Screen options={{ title: row.titleRu }} />
+      <Stack.Screen options={{ title: row.titleUk }} />
       {scened && <RoomScene scene={theme.scene} accent={theme.accent} />}
       <ScrollView
         className="flex-1"
@@ -112,7 +112,7 @@ export function LessonScreen({ packId }: { packId: string }) {
       >
         {/* Over a scene, content floats on a translucent surface card (T31). */}
         <View className={scened ? 'rounded-2xl bg-surface-veil p-4' : ''}>
-          <RNText className="font-reading text-3xl text-text">{row.titleRu}</RNText>
+          <RNText className="font-reading text-3xl text-text">{row.titleUk}</RNText>
           <Text variant="muted" className="mb-5 mt-1">
             {row.titleEn}
           </Text>

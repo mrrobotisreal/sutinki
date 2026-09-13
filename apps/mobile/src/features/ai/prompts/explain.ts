@@ -10,7 +10,7 @@ import type { ChatMessage } from '../client';
 export type ExplainTarget =
   | {
       kind: 'sentence';
-      ru: string;
+      uk: string;
       /** Pack translation when we have one (reader sentences). */
       en?: string;
       /** Where it came from, for flavor ("Ночные гости"). */
@@ -25,7 +25,7 @@ export type ExplainTarget =
       grammar?: string;
       pos?: string;
       /** An example sentence the learner met the word in. */
-      exampleRu?: string;
+      exampleUk?: string;
     };
 
 const SYSTEM = `You are a Russian tutor for an English-speaking adult learner (~A1–B1). Explain clearly and concisely in English, in markdown.
@@ -39,7 +39,7 @@ Keep it under ~250 words. No preamble — start with the content.`;
 export function buildExplainMessages(target: ExplainTarget): ChatMessage[] {
   let user: string;
   if (target.kind === 'sentence') {
-    const parts = [`Explain this Russian sentence:\n\n«${target.ru}»`];
+    const parts = [`Explain this Russian sentence:\n\n«${target.uk}»`];
     if (target.en) parts.push(`Provided translation: "${target.en}"`);
     if (target.sourceTitle) parts.push(`(from «${target.sourceTitle}»)`);
     user = parts.join('\n');
@@ -52,7 +52,7 @@ export function buildExplainMessages(target: ExplainTarget): ChatMessage[] {
     } else if (target.grammar) {
       parts.push(`Saved grammar note: ${target.grammar}`);
     }
-    if (target.exampleRu) parts.push(`I met it in: «${target.exampleRu}»`);
+    if (target.exampleUk) parts.push(`I met it in: «${target.exampleUk}»`);
     user = parts.join('\n');
   }
   return [

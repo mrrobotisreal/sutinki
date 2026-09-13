@@ -14,7 +14,7 @@ import type { SutinkiDB } from '../types';
  * - **Stability bands** (T18 decision): per reviewed card (reps > 0),
  *   FSRS `stability` (days) < 7 → learning ("shaky"), 7–30 → young,
  *   ≥ 30 → mature. A lemma's band is the band of the MINIMUM stability
- *   across its bank item's reviewed ru-en/en-ru cards (weakest link);
+ *   across its bank item's reviewed uk-en/en-uk cards (weakest link);
  *   listening/production cards train other skills and do not vouch for
  *   "knowing" a word. reps = 0 on all core cards → collected, no band.
  * - **Encountered** = distinct lemmas appearing in *read* sentences
@@ -125,7 +125,7 @@ const REVIEWED_LEMMAS = sql`
     FROM bank_items b
     JOIN cards c ON c.bank_item_id = b.id
     WHERE b.kind = 'word' AND b.lemma_norm IS NOT NULL
-      AND c.direction IN ('ru-en', 'en-ru') AND c.reps > 0
+      AND c.direction IN ('uk-en', 'en-uk') AND c.reps > 0
   )`;
 
 export function createDashboardRepo(db: SutinkiDB) {
@@ -158,7 +158,7 @@ export function createDashboardRepo(db: SutinkiDB) {
                  ${sql.raw(LEVEL_TO_ORD.replace(/level/g, 'b.level'))} AS b_lvl,
                  (SELECT MIN(c.stability) FROM cards c
                    WHERE c.bank_item_id = b.id
-                     AND c.direction IN ('ru-en', 'en-ru') AND c.reps > 0) AS min_stab
+                     AND c.direction IN ('uk-en', 'en-uk') AND c.reps > 0) AS min_stab
           FROM bank_items b
           WHERE b.kind = 'word' AND b.lemma_norm IS NOT NULL
         ),
@@ -402,7 +402,7 @@ export function createDashboardRepo(db: SutinkiDB) {
         FROM bank_items b
         JOIN cards c ON c.bank_item_id = b.id
         WHERE b.kind = 'word'
-          AND c.direction IN ('ru-en', 'en-ru')
+          AND c.direction IN ('uk-en', 'en-uk')
           AND c.reps > 0 AND c.stability < ${STABILITY_MATURE_MIN}
         GROUP BY b.id
         ORDER BY rank_score ASC
@@ -498,7 +498,7 @@ export function createDashboardRepo(db: SutinkiDB) {
         WHERE b.kind = 'word' AND b.lemma_norm IS NOT NULL
         GROUP BY b.id
         ORDER BY (SELECT MIN(c.stability) FROM cards c
-                   WHERE c.bank_item_id = b.id AND c.direction IN ('ru-en', 'en-ru')) ASC
+                   WHERE c.bank_item_id = b.id AND c.direction IN ('uk-en', 'en-uk')) ASC
         LIMIT ${limit}
       `);
       return rows.map((r) => r.id);

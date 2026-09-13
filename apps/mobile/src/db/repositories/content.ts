@@ -1,6 +1,6 @@
 import { and, asc, eq, sql } from 'drizzle-orm';
 
-import { normalizeRu, toFtsQuery } from '../normalize';
+import { normalizeUk, toFtsQuery } from '../normalize';
 import {
   audioTracks,
   exerciseSpecs,
@@ -23,7 +23,7 @@ export type WordStampRow = typeof wordStamps.$inferSelect;
 
 export interface StoryListItem extends StoryRow {
   packTitleEn: string;
-  packTitleRu: string;
+  packTitleUk: string;
   sentenceCount: number;
 }
 
@@ -47,14 +47,14 @@ export interface ResolvedSentence {
 /** One sentence with ≥1 matching token — a global-search result row (T24). */
 export interface SentenceSearchHit {
   packId: string;
-  packTitleRu: string;
+  packTitleUk: string;
   level: string;
   storyId: string;
-  storyTitleRu: string;
+  storyTitleUk: string;
   sentenceId: string;
   /** Scroll target for the reader deep link (T04 restore path). */
   orderIdx: number;
-  ru: string;
+  uk: string;
   /** Distinct matched token surfaces, for match highlighting in the snippet. */
   matchedTexts: string[];
 }
@@ -102,7 +102,7 @@ export function createContentRepo(db: SutinkiDB) {
         .select({
           story: stories,
           packTitleEn: packs.titleEn,
-          packTitleRu: packs.titleRu,
+          packTitleUk: packs.titleUk,
           sentenceCount: sql<number>`(SELECT COUNT(*) FROM sentences WHERE sentences.pack_id = stories.pack_id AND sentences.story_id = stories.id)`,
         })
         .from(stories)
@@ -111,7 +111,7 @@ export function createContentRepo(db: SutinkiDB) {
       return rows.map((r) => ({
         ...r.story,
         packTitleEn: r.packTitleEn,
-        packTitleRu: r.packTitleRu,
+        packTitleUk: r.packTitleUk,
         sentenceCount: r.sentenceCount,
       }));
     },
@@ -201,14 +201,14 @@ export function createContentRepo(db: SutinkiDB) {
 
     /** All sentences containing a lemma (ё/е-tolerant) — cloze generation (T13). */
     async findSentencesWithLemma(lemma: string): Promise<SentenceRow[]> {
-      const norm = normalizeRu(lemma);
+      const norm = normalizeUk(lemma);
       return db
         .selectDistinct({
           packId: sentences.packId,
           id: sentences.id,
           storyId: sentences.storyId,
           orderIdx: sentences.orderIdx,
-          ru: sentences.ru,
+          uk: sentences.uk,
           en: sentences.en,
           grammarTopics: sentences.grammarTopics,
         })
@@ -268,19 +268,19 @@ export function createContentRepo(db: SutinkiDB) {
       if (!match) return [];
       const rows = await db.all<{
         pack_id: string;
-        pack_title_ru: string;
+        pack_title_uk: string;
         level: string;
         story_id: string;
-        story_title_ru: string;
+        story_title_uk: string;
         sentence_id: string;
         order_idx: number;
-        ru: string;
+        uk: string;
         matched: string;
         best_rank: number;
       }>(sql`
-        SELECT t.pack_id, p.title_ru AS pack_title_ru, p.level,
-               t.story_id, st.title_ru AS story_title_ru,
-               t.sentence_id, s.order_idx, s.ru,
+        SELECT t.pack_id, p.title_uk AS pack_title_uk, p.level,
+               t.story_id, st.title_uk AS story_title_uk,
+               t.sentence_id, s.order_idx, s.uk,
                GROUP_CONCAT(DISTINCT t.text) AS matched,
                MIN(rank) AS best_rank
         FROM tokens_fts f
@@ -295,13 +295,13 @@ export function createContentRepo(db: SutinkiDB) {
       `);
       return rows.map((r) => ({
         packId: r.pack_id,
-        packTitleRu: r.pack_title_ru,
+        packTitleUk: r.pack_title_uk,
         level: r.level,
         storyId: r.story_id,
-        storyTitleRu: r.story_title_ru,
+        storyTitleUk: r.story_title_uk,
         sentenceId: r.sentence_id,
         orderIdx: r.order_idx,
-        ru: r.ru,
+        uk: r.uk,
         matchedTexts: r.matched ? r.matched.split(',') : [],
       }));
     },

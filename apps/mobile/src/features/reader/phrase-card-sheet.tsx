@@ -15,7 +15,7 @@ import type { PhraseSelection } from './token-text';
 export interface PhraseCardTarget {
   selection: PhraseSelection;
   /** Sentence context shown on the card + source refs for the save. */
-  sentenceRu: string;
+  sentenceUk: string;
   sentenceId: string;
   storyId: string;
 }
@@ -96,7 +96,7 @@ function PhraseSheet({ target, onClose }: { target: PhraseCardTarget; onClose: (
         {/* sentence context */}
         <View className="mt-2 border-l-2 border-accent/40 pl-3">
           <Text variant="caption" className="font-reading-italic">
-            {target.sentenceRu}
+            {target.sentenceUk}
           </Text>
         </View>
 

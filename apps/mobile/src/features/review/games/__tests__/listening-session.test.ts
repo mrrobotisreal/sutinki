@@ -33,7 +33,7 @@ async function setup(
     sentences: [
       {
         id: 's0',
-        ru: 'Вот словами здесь',
+        uk: 'Вот словами здесь',
         en: 'Here with words',
         lemmas: ['вот', 'слово', 'здесь'],
       },
@@ -153,7 +153,7 @@ describe('buildListeningItemForCard', () => {
     await addDistractors(repos, 5);
     const card = (await repos.reviews.getCard(item.id, 'listening'))!;
     const entry = await buildListeningItemForCard(repos, card, item, 'pick4');
-    expect(entry.answerRu).toBe('словами');
+    expect(entry.answerUk).toBe('словами');
     expect(entry.variant).toBe('pick4');
     expect(entry.choices).toHaveLength(LISTENING_CHOICE_COUNT);
     expect(entry.choices!.some((c) => foldForAnswer(c) === foldForAnswer('словами'))).toBe(true);
@@ -174,7 +174,7 @@ describe('buildListeningItemForCard', () => {
     const { item } = await repos.bank.addWord({ lemma: 'тень', surface: 'тень', translation: '' });
     const card = (await repos.reviews.getCard(item.id, 'listening'))!;
     const entry = await buildListeningItemForCard(repos, card, item, 'typed');
-    expect(entry.answerRu).toBe('тень');
+    expect(entry.answerUk).toBe('тень');
     expect(entry.translation).toBeNull();
   });
 });

@@ -42,7 +42,7 @@ export const EnvelopeSentenceSchema = z.object({
   /** Envelope-local stable uid (`c1`, `c2`, …) — NOT the final pack sentence id. */
   uid: z.string().min(1),
   /** The sentence text (NFC, single spaces — splitSentences output). */
-  ru: z.string().min(1),
+  uk: z.string().min(1),
   /**
    * pending = not yet annotated (new, boundary-edited, or awaiting re-run);
    * ok = annotated and reconstruction-verified;
@@ -86,9 +86,9 @@ export function parseEnvelope(raw: string | null): AnnotationEnvelope | null {
 
 /** Fresh envelope from request text: rule-based sentence split, all pending. */
 export function newEnvelope(text: string): AnnotationEnvelope {
-  const sentences = splitSentences(text).map((ru, i) => ({
+  const sentences = splitSentences(text).map((uk, i) => ({
     uid: `c${i + 1}`,
-    ru,
+    uk,
     status: 'pending' as const,
   }));
   return { v: 1, nextUid: sentences.length + 1, sentences };
@@ -117,7 +117,7 @@ export function mergeWithNext(env: AnnotationEnvelope, uid: string): AnnotationE
   if (!cur || !next) return env;
   const merged: EnvelopeSentence = {
     uid: cur.uid,
-    ru: `${cur.ru} ${next.ru}`,
+    uk: `${cur.uk} ${next.uk}`,
     status: 'pending',
   };
   return {
@@ -127,8 +127,8 @@ export function mergeWithNext(env: AnnotationEnvelope, uid: string): AnnotationE
 }
 
 /** The whitespace-chunk words of a sentence (split-point choices in review). */
-export function sentenceWords(ru: string): string[] {
-  return ru.split(' ').filter(Boolean);
+export function sentenceWords(uk: string): string[] {
+  return uk.split(' ').filter(Boolean);
 }
 
 /**
@@ -143,16 +143,16 @@ export function splitAfterWord(
   const i = env.sentences.findIndex((s) => s.uid === uid);
   const cur = env.sentences[i];
   if (!cur) return env;
-  const words = sentenceWords(cur.ru);
+  const words = sentenceWords(cur.uk);
   if (wordIdx < 0 || wordIdx >= words.length - 1) return env;
   const first: EnvelopeSentence = {
     uid: cur.uid,
-    ru: words.slice(0, wordIdx + 1).join(' '),
+    uk: words.slice(0, wordIdx + 1).join(' '),
     status: 'pending',
   };
   const second: EnvelopeSentence = {
     uid: `c${env.nextUid}`,
-    ru: words.slice(wordIdx + 1).join(' '),
+    uk: words.slice(wordIdx + 1).join(' '),
     status: 'pending',
   };
   return {
@@ -178,10 +178,10 @@ export function isPunctText(text: string): boolean {
 }
 
 /** A short excerpt of the sentence around an offset (pipeline align.ts style). */
-function excerpt(ru: string, at: number): string {
+function excerpt(uk: string, at: number): string {
   const from = Math.max(0, at - 10);
-  const to = Math.min(ru.length, at + 15);
-  return `${from > 0 ? '…' : ''}${ru.slice(from, at)}⟨here⟩${ru.slice(at, to)}${to < ru.length ? '…' : ''}`;
+  const to = Math.min(uk.length, at + 15);
+  return `${from > 0 ? '…' : ''}${uk.slice(from, at)}⟨here⟩${uk.slice(at, to)}${to < uk.length ? '…' : ''}`;
 }
 
 /** Content POS whose words should always carry a CEFR level (confidence heuristic). */
@@ -224,7 +224,7 @@ export interface BuiltSentence {
  * prompt.
  */
 export function buildSentenceFromResponse(
-  ru: string,
+  uk: string,
   en: string,
   rawTokens: AnnotateToken[],
 ): BuiltSentence {
@@ -263,13 +263,13 @@ export function buildSentenceFromResponse(
   let pos = 0;
   tokens.forEach((tok, i) => {
     let space = false;
-    if (ru[pos] === ' ') {
+    if (uk[pos] === ' ') {
       space = true;
       pos += 1;
     }
-    if (!ru.startsWith(tok.text, pos)) {
+    if (!uk.startsWith(tok.text, pos)) {
       throw new Error(
-        `token "${tok.text}" does not match the sentence at offset ${pos}: "${excerpt(ru, pos)}" — token texts must appear in order and rebuild the sentence exactly`,
+        `token "${tok.text}" does not match the sentence at offset ${pos}: "${excerpt(uk, pos)}" — token texts must appear in order and rebuild the sentence exactly`,
       );
     }
     pos += tok.text.length;
@@ -277,12 +277,12 @@ export function buildSentenceFromResponse(
     if (space !== schemaDefault) tok.spaceBefore = space;
     else delete tok.spaceBefore;
   });
-  if (pos !== ru.length) {
-    throw new Error(`tokens end before the sentence does — unconsumed text: "${excerpt(ru, pos)}"`);
+  if (pos !== uk.length) {
+    throw new Error(`tokens end before the sentence does — unconsumed text: "${excerpt(uk, pos)}"`);
   }
 
   // The shared invariant from packages/schema is the authoritative gate.
-  const parsed = SentenceSchema.safeParse({ id: 'chk-1', ru, en, tokens });
+  const parsed = SentenceSchema.safeParse({ id: 'chk-1', uk, en, tokens });
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     throw new Error(
@@ -360,7 +360,7 @@ export async function annotateSentences(
 ): Promise<AnnotationEnvelope> {
   const targets = env.sentences.filter((s) => uids.includes(s.uid));
   if (targets.length === 0) return env;
-  const batch: AnnotateSentenceInput[] = targets.map((s) => ({ id: s.uid, ru: s.ru }));
+  const batch: AnnotateSentenceInput[] = targets.map((s) => ({ id: s.uid, uk: s.uk }));
 
   const first = await chatParsed(deps, buildImportAnnotateMessages(batch));
   let level = mergeLevel(env.level, first.response.level);
@@ -368,12 +368,12 @@ export async function annotateSentences(
   const results = new Map<string, EnvelopeSentence>();
   const failures: { id: string; error: string; raw: unknown }[] = [];
 
-  const applyOne = (uid: string, ru: string, got: (typeof first.response.sentences)[number]) => {
+  const applyOne = (uid: string, uk: string, got: (typeof first.response.sentences)[number]) => {
     try {
-      const built = buildSentenceFromResponse(ru, got.en, got.tokens);
+      const built = buildSentenceFromResponse(uk, got.en, got.tokens);
       results.set(uid, {
         uid,
-        ru,
+        uk,
         status: 'ok',
         en: built.en,
         tokens: built.tokens,
@@ -392,7 +392,7 @@ export async function annotateSentences(
       failures.push({ id: t.uid, error: 'sentence was not returned', raw: undefined });
       continue;
     }
-    const fail = applyOne(t.uid, t.ru, got);
+    const fail = applyOne(t.uid, t.uk, got);
     if (fail) failures.push(fail);
   }
 
@@ -418,16 +418,16 @@ export async function annotateSentences(
         finalFailures.push(f);
         continue;
       }
-      const fail = applyOne(f.id, target.ru, got);
+      const fail = applyOne(f.id, target.uk, got);
       if (fail) finalFailures.push(fail);
     }
   }
 
   for (const f of finalFailures) {
-    const ru = targets.find((t) => t.uid === f.id)?.ru ?? '';
+    const uk = targets.find((t) => t.uid === f.id)?.uk ?? '';
     results.set(f.id, {
       uid: f.id,
-      ru,
+      uk,
       status: 'needs-review',
       error: f.error,
       ...(f.raw !== undefined ? { raw: f.raw } : {}),
@@ -550,11 +550,11 @@ export function buildPackFromEnvelope(input: {
 }): { pack: unknown; included: number; excluded: number } {
   const ok = input.env.sentences.filter((s) => s.status === 'ok' && s.en && s.tokens);
   const excluded = input.env.sentences.length - ok.length;
-  const title = { ru: input.title.normalize('NFC'), en: input.title.normalize('NFC') };
+  const title = { uk: input.title.normalize('NFC'), en: input.title.normalize('NFC') };
   const level = input.env.level ?? 'A1';
   const sentences = ok.map((s, i) => ({
     id: `s1-${String(i + 1).padStart(3, '0')}`,
-    ru: s.ru,
+    uk: s.uk,
     en: s.en!,
     tokens: s.tokens!,
   }));

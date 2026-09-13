@@ -8,7 +8,7 @@
  *   from each sentence's first/last stamp.
  * - **sentence mode** — the §11 degradation path for a stampless track: the
  *   only timing we have is the track duration, so sentence spans are
- *   estimated proportionally by character weight of each sentence's `ru`.
+ *   estimated proportionally by character weight of each sentence's `uk`.
  *   Highlighting is per-sentence and tap-to-seek lands on the estimate.
  */
 
@@ -21,7 +21,7 @@ export interface KaraokeStampInput {
 
 export interface KaraokeSentenceInput {
   id: string;
-  ru: string;
+  uk: string;
 }
 
 export type KaraokeMode = 'word' | 'sentence';
@@ -137,7 +137,7 @@ function proportionalSpans(
   if (sentences.length === 0 || durationMs <= 0) return [];
   // +4 per sentence stands in for the inter-sentence pause so very short
   // sentences don't collapse to near-zero windows.
-  const weights = sentences.map((s) => s.ru.length + 4);
+  const weights = sentences.map((s) => s.uk.length + 4);
   const total = weights.reduce((a, b) => a + b, 0);
   const spans: SentenceSpan[] = [];
   let cum = 0;

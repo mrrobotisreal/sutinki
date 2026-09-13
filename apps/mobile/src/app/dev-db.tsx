@@ -19,11 +19,13 @@ export default function DevDbScreen() {
   const stories = useStories();
   const [query, setQuery] = React.useState('');
   const search = useTokenSearch(query);
-  // Built-in FTS smoke test: known fixture lemma «стена» queried as "стена"
-  // and ё-folded «чёрный» queried as "черный" — proves FTS5 MATCH works
-  // on-device with ё/е tolerance without needing Cyrillic keyboard input.
-  const selfTestWall = useTokenSearch('стена');
-  const selfTestBlack = useTokenSearch('черный');
+  // Built-in FTS smoke test (UT03, ADR-0004): the apostrophe word «п'ять»
+  // queried with the TYPOGRAPHIC apostrophe («п’ять») and the ґ word
+  // «ґанок» queried as «ганок» — proves FTS5 MATCH works on-device with
+  // apostrophe + ґ/г tolerance without needing a Ukrainian keyboard. Both
+  // read 0 hits until a Ukrainian pack carrying those words is installed.
+  const selfTestApostrophe = useTokenSearch('п’ять');
+  const selfTestGe = useTokenSearch('ганок');
 
   useFocusEffect(
     React.useCallback(() => {
@@ -41,7 +43,7 @@ export default function DevDbScreen() {
           {packs.data?.map((p) => (
             <View key={p.id} className="rounded-xl border border-border bg-surface p-3">
               <Text className="font-ui-medium">
-                {p.titleRu} · {p.titleEn}
+                {p.titleUk} · {p.titleEn}
               </Text>
               <Text variant="caption">
                 {p.id} · v{p.version} · {p.type} · {p.level} · {p.storyCount}{' '}
@@ -66,7 +68,7 @@ export default function DevDbScreen() {
               key={`${s.packId}/${s.id}`}
               className="rounded-xl border border-border bg-surface p-3"
             >
-              <Text className="font-ui-medium">{s.titleRu}</Text>
+              <Text className="font-ui-medium">{s.titleUk}</Text>
               <Text variant="caption">
                 {s.titleEn} · {s.level} · {s.sentenceCount} sentences · pack {s.packId}
               </Text>
@@ -77,12 +79,16 @@ export default function DevDbScreen() {
 
       <View>
         <Text variant="caption" className="mb-2 uppercase tracking-wider">
-          FTS5 token search (ё/е-tolerant)
+          FTS5 token search (apostrophe- and ґ/г-tolerant)
         </Text>
         <Text variant="caption" className="mb-2">
-          Self-test — «стена»: {selfTestWall.data ? `${selfTestWall.data.length} hits` : '…'} ·
-          «черный»→ё: {selfTestBlack.data ? `${selfTestBlack.data.length} hits` : '…'}
-          {selfTestBlack.data?.[0]?.lemma ? ` (lemma: ${selfTestBlack.data[0].lemma})` : ''}
+          Self-test — «п’ять»→ʼ:{' '}
+          {selfTestApostrophe.data ? `${selfTestApostrophe.data.length} hits` : '…'}
+          {selfTestApostrophe.data?.[0]?.lemma
+            ? ` (lemma: ${selfTestApostrophe.data[0].lemma})`
+            : ''}{' '}
+          · «ганок»→ґ: {selfTestGe.data ? `${selfTestGe.data.length} hits` : '…'}
+          {selfTestGe.data?.[0]?.lemma ? ` (lemma: ${selfTestGe.data[0].lemma})` : ''}
         </Text>
         <TextInput
           value={query}

@@ -59,15 +59,15 @@ describe('stats repo — motivation additions (T19)', () => {
 
     // Mature item: both core cards reviewed with high stability.
     for (const card of await repos.reviews.listCardsForItem(mature.item.id)) {
-      if (card.direction === 'ru-en' || card.direction === 'en-ru') {
+      if (card.direction === 'uk-en' || card.direction === 'en-uk') {
         await repos.reviews.saveCard({ ...card, reps: 3, stability: 40 });
       }
     }
     // Shaky item: one core card young — MIN drags it under the bar.
     for (const card of await repos.reviews.listCardsForItem(shaky.item.id)) {
-      if (card.direction === 'ru-en')
+      if (card.direction === 'uk-en')
         await repos.reviews.saveCard({ ...card, reps: 3, stability: 45 });
-      if (card.direction === 'en-ru')
+      if (card.direction === 'en-uk')
         await repos.reviews.saveCard({ ...card, reps: 2, stability: 5 });
     }
 

@@ -138,7 +138,7 @@ export function useDueCardCount() {
   });
 }
 
-/** Due ru-en/en-ru cards only — what the standalone flashcard/MC session serves. */
+/** Due uk-en/en-uk cards only — what the standalone flashcard/MC session serves. */
 export function useMixedDueCount() {
   return useQuery({
     queryKey: queryKeys.dueCountMixed,
@@ -244,10 +244,10 @@ export function useBookmarksForStory(packId: string, storyId: string) {
 
 export interface ResolvedBookmark extends BookmarkRow {
   /** null = the pack was removed since bookmarking (degrade, never crash). */
-  storyTitleRu: string | null;
-  packTitleRu: string | null;
+  storyTitleUk: string | null;
+  packTitleUk: string | null;
   /** Resolved sentence text + scroll target; sentence bookmarks only. */
-  sentenceRu: string | null;
+  sentenceUk: string | null;
   sentenceOrderIdx: number | null;
 }
 
@@ -276,9 +276,9 @@ export function useResolvedBookmarks() {
               : null;
           return {
             ...row,
-            storyTitleRu: story?.titleRu ?? null,
-            packTitleRu: packById.get(row.packId)?.titleRu ?? null,
-            sentenceRu: resolved?.sentence.ru ?? null,
+            storyTitleUk: story?.titleUk ?? null,
+            packTitleUk: packById.get(row.packId)?.titleUk ?? null,
+            sentenceUk: resolved?.sentence.uk ?? null,
             sentenceOrderIdx: resolved?.sentence.orderIdx ?? null,
           };
         }),

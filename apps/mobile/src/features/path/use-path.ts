@@ -117,7 +117,7 @@ export function nextStepInfo(node: PathNode): { label: string; route: string } {
     case 'story': {
       const story = unit.stories.find((s) => s.storyId === unit.nextStoryId);
       return {
-        label: story ? `Read «${story.titleRu}»` : 'Read the next story',
+        label: story ? `Read «${story.titleUk}»` : 'Read the next story',
         route: `/reader/${unit.pack.id}/${unit.nextStoryId}?from=path`,
       };
     }

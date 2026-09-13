@@ -100,7 +100,7 @@ export async function buildSbItemForCard(
   const tiles: SbTile[] = shuffle([
     ...answerTokens.map((t, i) => ({
       id: `w${i}`,
-      text: t.text.toLocaleLowerCase('ru-RU'),
+      text: t.text.toLocaleLowerCase('uk-UA'),
       distractor: false,
     })),
     ...distractors.map((text, i) => ({ id: `d${i}`, text, distractor: true })),
@@ -166,7 +166,7 @@ async function buildSbDistractors(
   const picked: string[] = [];
   const seen = new Set<string>();
   for (const candidate of candidates) {
-    const text = candidate.surface.toLocaleLowerCase('ru-RU');
+    const text = candidate.surface.toLocaleLowerCase('uk-UA');
     const key = foldForAnswer(text);
     // Multi-word surfaces can't be a single tile; sentence collisions would
     // make a "distractor" silently correct.

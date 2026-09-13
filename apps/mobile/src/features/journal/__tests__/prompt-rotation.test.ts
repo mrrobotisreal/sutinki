@@ -6,7 +6,7 @@ const prompt = (id: string, level: PromptRow['level']): PromptRow => ({
   packId: 'a1-prompts-001',
   id,
   level,
-  promptRu: `ру-${id}`,
+  promptUk: `ру-${id}`,
   promptEn: `en-${id}`,
   tags: null,
 });

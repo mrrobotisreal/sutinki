@@ -9,10 +9,10 @@ import { useAppTheme } from '@/theme/use-app-theme';
 const grainTexture = require('../../../assets/textures/grain.png');
 
 interface StoryHeaderProps {
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   level: CefrLevel;
-  packTitleRu: string;
+  packTitleUk: string;
   sentenceCount: number;
   finished: boolean;
 }
@@ -24,10 +24,10 @@ interface StoryHeaderProps {
  * scroll cost is a one-time raster (T22 perf note in the ticket).
  */
 export function StoryHeader({
-  titleRu,
+  titleUk,
   titleEn,
   level,
-  packTitleRu,
+  packTitleUk,
   sentenceCount,
   finished,
 }: StoryHeaderProps) {
@@ -56,9 +56,9 @@ export function StoryHeader({
       <View className="px-5 pb-8 pt-20">
         <View className="mb-3 flex-row items-center gap-2">
           <LevelChip level={level} />
-          <Text variant="caption">{packTitleRu}</Text>
+          <Text variant="caption">{packTitleUk}</Text>
         </View>
-        <Text className="font-reading-bold text-2xl leading-10 text-text">{titleRu}</Text>
+        <Text className="font-reading-bold text-2xl leading-10 text-text">{titleUk}</Text>
         <Text variant="muted" className="mt-1 font-reading-italic">
           {titleEn}
         </Text>

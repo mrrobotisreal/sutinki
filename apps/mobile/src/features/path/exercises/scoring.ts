@@ -1,3 +1,4 @@
+import { APOSTROPHE_CHARS } from '@/db/normalize';
 import { answersMatch } from '@/lib/text';
 
 /**
@@ -49,7 +50,7 @@ export function passes(score: ExerciseScore, threshold: number): boolean {
 /**
  * Typed-answer equality for full phrases/sentences (listening typed
  * variant): punctuation-insensitive on both sides, then the shared tolerant
- * matcher (NFC/case/ё→е/stress). NO edit-distance — that leniency is
+ * matcher (NFC/case/apostrophe/ґ→г/stress). NO edit-distance — that leniency is
  * reserved for the noisy ASR channel (T13 decision).
  */
 export function typedTextMatches(expected: string, typed: string): boolean {
@@ -57,9 +58,10 @@ export function typedTextMatches(expected: string, typed: string): boolean {
 }
 
 function stripPunct(text: string): string {
-  // Keep in-word hyphens («кто-то»); drop every other punctuation mark.
+  // Keep in-word hyphens («хто-небудь») and apostrophes («п'ять» — any
+  // variant, folded later by answersMatch); drop every other punctuation mark.
   return text
-    .replace(/[^\p{L}\p{N}\s-]/gu, ' ')
+    .replace(new RegExp(`[^\\p{L}\\p{N}\\s${APOSTROPHE_CHARS}-]`, 'gu'), ' ')
     .replace(/(^|\s)-+|-+(\s|$)/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();

@@ -203,7 +203,7 @@ export function useDialogueRun(
         useAchievementToasts.getState().push({
           id: `ending-${dialogueId}-${ending.id}`,
           title: 'Новая концовка',
-          description: `«${ending.titleRu}» — ${ending.titleEn}`,
+          description: `«${ending.titleUk}» — ${ending.titleEn}`,
           icon: endingToastIcon(ending.tone),
         });
       }

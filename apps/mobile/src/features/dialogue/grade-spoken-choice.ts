@@ -1,5 +1,5 @@
 import { repos } from '@/db';
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 import type { DialogueGraphChoice } from '@/db/repositories/dialogues';
 import { recordReviewOutcome } from '@/features/motivation/service';
 import { pronunciationScoreToRating } from '@/features/pronunciation/scoring';
@@ -27,7 +27,7 @@ export async function gradeSpokenChoice(
     if (token.isPunct) continue;
     // Same effective-lemma rule as the word popup: lemma, else surface.
     const lemma = token.lemma ?? token.text;
-    const norm = normalizeRu(lemma);
+    const norm = normalizeUk(lemma);
     if (seen.has(norm)) continue;
     seen.add(norm);
 

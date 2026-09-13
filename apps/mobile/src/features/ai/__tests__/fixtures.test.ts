@@ -60,7 +60,7 @@ describe('prompt templates', () => {
   it('explain: sentence and card variants render their context lines', () => {
     const sentence = buildExplainMessages({
       kind: 'sentence',
-      ru: 'Ночью я слышу стук.',
+      uk: 'Ночью я слышу стук.',
       en: 'At night I hear a knock.',
       sourceTitle: 'Стук в стене',
     });
@@ -72,7 +72,7 @@ describe('prompt templates', () => {
       headword: 'зеркало',
       translation: 'mirror',
       pos: 'noun',
-      exampleRu: 'Мы купили странное зеркало.',
+      exampleUk: 'Мы купили странное зеркало.',
     });
     expect(card[1]!.content).toContain('«зеркало»');
     expect(card[1]!.content).toContain('Мы купили странное зеркало.');
@@ -81,12 +81,12 @@ describe('prompt templates', () => {
 
 describe('recorded fixtures parse with the production parsers', () => {
   it('journal feedback → StoredFeedback, and survives a DB round-trip', () => {
-    const fx = fixture<{ entryRu: string; model: string; content: string }>(
+    const fx = fixture<{ entryUk: string; model: string; content: string }>(
       'journal-feedback.json',
     );
-    const stored = parseFeedbackCompletion(fx.content, fx.entryRu, fx.model, 1_000);
+    const stored = parseFeedbackCompletion(fx.content, fx.entryUk, fx.model, 1_000);
     expect(stored.v).toBe(1);
-    expect(stored.sourceRu).toBe(fx.entryRu);
+    expect(stored.sourceUk).toBe(fx.entryUk);
     expect(stored.corrected.length).toBeGreaterThan(0);
     expect(stored.changes.length).toBeGreaterThan(0);
     for (const change of stored.changes) {

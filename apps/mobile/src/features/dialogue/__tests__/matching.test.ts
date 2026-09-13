@@ -15,24 +15,28 @@ import {
  */
 
 const hungry: MatchableChoice[] = [
-  { id: 'c1', ru: 'Да, я очень голодный.', asrAlternates: ['Да, очень.'] },
-  { id: 'c2', ru: 'Нет, спасибо, я не голодный.' },
-  { id: 'c3', ru: 'А что это на стене?' },
+  { id: 'c1', uk: 'Да, я очень голодный.', asrAlternates: ['Да, очень.'] },
+  { id: 'c2', uk: 'Нет, спасибо, я не голодный.' },
+  { id: 'c3', uk: 'А что это на стене?' },
 ];
 
 const seconds: MatchableChoice[] = [
-  { id: 'more', ru: 'Да, можно ещё немного.', asrAlternates: ['Да, ещё немного, пожалуйста.'] },
+  {
+    id: 'more',
+    uk: "Так, можна ще п'ять хвилин.",
+    asrAlternates: ["Так, ще п'ять хвилин, будь ласка."],
+  },
   {
     id: 'stop',
-    ru: 'Спасибо, я сыт, всё было очень вкусно.',
-    asrAlternates: ['Спасибо, было очень вкусно.'],
+    uk: 'Дякую, я ситий, все було дуже смачно.',
+    asrAlternates: ['Дякую, було дуже смачно.'],
   },
-  { id: 'flat-no', ru: 'Нет.' },
+  { id: 'flat-no', uk: 'Ні.' },
 ];
 
 const minimalPair: MatchableChoice[] = [
-  { id: 'yes', ru: 'Да, спасибо.' },
-  { id: 'no', ru: 'Нет, спасибо.' },
+  { id: 'yes', uk: 'Да, спасибо.' },
+  { id: 'no', uk: 'Нет, спасибо.' },
 ];
 
 describe('matchTranscriptToChoices', () => {
@@ -69,8 +73,8 @@ describe('matchTranscriptToChoices', () => {
 
   it('treats an above-threshold tie as ambiguous, never guessing a branch', () => {
     const drinks: MatchableChoice[] = [
-      { id: 'tea', ru: 'Я хочу чай.' },
-      { id: 'coffee', ru: 'Я хочу кофе.' },
+      { id: 'tea', uk: 'Я хочу чай.' },
+      { id: 'coffee', uk: 'Я хочу кофе.' },
     ];
     // 2/3 of each target heard — both clear the threshold, margin 0.
     const r = matchTranscriptToChoices('я хочу', drinks);
@@ -81,23 +85,23 @@ describe('matchTranscriptToChoices', () => {
   });
 
   it('accepts an asrAlternate as a full match', () => {
-    const r = matchTranscriptToChoices('да ещё немного пожалуйста', seconds);
+    const r = matchTranscriptToChoices("так ще п'ять хвилин будь ласка", seconds);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('more');
     expect(r.best?.score).toBe(100);
-    expect(r.best?.target).toBe('Да, ещё немного, пожалуйста.');
+    expect(r.best?.target).toBe("Так, ще п'ять хвилин, будь ласка.");
   });
 
   it('accepts a natural partial phrasing above the selection threshold', () => {
     // Dropping the leading «да» still leaves 3/4 of the target heard.
-    const r = matchTranscriptToChoices('можно ещё немного', seconds);
+    const r = matchTranscriptToChoices("можна ще п'ять хвилин", seconds);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('more');
     expect(r.best?.score).toBeGreaterThanOrEqual(CHOICE_SELECTION_THRESHOLD);
   });
 
   it('lets a one-word choice win outright when spoken', () => {
-    const r = matchTranscriptToChoices('нет', seconds);
+    const r = matchTranscriptToChoices('ні', seconds);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('flat-no');
     expect(r.best?.score).toBe(100);
@@ -115,8 +119,8 @@ describe('matchTranscriptToChoices', () => {
     expect(r.outcome).toBe('below-threshold');
   });
 
-  it('is ё/е-tolerant through the reused scorer', () => {
-    const r = matchTranscriptToChoices('да можно еще немного', seconds);
+  it('is apostrophe-tolerant through the reused scorer (ASR may emit any apostrophe, or U+02BC)', () => {
+    const r = matchTranscriptToChoices('так можна ще пʼять хвилин', seconds);
     expect(r.outcome).toBe('matched');
     expect(r.best?.score).toBe(100);
   });

@@ -146,7 +146,7 @@ export function DialoguePlayerScreen() {
     track('dialogue_line_replayed', { hasAudio: node.audio?.localUri != null });
     const uri = node.audio?.localUri;
     if (!uri) {
-      if (node.sentence?.ru) void speak(node.sentence.ru);
+      if (node.sentence?.uk) void speak(node.sentence.uk);
       return;
     }
     ephemeralRef.current?.release();
@@ -155,7 +155,7 @@ export function DialoguePlayerScreen() {
       ephemeralRef.current = player;
       player.play();
     } catch {
-      if (node.sentence?.ru) void speak(node.sentence.ru);
+      if (node.sentence?.uk) void speak(node.sentence.uk);
     }
   }, []);
 
@@ -234,7 +234,7 @@ export function DialoguePlayerScreen() {
     return (
       <View className="flex-1 bg-bg" style={{ paddingTop: insets.top }}>
         <Header
-          title={graph.dialogue.titleRu}
+          title={graph.dialogue.titleUk}
           onClose={() => router.back()}
           onRestart={confirmRestart}
         />
@@ -277,7 +277,7 @@ export function DialoguePlayerScreen() {
   return (
     <View className="flex-1 bg-bg" style={{ paddingTop: insets.top }}>
       <Header
-        title={graph.dialogue.titleRu}
+        title={graph.dialogue.titleUk}
         onClose={() => router.back()}
         onRestart={confirmRestart}
       />

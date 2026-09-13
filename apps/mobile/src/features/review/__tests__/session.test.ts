@@ -50,7 +50,7 @@ describe('buildSession', () => {
     expect(modes.has('flashcard')).toBe(true);
 
     for (const entry of session) {
-      expect(['ru-en', 'en-ru']).toContain(entry.direction);
+      expect(['uk-en', 'en-uk']).toContain(entry.direction);
       expect(entry.card.bankItemId).toBe(entry.item.id);
       if (entry.mode === 'mc') {
         expect(entry.choices).toHaveLength(MC_CHOICE_COUNT);

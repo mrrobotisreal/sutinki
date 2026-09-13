@@ -7,7 +7,7 @@ export type SessionMode = 'flashcard' | 'mc';
 
 export interface McChoice {
   bankItemId: string;
-  /** Display text: translation for ru-en, Russian headword for en-ru. */
+  /** Display text: translation for uk-en, Russian headword for en-uk. */
   text: string;
   correct: boolean;
 }
@@ -28,11 +28,11 @@ const OVERFETCH = 2;
 
 /** The side of a bank item each direction asks for vs. answers with. */
 export function promptText(item: BankItemRow, direction: CardDirection): string {
-  return direction === 'en-ru' ? item.translation : headword(item);
+  return direction === 'en-uk' ? item.translation : headword(item);
 }
 
 export function answerText(item: BankItemRow, direction: CardDirection): string {
-  return direction === 'en-ru' ? headword(item) : item.translation;
+  return direction === 'en-uk' ? headword(item) : item.translation;
 }
 
 export function headword(item: BankItemRow): string {

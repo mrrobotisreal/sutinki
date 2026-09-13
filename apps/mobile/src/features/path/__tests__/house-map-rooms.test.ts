@@ -12,7 +12,7 @@ function unitFor(id: string, themeScene: string | null): ReturnType<typeof build
     id,
     version: 1,
     type: 'course-unit',
-    titleRu: `Т-${id}`,
+    titleUk: `Т-${id}`,
     titleEn: `T-${id}`,
     level: 'A1',
     tags: [],
@@ -48,7 +48,7 @@ describe('house rooms registry', () => {
     expect(isHouseUnit({ themeScene: 'kitchen' })).toBe(true);
     expect(isHouseUnit({ themeScene: 'greenhouse' })).toBe(false); // forward-compat fallback
     expect(isHouseUnit({ themeScene: null })).toBe(false);
-    expect(roomForScene('pantry')?.titleRu).toBe('Кладовая');
+    expect(roomForScene('pantry')?.titleUk).toBe('Кладовая');
     expect(roomForScene('greenhouse')).toBeNull();
   });
 

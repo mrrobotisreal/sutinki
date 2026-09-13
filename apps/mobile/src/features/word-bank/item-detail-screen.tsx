@@ -26,7 +26,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 import { EditItemSheet } from './edit-item-sheet';
 
 /** All four FSRS directions (design §5); listening/production activate in T14/T12. */
-const DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'listening', 'production'];
+const DIRECTIONS: CardDirection[] = ['uk-en', 'en-uk', 'listening', 'production'];
 const HISTORY_LIMIT = 12;
 
 /**
@@ -215,7 +215,7 @@ export function ItemDetailScreen({ id }: { id: string }) {
                 surface: item.surface || undefined,
                 grammar: item.grammar ?? undefined,
                 pos: item.pos ?? undefined,
-                exampleRu: item.encounters.find((e) => e.context)?.context?.sentence.ru,
+                exampleUk: item.encounters.find((e) => e.context)?.context?.sentence.uk,
               }
             : null
         }
@@ -346,10 +346,10 @@ function EncounterCard({ encounter }: { encounter: EncounterWithContext }) {
       {encounter.context ? (
         <>
           <RNText className="font-reading text-base leading-6 text-text">
-            {encounter.context.sentence.ru}
+            {encounter.context.sentence.uk}
           </RNText>
           <Text variant="caption" className="mt-1.5">
-            {encounter.context.story ? `«${encounter.context.story.titleRu}»` : 'Story removed'} ·
+            {encounter.context.story ? `«${encounter.context.story.titleUk}»` : 'Story removed'} ·
             as «{encounter.surface}» · {date}
           </Text>
         </>

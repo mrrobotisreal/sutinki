@@ -17,19 +17,19 @@ const pack = {
   id: 'a1-dash-test',
   version: 1,
   type: 'stories',
-  title: { ru: 'Тест', en: 'Test' },
+  title: { uk: 'Тест', en: 'Test' },
   level: 'A1',
   tags: [],
   stories: [
     {
       id: 'st-1',
-      title: { ru: 'История', en: 'Story' },
+      title: { uk: 'История', en: 'Story' },
       level: 'A1',
       audio: [],
       sentences: [
         {
           id: 'sn-1',
-          ru: 'В подвале стоит кровать.',
+          uk: 'В подвале стоит кровать.',
           en: 'A bed stands in the cellar.',
           grammarTopics: ['prepositional-location', 'verbs-of-position'],
           tokens: [
@@ -42,15 +42,21 @@ const pack = {
         },
         {
           id: 'sn-2',
-          ru: 'Тёмная вода шумит.',
+          uk: 'Ґрунтова вода шумить.',
           en: 'Dark water makes noise.',
           grammarTopics: ['adjective-agreement'],
           tokens: [
-            { text: 'Тёмная', lemma: 'тёмный', translation: 'dark', pos: 'adj', level: 'A2' },
+            {
+              text: 'Ґрунтова',
+              lemma: 'ґрунтовий',
+              translation: 'ground (adj.)',
+              pos: 'adj',
+              level: 'A2',
+            },
             { text: 'вода', lemma: 'вода', translation: 'water', pos: 'noun', level: 'A1' },
             {
-              text: 'шумит',
-              lemma: 'шуметь',
+              text: 'шумить',
+              lemma: 'шуміти',
               translation: 'makes noise',
               pos: 'verb',
               level: 'B1',
@@ -78,7 +84,7 @@ async function setCoreStability(
 ) {
   const cards = await repos.reviews.listCardsForItem(bankItemId);
   for (const card of cards) {
-    if (card.direction !== 'ru-en' && card.direction !== 'en-ru') continue;
+    if (card.direction !== 'uk-en' && card.direction !== 'en-uk') continue;
     await repos.reviews.saveCard({ ...card, stability, reps: 1, state: 2 });
   }
 }
@@ -130,16 +136,16 @@ describe('dashboard repo — vocab by level', () => {
     await repos.reading.markFinished('a1-dash-test', 'st-1');
 
     const dark = await repos.bank.addWord({
-      lemma: 'темный',
-      surface: 'темная',
-      translation: 'dark',
+      lemma: 'грунтовий',
+      surface: 'грунтова',
+      translation: 'ground (adj.)',
     });
-    // ё/е tolerance: bank spelled without ё still matches content 'тёмный'.
+    // ґ/г tolerance: bank spelled with г still matches content «ґрунтовий» (ADR-0004).
     await setCoreStability(repos, dark.item.id, STABILITY_MATURE_MIN);
 
     const rows = await repos.dashboard.getVocabByLevel();
     const a2 = rows.find((r) => r.level === 'A2')!;
-    expect(a2.encountered).toBe(2); // подвал + тёмный
+    expect(a2.encountered).toBe(2); // подвал + ґрунтовий
     expect(a2.collected).toBe(1);
     expect(a2.mature).toBe(1);
 

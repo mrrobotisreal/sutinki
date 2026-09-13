@@ -114,7 +114,7 @@ export function HouseMap({ units, currentId, onPressRoom }: HouseMapProps) {
               key={unit.pack.id}
               onPress={() => onPressRoom(unit)}
               accessibilityRole="button"
-              accessibilityLabel={`Room ${unit.pack.titleRu}, ${
+              accessibilityLabel={`Room ${unit.pack.titleUk}, ${
                 state === 'completed'
                   ? 'completed'
                   : state === 'current'
@@ -130,7 +130,7 @@ export function HouseMap({ units, currentId, onPressRoom }: HouseMapProps) {
                   className={`font-reading text-lg ${state === 'future' ? 'text-text-muted' : 'text-text'}`}
                   numberOfLines={1}
                 >
-                  {unit.pack.titleRu}
+                  {unit.pack.titleUk}
                 </RNText>
                 <Text variant="caption" numberOfLines={1}>
                   {room?.titleEn ?? unit.pack.titleEn} · {unit.stepsDone}/{unit.stepsTotal}

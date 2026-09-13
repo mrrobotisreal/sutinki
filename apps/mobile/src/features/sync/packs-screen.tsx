@@ -50,7 +50,7 @@ export function PacksScreen() {
 
   const confirmRemove = React.useCallback(
     (item: InstalledPack) => {
-      const title = item.pack?.titleRu ?? item.state.packId;
+      const title = item.pack?.titleUk ?? item.state.packId;
       Alert.alert(
         'Remove pack?',
         `«${title}» will be removed from the device. Your word bank and review history keep working; ` +
@@ -74,7 +74,7 @@ export function PacksScreen() {
   // reinstalls it. Distinct confirm copy so that's never a surprise.
   const confirmRemoveImported = React.useCallback(
     (item: InstalledPack) => {
-      const title = item.pack?.titleRu ?? item.state.packId;
+      const title = item.pack?.titleUk ?? item.state.packId;
       Alert.alert(
         'Удалить импорт?',
         `«${title}» will be deleted completely — including its backup copy. It will NOT come back ` +
@@ -183,7 +183,7 @@ function PackRowView({
       {pack ? <LevelChip level={pack.level} /> : null}
       <View className="flex-1 gap-0.5">
         <Text className="font-ui-medium" numberOfLines={1}>
-          {pack?.titleRu ?? state.packId}
+          {pack?.titleUk ?? state.packId}
         </Text>
         <Text variant="caption" numberOfLines={1}>
           v{state.version} · {formatBytes(state.bytes)} · {sourceLabel(state.source)} ·{' '}
@@ -193,7 +193,7 @@ function PackRowView({
       <Pressable
         onPress={onRemove}
         hitSlop={8}
-        accessibilityLabel={`Remove ${pack?.titleRu ?? state.packId}`}
+        accessibilityLabel={`Remove ${pack?.titleUk ?? state.packId}`}
       >
         <Ionicons name="trash-outline" size={20} color={tokens.textMuted} />
       </Pressable>

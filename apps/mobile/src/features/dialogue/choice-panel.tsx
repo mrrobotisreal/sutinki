@@ -95,7 +95,7 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
       const transcript = await transcribeWav(path);
       const matchables = node.choices.map((c) => ({
         id: c.id,
-        ru: c.sentence?.ru ?? '',
+        uk: c.sentence?.uk ?? '',
         asrAlternates: c.asrAlternates,
       }));
       const match = matchTranscriptToChoices(transcript.text, matchables);
@@ -150,7 +150,7 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
   }, [finishRecording]);
 
   const revealHint = React.useCallback((choice: DialogueGraphChoice) => {
-    if (!choice.hintEn && !choice.hintRu) return;
+    if (!choice.hintEn && !choice.hintUk) return;
     setHintsShown((prev) => {
       if (prev.has(choice.id)) return prev;
       track('dialogue_hint_revealed', { choiceId: choice.id });
@@ -299,12 +299,12 @@ function ChoiceCard({
 }) {
   const { tokens: theme } = useAppTheme();
   const sentence = choice.sentence;
-  const hint = choice.hintEn ?? choice.hintRu;
+  const hint = choice.hintEn ?? choice.hintUk;
   return (
     <Pressable
       onLongPress={onLongPress}
       delayLongPress={320}
-      accessibilityLabel={`Answer: ${sentence?.ru ?? ''}. Long press for a hint`}
+      accessibilityLabel={`Answer: ${sentence?.uk ?? ''}. Long press for a hint`}
       className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
     >
       <View className="flex-1">

@@ -170,7 +170,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-bg px-8">
         <Ionicons name="flag-outline" size={36} color={tokens.accent} />
-        <RNText className="text-center font-reading text-3xl text-text">{pack.titleRu}</RNText>
+        <RNText className="text-center font-reading text-3xl text-text">{pack.titleUk}</RNText>
         <Text variant="muted" className="text-center">
           {pack.titleEn} · {specs.length} exercises · pass mark {Math.round(threshold * 100)}%
         </Text>
@@ -198,7 +198,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
   if (phase === 'result' && outcome) {
     return outcome.passed ? (
       <CheckpointPassed
-        pack={{ titleRu: pack.titleRu, level: pack.level }}
+        pack={{ titleUk: pack.titleUk, level: pack.level }}
         outcome={outcome}
         onDone={() => router.back()}
       />
@@ -245,7 +245,7 @@ function CheckpointPassed({
   outcome,
   onDone,
 }: {
-  pack: { titleRu: string; level: string };
+  pack: { titleUk: string; level: string };
   outcome: CheckpointOutcome;
   onDone: () => void;
 }) {
@@ -274,7 +274,7 @@ function CheckpointPassed({
       <Text variant="caption" className="uppercase tracking-wider">
         Milestone
       </Text>
-      <RNText className="text-center font-reading text-3xl text-text">{pack.titleRu}</RNText>
+      <RNText className="text-center font-reading text-3xl text-text">{pack.titleUk}</RNText>
       <RNText className="font-ui-bold text-6xl" style={{ color: tokens.success }}>
         {Math.round(outcome.scorePercent)}%
       </RNText>

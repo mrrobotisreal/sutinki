@@ -298,7 +298,7 @@ function SentenceRow(props: {
   const { sentence: s, first, isLast, expanded, splitting, busy, readOnly } = props;
   const { tokens } = useAppTheme();
   const lowConfidence = (s.flagged?.length ?? 0) > 0;
-  const words = sentenceWords(s.ru);
+  const words = sentenceWords(s.uk);
 
   return (
     <View className={first ? '' : 'border-t border-border'}>
@@ -309,7 +309,7 @@ function SentenceRow(props: {
       >
         <View className="flex-row items-start gap-2">
           <Text variant="reading" className="flex-1 text-base">
-            {s.ru}
+            {s.uk}
           </Text>
           {s.status === 'needs-review' && (
             <Ionicons name="warning-outline" size={16} color={tokens.danger} />

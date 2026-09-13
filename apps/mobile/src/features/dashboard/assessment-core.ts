@@ -61,7 +61,7 @@ export async function buildAssessmentBundle(repos: Repositories): Promise<Assess
   const journal: AssessmentJournalSample[] = entries.map((e) => {
     const feedback = e.aiFeedback ? safeCorrected(e.aiFeedback) : undefined;
     return {
-      ru: e.ru.slice(0, JOURNAL_SAMPLE_MAX_CHARS),
+      uk: e.uk.slice(0, JOURNAL_SAMPLE_MAX_CHARS),
       corrected: feedback?.slice(0, JOURNAL_SAMPLE_MAX_CHARS),
       createdAt: e.createdAt,
     };

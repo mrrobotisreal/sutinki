@@ -30,9 +30,9 @@ Respond with ONLY a JSON object, no markdown fences, no prose around it:
 
 If the entry has no errors at all, return it unchanged in "corrected", an empty "changes" array, and say so warmly in "summary".`;
 
-export function buildJournalFeedbackMessages(entryRu: string): ChatMessage[] {
+export function buildJournalFeedbackMessages(entryUk: string): ChatMessage[] {
   return [
     { role: 'system', content: SYSTEM },
-    { role: 'user', content: `My journal entry:\n\n${entryRu}` },
+    { role: 'user', content: `My journal entry:\n\n${entryUk}` },
   ];
 }

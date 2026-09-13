@@ -20,7 +20,7 @@ export interface PronunciationItem {
   card: CardRow;
   item: BankItemRow;
   /** What Mitch is asked to say (original text, ё/casing preserved). */
-  promptRu: string;
+  promptUk: string;
   /** English gloss shown under the prompt (null when unavailable). */
   promptEn: string | null;
   source: PromptSource;
@@ -65,19 +65,19 @@ export async function buildPronunciationSession(
 async function resolvePrompt(
   repos: Repositories,
   item: BankItemRow,
-): Promise<{ promptRu: string; promptEn: string | null; source: PromptSource }> {
+): Promise<{ promptUk: string; promptEn: string | null; source: PromptSource }> {
   if (item.kind === 'phrase') {
-    return { promptRu: item.surface, promptEn: item.translation || null, source: 'phrase' };
+    return { promptUk: item.surface, promptEn: item.translation || null, source: 'phrase' };
   }
   if (item.sourceSentenceId) {
     const resolved = await repos.content.resolveSentence(item.sourceSentenceId);
-    const ru = resolved?.sentence.ru;
-    if (ru && scoringTokens(ru).length <= MAX_PROMPT_WORDS) {
-      return { promptRu: ru, promptEn: resolved.sentence.en || null, source: 'sentence' };
+    const uk = resolved?.sentence.uk;
+    if (uk && scoringTokens(uk).length <= MAX_PROMPT_WORDS) {
+      return { promptUk: uk, promptEn: resolved.sentence.en || null, source: 'sentence' };
     }
   }
   return {
-    promptRu: item.lemma ?? item.surface,
+    promptUk: item.lemma ?? item.surface,
     promptEn: item.translation || null,
     source: 'word',
   };

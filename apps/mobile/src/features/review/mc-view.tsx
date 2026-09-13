@@ -28,7 +28,7 @@ export function McView({ entry, onAnswer }: McViewProps) {
     shownAtRef.current = Date.now();
   }, []);
   const choices = React.useMemo(() => entry.choices ?? [], [entry.choices]);
-  const promptIsRu = entry.direction !== 'en-ru';
+  const promptIsUk = entry.direction !== 'en-uk';
 
   const select = React.useCallback(
     (idx: number) => {
@@ -52,7 +52,7 @@ export function McView({ entry, onAnswer }: McViewProps) {
       <View className="mt-4 min-h-36 items-center justify-center rounded-2xl border border-border bg-surface px-6 py-8">
         <RNText
           className={
-            promptIsRu ? 'font-reading text-3xl text-text' : 'font-ui-medium text-2xl text-text'
+            promptIsUk ? 'font-reading text-3xl text-text' : 'font-ui-medium text-2xl text-text'
           }
           style={{ textAlign: 'center' }}
         >
@@ -79,7 +79,7 @@ export function McView({ entry, onAnswer }: McViewProps) {
             >
               <RNText
                 className={
-                  promptIsRu ? 'font-ui text-base text-text' : 'font-reading text-lg text-text'
+                  promptIsUk ? 'font-ui text-base text-text' : 'font-reading text-lg text-text'
                 }
               >
                 {choice.text}

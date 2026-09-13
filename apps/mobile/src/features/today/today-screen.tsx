@@ -165,7 +165,7 @@ export function TodayScreen() {
             router.push(`/dialogue/${dialogueTarget.packId}/${dialogueTarget.id}`);
           }}
           accessibilityRole="button"
-          accessibilityLabel={`Play the dialogue ${dialogueTarget.titleRu}`}
+          accessibilityLabel={`Play the dialogue ${dialogueTarget.titleUk}`}
           className="rounded-xl border border-border bg-surface p-4 active:bg-surface-2"
         >
           <View className="flex-row items-center justify-between gap-3">
@@ -174,7 +174,7 @@ export function TodayScreen() {
                 Диалог
               </Text>
               <RNText className="font-reading text-xl text-text" numberOfLines={1}>
-                {dialogueTarget.titleRu}
+                {dialogueTarget.titleUk}
               </RNText>
               <Text variant="caption" numberOfLines={1}>
                 Answer out loud — the story follows your voice
@@ -199,7 +199,7 @@ export function TodayScreen() {
             )
           }
           accessibilityRole="button"
-          accessibilityLabel={`Continue reading ${continueTarget.story.titleRu}`}
+          accessibilityLabel={`Continue reading ${continueTarget.story.titleUk}`}
           className="rounded-xl border border-border bg-surface p-4 active:bg-surface-2"
         >
           <Text variant="caption" className="uppercase tracking-wider">
@@ -207,7 +207,7 @@ export function TodayScreen() {
           </Text>
           <View className="mt-2 flex-row items-center justify-between gap-3">
             <RNText className="flex-1 font-reading text-xl text-text" numberOfLines={1}>
-              {continueTarget.story.titleRu}
+              {continueTarget.story.titleUk}
             </RNText>
             <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
           </View>
@@ -222,8 +222,8 @@ function PathContinueCard({ node }: { node: PathNode }) {
   const { tokens } = useAppTheme();
   const step = nextStepInfo(node);
   const subtitle = isUnit(node)
-    ? `${node.pack.titleRu} · ${node.stepsDone}/${node.stepsTotal}`
-    : node.pack.titleRu;
+    ? `${node.pack.titleUk} · ${node.stepsDone}/${node.stepsTotal}`
+    : node.pack.titleUk;
   return (
     <Pressable
       onPress={() => {

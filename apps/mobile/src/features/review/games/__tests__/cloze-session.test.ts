@@ -20,7 +20,7 @@ async function setup(wordCount = 8) {
     storyId: 'st1',
     sentences: words.map((w, i) => ({
       id: `s${i}`,
-      ru: `Вот ${w} здесь`,
+      uk: `Вот ${w} здесь`,
       en: `Here is ${w}`,
       lemmas: ['вот', w, 'здесь'],
     })),
@@ -95,7 +95,7 @@ describe('buildClozeSession', () => {
       packId: 'p1',
       storyId: 'st1',
       sentences: [
-        { id: 's0', ru: 'Тень растёт', en: 'The shadow grows', lemmas: ['тень', 'расти'] },
+        { id: 's0', uk: 'Тень растёт', en: 'The shadow grows', lemmas: ['тень', 'расти'] },
       ],
     });
     await repos.reading.markFinished('p1', 'st1');

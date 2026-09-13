@@ -74,7 +74,7 @@ export function ListeningView({ entry, onDone }: ListeningViewProps) {
   const answer = React.useCallback(
     (text: string, viaChoice: string | null) => {
       if (answered || revealed) return;
-      const correct = answersMatch(entry.answerRu, text);
+      const correct = answersMatch(entry.answerUk, text);
       Vibration.vibrate(correct ? 8 : 24);
       audio.stop();
       setAnswered({ text, correct });
@@ -82,7 +82,7 @@ export function ListeningView({ entry, onDone }: ListeningViewProps) {
       if (correct) finish(true, FEEDBACK_DELAY_MS);
       // wrong → explicit Continue below
     },
-    [answered, revealed, entry.answerRu, audio, finish],
+    [answered, revealed, entry.answerUk, audio, finish],
   );
 
   const giveUp = React.useCallback(() => {
@@ -129,7 +129,7 @@ export function ListeningView({ entry, onDone }: ListeningViewProps) {
               className="font-reading text-2xl"
               style={{ color: answered?.correct ? theme.success : theme.danger }}
             >
-              {entry.answerRu}
+              {entry.answerUk}
             </RNText>
             {entry.translation && <Text variant="muted">{entry.translation}</Text>}
           </View>
@@ -146,7 +146,7 @@ export function ListeningView({ entry, onDone }: ListeningViewProps) {
       {entry.variant === 'pick4' && entry.choices ? (
         <View className="mt-5 flex-row flex-wrap justify-center gap-2.5">
           {entry.choices.map((choice) => {
-            const isCorrectChoice = answersMatch(entry.answerRu, choice);
+            const isCorrectChoice = answersMatch(entry.answerUk, choice);
             let frame = 'border-border bg-surface active:bg-surface-2';
             if (showAnswer) {
               if (isCorrectChoice) frame = 'border-success bg-success/15';

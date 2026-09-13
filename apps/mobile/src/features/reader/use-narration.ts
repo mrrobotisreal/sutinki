@@ -97,8 +97,8 @@ interface UseNarrationArgs {
   packId: string;
   storyId: string;
   /** Lockscreen metadata (design §7.1 — listen like a podcast). */
-  storyTitleRu: string;
-  packTitleRu: string;
+  storyTitleUk: string;
+  packTitleUk: string;
   sentences: readonly KaraokeSentenceInput[];
   tracks: readonly AudioTrackRow[];
 }
@@ -113,8 +113,8 @@ export function trackLabel(track: Pick<AudioTrackRow, 'voice' | 'style'>): strin
 export function useNarration({
   packId,
   storyId,
-  storyTitleRu,
-  packTitleRu,
+  storyTitleUk,
+  packTitleUk,
   sentences,
   tracks,
 }: UseNarrationArgs): Narration {
@@ -209,12 +209,12 @@ export function useNarration({
     (player: AudioPlayer, trackRow: AudioTrackRow) => {
       player.setActiveForLockScreen(
         true,
-        { title: storyTitleRu, artist: trackLabel(trackRow), albumTitle: packTitleRu },
+        { title: storyTitleUk, artist: trackLabel(trackRow), albumTitle: packTitleUk },
         { showSeekForward: true, showSeekBackward: true },
       );
       lockScreenActiveRef.current = true;
     },
-    [storyTitleRu, packTitleRu],
+    [storyTitleUk, packTitleUk],
   );
 
   /** Create the player on first use; swap sources afterward. */

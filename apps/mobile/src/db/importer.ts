@@ -1,7 +1,7 @@
 import { parsePack, type NodeAudio, type Pack, type Sentence, type Token } from '@sutinki/schema';
 import { eq, sql } from 'drizzle-orm';
 
-import { normalizeRu } from './normalize';
+import { normalizeUk } from './normalize';
 import {
   audioTracks,
   dialogueChoices,
@@ -198,7 +198,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
     id: pack.id,
     version: pack.version,
     type: pack.type,
-    titleRu: pack.title.ru,
+    titleUk: pack.title.uk,
     titleEn: pack.title.en,
     level: pack.level,
     tags: pack.tags,
@@ -215,7 +215,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       packId: pack.id,
       id: story.id,
       orderIdx: storyIdx,
-      titleRu: story.title.ru,
+      titleUk: story.title.uk,
       titleEn: story.title.en,
       level: story.level,
     });
@@ -257,7 +257,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       packId: pack.id,
       id: dialogue.id,
       orderIdx: dialogueIdx,
-      titleRu: dialogue.title.ru,
+      titleUk: dialogue.title.uk,
       titleEn: dialogue.title.en,
       level: dialogue.level,
       startNodeId: dialogue.startNodeId,
@@ -323,7 +323,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
           sentenceId: choice.sentence.id,
           nextNodeId: choice.next,
           asrAlternates: choice.asrAlternates ?? null,
-          hintRu: choice.hint?.ru ?? null,
+          hintUk: choice.hint?.uk ?? null,
           hintEn: choice.hint?.en ?? null,
         });
         if (choice.audio) await stageAudio(choice.audio, node.id, choice.id, choice.sentence.id);
@@ -335,9 +335,9 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
         packId: pack.id,
         dialogueId: dialogue.id,
         id: ending.id,
-        titleRu: ending.title.ru,
+        titleUk: ending.title.uk,
         titleEn: ending.title.en,
-        recapRu: ending.recap.ru,
+        recapUk: ending.recap.uk,
         recapEn: ending.recap.en,
         tone: ending.tone,
       });
@@ -348,7 +348,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
     await db.insert(lessons).values({
       packId: pack.id,
       id: pack.lesson.id,
-      titleRu: pack.lesson.title.ru,
+      titleUk: pack.lesson.title.uk,
       titleEn: pack.lesson.title.en,
       body: pack.lesson.body,
       grammarTopics: pack.lesson.grammarTopics ?? null,
@@ -360,7 +360,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       packId: pack.id,
       id: prompt.id,
       level: prompt.level,
-      promptRu: prompt.prompt.ru,
+      promptUk: prompt.prompt.uk,
       promptEn: prompt.prompt.en,
       tags: prompt.tags ?? null,
     });
@@ -391,7 +391,7 @@ async function insertSentenceRows(
     id: sentence.id,
     storyId,
     orderIdx,
-    ru: sentence.ru,
+    uk: sentence.uk,
     en: sentence.en,
     grammarTopics: sentence.grammarTopics ?? null,
   });
@@ -404,11 +404,11 @@ async function insertSentenceRows(
     tokenIndex,
     storyId,
     text: tok.text,
-    textNorm: normalizeRu(tok.text),
+    textNorm: normalizeUk(tok.text),
     isPunct: tok.isPunct ?? false,
     spaceBefore: effectiveSpaceBefore(tok, tokenIndex),
     lemma: tok.lemma ?? null,
-    lemmaNorm: tok.lemma ? normalizeRu(tok.lemma) : null,
+    lemmaNorm: tok.lemma ? normalizeUk(tok.lemma) : null,
     translation: tok.translation ?? null,
     pos: tok.pos ?? null,
     grammar: tok.grammar ?? null,

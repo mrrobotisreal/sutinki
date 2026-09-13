@@ -15,7 +15,7 @@ import type { SutinkiDB } from '../types';
 export type CardRow = typeof cards.$inferSelect;
 export type ReviewLogRow = typeof reviewLog.$inferSelect;
 
-export const ALL_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'listening', 'production'];
+export const ALL_DIRECTIONS: CardDirection[] = ['uk-en', 'en-uk', 'listening', 'production'];
 
 /**
  * Directions that actually schedule today. T06 decision (recorded in the
@@ -25,7 +25,7 @@ export const ALL_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'listening', '
  * gap. T12 activated `production` (pronunciation game); T14 activated
  * `listening` (listening quiz).
  */
-export const ACTIVE_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'production', 'listening'];
+export const ACTIVE_DIRECTIONS: CardDirection[] = ['uk-en', 'en-uk', 'production', 'listening'];
 
 /**
  * Directions the T06 standalone flashcard/MC session serves. `production`
@@ -33,7 +33,7 @@ export const ACTIVE_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'production
  * skill, so those cards are due only to the game that can (pronunciation /
  * listening quiz — both also folded into the T14 daily session).
  */
-export const MIXED_SESSION_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru'];
+export const MIXED_SESSION_DIRECTIONS: CardDirection[] = ['uk-en', 'en-uk'];
 
 /**
  * Directions the T14 unified daily session serves — everything except
@@ -41,7 +41,7 @@ export const MIXED_SESSION_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru'];
  * setup, ASR model gate, and room acoustics make it a deliberate act, not
  * something to spring mid-session). Today's headline due count uses this.
  */
-export const UNIFIED_SESSION_DIRECTIONS: CardDirection[] = ['ru-en', 'en-ru', 'listening'];
+export const UNIFIED_SESSION_DIRECTIONS: CardDirection[] = ['uk-en', 'en-uk', 'listening'];
 
 /**
  * One shared scheduler, default FSRS-5 parameters (no fuzz — single user,
@@ -231,7 +231,7 @@ export function createReviewsRepo(db: SutinkiDB) {
 
     /**
      * Word lemmas in the T18 "mature" mastery band: MIN stability across the
-     * item's *reviewed* core-direction cards (ru-en/en-ru — the directions
+     * item's *reviewed* core-direction cards (uk-en/en-uk — the directions
      * that vouch for knowing a word, T18 decision) ≥ `minStabilityDays`.
      * Feeds the mastered-100 achievement (T19).
      */

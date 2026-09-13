@@ -15,8 +15,8 @@ import {
 /** T12: the lenient alignment scoring pipeline (design §6). */
 
 describe('scoringTokens', () => {
-  it('normalizes, lowercases, folds ё and strips punctuation', () => {
-    expect(scoringTokens('Всё хорошо, спасибо!')).toEqual(['все', 'хорошо', 'спасибо']);
+  it('normalizes, lowercases, folds apostrophes/ґ and strips punctuation', () => {
+    expect(scoringTokens("П'ять ґанків, дякую!")).toEqual(['пʼять', 'ганків', 'дякую']);
   });
 
   it('keeps in-word hyphens («кто-то» is one word)', () => {
@@ -60,11 +60,12 @@ describe('scoreAttempt', () => {
     expect(r.words.every((w) => w.matched)).toBe(true);
   });
 
-  it('is ё/е-, case- and punctuation-tolerant (comparison only)', () => {
-    const r = scoreAttempt('Всё тихо.', 'все тихо');
+  it('is apostrophe-, ґ/г-, case- and punctuation-tolerant (comparison only)', () => {
+    const r = scoreAttempt("П'ять на ґанку.", 'пʼять на ганку');
     expect(r.score).toBe(100);
-    // Display keeps the authored ё for the UI.
-    expect(r.words[0]!.display).toBe('Всё');
+    // Display keeps the authored apostrophe and ґ for the UI.
+    expect(r.words[0]!.display).toBe("П'ять");
+    expect(r.words[2]!.display).toBe('ґанку');
   });
 
   it('a deliberately wrong word turns exactly that word red', () => {

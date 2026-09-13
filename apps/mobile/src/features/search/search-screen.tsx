@@ -131,10 +131,10 @@ export function GlobalSearchScreen() {
                   <View className="mt-1 flex-row items-center gap-2">
                     <LevelChip level={first.level as CefrLevel} />
                     <Text className="flex-1 font-ui-medium text-sm" numberOfLines={1}>
-                      {first.storyTitleRu}
+                      {first.storyTitleUk}
                     </Text>
                     <Text variant="caption" numberOfLines={1}>
-                      {first.packTitleRu}
+                      {first.packTitleUk}
                     </Text>
                   </View>
                   {group.hits.map((hit) => (
@@ -193,14 +193,14 @@ export function GlobalSearchScreen() {
 
 function SentenceResult({ hit, onPress }: { hit: SentenceSearchHit; onPress: () => void }) {
   const segments = React.useMemo(
-    () => highlightSnippet(hit.ru, hit.matchedTexts),
-    [hit.ru, hit.matchedTexts],
+    () => highlightSnippet(hit.uk, hit.matchedTexts),
+    [hit.uk, hit.matchedTexts],
   );
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`Open in reader: ${hit.ru}`}
+      accessibilityLabel={`Open in reader: ${hit.uk}`}
       className="rounded-xl border border-border bg-surface p-3 active:opacity-80"
     >
       <Text className="font-reading text-sm leading-5" numberOfLines={3}>
@@ -238,7 +238,7 @@ function EntryResult({ entry, onPress }: { entry: JournalEntryRow; onPress: () =
         {formatDate(entry.createdAt)}
       </Text>
       <Text className="mt-1 font-reading text-sm leading-5" numberOfLines={2}>
-        {snippet(entry.ru)}
+        {snippet(entry.uk)}
       </Text>
     </Pressable>
   );

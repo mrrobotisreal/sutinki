@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { parsePack, reconstructSentenceRu } from '@sutinki/schema';
+import { parsePack, reconstructSentenceUk } from '@sutinki/schema';
 import { describe, expect, it, vi, type Mock } from 'vitest';
 
 import { AiError } from '../errors';
@@ -38,7 +38,7 @@ import { extractJsonObject, ImportAnnotateResponseSchema } from '../schemas';
 const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), '__fixtures__');
 
 const fixture = JSON.parse(readFileSync(path.join(FIXTURES, 'import-annotate.json'), 'utf8')) as {
-  sentences: { id: string; ru: string }[];
+  sentences: { id: string; uk: string }[];
   model: string;
   content: string;
 };
@@ -50,8 +50,8 @@ function chatOk(content: string) {
 const noSleep = (_ms: number) => Promise.resolve();
 
 describe('prompt templates', () => {
-  it('system pins the JSON contract + lemma conventions; user carries id: ru lines', () => {
-    const messages = buildImportAnnotateMessages([{ id: 'c1', ru: 'Я дома.' }]);
+  it('system pins the JSON contract + lemma conventions; user carries id: uk lines', () => {
+    const messages = buildImportAnnotateMessages([{ id: 'c1', uk: 'Я дома.' }]);
     expect(messages[0]!.role).toBe('system');
     for (const marker of ['"sentences"', '"tokens"', '"lemma"', 'imperfective infinitive', 'ё']) {
       expect(messages[0]!.content).toContain(marker);
@@ -61,7 +61,7 @@ describe('prompt templates', () => {
 
   it('retry continues the conversation with the raw output and exact errors', () => {
     const messages = buildImportAnnotateRetryMessages(
-      [{ id: 'c1', ru: 'Я дома.' }],
+      [{ id: 'c1', uk: 'Я дома.' }],
       '{"bad": true}',
       [{ id: 'c1', error: 'token "дом" does not match' }],
     );
@@ -84,8 +84,8 @@ describe('recorded fixture (real Sonnet response)', () => {
   it('every sentence reconstructs exactly and word tokens carry lemma+translation', () => {
     for (const input of fixture.sentences) {
       const got = response.sentences.find((s) => s.id === input.id)!;
-      const built = buildSentenceFromResponse(input.ru, got.en, got.tokens);
-      expect(reconstructSentenceRu(built.tokens)).toBe(input.ru);
+      const built = buildSentenceFromResponse(input.uk, got.en, got.tokens);
+      expect(reconstructSentenceUk(built.tokens)).toBe(input.uk);
       for (const tok of built.tokens) {
         if (!tok.isPunct) {
           expect(tok.lemma).toBeTruthy();
@@ -99,7 +99,7 @@ describe('recorded fixture (real Sonnet response)', () => {
     const byId = new Map(response.sentences.map((s) => [s.id, s]));
     // c2: «Пятёрочка» hugs its quotes (spaceBefore derivation) + latin Yandex
     const c2 = buildSentenceFromResponse(
-      fixture.sentences[1]!.ru,
+      fixture.sentences[1]!.uk,
       byId.get('c2')!.en,
       byId.get('c2')!.tokens,
     );
@@ -109,14 +109,14 @@ describe('recorded fixture (real Sonnet response)', () => {
     expect(c2.tokens.find((t) => t.text === 'Yandex')!.isPunct).toBeUndefined();
     // c3: emoji passes through as punctuation
     const c3 = buildSentenceFromResponse(
-      fixture.sentences[2]!.ru,
+      fixture.sentences[2]!.uk,
       byId.get('c3')!.en,
       byId.get('c3')!.tokens,
     );
     expect(c3.tokens.find((t) => t.text === '🙂')!.isPunct).toBe(true);
     // c4: the name keeps its capital in the lemma
     const c4 = buildSentenceFromResponse(
-      fixture.sentences[3]!.ru,
+      fixture.sentences[3]!.uk,
       byId.get('c4')!.en,
       byId.get('c4')!.tokens,
     );
@@ -219,7 +219,7 @@ describe('confidence rule', () => {
 describe('envelope + boundary edits', () => {
   it('newEnvelope splits the request text into pending sentences', () => {
     const env = newEnvelope('Я дома. Кто там?');
-    expect(env.sentences.map((s) => s.ru)).toEqual(['Я дома.', 'Кто там?']);
+    expect(env.sentences.map((s) => s.uk)).toEqual(['Я дома.', 'Кто там?']);
     expect(env.sentences.every((s) => s.status === 'pending')).toBe(true);
     expect(envelopeProgress(env)).toEqual({ done: 0, total: 2, flagged: 0 });
   });
@@ -238,7 +238,7 @@ describe('envelope + boundary edits', () => {
     const merged = mergeWithNext(env, env.sentences[0]!.uid);
     expect(merged.sentences).toHaveLength(1);
     expect(merged.sentences[0]).toMatchObject({
-      ru: 'Это был не сон. А что-то другое.',
+      uk: 'Это был не сон. А что-то другое.',
       status: 'pending',
     });
   });
@@ -246,7 +246,7 @@ describe('envelope + boundary edits', () => {
   it('split divides after a word, allocating a fresh uid', () => {
     const env = newEnvelope('Я дома и мне страшно');
     const split = splitAfterWord(env, env.sentences[0]!.uid, 1);
-    expect(split.sentences.map((s) => s.ru)).toEqual(['Я дома', 'и мне страшно']);
+    expect(split.sentences.map((s) => s.uk)).toEqual(['Я дома', 'и мне страшно']);
     expect(split.sentences[1]!.uid).toBe('c2');
     expect(split.nextUid).toBe(3);
     // out-of-range is a no-op
@@ -256,7 +256,7 @@ describe('envelope + boundary edits', () => {
   it('delete removes a sentence', () => {
     const env = newEnvelope('Я дома. Кто там?');
     const after = deleteSentence(env, env.sentences[0]!.uid);
-    expect(after.sentences.map((s) => s.ru)).toEqual(['Кто там?']);
+    expect(after.sentences.map((s) => s.uk)).toEqual(['Кто там?']);
   });
 });
 

@@ -125,13 +125,13 @@ export async function buildClozeSession(
  */
 async function buildClozeTiles(repos: Repositories, entry: ClozeItem): Promise<string[] | null> {
   const answer = entry.source.tokens[entry.source.targetIndex]!.text;
-  const answerTile = answer.toLocaleLowerCase('ru-RU');
+  const answerTile = answer.toLocaleLowerCase('uk-UA');
 
   const candidates = await repos.bank.findDistractors(entry.item, (CLOZE_TILE_COUNT - 1) * 3);
   const seen = new Set([foldForAnswer(answer)]);
   const distractors: string[] = [];
   for (const candidate of candidates) {
-    const text = candidate.surface.toLocaleLowerCase('ru-RU');
+    const text = candidate.surface.toLocaleLowerCase('uk-UA');
     const key = foldForAnswer(text);
     // The blank is one token — a multi-word (phrase) surface can't fill it.
     if (!text || text.includes(' ') || seen.has(key)) continue;

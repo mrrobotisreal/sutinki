@@ -1,4 +1,4 @@
-import { normalizeRu } from '@/db/normalize';
+import { normalizeUk } from '@/db/normalize';
 
 /**
  * Match highlighting for global-search snippets (T24). The FTS layer tells
@@ -15,16 +15,16 @@ export interface SnippetSegment {
 
 const EDGE_PUNCT = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu;
 
-export function highlightSnippet(ru: string, matchedTexts: string[]): SnippetSegment[] {
-  const matched = new Set(matchedTexts.map((t) => normalizeRu(t)));
-  return ru
+export function highlightSnippet(uk: string, matchedTexts: string[]): SnippetSegment[] {
+  const matched = new Set(matchedTexts.map((t) => normalizeUk(t)));
+  return uk
     .split(/(\s+)/)
     .filter((part) => part.length > 0)
     .map((part) => {
       const core = part.replace(EDGE_PUNCT, '');
       return {
         text: part,
-        matched: core.length > 0 && matched.has(normalizeRu(core)),
+        matched: core.length > 0 && matched.has(normalizeUk(core)),
       };
     });
 }

@@ -34,30 +34,42 @@ describe('bank repository — dedup rules', () => {
     expect(item!.translation).toBe('word');
   });
 
-  it('lemma dedup is ё/е-tolerant and case-insensitive', async () => {
+  it('lemma dedup is apostrophe- and ґ/г-tolerant and case-insensitive', async () => {
     const db = createTestDb();
     const bank = createBankRepo(db);
 
-    const withYo = await bank.addWord({ lemma: 'чёрный', surface: 'чёрный', translation: 'black' });
-    const withoutYo = await bank.addWord({
-      lemma: 'Черный',
-      surface: 'черная',
-      translation: 'black',
+    const withAscii = await bank.addWord({ lemma: "п'ять", surface: "п'ять", translation: 'five' });
+    const withTypographic = await bank.addWord({
+      lemma: 'П’ять',
+      surface: 'п’яти',
+      translation: 'five',
     });
-    expect(withoutYo.created).toBe(false);
-    expect(withoutYo.item.id).toBe(withYo.item.id);
-    // Stored lemma preserves the authored ё (tolerance never mutates text).
-    expect(withYo.item.lemma).toBe('чёрный');
+    expect(withTypographic.created).toBe(false);
+    expect(withTypographic.item.id).toBe(withAscii.item.id);
+    // Stored lemma preserves the authored apostrophe (tolerance never mutates text).
+    expect(withAscii.item.lemma).toBe("п'ять");
+    expect((await bank.findWordByLemma('пʼять'))?.id).toBe(withAscii.item.id);
 
-    expect((await bank.findWordByLemma('черный'))?.id).toBe(withYo.item.id);
+    // ґ/г: one bank item either way, display keeps the author's letter.
+    const withGe = await bank.addWord({ lemma: 'ґанок', surface: 'ґанок', translation: 'porch' });
+    const withHe = await bank.addWord({ lemma: 'Ганок', surface: 'ганку', translation: 'porch' });
+    expect(withHe.created).toBe(false);
+    expect(withHe.item.id).toBe(withGe.item.id);
+    expect(withGe.item.lemma).toBe('ґанок');
   });
 
-  it('phrase dedup keys on normalized text (case, ё, whitespace)', async () => {
+  it('phrase dedup keys on normalized text (case, apostrophe, whitespace)', async () => {
     const db = createTestDb();
     const bank = createBankRepo(db);
 
-    const a = await bank.addPhrase({ surface: 'Всё в порядке', translation: 'everything is fine' });
-    const b = await bank.addPhrase({ surface: 'все  в порядке ', translation: 'all good' });
+    const a = await bank.addPhrase({
+      surface: "Здоров'я та щастя",
+      translation: 'health and happiness',
+    });
+    const b = await bank.addPhrase({
+      surface: 'здоров’я  та щастя ',
+      translation: 'health and joy',
+    });
     expect(b.created).toBe(false);
     expect(b.item.id).toBe(a.item.id);
     expect(await bank.countItems('phrase')).toBe(1);
@@ -88,7 +100,7 @@ describe('bank repository — dedup rules', () => {
     await reviews.ensureCards(added.item.id);
     expect(await reviews.listCardsForItem(added.item.id)).toHaveLength(4);
 
-    // ё/е-tolerant substring search over the bank
+    // apostrophe-tolerant substring search over the bank
     expect(await bank.listItems({ search: 'стен' })).toHaveLength(1);
     expect(await bank.listItems({ level: 'A1', pos: 'noun' })).toHaveLength(1);
     expect(await bank.listItems({ kind: 'phrase' })).toHaveLength(0);

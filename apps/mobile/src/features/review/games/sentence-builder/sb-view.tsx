@@ -17,7 +17,7 @@ interface SbViewProps {
  * there takes it back (counted — take-backs cap the rating at Hard, see
  * mapping.ts). Check compares the arrangement positionally with the tolerant
  * matcher; the reveal always shows the authored sentence (punctuation
- * auto-placed from `ru`, never scored — T13 decision). Remounted per item.
+ * auto-placed from `uk`, never scored — T13 decision). Remounted per item.
  */
 export function SbView({ entry, onDone }: SbViewProps) {
   /** Order of tile ids currently in the answer row. */
@@ -130,7 +130,7 @@ export function SbView({ entry, onDone }: SbViewProps) {
           <RNText
             className={`mt-1.5 font-reading text-xl ${result.correct ? 'text-success' : 'text-text'}`}
           >
-            {entry.source.sentence.ru}
+            {entry.source.sentence.uk}
           </RNText>
         </View>
       )}

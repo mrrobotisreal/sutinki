@@ -49,7 +49,7 @@ async function seedSource(db: SutinkiDB) {
     id: 'pack-a',
     version: 2,
     type: 'stories',
-    titleRu: 'Тест',
+    titleUk: 'Тест',
     titleEn: 'Test',
     level: 'A1',
     tags: [],
@@ -104,7 +104,7 @@ async function seedSource(db: SutinkiDB) {
     {
       id: 'card-1',
       bankItemId: 'bi-word',
-      direction: 'ru-en',
+      direction: 'uk-en',
       dueAt: NOW + 86400000,
       stability: 3.5,
       difficulty: 5.1,
@@ -152,7 +152,7 @@ async function seedSource(db: SutinkiDB) {
   await db.insert(journalEntries).values({
     id: 'je-1',
     promptId: 'prompt-1',
-    ru: 'Сегодня я видел тёмный лес.',
+    uk: "Сьогодні я бачив п'ять ґанків.",
     aiFeedback: '{"v":1,"summary":"ok"}',
     feedbackStatus: 'done',
     createdAt: NOW - 2000,
@@ -161,7 +161,7 @@ async function seedSource(db: SutinkiDB) {
   await db.insert(notes).values({
     id: 'note-1',
     title: 'Грамматика',
-    body: '# ещё раз\nтёмный.',
+    body: '# ще раз\nп’ять.',
     createdAt: NOW - 2000,
     updatedAt: NOW - 500,
   });
@@ -350,7 +350,7 @@ describe('export-core', () => {
     expect(payload.tables.analyticsEvents).toHaveLength(2);
     // No content sneaks in under any key.
     const json = JSON.stringify(payload);
-    expect(json).not.toContain('"titleRu"');
+    expect(json).not.toContain('"titleUk"');
     expect(json).not.toContain('Тест'); // the pack title
     expect(payload.exportedAt).toBe(NOW);
   });
@@ -395,7 +395,7 @@ describe('restore-core (full pipeline: export → encrypt → decrypt → restor
       id: 'pack-a',
       version: 2,
       type: 'stories',
-      titleRu: 'Тест',
+      titleUk: 'Тест',
       titleEn: 'Test',
       level: 'A1',
       tags: [],
@@ -439,11 +439,13 @@ describe('restore-core (full pipeline: export → encrypt → decrypt → restor
 
     const target = createTestDb();
     await restoreUserData(target, JSON.parse(JSON.stringify(payload)));
-    // ё-folded shadow index: searching with е must find the ё entry (T03 rule).
+    // Folded shadow index (ADR-0004): a г query finds the ґ entry and a
+    // typographic-apostrophe query finds the ASCII one, and vice versa.
     const journal = createJournalRepo(target);
-    const entryHits = await journal.searchEntries('темный');
+    const entryHits = await journal.searchEntries('ганків');
     expect(entryHits.map((e) => e.id)).toContain('je-1');
-    const noteHits = await journal.searchNotes('еще');
+    expect((await journal.searchEntries('п’ять')).map((e) => e.id)).toContain('je-1');
+    const noteHits = await journal.searchNotes("п'ять");
     expect(noteHits.map((n) => n.id)).toContain('note-1');
   });
 

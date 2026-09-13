@@ -173,7 +173,7 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
           {hintsUsed >= 1 && !answered && !revealed && (
             <Text variant="muted" className="text-center">
               {hintsUsed === 1
-                ? `Starts with «${target.text.slice(0, 1).toLocaleLowerCase('ru-RU')}…»`
+                ? `Starts with «${target.text.slice(0, 1).toLocaleLowerCase('uk-UA')}…»`
                 : `Dictionary form: «${entry.item.lemma}»`}
             </Text>
           )}

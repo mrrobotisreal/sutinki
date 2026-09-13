@@ -50,7 +50,7 @@ describe('planTargets', () => {
 
 /**
  * Seed a finished story of N sentences whose middle word is banked — every
- * bank item then has due ru-en/en-ru/listening cards (afterAdd hook) and a
+ * bank item then has due uk-en/en-uk/listening cards (afterAdd hook) and a
  * sourceable read sentence, so all five modes are eligible.
  */
 async function setup(wordCount = 12) {
@@ -62,7 +62,7 @@ async function setup(wordCount = 12) {
     storyId: 'st1',
     sentences: words.map((w, i) => ({
       id: `s${i}`,
-      ru: `Вот ${w} здесь`,
+      uk: `Вот ${w} здесь`,
       en: `Here is ${w}`,
       lemmas: ['вот', w, 'здесь'],
     })),
@@ -108,7 +108,7 @@ describe('buildDailySession', () => {
       if (item.mode === 'listening') {
         expect(item.entry.card.direction).toBe('listening');
       } else {
-        expect(['ru-en', 'en-ru']).toContain(item.entry.card.direction);
+        expect(['uk-en', 'en-uk']).toContain(item.entry.card.direction);
       }
     }
   });
@@ -130,7 +130,7 @@ describe('buildDailySession', () => {
 
   it('rebalances toward listening when text cards run out', async () => {
     const { repos } = await setup(4);
-    // 4 items × (ru-en + en-ru) = 8 text cards, 4 listening cards.
+    // 4 items × (uk-en + en-uk) = 8 text cards, 4 listening cards.
     const session = await buildDailySession(repos, { length: 12 });
     expect(session.length).toBe(12);
     expect(modeCounts(session).listening).toBe(4);

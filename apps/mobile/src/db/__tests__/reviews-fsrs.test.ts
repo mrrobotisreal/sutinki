@@ -17,10 +17,10 @@ describe('card creation on bank add (createRepositories wiring)', () => {
     });
     const cards = await repos.reviews.listCardsForItem(item.id);
     expect(cards.map((c) => c.direction).sort()).toEqual([
-      'en-ru',
+      'en-uk',
       'listening',
       'production',
-      'ru-en',
+      'uk-en',
     ]);
     expect(cards.every((c) => c.state === State.New && c.dueAt <= Date.now())).toBe(true);
   });
@@ -62,8 +62,8 @@ describe('gradeCard (ts-fsrs pipeline)', () => {
     const repos = createRepositories(createTestDb());
     const a = await repos.bank.addWord({ lemma: 'страх', surface: 'страх', translation: 'fear' });
     const b = await repos.bank.addWord({ lemma: 'тьма', surface: 'тьма', translation: 'darkness' });
-    const cardA = (await repos.reviews.getCard(a.item.id, 'ru-en'))!;
-    const cardB = (await repos.reviews.getCard(b.item.id, 'ru-en'))!;
+    const cardA = (await repos.reviews.getCard(a.item.id, 'uk-en'))!;
+    const cardB = (await repos.reviews.getCard(b.item.id, 'uk-en'))!;
 
     const now = Date.now();
     const againResult = await repos.reviews.gradeCard(cardA.id, Rating.Again, { now });
@@ -75,7 +75,7 @@ describe('gradeCard (ts-fsrs pipeline)', () => {
     expect(againResult.card.state).toBe(State.Learning);
     expect(easyResult.card.state).toBe(State.Review);
     // Both leave the due queue for "now".
-    expect(await repos.reviews.countDueCards({ now })).toBe(6); // en-ru + production + listening siblings
+    expect(await repos.reviews.countDueCards({ now })).toBe(6); // en-uk + production + listening siblings
   });
 
   it('appends a full ts-fsrs review_log entry per grade', async () => {
@@ -85,7 +85,7 @@ describe('gradeCard (ts-fsrs pipeline)', () => {
       surface: 'шаг',
       translation: 'step',
     });
-    const card = (await repos.reviews.getCard(item.id, 'en-ru'))!;
+    const card = (await repos.reviews.getCard(item.id, 'en-uk'))!;
 
     const t0 = Date.now();
     await repos.reviews.gradeCard(card.id, Rating.Good, { now: t0, durationMs: 2500 });
@@ -116,14 +116,14 @@ describe('gradeCard (ts-fsrs pipeline)', () => {
       surface: 'дверь',
       translation: 'door',
     });
-    const ruEn = (await repos.reviews.getCard(item.id, 'ru-en'))!;
-    const enRu = (await repos.reviews.getCard(item.id, 'en-ru'))!;
+    const ruEn = (await repos.reviews.getCard(item.id, 'uk-en'))!;
+    const enUk = (await repos.reviews.getCard(item.id, 'en-uk'))!;
     const now = Date.now();
     await repos.reviews.gradeCard(ruEn.id, Rating.Good, { now });
-    await repos.reviews.gradeCard(enRu.id, Rating.Hard, { now: now + 1000 });
+    await repos.reviews.gradeCard(enUk.id, Rating.Hard, { now: now + 1000 });
     const log = await repos.reviews.listReviewLogForItem(item.id);
     expect(log).toHaveLength(2);
-    expect(log[0]!.cardId).toBe(enRu.id);
+    expect(log[0]!.cardId).toBe(enUk.id);
   });
 });
 
@@ -135,13 +135,13 @@ describe('due queue', () => {
       surface: 'окно',
       translation: 'window',
     });
-    const card = (await repos.reviews.getCard(item.id, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(item.id, 'uk-en'))!;
     const now = Date.now();
     await repos.reviews.gradeCard(card.id, Rating.Easy, { now });
 
     const due = await repos.reviews.listDueCards({ now });
-    expect(due.map((c) => c.direction).sort()).toEqual(['en-ru', 'listening', 'production']);
-    expect(await repos.reviews.countDueCards({ now, directions: ['ru-en'] })).toBe(0);
+    expect(due.map((c) => c.direction).sort()).toEqual(['en-uk', 'listening', 'production']);
+    expect(await repos.reviews.countDueCards({ now, directions: ['uk-en'] })).toBe(0);
     // The Easy card is due again in the future.
     expect(await repos.reviews.countDueCards({ now: card.dueAt + 30 * 86_400_000 })).toBe(4);
   });
@@ -151,11 +151,11 @@ describe('due queue', () => {
     const now = Date.now();
     const a = await repos.bank.addWord({ lemma: 'раз', surface: 'раз', translation: 'time/once' });
     const b = await repos.bank.addWord({ lemma: 'два', surface: 'два', translation: 'two' });
-    const cardA = (await repos.reviews.getCard(a.item.id, 'ru-en'))!;
-    const cardB = (await repos.reviews.getCard(b.item.id, 'ru-en'))!;
+    const cardA = (await repos.reviews.getCard(a.item.id, 'uk-en'))!;
+    const cardB = (await repos.reviews.getCard(b.item.id, 'uk-en'))!;
     await repos.reviews.saveCard({ ...cardA, dueAt: now - 1000 });
     await repos.reviews.saveCard({ ...cardB, dueAt: now - 5000 });
-    const due = await repos.reviews.listDueCards({ now, directions: ['ru-en'] });
+    const due = await repos.reviews.listDueCards({ now, directions: ['uk-en'] });
     expect(due.map((c) => c.id)).toEqual([cardB.id, cardA.id]);
   });
 });
