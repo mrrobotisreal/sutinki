@@ -21,7 +21,7 @@ export function gunzipPackJson(b64: string): string {
 }
 
 /**
- * Share-to-Сумрак storage (T28, design V2 §4.1/§4.3): durable import
+ * Share-to-Сутінки storage (T28, design V2 §4.1/§4.3): durable import
  * requests (the T15/T16 queue pattern — a 'queued' row IS the pending
  * request) and committed local packs by value (gzipped pack JSON in a user
  * table so backup/restore round-trips them). All import DB access lives

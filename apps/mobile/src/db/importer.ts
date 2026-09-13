@@ -38,7 +38,7 @@ export interface ImportOptions {
   source?: PackSource;
   /**
    * Pack provenance written to `packs.origin` (T28): 'remote' (default) for
-   * manifest-managed content, 'local' for on-device Share-to-Сумрак packs.
+   * manifest-managed content, 'local' for on-device Share-to-Сутінки packs.
    * The imports service always pairs origin:'local' with source:'local-import'
    * so the sync-immunity key and the UI key can't drift.
    */

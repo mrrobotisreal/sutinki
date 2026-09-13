@@ -29,7 +29,7 @@ export function packTrack(pack: Pick<PackRow, 'track'>): string {
  * Unknown tracks render their raw id — forward-compatible like scenes.
  */
 export const TRACK_TITLES: Record<string, { uk: string; en: string }> = {
-  family: { uk: 'Семья', en: 'The family track' },
+  family: { uk: 'Сім’я', en: 'The family track' },
 };
 
 export function trackTitle(track: string): { uk: string; en: string } {

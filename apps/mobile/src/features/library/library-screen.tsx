@@ -47,7 +47,7 @@ type LibraryRow =
 interface LibrarySection {
   pack: PackRow;
   data: LibraryRow[];
-  /** T28: set on the first local-origin section — renders the «Импортировано» shelf divider. */
+  /** T28: set on the first local-origin section — renders the «Імпортовано» shelf divider. */
   shelfHeader?: string;
   /** T28: source label + imported date for local packs (from `imported_packs`). */
   importedMeta?: { sourceLabel: string | null; createdAt: number };
@@ -66,7 +66,7 @@ interface LibrarySection {
 }
 
 /**
- * Библиотека (design §7.2 nav / T04): installed packs with their stories —
+ * Бібліотека (design §7.2 nav / T04): installed packs with their stories —
  * level chips, tags, and the read-state each story carries (unread /
  * in-progress with % / finished). Tapping a story opens the reader.
  */
@@ -95,7 +95,7 @@ export function LibraryScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      track('tab_viewed', { tab: 'Библиотека' });
+      track('tab_viewed', { tab: 'Бібліотека' });
     }, []),
   );
 
@@ -192,7 +192,7 @@ export function LibraryScreen() {
         },
       };
     });
-    // T28: local (imported) packs shelve together under «Импортировано»,
+    // T28: local (imported) packs shelve together under «Імпортовано»,
     // after the remote content (design V2 §4.3).
     const local = packs.data
       .filter((p) => p.origin === 'local')
@@ -207,7 +207,7 @@ export function LibraryScreen() {
             }
           : undefined,
       }));
-    if (local[0]) local[0] = { ...local[0], shelfHeader: 'Импортировано' };
+    if (local[0]) local[0] = { ...local[0], shelfHeader: 'Імпортовано' };
     return [...remote, ...local];
   }, [packs.data, stories.data, dialogues.data, importedMeta.data, progressByStory, rungChoice]);
 
@@ -277,7 +277,7 @@ export function LibraryScreen() {
         refreshControl={refreshControl}
       >
         <Ionicons name="library-outline" size={40} color={tokens.textMuted} />
-        <Text className="font-reading-bold text-xl">Библиотека пуста</Text>
+        <Text className="font-reading-bold text-xl">Бібліотека порожня</Text>
         <Text variant="muted" className="text-center">
           Sample packs import on first run; pull to sync new stories from the content repo.
         </Text>

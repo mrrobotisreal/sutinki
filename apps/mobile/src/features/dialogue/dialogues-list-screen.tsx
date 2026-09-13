@@ -49,10 +49,10 @@ export function DialoguesListScreen() {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-10">
         <Ionicons name="chatbubbles-outline" size={40} color={theme.textMuted} />
-        <Text className="font-reading-bold text-xl">Пока тихо</Text>
+        <Text className="font-reading-bold text-xl">Поки що тихо</Text>
         <Text variant="muted" className="text-center">
           No dialogue packs installed yet. They arrive through content sync like any pack — pull to
-          refresh in Библиотека.
+          refresh in Бібліотека.
         </Text>
       </View>
     );
@@ -99,7 +99,7 @@ export function DialogueRow({ item, onPress }: { item: DialogueListItem; onPress
           )}
         </View>
         <Text variant="caption" numberOfLines={1}>
-          {item.titleEn} · Концовки: {item.endingsSeenCount}/{item.endingCount}
+          {item.titleEn} · Кінцівки: {item.endingsSeenCount}/{item.endingCount}
         </Text>
       </View>
       <LevelChip level={item.level} />

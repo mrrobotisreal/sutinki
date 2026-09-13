@@ -189,10 +189,10 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
             </RNText>
             <Text variant="muted">
               {passed
-                ? 'Отлично — that landed.'
+                ? 'Чудово — that landed.'
                 : result.score > 0
                   ? 'Getting there — red words need another pass.'
-                  : 'Не расслышал — try once more, a bit slower.'}
+                  : 'Не розчув — try once more, a bit slower.'}
             </Text>
             {heardText.length > 0 && (
               <Text variant="caption" className="mt-1 text-center">
@@ -208,8 +208,8 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
           <Ionicons name="mic-off-outline" size={40} color={tokens.textMuted} />
           <Text className="text-center font-ui-medium">Microphone access needed</Text>
           <Text variant="muted" className="text-center">
-            Pronunciation practice scores your spoken Russian on-device — nothing is uploaded. Allow
-            microphone access in system settings to play this mode.
+            Pronunciation practice scores your spoken Ukrainian on-device — nothing is uploaded.
+            Allow microphone access in system settings to play this mode.
           </Text>
           <Pressable
             onPress={() => void Linking.openSettings()}

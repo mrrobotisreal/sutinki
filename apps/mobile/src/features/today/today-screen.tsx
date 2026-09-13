@@ -21,7 +21,7 @@ import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
- * Сегодня (design §10, UI_DESIGN §4): one viewport answering, top to
+ * Сьогодні (design §10, UI_DESIGN §4): one viewport answering, top to
  * bottom — goal/streak state (the real T19 ring over daily_activity +
  * the motivation snapshot), what's due (session CTA), where I left off
  * (continue-reading card).
@@ -41,7 +41,7 @@ export function TodayScreen() {
   // Counts change while this tab is unfocused (sessions, reading) — refresh on return.
   useFocusEffect(
     React.useCallback(() => {
-      track('tab_viewed', { tab: 'Сегодня' });
+      track('tab_viewed', { tab: 'Сьогодні' });
       void queryClient.invalidateQueries({ queryKey: ['due-count'] });
       void queryClient.invalidateQueries({ queryKey: ['daily-activity'] });
       void queryClient.invalidateQueries({ queryKey: ['motivation'] });
@@ -65,7 +65,7 @@ export function TodayScreen() {
     return story ? { progress: inProgress, story } : null;
   }, [progressList.data, stories.data]);
 
-  // T27: «Диалог» card — first installed dialogue not yet finished once;
+  // T27: «Діалог» card — first installed dialogue not yet finished once;
   // disappears after any finished run (V2 §3.3).
   const dialogueTarget = React.useMemo(
     () => (dialogues.data ?? []).find((d) => d.finishedRunCount === 0) ?? null,
@@ -124,7 +124,7 @@ export function TodayScreen() {
           </Pressable>
         ) : (
           <Text variant="muted" className="mt-3">
-            Всё повторено — nothing due. Reading adds new words to review.
+            Усе повторено — nothing due. Reading adds new words to review.
           </Text>
         )}
       </View>
@@ -171,7 +171,7 @@ export function TodayScreen() {
           <View className="flex-row items-center justify-between gap-3">
             <View className="flex-1 gap-0.5">
               <Text variant="caption" className="uppercase tracking-wider">
-                Диалог
+                Діалог
               </Text>
               <RNText className="font-reading text-xl text-text" numberOfLines={1}>
                 {dialogueTarget.titleUk}
@@ -235,7 +235,7 @@ function PathContinueCard({ node }: { node: PathNode }) {
       className="rounded-xl border border-border bg-surface p-4 active:bg-surface-2"
     >
       <Text variant="caption" className="uppercase tracking-wider">
-        Путь
+        Шлях
       </Text>
       <View className="mt-2 flex-row items-center justify-between gap-3">
         <View className="flex-1 gap-0.5">

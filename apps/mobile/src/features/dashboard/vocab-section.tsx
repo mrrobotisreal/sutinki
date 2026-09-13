@@ -32,7 +32,7 @@ export function VocabSection({ data }: { data: VocabLevelStats[] }) {
     return (
       <SectionCard title="Vocabulary">
         <EmptyHint>
-          Ничего пока нет — read a story and collect words; mastery shows up here as you review
+          Поки що нічого немає — read a story and collect words; mastery shows up here as you review
           them.
         </EmptyHint>
       </SectionCard>

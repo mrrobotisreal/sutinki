@@ -6,16 +6,16 @@ import { Pressable, type ColorValue } from 'react-native';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
- * The five-pillar tab shell (design §10). Russian titles are the intended
+ * The five-pillar tab shell (design §10). Ukrainian titles are the intended
  * delight; English fallbacks live here for the future settings toggle
  * (UI_DESIGN §3 — "toggleable, EN fallback strings maintained").
  */
 const TAB_TITLES = {
-  index: { uk: 'Сегодня', en: 'Today' },
-  path: { uk: 'Путь', en: 'Path' },
-  library: { uk: 'Библиотека', en: 'Library' },
-  dictionary: { uk: 'Словарь', en: 'Word bank' },
-  journal: { uk: 'Журнал', en: 'Journal' },
+  index: { uk: 'Сьогодні', en: 'Today' },
+  path: { uk: 'Шлях', en: 'Path' },
+  library: { uk: 'Бібліотека', en: 'Library' },
+  dictionary: { uk: 'Словник', en: 'Word bank' },
+  journal: { uk: 'Щоденник', en: 'Journal' },
 } as const;
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -37,6 +37,10 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: tokens.textMuted,
         tabBarStyle: { backgroundColor: tokens.surface, borderTopColor: tokens.border },
         tabBarLabelStyle: { fontFamily: 'GolosText_500Medium', fontSize: 11 },
+        // UT04: Ukrainian pillar names run long («Бібліотека», «Щоденник») and
+        // truncated at Android's largest font scale; tab labels stay at 11sp
+        // (icons carry the tab, reading text keeps its own scale — UI_DESIGN §8).
+        tabBarAllowFontScaling: false,
         headerStyle: { backgroundColor: tokens.surface },
         headerTitleStyle: { fontFamily: 'GolosText_500Medium', color: tokens.text },
         headerRight: () => (
@@ -93,7 +97,7 @@ export default function TabsLayout() {
               <Pressable
                 onPress={() => router.push('/import')}
                 hitSlop={8}
-                accessibilityLabel="Import Russian text"
+                accessibilityLabel="Import Ukrainian text"
                 className="mr-4"
               >
                 <Ionicons name="download-outline" size={24} color={tokens.textMuted} />

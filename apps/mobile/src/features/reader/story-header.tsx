@@ -71,11 +71,11 @@ export function StoryHeader({
   );
 }
 
-/** Russian plural agreement for «предложение» (nice touch on a study app). */
+/** Ukrainian plural agreement for «речення» (nice touch on a study app): 1 речення · 2–4 речення · 5+ речень. */
 function sentencesLabel(n: number): string {
   const mod10 = n % 10;
   const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return 'предложение';
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'предложения';
-  return 'предложений';
+  if (mod10 === 1 && mod100 !== 11) return 'речення';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'речення';
+  return 'речень';
 }

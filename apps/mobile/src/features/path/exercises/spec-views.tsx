@@ -53,7 +53,7 @@ export function SpecMcView({ spec, onDone }: SpecViewProps<'multiple-choice'>) {
   return (
     <View className="flex-1 px-4 pt-6">
       <Text variant="caption" className="text-center uppercase tracking-wider">
-        {spec.direction === 'uk-en' ? 'What does it mean?' : 'Как это по-русски?'}
+        {spec.direction === 'uk-en' ? 'What does it mean?' : 'Як це українською?'}
       </Text>
       <View className="mt-4 min-h-28 justify-center rounded-2xl border border-border bg-surface px-5 py-7">
         <RNText className="text-center font-reading text-3xl text-text">{spec.prompt}</RNText>
@@ -220,7 +220,7 @@ export function SpecSbView({ spec, onDone }: SpecViewProps<'sentence-builder'>) 
   return (
     <View className="flex-1 px-4 pt-6">
       <Text variant="caption" className="text-center uppercase tracking-wider">
-        Sentence builder · build the Russian
+        Sentence builder · build the Ukrainian
       </Text>
       <View className="mt-4 rounded-2xl border border-border bg-surface px-5 py-6">
         <RNText className="font-ui-medium text-xl text-text">{spec.en}</RNText>

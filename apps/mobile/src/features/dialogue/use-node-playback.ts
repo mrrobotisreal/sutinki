@@ -16,7 +16,7 @@ import { getSpeechService, speak } from '@/services/speech';
  *
  * Degradation (V2 offline principles): no staged audio (or the file is
  * gone) ⇒ the line is spoken via the speech service (Piper → system TTS)
- * and playback reports `unavailable` — the screen shows a manual «Далее»
+ * and playback reports `unavailable` — the screen shows a manual «Далі»
  * instead of guessing TTS duration. No karaoke without real timing; a line
  * with audio but no stamps gets the sentence-level wash (`sentence` mode).
  *
@@ -96,7 +96,7 @@ export function useNodePlayback(
     if (!node) return;
     const uri = node.audio?.localUri;
     if (!uri || !fileExists(uri)) {
-      // Missing audio: speak the line, hand pacing to the screen (Далее).
+      // Missing audio: speak the line, hand pacing to the screen (Далі).
       if (node.sentence?.uk) void speak(node.sentence.uk);
       return () => {
         void getSpeechService().stop();

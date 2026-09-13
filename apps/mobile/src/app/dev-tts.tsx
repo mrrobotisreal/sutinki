@@ -9,7 +9,7 @@ import { useTtsStore } from '@/features/tts/store';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-const SAMPLE_TEXT = 'В темноте старого дома кто-то тихо стучит в стену. Ты слышишь это?';
+const SAMPLE_TEXT = 'У темряві старого будинку хтось тихо стукає в стіну. Ти чуєш це?';
 
 const RATES = [0.7, 0.85, 1, 1.25] as const;
 
@@ -64,7 +64,7 @@ export default function DevTtsScreen() {
         onChangeText={setText}
         multiline
         className="min-h-28 rounded-xl border border-border bg-surface px-4 py-3 font-reading text-lg text-text"
-        placeholder="Введите текст…"
+        placeholder="Введи текст…"
         placeholderTextColor={tokens.textMuted}
         textAlignVertical="top"
       />

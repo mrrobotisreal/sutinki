@@ -324,7 +324,7 @@ export function useNote(id: string | undefined) {
   });
 }
 
-/** FTS over journal entries + notes in one shot — the Журнал tab search (design §5). */
+/** FTS over journal entries + notes in one shot — the Щоденник tab search (design §5). */
 export function useJournalSearch(query: string) {
   return useQuery({
     queryKey: queryKeys.journalSearch(query),

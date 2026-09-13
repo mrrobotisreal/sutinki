@@ -63,7 +63,7 @@ function shuffle<T>(arr: T[]): T[] {
 
 /**
  * Positional check of an arrangement against the canonical word-token order,
- * tolerant per tile (ё/е, case) via the shared comparator — so duplicate
+ * tolerant per tile (apostrophe, ґ/г, case) via the shared comparator — so duplicate
  * words are interchangeable and a distractor that happens to equal a correct
  * word counts at that slot.
  */

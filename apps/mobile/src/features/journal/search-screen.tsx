@@ -10,8 +10,8 @@ import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
- * Журнал search (T15, design §5): one query over both FTS indexes —
- * journal_fts (entry text) and notes_fts (title + body). ё/е-tolerant via
+ * Щоденник search (T15, design §5): one query over both FTS indexes —
+ * journal_fts (entry text) and notes_fts (title + body). Apostrophe- and ґ/г-tolerant via
  * the repositories' normalized match queries; last term prefix-matched so
  * results appear while typing.
  */
@@ -40,7 +40,7 @@ export function JournalSearchScreen() {
             value={query}
             onChangeText={setQuery}
             autoFocus
-            placeholder="Поиск по записям и заметкам…"
+            placeholder="Пошук у записах і нотатках…"
             placeholderTextColor={theme.textMuted}
             className="flex-1 py-2.5 font-ui text-base text-text"
             accessibilityLabel="Search journal and notes"
@@ -60,11 +60,11 @@ export function JournalSearchScreen() {
       >
         {!hasQuery ? (
           <Text variant="caption" className="pt-10 text-center">
-            Search matches Russian text with ё/е tolerance.
+            Search matches Ukrainian text — apostrophe- and ґ/г-tolerant.
           </Text>
         ) : entries.length === 0 && notes.length === 0 && !results.isLoading ? (
           <Text variant="caption" className="pt-10 text-center">
-            Ничего не найдено. Nothing matched «{deferred.trim()}».
+            Нічого не знайдено. Nothing matched «{deferred.trim()}».
           </Text>
         ) : (
           <>
@@ -85,7 +85,7 @@ export function JournalSearchScreen() {
             ))}
             {notes.length > 0 && (
               <Text variant="caption" className="mt-3 uppercase tracking-wider">
-                Заметки · {notes.length}
+                Нотатки · {notes.length}
               </Text>
             )}
             {notes.map((note) => (

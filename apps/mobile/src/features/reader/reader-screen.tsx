@@ -471,7 +471,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
   if (!detail.data) {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading-bold text-xl">История не найдена</Text>
+        <Text className="font-reading-bold text-xl">Історію не знайдено</Text>
         <Text variant="muted" className="text-center">
           This story is no longer installed. It may have been removed with its pack.
         </Text>
@@ -646,7 +646,7 @@ function StoryEnd({ finished }: { finished: boolean }) {
     <View className="mt-10 items-center gap-2 px-8">
       <View className="h-px w-16 bg-border" />
       <Text variant="muted" className="font-reading-italic tracking-widest">
-        конец
+        кінець
       </Text>
       {finished && (
         <Text variant="caption" className="text-success">

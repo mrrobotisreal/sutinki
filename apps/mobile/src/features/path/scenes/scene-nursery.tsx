@@ -21,7 +21,7 @@ import { SCENE_PRIMARY_LOOP_MS, withAlpha } from './scene-palette';
 const LOOP = SCENE_PRIMARY_LOOP_MS.nursery; // 20000 — one full, patient rotation
 
 /**
- * «Детская» — slow rotating mobile shadows (V2 §5.3): five soft spokes
+ * «Дитяча» — slow rotating mobile shadows (V2 §5.3): five soft spokes
  * turning above the crib for no one, lit by a pale window glow. Poster
  * frame = the mobile mid-turn, spokes visible.
  */

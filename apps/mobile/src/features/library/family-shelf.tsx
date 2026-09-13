@@ -80,7 +80,7 @@ export function FamilyShelfHeader({
           className="mt-0.5 flex-row items-center gap-1.5 self-start rounded-lg px-1 py-1 active:bg-surface-2"
         >
           <Text variant="caption" className="text-accent">
-            Следующий уровень: {next}
+            Наступний рівень: {next}
           </Text>
           <Ionicons name="arrow-forward" size={13} color={tokens.accent} />
         </Pressable>

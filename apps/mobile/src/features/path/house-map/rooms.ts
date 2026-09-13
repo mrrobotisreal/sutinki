@@ -21,12 +21,12 @@ export interface RoomDef {
 }
 
 export const HOUSE_ROOMS: readonly RoomDef[] = [
-  { scene: 'hallway', titleUk: 'Прихожая', titleEn: 'The Entryway' },
-  { scene: 'living-room', titleUk: 'Гостиная', titleEn: 'The Living Room' },
+  { scene: 'hallway', titleUk: 'Передпокій', titleEn: 'The Entryway' },
+  { scene: 'living-room', titleUk: 'Вітальня', titleEn: 'The Living Room' },
   { scene: 'kitchen', titleUk: 'Кухня', titleEn: 'The Kitchen' },
-  { scene: 'pantry', titleUk: 'Кладовая', titleEn: 'The Pantry' },
-  { scene: 'nursery', titleUk: 'Детская', titleEn: 'The Nursery' },
-  { scene: 'cellar', titleUk: 'Подвал', titleEn: 'The Cellar', belowGround: true },
+  { scene: 'pantry', titleUk: 'Комора', titleEn: 'The Pantry' },
+  { scene: 'nursery', titleUk: 'Дитяча', titleEn: 'The Nursery' },
+  { scene: 'cellar', titleUk: 'Підвал', titleEn: 'The Cellar', belowGround: true },
 ];
 
 const ROOM_ORDER = new Map(HOUSE_ROOMS.map((room, i) => [room.scene, i]));
@@ -47,7 +47,7 @@ export function roomForScene(scene: string): RoomDef | null {
 /**
  * Floors of the map, top → cellar: house-themed units sorted by §5.1 room
  * order, then pack id. Two units sharing a scene stack in pack-id order —
- * this is how the «Тихий дом» prologue sits above the entryway once its
+ * this is how the «Тихий дім» prologue sits above the entryway once its
  * retrofit pack version ships a house scene.
  */
 export function orderHouseUnits(units: readonly UnitState[]): UnitState[] {

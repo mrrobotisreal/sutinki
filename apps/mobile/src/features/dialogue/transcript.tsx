@@ -66,7 +66,7 @@ export function NodeBubble({
       >
         <View className="mb-1 flex-row items-center gap-2">
           <Text variant="caption" className="uppercase tracking-wider">
-            {isPlayer ? 'Ты' : (speaker?.name.uk ?? node.speakerId)}
+            {isPlayer ? 'Ти' : (speaker?.name.uk ?? node.speakerId)}
           </Text>
           <Pressable
             onPress={onReplay}
@@ -108,7 +108,7 @@ export function ChoiceBubble({
       <View className="max-w-[88%] rounded-2xl rounded-br-md border border-accent/30 bg-accent-soft px-4 py-3">
         <View className="mb-1 flex-row items-center gap-2">
           <Text variant="caption" className="uppercase tracking-wider">
-            Ты
+            Ти
           </Text>
           {entry.score !== undefined && (
             <View className="flex-row items-center gap-1">

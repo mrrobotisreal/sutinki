@@ -5,7 +5,7 @@ import { normalizeUk } from '@/db/normalize';
  * us which token surfaces matched (`matchedTexts` — lemma matches included,
  * e.g. searching «слово» matches the token «словами»); here we mark the
  * whitespace chunks of the sentence whose letter core is one of them,
- * ё/е-tolerant by normalizing both sides. Pure and tested.
+ * apostrophe- and ґ/г-tolerant by normalizing both sides. Pure and tested.
  */
 
 export interface SnippetSegment {

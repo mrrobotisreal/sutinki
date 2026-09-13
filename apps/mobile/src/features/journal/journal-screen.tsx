@@ -16,7 +16,7 @@ import { FeedbackBadge } from './feedback-badge';
 type Section = 'entries' | 'notes';
 
 /**
- * Журнал tab (design §7.4): journal entries + markdown study notes behind
+ * Щоденник tab (design §7.4): journal entries + markdown study notes behind
  * one segmented header, FTS search entry point in the tab header, daily
  * prompt card up top, FAB to write. Lists are reverse-chronological
  * (entries by created, notes by last edit — §7.4 "organization by updated").
@@ -32,7 +32,7 @@ export function JournalScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      track('tab_viewed', { tab: 'Журнал' });
+      track('tab_viewed', { tab: 'Щоденник' });
     }, []),
   );
 
@@ -60,7 +60,7 @@ export function JournalScreen() {
           onPress={() => switchSection('entries')}
         />
         <SegmentButton
-          label="Заметки"
+          label="Нотатки"
           active={section === 'notes'}
           onPress={() => switchSection('notes')}
         />
@@ -107,7 +107,7 @@ export function JournalScreen() {
               entries.isLoading ? null : (
                 <EmptyState
                   icon="book-outline"
-                  uk="Журнал ждёт твоих слов."
+                  uk="Щоденник чекає на твої слова."
                   en="No entries yet — write your first one, even three sentences count."
                 />
               )
@@ -136,7 +136,7 @@ export function JournalScreen() {
             notes.isLoading ? null : (
               <EmptyState
                 icon="document-text-outline"
-                uk="Пока ни одной заметки."
+                uk="Поки що жодної нотатки."
                 en="Markdown study notes live here — grammar tables, mnemonics, anything."
               />
             )

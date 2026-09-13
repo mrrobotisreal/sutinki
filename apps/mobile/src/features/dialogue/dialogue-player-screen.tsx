@@ -100,7 +100,7 @@ export function DialoguePlayerScreen() {
   }
   const showChoices = current?.kind === 'choices' && choicesRevealedKey === stepKey;
 
-  // Manual «Далее» when the line has no playable audio (TTS pacing unknown).
+  // Manual «Далі» when the line has no playable audio (TTS pacing unknown).
   const showManualAdvance =
     current != null && current.kind !== 'choices' && playback.status === 'unavailable';
 
@@ -167,9 +167,9 @@ export function DialoguePlayerScreen() {
       void run.restart();
       return;
     }
-    Alert.alert('Начать сначала?', 'Текущий разговор будет отброшен.', [
-      { text: 'Продолжить разговор', style: 'cancel' },
-      { text: 'Сначала', style: 'destructive', onPress: () => void run.restart() },
+    Alert.alert('Почати спочатку?', 'Поточну розмову буде скинуто.', [
+      { text: 'Продовжити розмову', style: 'cancel' },
+      { text: 'Спочатку', style: 'destructive', onPress: () => void run.restart() },
     ]);
   }, [run, engine]);
 
@@ -214,7 +214,7 @@ export function DialoguePlayerScreen() {
         style={{ paddingTop: insets.top }}
       >
         <Ionicons name="cloud-offline-outline" size={40} color={theme.textMuted} />
-        <Text className="font-ui-medium text-lg">Контент удалён</Text>
+        <Text className="font-ui-medium text-lg">Контент видалено</Text>
         <Text variant="muted" className="text-center">
           This dialogue&apos;s pack is no longer installed. Your runs and collected endings are kept
           and will reconnect when the pack is reinstalled.
@@ -259,14 +259,14 @@ export function DialoguePlayerScreen() {
       >
         <Ionicons name="refresh-outline" size={40} color={theme.textMuted} />
         <Text variant="muted" className="text-center">
-          Этот диалог обновился — начни разговор заново.
+          Цей діалог оновився — почни розмову знову.
         </Text>
         <Pressable
           onPress={() => void run.restart()}
           accessibilityRole="button"
           className="mt-2 rounded-full bg-accent px-5 py-2.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Начать сначала</Text>
+          <Text className="font-ui-medium text-bg">Почати спочатку</Text>
         </Pressable>
       </View>
     );
@@ -317,7 +317,7 @@ export function DialoguePlayerScreen() {
               accessibilityRole="button"
               className="flex-row items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 active:bg-surface-2"
             >
-              <Text className="font-ui-medium text-accent">Далее</Text>
+              <Text className="font-ui-medium text-accent">Далі</Text>
               <Ionicons name="arrow-forward" size={15} color={theme.accent} />
             </Pressable>
           </View>

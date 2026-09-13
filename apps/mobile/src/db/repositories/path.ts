@@ -113,7 +113,7 @@ export function createPathRepo(db: SutinkiDB) {
     },
 
     /**
-     * Derived vocabulary credit for a unit. ё/е-tolerant by construction:
+     * Derived vocabulary credit for a unit. apostrophe/ґ-tolerant by construction:
      * both sides of every join are the pre-computed `lemma_norm` shadows.
      */
     async getUnitLemmaStats(packId: string): Promise<UnitLemmaStats> {

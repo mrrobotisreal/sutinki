@@ -214,7 +214,7 @@ describe('tracks (T30)', () => {
   it('absent track resolves to main at the app layer', () => {
     expect(packTrack(pack('x', 'course-unit'))).toBe('main');
     expect(packTrack(pack('x', 'course-unit', 'A1', { track: 'family' }))).toBe('family');
-    expect(trackTitle('family').uk).toBe('Семья');
+    expect(trackTitle('family').uk).toBe('Сім’я');
     expect(trackTitle('mystery-guests')).toEqual({ uk: 'mystery-guests', en: 'mystery-guests' });
   });
 

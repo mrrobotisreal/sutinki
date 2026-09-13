@@ -91,7 +91,7 @@ export function LessonScreen({ packId }: { packId: string }) {
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
         <Ionicons name="book-outline" size={36} color={tokens.textMuted} />
         <Text variant="muted" className="text-center">
-          This unit&apos;s lesson isn&apos;t installed. Sync content in Библиотека and try again.
+          This unit&apos;s lesson isn&apos;t installed. Sync content in Бібліотека and try again.
         </Text>
       </View>
     );
@@ -125,7 +125,7 @@ export function LessonScreen({ packId }: { packId: string }) {
             accessibilityRole="button"
             className="mt-8 items-center rounded-xl bg-accent py-3.5 active:opacity-80"
           >
-            <Text className="font-ui-medium text-bg">Понятно — done reading</Text>
+            <Text className="font-ui-medium text-bg">Зрозуміло — done reading</Text>
           </Pressable>
         </View>
       </ScrollView>

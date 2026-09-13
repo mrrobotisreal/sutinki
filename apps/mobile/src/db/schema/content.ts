@@ -28,10 +28,10 @@ export const packs = sqliteTable('packs', {
   /**
    * Where the pack came from (T28, design V2 §4.3): 'remote' = manifest-
    * managed (github sync AND bundled fixtures — both version-diff against
-   * the manifest), 'local' = assembled on-device from a Share-to-Сумрак
+   * the manifest), 'local' = assembled on-device from a Share-to-Сутінки
    * import. Local packs are invisible to sync (immunity keyed on the
    * sync_state 'local-import' source, set alongside this by the imports
-   * service) and are listed on the Library's «Импортировано» shelf.
+   * service) and are listed on the Library's «Імпортовано» shelf.
    */
   origin: text('origin').$type<'remote' | 'local'>().notNull().default('remote'),
   /**

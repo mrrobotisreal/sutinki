@@ -15,7 +15,7 @@ import { normalizeUk, RAW_WORD_SPLIT } from '@/db/normalize';
  * building a second tolerant matcher.
  */
 
-/** Tokenize for scoring: normalize, strip punctuation, keep in-word hyphens («кто-то»). */
+/** Tokenize for scoring: normalize, strip punctuation, keep in-word hyphens («хто-небудь»). */
 export function scoringTokens(text: string): string[] {
   return normalizeUk(text)
     .split(/[^\p{L}\p{N}-]+/u)

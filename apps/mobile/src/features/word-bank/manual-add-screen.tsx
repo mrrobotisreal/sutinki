@@ -125,7 +125,7 @@ export function ManualAddScreen() {
           label="Phrase"
           value={surface}
           onChange={setSurface}
-          placeholder="как дела"
+          placeholder="як справи"
           autoFocus
         />
       )}

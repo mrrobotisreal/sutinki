@@ -58,7 +58,7 @@ export interface BankFilter {
    * (lib/mastery, the same definition the dashboard reconciles against).
    */
   mastery?: MasteryFilter;
-  /** Substring match on surface/lemma/translation (ё/е-tolerant on Russian). */
+  /** Substring match on surface/lemma/translation (apostrophe/ґ-tolerant on Ukrainian). */
   search?: string;
   limit?: number;
   offset?: number;
@@ -75,7 +75,7 @@ export interface BankListItem extends BankItemRow {
   encounterCount: number;
 }
 
-/** Distinct values present in the bank — drives the Словарь filter chips (T05). */
+/** Distinct values present in the bank — drives the Словник filter chips (T05). */
 export interface BankFilterOptions {
   pos: string[];
   levels: ('A1' | 'A2' | 'B1' | 'B2' | 'C1')[];

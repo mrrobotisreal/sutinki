@@ -219,7 +219,7 @@ export default function SettingsScreen() {
               <Pressable className="flex-row items-center justify-between border-t border-border px-4 py-3.5 active:bg-surface-2">
                 <View className="gap-0.5">
                   <Text className="font-ui-medium">Read any text</Text>
-                  <Text variant="caption">Speak arbitrary Russian, voice QA + latency (T11)</Text>
+                  <Text variant="caption">Speak arbitrary Ukrainian, voice QA + latency (T11)</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
               </Pressable>

@@ -22,8 +22,8 @@ const MASTERY_CHIPS: { value: MasteryFilter; label: string }[] = [
 ];
 
 /**
- * Словарь (design §7.2): the word bank as a reference tool — dense list,
- * search-first, filters as chips (UI_DESIGN §4). Search is ё/е-tolerant via
+ * Словник (design §7.2): the word bank as a reference tool — dense list,
+ * search-first, filters as chips (UI_DESIGN §4). Search is apostrophe- and ґ/г-tolerant via
  * the bank repo's normalized matching (T03 convention, first UI-visible
  * here). Mastery chips (T24) share lib/mastery's T18 band definition with
  * the dashboard, so the two surfaces always reconcile.
@@ -44,7 +44,7 @@ export function WordBankScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      track('tab_viewed', { tab: 'Словарь' });
+      track('tab_viewed', { tab: 'Словник' });
     }, []),
   );
 
@@ -314,11 +314,11 @@ function EmptyState({ searching }: { searching: boolean }) {
     <View className="flex-1 items-center justify-center gap-3 px-10">
       <Ionicons name="bookmarks-outline" size={40} color={theme.textMuted} />
       <Text className="font-reading-bold text-xl">
-        {searching ? 'Ничего не найдено' : 'Словарь пуст'}
+        {searching ? 'Нічого не знайдено' : 'Словник порожній'}
       </Text>
       <Text variant="muted" className="text-center">
         {searching
-          ? 'Nothing matches. Search is ё/е-tolerant — try fewer letters or clear the filters.'
+          ? 'Nothing matches. Search is apostrophe- and ґ/г-tolerant — try fewer letters or clear the filters.'
           : 'Tap a word while reading to look it up, or long-press and drag to collect a phrase. Everything you save lands here.'}
       </Text>
     </View>

@@ -66,7 +66,7 @@ export function ImportReviewScreen() {
         try {
           await rerunSentences(requestId, [uid]);
         } catch (err) {
-          Alert.alert('Не получилось', friendlyAiMessage(err));
+          Alert.alert('Не вийшло', friendlyAiMessage(err));
         } finally {
           setBusyUid(null);
         }
@@ -95,7 +95,7 @@ export function ImportReviewScreen() {
 
   const remove = React.useCallback(
     (uid: string) => {
-      Alert.alert('Удалить предложение?', 'It will not be part of the imported story.', [
+      Alert.alert('Видалити речення?', 'It will not be part of the imported story.', [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Remove',
@@ -116,18 +116,18 @@ export function ImportReviewScreen() {
     try {
       const { packId, included, excluded } = await commitAnnotatedRequest(requestId);
       Alert.alert(
-        'Импортировано',
+        'Імпортовано',
         `${included} sentences committed${excluded > 0 ? `, ${excluded} excluded` : ''}.`,
         [
           { text: 'OK', onPress: () => router.back() },
           {
-            text: 'Читать',
+            text: 'Читати',
             onPress: () => router.replace(`/reader/${packId}/s1`),
           },
         ],
       );
     } catch (err) {
-      Alert.alert('Не получилось', err instanceof Error ? err.message : 'Unknown error');
+      Alert.alert('Не вийшло', err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setCommitting(false);
     }
@@ -138,7 +138,7 @@ export function ImportReviewScreen() {
     const notOk = env.sentences.filter((s) => s.status !== 'ok').length;
     if (notOk > 0) {
       Alert.alert(
-        'Исключить непроверенные?',
+        'Виключити неперевірені?',
         `${notOk} flagged or un-annotated sentence${notOk === 1 ? '' : 's'} will be EXCLUDED from the story. Re-run or delete them first if you want them included.`,
         [
           { text: 'Cancel', style: 'cancel' },
@@ -151,7 +151,7 @@ export function ImportReviewScreen() {
   }, [env, doCommit]);
 
   const onDiscard = React.useCallback(() => {
-    Alert.alert('Удалить запрос?', 'The request and its annotation will be removed.', [
+    Alert.alert('Видалити запит?', 'The request and its annotation will be removed.', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Remove',
@@ -213,7 +213,7 @@ export function ImportReviewScreen() {
             }`}
           >
             <Text variant="caption" className={flaggedOnly ? 'text-accent' : ''}>
-              Только с флагом
+              Лише з прапорцем
             </Text>
           </Pressable>
         )}
@@ -241,7 +241,7 @@ export function ImportReviewScreen() {
           ))}
           {visible.length === 0 && (
             <View className="items-center px-6 py-8">
-              <Text variant="muted">Нет предложений с флагом.</Text>
+              <Text variant="muted">Немає речень із прапорцем.</Text>
             </View>
           )}
         </View>
@@ -249,7 +249,7 @@ export function ImportReviewScreen() {
         {!committed && (
           <Pressable onPress={onDiscard} accessibilityRole="button" className="mt-6 items-center">
             <Text variant="caption" className="text-danger">
-              Удалить запрос
+              Видалити запит
             </Text>
           </Pressable>
         )}
@@ -271,7 +271,7 @@ export function ImportReviewScreen() {
               <Ionicons name="checkmark-outline" size={18} color={tokens.text} />
             )}
             <Text className="font-ui-medium">
-              {okCount === 0 ? 'Нечего импортировать' : `Импортировать ${okCount} предл.`}
+              {okCount === 0 ? 'Нема чого імпортувати' : `Імпортувати ${okCount} реч.`}
             </Text>
           </Pressable>
         </View>
@@ -330,8 +330,8 @@ function SentenceRow(props: {
           {s.status === 'ok'
             ? `${s.tokens?.length ?? 0} tokens${lowConfidence ? ` · ${s.flagged!.length} flagged` : ''}`
             : s.status === 'pending'
-              ? 'Не аннотировано — re-run to annotate'
-              : 'Проверьте вручную — annotation failed'}
+              ? 'Не анотовано — re-run to annotate'
+              : 'Перевір вручну — annotation failed'}
         </Text>
       </Pressable>
 
@@ -347,7 +347,7 @@ function SentenceRow(props: {
 
           {splitting ? (
             <View className="gap-2">
-              <Text variant="caption">Разделить после слова:</Text>
+              <Text variant="caption">Розділити після слова:</Text>
               <View className="flex-row flex-wrap gap-1.5">
                 {words.slice(0, -1).map((w, wi) => (
                   <Pressable

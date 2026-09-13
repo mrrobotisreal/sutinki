@@ -3,7 +3,7 @@ import type { TokenRow } from '@/db/repositories/content';
 /**
  * Chunking turns a sentence's token list into the visual words TokenText
  * lays out: consecutive tokens with no space between them render as one
- * unbreakable unit («Это, соседи»., etc.), so wrapping can never separate
+ * unbreakable unit («Це, сусіди»., etc.), so wrapping can never separate
  * a word from its attached punctuation. The importer stored the *effective*
  * spaceBefore per token (schema defaults already applied), and the schema's
  * reconstruction invariant guarantees chunks joined with single spaces

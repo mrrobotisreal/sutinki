@@ -207,7 +207,7 @@ export function SessionScreen() {
   if (phase === 'empty') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading text-xl">Всё повторено</Text>
+        <Text className="font-reading text-xl">Усе повторено</Text>
         <Text variant="muted" className="text-center">
           Nothing is due right now. Read something — new words become reviews.
         </Text>

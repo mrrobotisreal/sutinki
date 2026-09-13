@@ -68,7 +68,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 /**
- * Pick one eligible sentence containing `lemma` (ё/е-tolerant via the
+ * Pick one eligible sentence containing `lemma` (apostrophe/ґ-tolerant via the
  * indexed `lemma_norm` shadow), random among candidates for variety, with
  * its tokens and the target-token position resolved. null = no eligible
  * sentence — the session builder skips the item, never loosens the rule.

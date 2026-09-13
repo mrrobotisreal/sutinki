@@ -24,7 +24,7 @@ import type { SutinkiDB } from '../types';
  * - **A lemma's CEFR level** = the minimum (easiest) level across all its
  *   content tokens; bank items whose lemma isn't in installed content fall
  *   back to the bank item's own level; still unknown → 'unleveled'.
- * - ё/е tolerance is inherited by construction: every join runs on the
+ * - apostrophe/ґ tolerance is inherited by construction: every join runs on the
  *   pre-computed `lemma_norm` shadow columns (T03), never on raw text.
  */
 

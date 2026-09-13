@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Pure Share-to-Сумрак intake logic (T28, design V2 §4.1/§4.3): text
+ * Pure Share-to-Сутінки intake logic (T28, design V2 §4.1/§4.3): text
  * normalization, sentence splitting, the length-cap split plan, and
  * imported-pack id generation. No I/O — the wired flows live in
  * import-service.ts; unit tests exercise this directly. (The T28 dev-only
@@ -31,7 +31,8 @@ export type ImportIntake = z.infer<typeof ImportIntakeSchema>;
 /**
  * NFC-normalize untrusted shared/pasted text (chat apps produce decomposed
  * Unicode — T08 lore), strip BOM/zero-width characters, unify newlines.
- * ё is preserved (NFC never touches it); inner whitespace is kept — only
+ * The apostrophe is preserved as typed (NFC never touches it); inner
+ * whitespace is kept — only
  * sentence assembly collapses runs.
  */
 export function normalizeIntakeText(raw: string): string {
@@ -55,35 +56,47 @@ export function suggestTitle(text: string): string {
     if (title.length >= 40) break;
   }
   title = title.replace(/[\s.,:;!?…«»„""'()-]+$/u, '');
-  return title || 'Импорт';
+  return title || 'Імпорт';
 }
 
 /**
  * Abbreviations whose trailing dot essentially never ends a sentence —
- * they lead into what they abbreviate («ул. Ленина», «т. д.», initials
- * like «А. С. Пушкин» via the single-uppercase-letter rule).
+ * they lead into what they abbreviate («вул. Шевченка», «т. д.», initials
+ * like «Т. Г. Шевченко» via the single-uppercase-letter rule).
  */
-const ABBREV_ALWAYS = new Set(['т', 'ул', 'им', 'напр', 'см', 'гл', 'стр', 'рис', 'табл']);
+const ABBREV_ALWAYS = new Set([
+  'т',
+  'вул',
+  'ім',
+  'напр',
+  'див',
+  'стор',
+  'рис',
+  'табл',
+  'просп',
+  'пл',
+]);
 
 /**
- * Abbreviations that CAN end a sentence («Это было в 1999 г.») — treated
+ * Abbreviations that CAN end a sentence («Це було 1999 р.») — treated
  * as sentence-internal only when the next fragment starts with a
  * lowercase letter or digit (a real sentence start is capitalized).
  */
 const ABBREV_IF_LOWER = new Set([
-  'г',
-  'гг',
-  'в',
-  'вв',
-  'д',
-  'е',
-  'п',
+  'р',
+  'рр',
+  'ст',
+  'ін',
+  'зв',
+  'ч',
+  'буд',
   'кв',
   'с',
-  'ок',
-  'руб',
+  'год',
+  'хв',
+  'грн',
   'коп',
-  'тыс',
+  'тис',
   'млн',
   'млрд',
 ]);
@@ -183,18 +196,26 @@ export function planImportSplit(text: string, cap = IMPORT_CHAR_CAP): string[] {
   return parts;
 }
 
-/** GOST-ish lowercase transliteration for slug generation only. */
+/**
+ * Lowercase Ukrainian transliteration (KMU 2010 table, position-insensitive
+ * simplification) for slug generation only. Apostrophes are dropped by the
+ * generic rule below; letters outside the Ukrainian alphabet are not mapped
+ * — foreign Cyrillic text still slugs from its shared letters or falls back.
+ */
 const TRANSLIT: Record<string, string> = {
   а: 'a',
   б: 'b',
   в: 'v',
-  г: 'g',
+  г: 'h',
+  ґ: 'g',
   д: 'd',
   е: 'e',
-  ё: 'e',
+  є: 'ie',
   ж: 'zh',
   з: 'z',
-  и: 'i',
+  и: 'y',
+  і: 'i',
+  ї: 'i',
   й: 'i',
   к: 'k',
   л: 'l',
@@ -207,17 +228,14 @@ const TRANSLIT: Record<string, string> = {
   т: 't',
   у: 'u',
   ф: 'f',
-  х: 'h',
+  х: 'kh',
   ц: 'ts',
   ч: 'ch',
   ш: 'sh',
-  щ: 'sch',
-  ъ: '',
-  ы: 'y',
+  щ: 'shch',
   ь: '',
-  э: 'e',
-  ю: 'yu',
-  я: 'ya',
+  ю: 'iu',
+  я: 'ia',
 };
 
 /** Title → StableId-safe slug (`/^[a-z0-9][a-z0-9-]*$/`), ≤24 chars, 'tekst' fallback. */

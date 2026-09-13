@@ -48,7 +48,7 @@ describe('house rooms registry', () => {
     expect(isHouseUnit({ themeScene: 'kitchen' })).toBe(true);
     expect(isHouseUnit({ themeScene: 'greenhouse' })).toBe(false); // forward-compat fallback
     expect(isHouseUnit({ themeScene: null })).toBe(false);
-    expect(roomForScene('pantry')?.titleUk).toBe('Кладовая');
+    expect(roomForScene('pantry')?.titleUk).toBe('Комора');
     expect(roomForScene('greenhouse')).toBeNull();
   });
 
@@ -57,7 +57,7 @@ describe('house rooms registry', () => {
       unitFor('a1-course-unit-092', 'cellar'),
       unitFor('a1-course-unit-091', 'kitchen'),
       unitFor('a1-course-unit-090', 'hallway'),
-      // the «Тихий дом» retrofit case: an earlier pack id sharing a scene
+      // the «Тихий дім» retrofit case: an earlier pack id sharing a scene
       unitFor('a1-course-unit-001', 'hallway'),
     ]);
     expect(ordered.map((u) => u.pack.id)).toEqual([

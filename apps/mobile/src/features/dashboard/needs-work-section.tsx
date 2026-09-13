@@ -57,7 +57,7 @@ export function NeedsWorkSection({
     <SectionCard title="What needs work">
       {empty ? (
         <EmptyHint>
-          Пока всё в порядке — once you have review history, the weakest words and topics surface
+          Поки що все гаразд — once you have review history, the weakest words and topics surface
           here.
         </EmptyHint>
       ) : (

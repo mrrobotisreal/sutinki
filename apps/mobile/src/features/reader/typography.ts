@@ -16,7 +16,7 @@ export function readerFontSize(prefs: ReaderPrefs): number {
   return READER_SIZE_STEPS[clamp(prefs.sizeStep, READER_SIZE_STEPS.length - 1)]!;
 }
 
-/** Style for the Russian story text. */
+/** Style for the Ukrainian story text. */
 export function readingTextStyle(prefs: ReaderPrefs): TextStyle {
   const fontSize = readerFontSize(prefs);
   const ratio =

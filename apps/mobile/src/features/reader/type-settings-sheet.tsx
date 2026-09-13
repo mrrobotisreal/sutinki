@@ -37,7 +37,7 @@ export function TypeSettingsSheet({ open, onClose }: { open: boolean; onClose: (
         {/* live preview */}
         <View className="mb-5 rounded-xl bg-surface-2 px-4 py-3">
           <RNText style={[readingTextStyle(prefs), { color: tokens.text }]} numberOfLines={2}>
-            Ночью в стене кто-то тихо стучит…
+            Уночі в стіні хтось тихо стукає…
           </RNText>
         </View>
 

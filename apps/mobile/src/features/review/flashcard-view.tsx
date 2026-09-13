@@ -85,25 +85,25 @@ export function FlashcardView({ entry, onGrade }: FlashcardViewProps) {
         {flipped ? (
           <View className="flex-row gap-2">
             <GradeButton
-              label="Again"
+              label="Знову"
               sub="forgot"
               tone="danger"
               onPress={() => grade(Rating.Again)}
             />
             <GradeButton
-              label="Hard"
+              label="Важко"
               sub="barely"
               tone="muted"
               onPress={() => grade(Rating.Hard)}
             />
             <GradeButton
-              label="Good"
+              label="Добре"
               sub="got it"
               tone="success"
               onPress={() => grade(Rating.Good)}
             />
             <GradeButton
-              label="Easy"
+              label="Легко"
               sub="instant"
               tone="accent"
               onPress={() => grade(Rating.Easy)}

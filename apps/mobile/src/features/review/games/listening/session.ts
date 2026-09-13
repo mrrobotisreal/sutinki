@@ -15,7 +15,7 @@ export interface ListeningItem {
   card: CardRow;
   item: BankItemRow;
   audio: ListeningAudio;
-  /** The Russian actually spoken — the answer key (ё/casing as in source). */
+  /** The Ukrainian actually spoken — the answer key (apostrophe/casing as in source). */
   answerUk: string;
   /** Gloss shown as post-answer feedback (null for unenriched captures). */
   translation: string | null;

@@ -62,7 +62,7 @@ export default function RootLayout() {
     GolosText_500Medium,
     GolosText_700Bold,
   });
-  // Display font for the splash intro + branding (Сумрак wordmark)
+  // Display font for the splash intro + branding (Сутінки wordmark)
   const [displayLoaded, displayError] = useDisplayFonts({
     RubikWetPaint_400Regular,
   });
@@ -131,7 +131,7 @@ export default function RootLayout() {
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
                 />
                 <Stack.Screen name="games" options={{ title: 'Games' }} />
-                <Stack.Screen name="dialogues" options={{ title: 'Диалоги' }} />
+                <Stack.Screen name="dialogues" options={{ title: 'Діалоги' }} />
                 <Stack.Screen
                   name="dialogue/[packId]/[dialogueId]"
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
@@ -167,8 +167,8 @@ export default function RootLayout() {
                 <Stack.Screen name="journal/search" options={{ title: 'Search' }} />
                 <Stack.Screen name="search" options={{ title: 'Search' }} />
                 <Stack.Screen name="bookmarks" options={{ title: 'Закладки' }} />
-                <Stack.Screen name="import" options={{ title: 'Импорт' }} />
-                <Stack.Screen name="import-review/[id]" options={{ title: 'Проверка импорта' }} />
+                <Stack.Screen name="import" options={{ title: 'Імпорт' }} />
+                <Stack.Screen name="import-review/[id]" options={{ title: 'Перевірка імпорту' }} />
                 <Stack.Screen
                   name="notes/[id]"
                   options={{ headerShown: false, animation: 'fade' }}

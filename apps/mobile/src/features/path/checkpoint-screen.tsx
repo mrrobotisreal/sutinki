@@ -147,7 +147,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
         <Ionicons name="flag-outline" size={36} color={tokens.textMuted} />
         <Text variant="muted" className="text-center">
-          This checkpoint isn&apos;t installed. Sync content in Библиотека first.
+          This checkpoint isn&apos;t installed. Sync content in Бібліотека first.
         </Text>
       </View>
     );
@@ -160,7 +160,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
         <Ionicons name="flag-outline" size={36} color={tokens.textMuted} />
         <Text variant="muted" className="text-center">
-          This checkpoint isn&apos;t installed. Sync content in Библиотека first.
+          This checkpoint isn&apos;t installed. Sync content in Бібліотека first.
         </Text>
       </View>
     );
@@ -213,7 +213,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
           {Math.round(outcome.threshold * 100)}%
         </Text>
         <Text className="text-center font-reading text-xl">
-          Ещё рано. The door stays where it is — come back stronger.
+          Ще рано. The door stays where it is — come back stronger.
         </Text>
         <Pressable
           onPress={() => router.back()}
@@ -284,8 +284,8 @@ function CheckpointPassed({
       </Text>
       <Text className="text-center font-reading text-xl">
         {outcome.firstPass
-          ? `Уровень ${pack.level} пройден. The path continues in the dark.`
-          : 'Пройдено снова — сильнее, чем раньше.'}
+          ? `Рівень ${pack.level} пройдено. The path continues in the dark.`
+          : 'Пройдено знову — сильніше, ніж раніше.'}
       </Text>
       <Pressable
         onPress={onDone}

@@ -7,7 +7,7 @@ export type SessionMode = 'flashcard' | 'mc';
 
 export interface McChoice {
   bankItemId: string;
-  /** Display text: translation for uk-en, Russian headword for en-uk. */
+  /** Display text: translation for uk-en, Ukrainian headword for en-uk. */
   text: string;
   correct: boolean;
 }

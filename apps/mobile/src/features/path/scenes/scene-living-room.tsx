@@ -23,7 +23,7 @@ const LOOP = SCENE_PRIMARY_LOOP_MS['living-room']; // 12600 — curtain sway
 const SHIMMER = 8300; // TV-static shimmer at a co-prime-ish period
 
 /**
- * «Гостиная» — curtain sway + faint TV-static shimmer (V2 §5.3): a soft
+ * «Вітальня» — curtain sway + faint TV-static shimmer (V2 §5.3): a soft
  * curtain panel on the right edge swaying a few px/degrees, and a cold
  * mist-colored glow low in the room, wavering like a set left on. Poster
  * frame = curtain at rest, screen dimly on.

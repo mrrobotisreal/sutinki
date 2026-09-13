@@ -72,7 +72,7 @@ export function SbSessionScreen() {
   if (session.phase === 'empty') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading text-xl">Нет предложений</Text>
+        <Text className="font-reading text-xl">Немає речень</Text>
         <Text variant="muted" className="text-center">
           Sentence builder rebuilds short sentences from stories you&apos;ve read that contain your
           saved words. Read a story and collect words — or allow unread stories in Settings → Games.

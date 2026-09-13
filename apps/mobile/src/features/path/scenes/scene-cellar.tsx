@@ -23,7 +23,7 @@ const LOOP = SCENE_PRIMARY_LOOP_MS.cellar; // 18600 — fog there-and-back
 const DRIP_MS = 11000; // ripple every ~11 s (2.4 s bloom + long quiet)
 
 /**
- * «Подвал» — drifting fog band + occasional drip ripple (V2 §5.3): a low
+ * «Підвал» — drifting fog band + occasional drip ripple (V2 §5.3): a low
  * mist crossing the room, and every so often a ring spreading where a drop
  * lands. Poster frame = fog mid-room, water still.
  */

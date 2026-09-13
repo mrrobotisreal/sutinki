@@ -130,8 +130,8 @@ export async function sweepAchievements(): Promise<void> {
 
 /**
  * One-time historic unlock pass (guarded by a settings flag): event-driven
- * achievements can't fire for things done BEFORE T19 shipped — but «Первая
- * история» sitting locked after five finished stories would be a lie. Runs
+ * achievements can't fire for things done BEFORE T19 shipped — but «Перша
+ * історія» sitting locked after five finished stories would be a lie. Runs
  * through repositories only; pron-perfect is recovered from the analytics
  * log (every graded pronunciation item since T12 carries bestScore).
  */

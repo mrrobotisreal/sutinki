@@ -13,7 +13,7 @@ import { type TranscriptEntry } from './engine';
 /**
  * Ending screen (T27, V2 §3.3): ending title + recap (RU with reveal-EN,
  * the sentence-reveal pattern), the path recap (answers chosen), and the
- * collected state «Концовки: N/M» with unseen endings masked. Restrained —
+ * collected state «Кінцівки: N/M» with unseen endings masked. Restrained —
  * the toast already celebrated; this screen is the record.
  */
 
@@ -25,9 +25,9 @@ const TONE_ICON: Record<DialogueEndingRow['tone'], React.ComponentProps<typeof I
   };
 
 const TONE_LABEL: Record<DialogueEndingRow['tone'], string> = {
-  good: 'Хорошая концовка',
-  bad: 'Плохая концовка',
-  strange: 'Странная концовка',
+  good: 'Добра кінцівка',
+  bad: 'Погана кінцівка',
+  strange: 'Дивна кінцівка',
 };
 
 export function EndingView({
@@ -100,7 +100,7 @@ export function EndingView({
       {chosen.length > 0 && (
         <View className="mt-6">
           <Text variant="caption" className="mb-2 uppercase tracking-wider">
-            Твой путь
+            Твій шлях
           </Text>
           <View className="gap-1.5">
             {chosen.map((entry) =>
@@ -127,7 +127,7 @@ export function EndingView({
       {/* endings collected */}
       <View className="mt-6">
         <Text variant="caption" className="mb-2 uppercase tracking-wider">
-          Концовки: {seenIds.size}/{graph.endings.length}
+          Кінцівки: {seenIds.size}/{graph.endings.length}
         </Text>
         <View className="gap-1.5">
           {graph.endings.map((e) => {
@@ -154,7 +154,7 @@ export function EndingView({
         className="mt-8 flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
       >
         <Ionicons name="refresh" size={16} color={theme.bg} />
-        <Text className="font-ui-medium text-bg">Пройти ещё раз</Text>
+        <Text className="font-ui-medium text-bg">Пройти ще раз</Text>
       </Pressable>
       <Pressable
         onPress={onClose}

@@ -8,7 +8,7 @@ import { sentenceEligible } from '../sentence-source';
 
 /**
  * T22: the T02 fixture pack ships a deliberately SILENT narration track
- * («Стук в стене» — fabricated word stamps over silence, built for karaoke
+ * («Стук у стіні» — fabricated word stamps over silence, built for karaoke
  * plumbing tests before real audio existed). A listening-quiz segment
  * sliced from it plays nothing, which reads as a broken question. Skip it
  * here (TTS fallback takes over); the reader's narration bar still plays
@@ -42,7 +42,7 @@ export type ListeningAudio =
       text: string;
     };
 
-/** The Russian a listener is expected to hear — the quiz answer key. */
+/** The Ukrainian a listener is expected to hear — the quiz answer key. */
 export function spokenText(audio: ListeningAudio): string {
   return audio.kind === 'segment' ? audio.spokenText : audio.text;
 }

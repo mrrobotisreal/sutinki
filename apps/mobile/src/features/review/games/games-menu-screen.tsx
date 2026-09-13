@@ -11,7 +11,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 /**
- * The standalone games menu (T13; UI_DESIGN §3 places it off Словарь).
+ * The standalone games menu (T13; UI_DESIGN §3 places it off Словник).
  * Every implemented mode is launchable here on demand — sessions serve due
  * cards first and top up with the weakest, so there's always practice; each
  * screen owns its own empty state when the bank/stories can't feed it yet.
@@ -35,7 +35,7 @@ export function GamesMenuScreen() {
     <ScrollView className="flex-1 bg-bg" contentContainerClassName="gap-3 px-4 pb-12 pt-4">
       <GameRow
         icon="today-outline"
-        title="Daily session"
+        title="Щоденна сесія"
         subtitle={
           dueCount > 0 ? `All modes, weighted mix · ${dueCount} due` : 'All modes, weighted mix'
         }
@@ -43,7 +43,7 @@ export function GamesMenuScreen() {
       />
       <GameRow
         icon="albums-outline"
-        title="Review session"
+        title="Картки"
         subtitle={
           mixedCount > 0
             ? `Flashcards + multiple choice · ${mixedCount} due`
@@ -53,31 +53,31 @@ export function GamesMenuScreen() {
       />
       <GameRow
         icon="text-outline"
-        title="Cloze"
+        title="Пропуск"
         subtitle="Fill the missing word in real story sentences"
         route="/review/cloze"
       />
       <GameRow
         icon="reorder-four-outline"
-        title="Sentence builder"
+        title="Конструктор речень"
         subtitle="Rebuild story sentences from shuffled tiles"
         route="/review/sentence-builder"
       />
       <GameRow
         icon="ear-outline"
-        title="Listening quiz"
+        title="Слухання"
         subtitle="Pick or type what you hear — narration or Piper"
         route="/review/listening"
       />
       <GameRow
         icon="chatbubbles-outline"
-        title="Dialogue"
-        subtitle="Speak your side of a branching scene — Диалог"
+        title="Діалог"
+        subtitle="Speak your side of a branching scene"
         route="/dialogues"
       />
       <GameRow
         icon="mic-outline"
-        title="Pronunciation"
+        title="Вимова"
         subtitle={
           pronCount > 0 ? `Say it out loud · ${pronCount} due` : 'Say it out loud, scored offline'
         }

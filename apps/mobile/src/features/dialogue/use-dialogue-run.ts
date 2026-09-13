@@ -202,7 +202,7 @@ export function useDialogueRun(
         // toast surface, ephemeral def (never persisted to `achievements`).
         useAchievementToasts.getState().push({
           id: `ending-${dialogueId}-${ending.id}`,
-          title: 'Новая концовка',
+          title: 'Нова кінцівка',
           description: `«${ending.titleUk}» — ${ending.titleEn}`,
           icon: endingToastIcon(ending.tone),
         });

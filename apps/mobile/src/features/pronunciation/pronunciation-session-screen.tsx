@@ -224,8 +224,8 @@ export function PronunciationSessionScreen() {
         <Ionicons name="cloud-download-outline" size={40} color={tokens.textMuted} />
         <Text className="text-center font-ui-medium text-lg">Speech recognition needed</Text>
         <Text variant="muted" className="text-center">
-          Pronunciation practice runs fully offline, but the Russian recognition model (~60 MB) has
-          to be downloaded once in Settings → Voices &amp; speech.
+          Pronunciation practice runs fully offline, but the Ukrainian recognition model (~60 MB)
+          has to be downloaded once in Settings → Voices &amp; speech.
         </Text>
         <Pressable
           onPress={() => {
@@ -244,7 +244,7 @@ export function PronunciationSessionScreen() {
   if (phase === 'empty') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading text-xl">Нечего произносить</Text>
+        <Text className="font-reading text-xl">Нема чого вимовляти</Text>
         <Text variant="muted" className="text-center">
           No speaking practice is due right now. Words and phrases you collect become pronunciation
           prompts.

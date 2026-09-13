@@ -385,7 +385,7 @@ function EntryEditor({
               multiline
               autoFocus={isNew}
               textAlignVertical="top"
-              placeholder="Пиши по-русски…"
+              placeholder="Пиши українською…"
               placeholderTextColor={theme.textMuted}
               className="min-h-[240px] font-reading text-text"
               style={{ fontSize: 19, lineHeight: 31 }}

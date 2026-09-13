@@ -173,7 +173,7 @@ export function QuizScreen({ packId }: { packId: string }) {
   if (phase === 'empty') {
     return scenedWrap(
       <View className="flex-1 items-center justify-center gap-3 px-8">
-        <Text className="text-center font-reading text-xl">Не из чего собрать квиз</Text>
+        <Text className="text-center font-reading text-xl">Немає з чого зібрати квіз</Text>
         <Text variant="muted" className="text-center">
           This unit&apos;s content isn&apos;t installed (or has too few annotated words) to build a
           quiz.
@@ -207,7 +207,7 @@ export function QuizScreen({ packId }: { packId: string }) {
         <Text className="text-center font-reading text-xl">
           {result.passed
             ? 'Пройдено. The unit remembers you now.'
-            : 'Не в этот раз — reread, review, return.'}
+            : 'Не цього разу — reread, review, return.'}
         </Text>
         <Pressable
           onPress={() => router.back()}

@@ -22,7 +22,7 @@ const LOOP = SCENE_PRIMARY_LOOP_MS.hallway; // 9300 — the flicker sequence tot
 const BREATH = 13700; // co-prime-ish second layer so the flicker never feels periodic
 
 /**
- * «Прихожая» — a lamp's glow flickering irregularly + dust motes (V2 §5.3).
+ * «Передпокій» — a lamp's glow flickering irregularly + dust motes (V2 §5.3).
  * Irregularity = one uneven flicker sequence × one slower breath layer at a
  * non-multiple period. Poster frame = lamp steadily lit, motes hanging.
  */

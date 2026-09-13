@@ -12,7 +12,7 @@ import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
- * «Закладки» (T24, V2 §7.1) — reached from the Словарь header. Story and
+ * «Закладки» (T24, V2 §7.1) — reached from the Словник header. Story and
  * sentence bookmarks in two sections, newest first; tapping opens the reader
  * (sentences scroll straight to their spot via the T04 restore path). A
  * bookmark whose pack was removed stays listed in a clear degraded state —
@@ -78,7 +78,7 @@ export function BookmarksScreen() {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-10">
         <Ionicons name="bookmark-outline" size={40} color={theme.textMuted} />
-        <Text className="font-reading-bold text-xl">Закладок нет</Text>
+        <Text className="font-reading-bold text-xl">Закладок немає</Text>
         <Text variant="muted" className="text-center">
           Bookmark a story from its reader header, or a sentence from its revealed translation row.
           Everything you mark lands here.
@@ -91,7 +91,7 @@ export function BookmarksScreen() {
     <ScrollView className="flex-1 bg-bg px-4 pt-2" contentContainerClassName="pb-16 gap-2">
       {storyRows.length > 0 && (
         <Text variant="caption" className="mt-2 uppercase tracking-wider">
-          Истории · {storyRows.length}
+          Історії · {storyRows.length}
         </Text>
       )}
       {storyRows.map((row) => (
@@ -104,7 +104,7 @@ export function BookmarksScreen() {
       ))}
       {sentenceRows.length > 0 && (
         <Text variant="caption" className="mt-3 uppercase tracking-wider">
-          Предложения · {sentenceRows.length}
+          Речення · {sentenceRows.length}
         </Text>
       )}
       {sentenceRows.map((row) => (
@@ -156,7 +156,7 @@ function BookmarkCard({
           </Text>
         )}
         <Text variant="caption" numberOfLines={1}>
-          {removed ? 'Контент удалён — the pack is no longer installed' : row.packTitleUk}
+          {removed ? 'Контент видалено — the pack is no longer installed' : row.packTitleUk}
         </Text>
       </Pressable>
       <Pressable

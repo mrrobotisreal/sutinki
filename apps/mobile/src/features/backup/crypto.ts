@@ -22,7 +22,7 @@ import { BackupError } from './errors';
  * a native crypto module to keep disaster-recovery code dependency-light and
  * unit-testable; see ticket notes for the iteration-count reasoning).
  * Passphrases are NFC-normalized before encoding, so a passphrase typed on a
- * different keyboard (composed vs decomposed ё…) still derives the same key.
+ * different keyboard (composed vs decomposed ї…) still derives the same key.
  */
 
 export const KDF_ITERATIONS_DEFAULT = 210_000;

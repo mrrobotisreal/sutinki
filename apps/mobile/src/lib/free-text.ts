@@ -92,8 +92,8 @@ export function snapFreeRangeToWords(chunks: FreeChunk[], range: FreeRange): Fre
 }
 
 /**
- * The clean surface form for the bank: edge punctuation stripped («слышу,»
- * → «слышу»), inner punctuation kept (то-то, где-нибудь). Null when nothing
+ * The clean surface form for the bank: edge punctuation stripped («чую,»
+ * → «чую»), inner punctuation kept (хто-небудь, п'ять). Null when nothing
  * word-like remains.
  */
 export function cleanSurface(raw: string): string | null {

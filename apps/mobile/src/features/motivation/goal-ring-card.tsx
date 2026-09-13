@@ -151,7 +151,7 @@ export function GoalRingCard() {
           </View>
           {goalMetToday && (
             <Text variant="caption" className="text-accent">
-              Цель выполнена — goal met!
+              Ціль виконано — goal met!
             </Text>
           )}
         </View>

@@ -24,14 +24,14 @@ import {
 import { useInvalidatePath, usePathState } from './use-path';
 
 /**
- * Путь (design §7.5, UI_DESIGN §4): a vertical journey of course units and
+ * Шлях (design §7.5, UI_DESIGN §4): a vertical journey of course units and
  * checkpoints per level. The current node starts expanded; EVERY node is
  * tappable and every step inside is navigable regardless of state —
  * locked-looking UI is a design bug here (UI_DESIGN §4 "No locks, ever").
  * Completed units dim to embers.
  *
  * T30: units group by TRACK within a level — `main` first, then named
- * sections («Семья» warm identity via track-warm tokens, same layout).
+ * sections («Сім’я» warm identity via track-warm tokens, same layout).
  * House-themed units (theme.scene in the house set) render as the vertical
  * house cross-section map instead of a card stack; tapping a room selects
  * that unit and its normal card (steps and all) appears under the map.
@@ -80,9 +80,9 @@ export function PathScreen() {
       >
         <View className="items-center gap-3">
           <Ionicons name="trail-sign-outline" size={40} color={tokens.textMuted} />
-          <Text className="text-center font-reading text-xl">Путь ещё пуст</Text>
+          <Text className="text-center font-reading text-xl">Шлях ще порожній</Text>
           <Text variant="muted" className="text-center">
-            The guided path appears when course-unit packs are installed. Pull down in Библиотека to
+            The guided path appears when course-unit packs are installed. Pull down in Бібліотека to
             sync content.
           </Text>
         </View>
@@ -217,7 +217,7 @@ function PathNodeCard({
   node: PathNode;
   isCurrent: boolean;
   expanded: boolean;
-  /** T30: non-main track sections use the warm («Семья») accent identity. */
+  /** T30: non-main track sections use the warm («Сім’я») accent identity. */
   warm?: boolean;
   onToggle: () => void;
 }) {

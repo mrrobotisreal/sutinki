@@ -15,7 +15,7 @@ export interface SpeakOptions {
 }
 
 export interface SpeechService {
-  /** Speak Russian text aloud. Resolves when playback has been started (or skipped). */
+  /** Speak Ukrainian text aloud. Resolves when playback has been started (or skipped). */
   speak(text: string, opts?: SpeakOptions): Promise<void>;
   stop(): Promise<void>;
   /** False for the stub — UI can show the speaker as inert-but-present. */

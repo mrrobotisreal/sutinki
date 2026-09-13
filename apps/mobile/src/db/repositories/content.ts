@@ -199,7 +199,7 @@ export function createContentRepo(db: SutinkiDB) {
         .orderBy(asc(tokens.tokenIndex));
     },
 
-    /** All sentences containing a lemma (ё/е-tolerant) — cloze generation (T13). */
+    /** All sentences containing a lemma (apostrophe/ґ-tolerant) — cloze generation (T13). */
     async findSentencesWithLemma(lemma: string): Promise<SentenceRow[]> {
       const norm = normalizeUk(lemma);
       return db
@@ -220,7 +220,7 @@ export function createContentRepo(db: SutinkiDB) {
         .where(eq(tokens.lemmaNorm, norm));
     },
 
-    /** FTS5 search over token lemma/text (already ё-folded in the index). */
+    /** FTS5 search over token lemma/text (already normalizeUk-folded in the index). */
     async searchTokens(query: string, limit = 50): Promise<TokenSearchHit[]> {
       const match = toFtsQuery(query);
       if (!match) return [];
@@ -257,7 +257,7 @@ export function createContentRepo(db: SutinkiDB) {
     },
 
     /**
-     * Global content search (T24, V2 §7.1): FTS5 over the ё-folded token
+     * Global content search (T24, V2 §7.1): FTS5 over the normalizeUk-folded token
      * shadow columns, one row per matching SENTENCE (multiple matched tokens
      * collapse), best-rank first, with the story/pack context and orderIdx
      * the results screen needs for grouping and reader deep links. Matching

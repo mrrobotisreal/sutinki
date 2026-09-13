@@ -25,7 +25,7 @@ import { createImportRequests, removeImportRequest } from './import-service';
 import { useImportIntakeStore } from './intake-store';
 
 /**
- * «Импорт» intake (T28, design V2 §4.1): paste or share Russian text →
+ * «Імпорт» intake (T28, design V2 §4.1): paste or share Ukrainian text →
  * durable import request(s). Over-cap input splits at sentence boundaries
  * (shown before saving). Requests queue offline — the AI annotation step
  * (T29) runs when online; this session's dev-only stub path lives on the
@@ -84,13 +84,13 @@ export function ImportIntakeScreen() {
         // the connectivity listener picks the rows up later.
         void pumpImportAnnotateQueue();
         Alert.alert(
-          rows.length > 1 ? `Сохранено: ${rows.length} части` : 'Сохранено',
+          rows.length > 1 ? `Збережено: ${rows.length} ${partsLabel(rows.length)}` : 'Збережено',
           rows.length > 1
             ? `The text was split at sentence boundaries into ${rows.length} requests, each within the ${IMPORT_CHAR_CAP}-character cap.`
             : 'The import request is queued. Annotation runs when online.',
         );
       } catch (err) {
-        Alert.alert('Не получилось', err instanceof Error ? err.message : 'Unknown error');
+        Alert.alert('Не вийшло', err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setSaving(false);
       }
@@ -108,18 +108,18 @@ export function ImportIntakeScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <Text variant="caption" className="mb-1 uppercase tracking-wider">
-          Русский текст
+          Український текст
         </Text>
         <TextInput
           value={text}
           onChangeText={setText}
-          placeholder="Вставьте текст — сообщение, абзац статьи, слова песни…"
+          placeholder="Встав текст — повідомлення, абзац статті, слова пісні…"
           placeholderTextColor={tokens.textMuted}
           multiline
           textAlignVertical="top"
           autoCorrect={false}
           className="min-h-44 rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-reading text-base text-text"
-          accessibilityLabel="Russian text to import"
+          accessibilityLabel="Ukrainian text to import"
         />
         <View className="mt-1 flex-row items-center justify-between">
           <Text variant="caption" className={overCap ? 'text-accent' : ''}>
@@ -127,13 +127,13 @@ export function ImportIntakeScreen() {
           </Text>
           {overCap && (
             <Text variant="caption" className="text-accent">
-              Будет разделено: {parts.length} части
+              Буде розділено: {parts.length} {partsLabel(parts.length)}
             </Text>
           )}
         </View>
 
         <Text variant="caption" className="mb-1 mt-4 uppercase tracking-wider">
-          Название
+          Назва
         </Text>
         <TextInput
           value={titleTouched ? title : effectiveTitle}
@@ -141,7 +141,7 @@ export function ImportIntakeScreen() {
             setTitle(v);
             setTitleTouched(true);
           }}
-          placeholder="Название импорта"
+          placeholder="Назва імпорту"
           placeholderTextColor={tokens.textMuted}
           autoCorrect={false}
           className="rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-ui text-base text-text"
@@ -149,12 +149,12 @@ export function ImportIntakeScreen() {
         />
 
         <Text variant="caption" className="mb-1 mt-4 uppercase tracking-wider">
-          Источник (optional)
+          Джерело (optional)
         </Text>
         <TextInput
           value={sourceLabel}
           onChangeText={setSourceLabel}
-          placeholder="e.g. Telegram — Алина"
+          placeholder="e.g. Telegram — Аліна"
           placeholderTextColor={tokens.textMuted}
           autoCorrect={false}
           className="rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-ui text-base text-text"
@@ -175,7 +175,7 @@ export function ImportIntakeScreen() {
             <Ionicons name="download-outline" size={18} color={tokens.text} />
           )}
           <Text className="font-ui-medium">
-            {overCap ? `Импортировать ${parts.length} части` : 'Импортировать'}
+            {overCap ? `Імпортувати ${parts.length} ${partsLabel(parts.length)}` : 'Імпортувати'}
           </Text>
         </Pressable>
         <Text variant="caption" className="mt-2 text-center">
@@ -188,12 +188,21 @@ export function ImportIntakeScreen() {
   );
 }
 
+/** Ukrainian plural agreement for «частина»: 1 частина · 2–4 частини · 5+ частин. */
+function partsLabel(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'частина';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'частини';
+  return 'частин';
+}
+
 const STATUS_LABELS: Record<ImportRequestRow['status'], string> = {
-  draft: 'Черновик',
-  queued: 'В очереди',
-  annotated: 'Ожидает проверки',
-  committed: 'Импортировано',
-  failed: 'Ошибка',
+  draft: 'Чернетка',
+  queued: 'У черзі',
+  annotated: 'Чекає на перевірку',
+  committed: 'Імпортовано',
+  failed: 'Помилка',
 };
 
 function RequestsList({ requests }: { requests: ImportRequestRow[] }) {
@@ -203,7 +212,7 @@ function RequestsList({ requests }: { requests: ImportRequestRow[] }) {
   if (requests.length === 0) return null;
 
   const confirmRemove = (row: ImportRequestRow) => {
-    Alert.alert('Удалить запрос?', `«${row.title}» will be removed.`, [
+    Alert.alert('Видалити запит?', `«${row.title}» will be removed.`, [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Remove',
@@ -216,7 +225,7 @@ function RequestsList({ requests }: { requests: ImportRequestRow[] }) {
   return (
     <View className="mt-8">
       <Text variant="caption" className="mb-2 uppercase tracking-wider">
-        Запросы
+        Запити
       </Text>
       <View className="overflow-hidden rounded-xl border border-border bg-surface">
         {requests.map((row, i) => {
@@ -227,13 +236,13 @@ function RequestsList({ requests }: { requests: ImportRequestRow[] }) {
           // Sending: live N/M line. Queued w/ partial progress: resume info.
           const statusLine =
             phase?.phase === 'sending'
-              ? `Аннотация… ${phase.done ?? 0}/${phase.total ?? progress?.total ?? '?'}`
+              ? `Анотація… ${phase.done ?? 0}/${phase.total ?? progress?.total ?? '?'}`
               : phase?.phase === 'error'
                 ? (phase.message ?? 'Error')
                 : row.status === 'queued' && progress && progress.done > 0
                   ? `${STATUS_LABELS[row.status]} · ${progress.done}/${progress.total}`
                   : reviewable && progress
-                    ? `${STATUS_LABELS[row.status]} · ${progress.total} предл.${progress.flagged > 0 ? ` · ${progress.flagged} ⚑` : ''}`
+                    ? `${STATUS_LABELS[row.status]} · ${progress.total} реч.${progress.flagged > 0 ? ` · ${progress.flagged} ⚑` : ''}`
                     : STATUS_LABELS[row.status];
           const openable = reviewable || row.status === 'committed';
           return (
@@ -267,7 +276,7 @@ function RequestsList({ requests }: { requests: ImportRequestRow[] }) {
               {reviewable && (
                 <View className="flex-row items-center gap-1">
                   <Text variant="caption" className="text-accent">
-                    Проверить
+                    Перевірити
                   </Text>
                   <Ionicons name="chevron-forward" size={14} color={tokens.accent} />
                 </View>

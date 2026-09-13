@@ -19,7 +19,7 @@ export type PromptSource = 'phrase' | 'sentence' | 'word';
 export interface PronunciationItem {
   card: CardRow;
   item: BankItemRow;
-  /** What Mitch is asked to say (original text, ё/casing preserved). */
+  /** What Mitch is asked to say (original text, apostrophe/casing preserved). */
   promptUk: string;
   /** English gloss shown under the prompt (null when unavailable). */
   promptEn: string | null;

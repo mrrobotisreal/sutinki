@@ -33,7 +33,7 @@ import {
  * The player turn (T27, V2 §3.3): 2–4 `ChoiceCard`s (tap-word enabled,
  * long-press reveals the EN hint, optional coach «hear it» audio) and the
  * T12 mic flow — record → ASR → match against every choice + alternates.
- * Below-threshold/ambiguous ⇒ «Скажи ещё раз?» with per-word ✗ against the
+ * Below-threshold/ambiguous ⇒ «Скажи ще раз?» with per-word ✗ against the
  * best candidate; TAP_UNLOCK_AFTER_ATTEMPTS failures unlock tap-to-choose.
  * Voice-first, never voice-locked: `dialogueTapMode`, a missing ASR model,
  * or a denied mic all make tap primary with a clear notice instead.
@@ -173,15 +173,15 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
 
   const retryMessage =
     result?.outcome === 'no-speech'
-      ? 'Не расслышал — попробуй ещё раз, чуть громче.'
+      ? 'Не розчув — спробуй ще раз, трохи голосніше.'
       : result?.outcome === 'ambiguous'
-        ? 'Похоже сразу на два ответа — скажи ещё раз, полной фразой.'
-        : 'Скажи ещё раз? Красные слова не прозвучали.';
+        ? 'Схоже одразу на дві відповіді — скажи ще раз, повною фразою.'
+        : 'Скажи ще раз? Червоні слова не прозвучали.';
 
   return (
     <View className="border-t border-border bg-bg px-4 pb-4 pt-3">
       <Text variant="caption" className="mb-2 uppercase tracking-wider">
-        {tapUnlocked && !voiceUsable ? 'Выбери ответ' : 'Твой ответ'}
+        {tapUnlocked && !voiceUsable ? 'Вибери відповідь' : 'Твоя відповідь'}
       </Text>
 
       <View className="gap-2">
@@ -226,12 +226,12 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
           </View>
           {heard.length > 0 && (
             <Text variant="caption" className="text-center">
-              Услышал: «{heard}»
+              Почув: «{heard}»
             </Text>
           )}
           {attempts >= TAP_UNLOCK_AFTER_ATTEMPTS && (
             <Text variant="caption" className="text-center text-accent">
-              Или выбери ответ нажатием →
+              Або вибери відповідь дотиком →
             </Text>
           )}
         </View>
@@ -240,18 +240,19 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
       {/* voice-unavailable notices — tap is primary, never a dead end */}
       {!asrAvailable && (
         <Text variant="caption" className="mt-3 text-center">
-          Голосовой режим недоступен — модель распознавания не установлена (Settings → Speech
-          recognition). Отвечай нажатием.
+          Голосовий режим недоступний — модель розпізнавання не встановлена (Settings → Speech
+          recognition). Відповідай дотиком.
         </Text>
       )}
       {asrAvailable && micDenied && (
         <Text variant="caption" className="mt-3 text-center">
-          Нет доступа к микрофону — отвечай нажатием, или разреши доступ в настройках системы.
+          Немає доступу до мікрофона — відповідай дотиком або дозволь доступ у налаштуваннях
+          системи.
         </Text>
       )}
       {asrAvailable && !micDenied && micError && (
         <Text variant="caption" className="mt-3 text-center">
-          Распознавание не сработало — отвечай нажатием.
+          Розпізнавання не спрацювало — відповідай дотиком.
         </Text>
       )}
 
@@ -260,7 +261,7 @@ export function ChoicePanel({ node, disabled, onResolve, onWordPress }: ChoicePa
         <View className="mt-2 items-center">
           {phase === 'recording' && (
             <Text variant="caption" className="mb-1 text-danger">
-              Говори — нажми, чтобы закончить
+              Говори — натисни, щоб закінчити
             </Text>
           )}
           <RecordButton

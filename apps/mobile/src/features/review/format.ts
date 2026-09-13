@@ -5,8 +5,8 @@ import type { CardDirection } from '@/db/schema';
 /** Display helpers for FSRS state — card detail + session UI share these. */
 
 export const DIRECTION_LABELS: Record<CardDirection, string> = {
-  'uk-en': 'RU → EN',
-  'en-uk': 'EN → RU',
+  'uk-en': 'UK → EN',
+  'en-uk': 'EN → UK',
   listening: 'Listening',
   production: 'Production',
 };

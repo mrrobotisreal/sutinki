@@ -74,7 +74,7 @@ export function ListeningSessionScreen() {
   if (session.phase === 'empty') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading text-xl">Нечего слушать</Text>
+        <Text className="font-reading text-xl">Нема чого слухати</Text>
         <Text variant="muted" className="text-center">
           The listening quiz plays words from your bank. Read a story and collect some words first.
         </Text>

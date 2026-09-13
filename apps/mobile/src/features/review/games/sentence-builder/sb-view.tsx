@@ -68,7 +68,7 @@ export function SbView({ entry, onDone }: SbViewProps) {
   return (
     <ScrollView className="flex-1 px-4 pt-6" contentContainerClassName="pb-6">
       <Text variant="caption" className="text-center uppercase tracking-wider">
-        Sentence builder · build the Russian
+        Sentence builder · build the Ukrainian
       </Text>
 
       <View className="mt-4 rounded-2xl border border-border bg-surface px-5 py-6">
@@ -125,7 +125,7 @@ export function SbView({ entry, onDone }: SbViewProps) {
       {result && (
         <View className="mt-5 rounded-2xl border border-border bg-surface px-5 py-4">
           <Text variant="caption" className="uppercase tracking-wider">
-            {result.correct ? 'Верно' : 'The sentence was'}
+            {result.correct ? 'Правильно' : 'The sentence was'}
           </Text>
           <RNText
             className={`mt-1.5 font-reading text-xl ${result.correct ? 'text-success' : 'text-text'}`}

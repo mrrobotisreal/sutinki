@@ -36,7 +36,7 @@ const NotePayloadSchema = z.object({
 });
 
 /** `title` is NOT NULL in the schema; untitled notes get this fallback. */
-const UNTITLED = 'Заметка';
+const UNTITLED = 'Нотатка';
 
 /** Route-level wrapper — same remount-per-target pattern as the entry editor. */
 export function NoteEditorScreen({ id }: { id: string }) {
@@ -253,7 +253,7 @@ function NoteEditor({ note }: { note: NoteRow | null }) {
               }}
               multiline
               textAlignVertical="top"
-              placeholder={'Markdown…  # заголовок, **жирный**, *курсив*, - список'}
+              placeholder={'Markdown…  # заголовок, **жирний**, *курсив*, - список'}
               placeholderTextColor={theme.textMuted}
               className="min-h-[240px] pt-3 font-reading text-text"
               style={{ fontSize: 16, lineHeight: 26 }}

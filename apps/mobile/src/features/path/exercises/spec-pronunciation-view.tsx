@@ -105,7 +105,7 @@ export function SpecPronunciationView({ spec, onDone, onSkip }: Props) {
         <Text variant="muted" className="text-center">
           {micDenied
             ? 'Without the mic this speaking item can’t be scored.'
-            : 'Install the Russian speech model in Settings to score speaking items.'}{' '}
+            : 'Install the Ukrainian speech model in Settings to score speaking items.'}{' '}
           It will be skipped — the rest of the test still counts.
         </Text>
         <Pressable

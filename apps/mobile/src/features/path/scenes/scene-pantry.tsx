@@ -21,7 +21,7 @@ import { SCENE_PRIMARY_LOOP_MS, withAlpha } from './scene-palette';
 const LOOP = SCENE_PRIMARY_LOOP_MS.pantry;
 
 /**
- * «Кладовая» — breathing darkness (V2 §5.3): the vignette + a dim center
+ * «Комора» — breathing darkness (V2 §5.3): the vignette + a dim center
  * glow scale 1.00→1.03 and back. On the dark theme the glow carries the
  * breath; on warm paper the vignette does. Poster frame = fully exhaled
  * (scale 1.0, everything visible).

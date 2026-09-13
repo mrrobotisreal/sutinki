@@ -76,7 +76,7 @@ export function PacksScreen() {
     (item: InstalledPack) => {
       const title = item.pack?.titleUk ?? item.state.packId;
       Alert.alert(
-        'Удалить импорт?',
+        'Видалити імпорт?',
         `«${title}» will be deleted completely — including its backup copy. It will NOT come back ` +
           'on sync or restore. Word-bank items highlighted from it stay in your bank.',
         [
@@ -142,7 +142,7 @@ export function PacksScreen() {
       {imported.length > 0 && (
         <>
           <Text variant="caption" className="mb-2 mt-6 uppercase tracking-wider">
-            Импортировано
+            Імпортовано
           </Text>
           <Text variant="caption" className="mb-2">
             Created on this device from shared text — never updated or removed by sync. Removing one

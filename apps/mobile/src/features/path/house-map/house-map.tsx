@@ -19,7 +19,7 @@ import type { UnitState } from '../path-model';
 import { roomForScene } from './rooms';
 
 /**
- * «Дом с шестью комнатами» — the vertical house cross-section (T30, V2
+ * «Будинок із шістьма кімнатами» — the vertical house cross-section (T30, V2
  * §5.3). Pure props-in presentation: the caller passes the house-themed
  * units already ordered (orderHouseUnits) and says which node is current.
  *

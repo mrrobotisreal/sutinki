@@ -16,7 +16,7 @@ export interface ColorTokens {
   success: string;
   danger: string;
   border: string;
-  /** Warm «Семья»-track identity (T30) — icons/SVG the class system can't reach. */
+  /** Warm «Сім’я»-track identity (T30) — icons/SVG the class system can't reach. */
   trackWarm: string;
   /** Backdrop/shadow wash base (always used WITH an alpha) — scene layers (T31). */
   scrim: string;

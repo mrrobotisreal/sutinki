@@ -15,11 +15,11 @@ import {
  * - `CHOICE_SELECTION_THRESHOLD = 60`. The T12 rating mapping (≥80 Good /
  *   ≥50 Hard) grades *pronunciation quality*; selection answers a different
  *   question — "which answer did Mitch mean". 80 rejected honest partial
- *   phrasings («можно ещё немного» for «Да, можно ещё немного» = 75); 50 let
+ *   phrasings («можна ще трохи» for «Так, можна ще трохи» = 75); 50 let
  *   two-word noise through on four-word choices. 60 = a clear majority of
  *   the target's words heard.
  * - `CHOICE_AMBIGUITY_MARGIN = 15`. Near-identical choices are the designed
- *   content shape («да, спасибо» vs «нет, спасибо» differ by one token —
+ *   content shape («так, дякую» vs «ні, дякую» differ by one token —
  *   50 points apart when spoken clearly). A best-vs-second gap under 15
  *   means the transcript genuinely fits both (e.g. only the shared words
  *   were heard) → retry instead of guessing a branch.
@@ -38,7 +38,7 @@ export const TAP_UNLOCK_AFTER_ATTEMPTS = 2;
 
 export interface MatchableChoice {
   id: string;
-  /** The choice sentence's Russian text. */
+  /** The choice sentence's Ukrainian text. */
   uk: string;
   /** Acceptable alternate phrasings (normalized-ish authored text). */
   asrAlternates?: string[] | null;

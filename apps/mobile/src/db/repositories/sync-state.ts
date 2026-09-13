@@ -7,7 +7,7 @@ export type SyncStateRow = typeof syncState.$inferSelect;
 /**
  * 'local-file' = a dev/fallback sideload of a REAL pack (still version-diffs
  * against the manifest if it appears there). 'local-import' = a T28
- * Share-to-Сумрак pack assembled on-device — sync-immune by source: the
+ * Share-to-Сутінки pack assembled on-device — sync-immune by source: the
  * diff core never installs/updates/removes rows carrying this source.
  */
 export type PackSource = 'bundled' | 'github' | 'local-file' | 'local-import';

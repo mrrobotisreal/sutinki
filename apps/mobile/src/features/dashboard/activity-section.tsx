@@ -51,7 +51,7 @@ export function ActivitySection({
   return (
     <SectionCard title="Activity">
       {!hasAnything ? (
-        <EmptyHint>Нечего показывать — reading and reviewing will light this up.</EmptyHint>
+        <EmptyHint>Нема чого показати — reading and reviewing will light this up.</EmptyHint>
       ) : (
         <>
           <View className="flex-row items-center gap-2">

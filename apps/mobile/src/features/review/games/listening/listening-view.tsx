@@ -23,7 +23,7 @@ interface ListeningViewProps {
 /**
  * Listening quiz (design §7.3 mode 5): the clip auto-plays, replay and
  * slow-replay stay available throughout, and the answer comes back as a
- * pick-from-4 tap or typed Russian (ё/е- and case-tolerant via the shared
+ * pick-from-4 tap or typed Ukrainian (apostrophe-, ґ/г- and case-tolerant via the shared
  * matcher). Wrong answers and give-ups pause on an explicit Continue (the
  * correction + gloss deserve a read); correct answers advance themselves.
  * Remounted per item (key on the session screen).

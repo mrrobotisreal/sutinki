@@ -18,7 +18,7 @@ const SENTENCE_LIMIT = 80;
 
 /**
  * Global content search (T24, V2 §7.1): one query over the token FTS (T03's
- * ё-folded shadow columns) plus the T15 journal/notes FTS — three sections:
+ * normalizeUk-folded shadow columns) plus the T15 journal/notes FTS — three sections:
  * story sentences (grouped by story, match highlighted, deep-link into the
  * reader at that sentence), journal entries, and notes. Entirely offline.
  */
@@ -90,7 +90,7 @@ export function GlobalSearchScreen() {
             onChangeText={setQuery}
             autoFocus
             autoCorrect={false}
-            placeholder="Поиск по историям, записям, заметкам…"
+            placeholder="Пошук в історіях, записах, нотатках…"
             placeholderTextColor={theme.textMuted}
             className="flex-1 py-2.5 font-ui text-base text-text"
             accessibilityLabel="Search all content"
@@ -110,18 +110,18 @@ export function GlobalSearchScreen() {
       >
         {!hasQuery ? (
           <Text variant="caption" className="pt-10 text-center">
-            Search every installed story, journal entry, and note. ё/е-tolerant — «черный» finds
-            «чёрный».
+            Search every installed story, journal entry, and note. Apostrophe- and ґ/г-tolerant —
+            «ганок» finds «ґанок».
           </Text>
         ) : empty ? (
           <Text variant="caption" className="pt-10 text-center">
-            Ничего не найдено. Nothing matched «{trimmed}».
+            Нічого не знайдено. Nothing matched «{trimmed}».
           </Text>
         ) : (
           <>
             {storyGroups.length > 0 && (
               <Text variant="caption" className="mt-2 uppercase tracking-wider">
-                Истории · {sentences.length}
+                Історії · {sentences.length}
               </Text>
             )}
             {storyGroups.map((group) => {
@@ -171,7 +171,7 @@ export function GlobalSearchScreen() {
 
             {notes.length > 0 && (
               <Text variant="caption" className="mt-3 uppercase tracking-wider">
-                Заметки · {notes.length}
+                Нотатки · {notes.length}
               </Text>
             )}
             {notes.map((note) => (
