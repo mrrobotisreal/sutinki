@@ -33,11 +33,11 @@ if (!key) {
   process.exit(1);
 }
 
-/** Deliberately flawed A2-ish entry — exercises several correction kinds. */
+/** Deliberately flawed very-early-A1 entry (UT04) — a case error, a Russianism, an apostrophe word. */
 const JOURNAL_ENTRY = [
-  'Вчера я идти в магазин с моя невеста.',
-  'Мы купили много продукты и один странный зеркало.',
-  'Ночью я слышал стук в стене, но я не боюсь темноты.',
+  'Вчора я іти в магазин з моя наречена.',
+  "Ми купили п'ять яблук і один дивний дзеркало.",
+  'Уночі я чув стук в стіні, але я не боюся темноти.',
 ].join(' ');
 
 const ENRICHMENT_ITEMS = [
@@ -45,20 +45,20 @@ const ENRICHMENT_ITEMS = [
     id: 'fx-word-1',
     kind: 'word' as const,
     surface: 'словами',
-    context: 'Он говорил простыми словами, но я всё равно не понял.',
+    context: 'Він говорив простими словами, але я все одно не зрозумів.',
   },
   {
     id: 'fx-word-2',
     kind: 'word' as const,
-    surface: 'наверху',
+    surface: 'нагорі',
     translation: 'upstairs',
-    context: 'Кто-то ходит наверху, но дом пустой.',
+    context: 'Хтось ходить нагорі, але будинок порожній.',
   },
   {
     id: 'fx-phrase-1',
     kind: 'phrase' as const,
-    surface: 'по крайней мере',
-    context: 'По крайней мере, дверь была закрыта.',
+    surface: 'принаймні',
+    context: 'Принаймні, двері були зачинені.',
   },
 ];
 
@@ -78,9 +78,9 @@ const ASSESSMENT_BUNDLE = {
   },
   journal: [
     {
-      uk: 'Вчера я идти в магазин с моя невеста. Мы купили много продукты и один странный зеркало. Ночью я слышал стук в стене, но я не боюсь темноты.',
+      uk: "Вчора я іти в магазин з моя наречена. Ми купили п'ять яблук і один дивний дзеркало. Уночі я чув стук в стіні, але я не боюся темноти.",
       corrected:
-        'Вчера я ходил в магазин с моей невестой. Мы купили много продуктов и одно странное зеркало. Ночью я слышал стук в стене, но я не боюсь темноты.',
+        "Вчора я ходив у магазин зі своєю нареченою. Ми купили п'ять яблук і одне дивне дзеркало. Уночі я чув стукіт у стіні, але я не боюся темряви.",
       createdAt: Date.UTC(2026, 7, 21),
     },
   ],
@@ -92,13 +92,13 @@ const ASSESSMENT_BUNDLE = {
  * the fixture exercises the whole token contract.
  */
 const IMPORT_SENTENCES = [
-  { id: 'c1', uk: 'Привет, любимый!' },
+  { id: 'c1', uk: 'Привіт, коханий!' },
   {
     id: 'c2',
-    uk: 'Мы с мамой купили продукты в магазине «Пятёрочка» и заказали пиццу через Yandex.',
+    uk: 'Ми з мамою купили продукти в магазині «Сільпо» і замовили піцу через Glovo.',
   },
-  { id: 'c3', uk: 'Приходи к нам в 19:30, будет вкусный борщ 🙂' },
-  { id: 'c4', uk: 'Анна Ахматова писала: «Я научилась просто, мудро жить».' },
+  { id: 'c3', uk: "Приходь до нас о 19:30, буде смачний борщ і п'ять вареників 🙂" },
+  { id: 'c4', uk: 'Леся Українка писала: «Contra spem spero!» — і сиділа на ґанку.' },
 ];
 
 async function chat(messages: unknown, maxTokens: number): Promise<unknown> {
@@ -129,7 +129,7 @@ async function main() {
     const feedback = slim(await chat(buildJournalFeedbackMessages(JOURNAL_ENTRY), 4096));
     writeFileSync(
       join(OUT_DIR, 'journal-feedback.json'),
-      JSON.stringify({ entryRu: JOURNAL_ENTRY, ...feedback }, null, 2),
+      JSON.stringify({ entryUk: JOURNAL_ENTRY, ...feedback }, null, 2),
     );
   }
 
@@ -148,7 +148,7 @@ async function main() {
       await chat(
         buildExplainMessages({
           kind: 'sentence',
-          uk: 'Ночью я слышу стук в стене.',
+          uk: 'Уночі я чую стукіт у стіні.',
           en: 'At night I hear a knocking in the wall.',
         }),
         1024,

@@ -1,7 +1,7 @@
 /**
  * Word-level diff for journal corrections (T16). Deliberately small: an
  * LCS over whitespace-split words (NFC-normalized exact compare — case
- * and ё fixes are real corrections and must show). No library (ticket
+ * and apostrophe/ґ fixes are real corrections and must show). No library (ticket
  * note: keep it simple, word/phrase-level).
  */
 

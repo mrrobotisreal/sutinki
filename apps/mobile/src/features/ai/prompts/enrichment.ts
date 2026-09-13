@@ -10,7 +10,7 @@ import type { ChatMessage } from '../client';
 export interface EnrichmentItemInput {
   id: string;
   kind: 'word' | 'phrase';
-  /** Surface form as highlighted ("словами", "по крайней мере"). */
+  /** Surface form as highlighted ("словами", "принаймні"). */
   surface: string;
   /** Existing translation, if the user typed one at save time. */
   translation?: string;
@@ -18,16 +18,16 @@ export interface EnrichmentItemInput {
   context?: string;
 }
 
-const SYSTEM = `You are a Russian lexicographer producing dictionary annotations for a learner's word bank. Each input item is a word or phrase highlighted from real Russian text, with optional surrounding context.
+const SYSTEM = `You are a Ukrainian lexicographer producing dictionary annotations for a learner's word bank. Each input item is a word or phrase highlighted from real Ukrainian text, with optional surrounding context.
 
 For each item return:
-- "lemma" (words only): the dictionary form — nominative singular for nouns, infinitive (imperfective unless the surface is clearly perfective) for verbs, masculine nominative singular for adjectives. Omit for phrases and proper names that ARE their own form.
+- "lemma" (words only): the dictionary form — nominative singular for nouns, infinitive in -ти (imperfective unless the surface is clearly perfective; reflexive -ся stays) for verbs, masculine nominative singular for adjectives. Omit for phrases and proper names that ARE their own form.
 - "translation": a concise English gloss fitting the context if one is given. If the user already has a translation, keep it unless it is wrong.
-- "grammar" (optional): a compact note about the SURFACE form ("gen.pl.", "pf. of говорить", "short adj."). Omit if the surface is the dictionary form and nothing is notable.
+- "grammar" (optional): a compact note about the SURFACE form ("gen.pl.", "pf. of казати", "voc."). Omit if the surface is the dictionary form and nothing is notable.
 - "pos" (words only): one of noun, verb, adj, adv, pron, prep, conj, part, num, interj.
 - "level": CEFR level of the lemma/phrase: A1, A2, B1, B2, or C1. Estimate honestly; C1 for anything rare.
 
-Preserve ё in lemmas where standard dictionaries use it. Use lowercase for lemmas except proper names.
+Use standard Ukrainian orthography (2019 правопис). Keep the apostrophe in lemmas exactly as in the surface form («п'ять» → «п'ять»); never replace ґ with г or vice versa. Use lowercase for lemmas except proper names.
 
 Respond with ONLY a JSON object, no markdown fences:
 { "items": [ { "id": "<echoed id>", "lemma": "...", "translation": "...", "grammar": "...", "pos": "...", "level": "..." } ] }

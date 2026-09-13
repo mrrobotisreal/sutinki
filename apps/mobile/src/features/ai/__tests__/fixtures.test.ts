@@ -31,54 +31,81 @@ function fixture<T>(name: string): T {
 }
 
 describe('prompt templates', () => {
-  it('journal feedback: system pins the JSON contract, user carries the entry', () => {
-    const messages = buildJournalFeedbackMessages('Я идти домой.');
+  // Two very-early-A1 Ukrainian entries (UT04): one with a deliberate case
+  // error («у мій кімната» → «у моїй кімнаті»), one with an apostrophe word.
+  const A1_CASE_ERROR = 'Я сиджу у мій кімната. Тут темно.';
+  const A1_APOSTROPHE = "У мене є п'ять котів. Моя сім'я вдома.";
+
+  it('journal feedback: system pins the JSON contract + Ukrainian rules, user carries the entry verbatim', () => {
+    const messages = buildJournalFeedbackMessages(A1_CASE_ERROR);
     expect(messages[0]!.role).toBe('system');
     for (const key of ['"corrected"', '"changes"', '"before"', '"after"', '"summary"']) {
       expect(messages[0]!.content).toContain(key);
     }
+    expect(messages[0]!.content).toContain('Ukrainian tutor');
+    expect(messages[0]!.content).toContain('very early A1');
+    expect(messages[0]!.content).toContain('2019 правопис');
+    expect(messages[0]!.content).not.toContain('Russian tutor');
     expect(messages[1]).toEqual({
       role: 'user',
-      content: 'My journal entry:\n\nЯ идти домой.',
+      content: `My journal entry:\n\n${A1_CASE_ERROR}`,
     });
+    // the apostrophe reaches the model untouched (U+0027 as typed)
+    const withApostrophe = buildJournalFeedbackMessages(A1_APOSTROPHE);
+    expect(withApostrophe[1]!.content).toContain("п'ять");
+    expect(withApostrophe[1]!.content).toContain("сім'я");
   });
 
   it('enrichment: every item id and field reaches the user message', () => {
     const messages = buildEnrichmentMessages([
-      { id: 'a1', kind: 'word', surface: 'словами', context: 'простыми словами' },
-      { id: 'b2', kind: 'phrase', surface: 'по крайней мере', translation: 'at least' },
+      { id: 'a1', kind: 'word', surface: 'словами', context: 'простими словами' },
+      { id: 'b2', kind: 'phrase', surface: 'принаймні', translation: 'at least' },
+      { id: 'c3', kind: 'word', surface: "п'яти", context: "о п'яти годині" },
     ]);
     const user = messages[1]!.content;
     expect(user).toContain('id: a1');
     expect(user).toContain('kind: word');
-    expect(user).toContain('context: …простыми словами…');
+    expect(user).toContain('context: …простими словами…');
     expect(user).toContain('id: b2');
     expect(user).toContain('user translation: at least');
+    expect(user).toContain("surface: п'яти");
     expect(messages[0]!.content).toContain('"items"');
+    expect(messages[0]!.content).toContain('Ukrainian lexicographer');
+    expect(messages[0]!.content).toContain('-ти');
   });
 
   it('explain: sentence and card variants render their context lines', () => {
     const sentence = buildExplainMessages({
       kind: 'sentence',
-      uk: 'Ночью я слышу стук.',
+      uk: 'Уночі я чую стукіт.',
       en: 'At night I hear a knock.',
-      sourceTitle: 'Стук в стене',
+      sourceTitle: 'Стукіт у стіні',
     });
-    expect(sentence[1]!.content).toContain('«Ночью я слышу стук.»');
-    expect(sentence[1]!.content).toContain('Стук в стене');
+    expect(sentence[0]!.content).toContain('Ukrainian tutor');
+    expect(sentence[1]!.content).toContain('Explain this Ukrainian sentence');
+    expect(sentence[1]!.content).toContain('«Уночі я чую стукіт.»');
+    expect(sentence[1]!.content).toContain('Стукіт у стіні');
 
     const card = buildExplainMessages({
       kind: 'card',
-      headword: 'зеркало',
+      headword: 'дзеркало',
       translation: 'mirror',
       pos: 'noun',
-      exampleUk: 'Мы купили странное зеркало.',
+      exampleUk: 'Ми купили дивне дзеркало.',
     });
-    expect(card[1]!.content).toContain('«зеркало»');
-    expect(card[1]!.content).toContain('Мы купили странное зеркало.');
+    expect(card[1]!.content).toContain('Explain this Ukrainian noun');
+    expect(card[1]!.content).toContain('«дзеркало»');
+    expect(card[1]!.content).toContain('Ми купили дивне дзеркало.');
   });
 });
 
+/**
+ * The recorded completions below were captured at the fork against the
+ * Russian prompts (their *content* is Russian study text). They still pin
+ * the parser ↔ schema contract, which UT04 did not change; recapturing
+ * them in Ukrainian needs a live OpenRouter key (`scripts/capture-ai-fixtures.ts`,
+ * whose inputs are Ukrainian since UT04) — a human step, recorded in the ticket.
+ */
 describe('recorded fixtures parse with the production parsers', () => {
   it('journal feedback → StoredFeedback, and survives a DB round-trip', () => {
     const fx = fixture<{ entryUk: string; model: string; content: string }>(

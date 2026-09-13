@@ -23,7 +23,7 @@ const validResponse = {
     writing: { level: 'A1', note: 'Short entries with frequent case errors.' },
     speaking: { level: 'A1', note: 'Pronunciation proxy only — 92 avg vs ASR.' },
   },
-  recommendations: ['Drill accusative vs prepositional after в/на.', 'Write longer entries.'],
+  recommendations: ['Drill accusative vs locative after в/на.', 'Write longer entries.'],
   summary: 'Solid A1 with A2 reading emerging. Keep reading daily.',
 };
 
@@ -68,7 +68,7 @@ describe('assessment prompt template', () => {
     const messages = buildAssessmentMessages({
       stats: { 'Total reviews completed': 65, 'Stories finished': 5 },
       journal: [
-        { uk: 'Я читаю книгу.', corrected: 'Я читаю книгу.', createdAt: Date.UTC(2026, 7, 21) },
+        { uk: 'Я читаю книжку.', corrected: 'Я читаю книжку.', createdAt: Date.UTC(2026, 7, 21) },
       ],
     });
     expect(messages[0]!.role).toBe('system');
@@ -84,9 +84,12 @@ describe('assessment prompt template', () => {
       expect(messages[0]!.content).toContain(key);
     }
     expect(messages[0]!.content).toContain('PROXY');
+    // UT04: Ukrainian examiner, calibrated to the very-early-A1 baseline
+    expect(messages[0]!.content).toContain('Ukrainian as a foreign language');
+    expect(messages[0]!.content).toContain('very early A1');
     const user = messages[1]!.content;
     expect(user).toContain('Total reviews completed: 65');
-    expect(user).toContain('Я читаю книгу.');
+    expect(user).toContain('Я читаю книжку.');
     expect(user).toContain('AI-corrected version:');
     expect(user).toContain('2026-08-21');
   });
@@ -117,7 +120,7 @@ describe('auto cadence gate', () => {
     expect(
       bundleHasEvidence({
         stats: { 'Total reviews completed': 0 },
-        journal: [{ uk: 'Привет.', createdAt: 0 }],
+        journal: [{ uk: 'Привіт.', createdAt: 0 }],
       }),
     ).toBe(true);
   });

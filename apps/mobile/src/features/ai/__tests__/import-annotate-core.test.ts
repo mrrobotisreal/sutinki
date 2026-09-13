@@ -51,23 +51,31 @@ const noSleep = (_ms: number) => Promise.resolve();
 
 describe('prompt templates', () => {
   it('system pins the JSON contract + lemma conventions; user carries id: uk lines', () => {
-    const messages = buildImportAnnotateMessages([{ id: 'c1', uk: 'Я дома.' }]);
+    const messages = buildImportAnnotateMessages([{ id: 'c1', uk: 'Я вдома.' }]);
     expect(messages[0]!.role).toBe('system');
-    for (const marker of ['"sentences"', '"tokens"', '"lemma"', 'imperfective infinitive', 'ё']) {
+    for (const marker of [
+      '"sentences"',
+      '"tokens"',
+      '"lemma"',
+      'imperfective infinitive in -ти',
+      'Ukrainian',
+      'apostrophe',
+      'ґ/г',
+    ]) {
       expect(messages[0]!.content).toContain(marker);
     }
-    expect(messages[1]!.content).toContain('c1: Я дома.');
+    expect(messages[1]!.content).toContain('c1: Я вдома.');
   });
 
   it('retry continues the conversation with the raw output and exact errors', () => {
     const messages = buildImportAnnotateRetryMessages(
-      [{ id: 'c1', uk: 'Я дома.' }],
+      [{ id: 'c1', uk: 'Я вдома.' }],
       '{"bad": true}',
-      [{ id: 'c1', error: 'token "дом" does not match' }],
+      [{ id: 'c1', error: 'token "дім" does not match' }],
     );
     expect(messages).toHaveLength(4);
     expect(messages[2]).toEqual({ role: 'assistant', content: '{"bad": true}' });
-    expect(messages[3]!.content).toContain('c1: token "дом" does not match');
+    expect(messages[3]!.content).toContain('c1: token "дім" does not match');
   });
 });
 

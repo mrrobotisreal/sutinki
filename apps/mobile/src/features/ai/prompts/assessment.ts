@@ -25,7 +25,7 @@ export interface AssessmentBundle {
   journal: AssessmentJournalSample[];
 }
 
-const SYSTEM = `You are an experienced CEFR examiner for Russian as a foreign language, assessing an English-speaking adult learner (target: C1). You receive his aggregate study statistics and recent Russian journal writing from his study app.
+const SYSTEM = `You are an experienced CEFR examiner for Ukrainian as a foreign language, assessing an English-speaking adult learner (target: C1). His current level is very early A1 — he is at the very beginning of Ukrainian, so calibrate accordingly: pre-A1 evidence is normal, and a solid A1 is progress. You receive his aggregate study statistics and recent Ukrainian journal writing from his study app.
 
 Estimate his current CEFR level for each skill:
 - "reading": from vocabulary mastery counts, levels of material read, and reading volume.
@@ -34,8 +34,8 @@ Estimate his current CEFR level for each skill:
 - "speaking": a PROXY only, derived from pronunciation-practice scores against speech recognition. There is no conversational evidence; say so in the note and be conservative.
 
 Rules:
-- Estimate honestly — never inflate to encourage. A1 is a respectable answer for a beginner.
-- Each note: one or two English sentences naming the concrete evidence for the estimate.
+- Estimate honestly — never inflate to encourage. A1 is the expected answer at this stage, and a respectable one.
+- Each note: one or two English sentences naming the concrete evidence for the estimate. Russian interference (Russian words, endings or spellings in Ukrainian text) counts as an error pattern worth naming.
 - Recommendations: 2–4 items, most important first, each a specific, actionable study focus (name grammar topics, skills, or habits — not generic "keep practicing").
 - If the evidence for a skill is very thin, estimate from what exists and say the evidence is thin in the note.
 

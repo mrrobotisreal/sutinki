@@ -92,7 +92,7 @@ export const EnrichmentProposalSchema = z.object({
   /** Dictionary form (words only; omitted for phrases). */
   lemma: z.string().min(1).max(100).optional(),
   translation: z.string().min(1).max(300),
-  /** Compact grammar note ("gen.pl.", "pf. of говорить"). */
+  /** Compact grammar note ("gen.pl.", "pf. of казати"). */
   grammar: z.string().max(300).optional(),
   pos: z.string().max(40).optional(),
   level: LevelSchema.optional(),
