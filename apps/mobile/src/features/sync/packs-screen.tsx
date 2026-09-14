@@ -52,14 +52,14 @@ export function PacksScreen() {
     (item: InstalledPack) => {
       const title = item.pack?.titleUk ?? item.state.packId;
       Alert.alert(
-        'Remove pack?',
-        `«${title}» will be removed from the device. Your word bank and review history keep working; ` +
-          'a pack still published in the content repo reinstalls on the next sync ' +
-          '(bundled sample packs reinstall at next app start).',
+        'Видалити пакет?',
+        `«${title}» буде видалено з пристрою. Словник і історія повторень працюватимуть далі; ` +
+          'пакет, який досі опубліковано в репозиторії контенту, встановиться знову під час наступної ' +
+          'синхронізації (вбудовані зразки — під час наступного запуску).',
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: 'Скасувати', style: 'cancel' },
           {
-            text: 'Remove',
+            text: 'Видалити',
             style: 'destructive',
             onPress: () => void removeInstalledPack(item.state.packId).then(refresh),
           },
@@ -77,12 +77,12 @@ export function PacksScreen() {
       const title = item.pack?.titleUk ?? item.state.packId;
       Alert.alert(
         'Видалити імпорт?',
-        `«${title}» will be deleted completely — including its backup copy. It will NOT come back ` +
-          'on sync or restore. Word-bank items highlighted from it stay in your bank.',
+        `«${title}» буде видалено повністю — разом із резервною копією. Він НЕ повернеться ` +
+          'після синхронізації чи відновлення. Слова, додані з нього до словника, залишаться.',
         [
-          { text: 'Cancel', style: 'cancel' },
+          { text: 'Скасувати', style: 'cancel' },
           {
-            text: 'Delete',
+            text: 'Видалити',
             style: 'destructive',
             onPress: () => void removeImportedPack(item.state.packId).then(refresh),
           },
@@ -110,12 +110,12 @@ export function PacksScreen() {
           <Ionicons name="sync-outline" size={18} color={tokens.text} />
         )}
         <Text className="font-ui-medium">
-          {phase !== 'idle' ? 'Syncing…' : 'Check for updates'}
+          {phase !== 'idle' ? 'Синхронізую…' : 'Перевірити оновлення'}
         </Text>
       </Pressable>
 
       <Text variant="caption" className="mb-2 uppercase tracking-wider">
-        Installed packs
+        Встановлені пакети
       </Text>
       {installed.isPending ? (
         <ActivityIndicator color={tokens.accent} className="mt-8" />
@@ -123,7 +123,7 @@ export function PacksScreen() {
         <View className="items-center gap-2 rounded-xl border border-border bg-surface px-6 py-10">
           <Ionicons name="cloud-download-outline" size={32} color={tokens.textMuted} />
           <Text variant="muted" className="text-center">
-            No packs installed yet. Configure the content repo in Settings, then check for updates.
+            Пакетів ще немає. Налаштуй репозиторій контенту в Налаштуваннях і перевір оновлення.
           </Text>
         </View>
       ) : (
@@ -145,8 +145,8 @@ export function PacksScreen() {
             Імпортовано
           </Text>
           <Text variant="caption" className="mb-2">
-            Created on this device from shared text — never updated or removed by sync. Removing one
-            deletes it completely, including from backups.
+            Створено на цьому пристрої з надісланого тексту — синхронізація їх не оновлює й не
+            видаляє. Видалення стирає пакет повністю, разом із резервними копіями.
           </Text>
           <View className="overflow-hidden rounded-xl border border-border bg-surface">
             {imported.map((item, i) => (
@@ -193,7 +193,7 @@ function PackRowView({
       <Pressable
         onPress={onRemove}
         hitSlop={8}
-        accessibilityLabel={`Remove ${pack?.titleUk ?? state.packId}`}
+        accessibilityLabel={`Видалити ${pack?.titleUk ?? state.packId}`}
       >
         <Ionicons name="trash-outline" size={20} color={tokens.textMuted} />
       </Pressable>
@@ -204,13 +204,13 @@ function PackRowView({
 function sourceLabel(source: string): string {
   switch (source) {
     case 'bundled':
-      return 'bundled';
+      return 'вбудований';
     case 'github':
-      return 'synced';
+      return 'синхронізований';
     case 'local-file':
-      return 'local';
+      return 'локальний';
     case 'local-import':
-      return 'imported';
+      return 'імпортований';
     default:
       return source;
   }

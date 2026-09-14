@@ -64,6 +64,31 @@ describe('diffManifest', () => {
   });
 });
 
+describe('diffManifest — empty manifest (UT07: sutinki-content before its first pack)', () => {
+  it('yields a clean zero-pack diff on a fresh install — nothing to install, nothing removed', () => {
+    const diff = diffManifest(manifest(), []);
+    expect(diff).toEqual({
+      toInstall: [],
+      toUpdate: [],
+      upToDate: [],
+      removedRemotely: [],
+      localCollisions: [],
+    });
+  });
+
+  it('marks github-installed packs removed-remotely, leaving bundled and local packs alone', () => {
+    const diff = diffManifest(manifest(), [
+      installedRow('sample', 1, 'bundled'),
+      installedRow('imported-x', 1, 'local-import'),
+      installedRow('old-remote', 2, 'github'),
+    ]);
+    expect(diff.toInstall).toEqual([]);
+    expect(diff.toUpdate).toEqual([]);
+    expect(diff.removedRemotely.map((r) => r.packId)).toEqual(['old-remote']);
+    expect(diff.localCollisions).toEqual([]);
+  });
+});
+
 describe('diffManifest — T28 local-pack immunity (design V2 §4.3)', () => {
   const local = (id: string, version = 1) => installedRow(id, version, 'local-import');
 

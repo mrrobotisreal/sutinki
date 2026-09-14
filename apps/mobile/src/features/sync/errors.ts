@@ -34,25 +34,25 @@ export function friendlySyncMessage(err: unknown): string {
   if (err instanceof SyncError) {
     switch (err.code) {
       case 'not-configured':
-        return 'Content sync is not set up yet — add the repo and token in Settings.';
+        return 'Синхронізацію ще не налаштовано — додай репозиторій і токен у Налаштуваннях.';
       case 'offline':
-        return 'No connection — sync will retry when you are online.';
+        return 'Немає з’єднання — синхронізація повториться, коли з’явиться мережа.';
       case 'auth':
-        return 'GitHub rejected the token. Check the PAT in Settings (it may have expired).';
+        return 'GitHub відхилив токен. Перевір PAT у Налаштуваннях (можливо, він прострочений).';
       case 'not-found':
-        return `Not found on GitHub: ${err.path ?? 'file'}. Check the repo name and token access.`;
+        return `Не знайдено на GitHub: ${err.path ?? 'файл'}. Перевір назву репозиторію і доступ токена.`;
       case 'rate-limited':
-        return 'GitHub rate limit hit — try again in a few minutes.';
+        return 'Вичерпано ліміт запитів GitHub — спробуй за кілька хвилин.';
       case 'sha256-mismatch':
-        return `Downloaded file failed verification (${err.path ?? 'file'}) — the pack was not installed.`;
+        return `Завантажений файл не пройшов перевірку (${err.path ?? 'файл'}) — пакет не встановлено.`;
       case 'invalid-manifest':
-        return 'The content repo manifest.json is invalid — republish it from the pipeline.';
+        return 'manifest.json у репозиторії контенту недійсний — опублікуй його заново з pipeline.';
       case 'invalid-pack':
-        return `A downloaded pack.json is invalid (${err.path ?? 'pack'}) — republish it from the pipeline.`;
+        return `Завантажений pack.json недійсний (${err.path ?? 'пакет'}) — опублікуй його заново з pipeline.`;
       case 'http':
-        return `GitHub request failed (HTTP ${err.status ?? '?'}) — try again.`;
+        return `Запит до GitHub не вдався (HTTP ${err.status ?? '?'}) — спробуй ще раз.`;
       case 'network':
-        return 'Network error while syncing — try again.';
+        return 'Помилка мережі під час синхронізації — спробуй ще раз.';
     }
   }
   return err instanceof Error ? err.message : String(err);

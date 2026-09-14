@@ -81,58 +81,59 @@ export function SyncSettingsSection() {
   return (
     <>
       <Text variant="caption" className="mb-2 mt-8 uppercase tracking-wider">
-        Content sync
+        Синхронізація контенту
       </Text>
       <View className="overflow-hidden rounded-xl border border-border bg-surface px-4 py-3.5">
         <Text variant="caption" className="mb-1 uppercase tracking-wider">
-          GitHub repo
+          Репозиторій GitHub
         </Text>
         <View className="mb-3 flex-row items-center gap-2">
           <TextInput
             value={owner}
             onChangeText={setOwner}
-            placeholder="owner"
+            placeholder="власник"
             placeholderTextColor={tokens.textMuted}
             autoCapitalize="none"
             autoCorrect={false}
             className="flex-1 rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-ui text-base text-text"
-            accessibilityLabel="Repository owner"
+            accessibilityLabel="Власник репозиторію"
           />
           <Text variant="muted">/</Text>
           <TextInput
             value={repo}
             onChangeText={setRepo}
-            placeholder="repo"
+            placeholder="репозиторій"
             placeholderTextColor={tokens.textMuted}
             autoCapitalize="none"
             autoCorrect={false}
             className="flex-[1.4] rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-ui text-base text-text"
-            accessibilityLabel="Repository name"
+            accessibilityLabel="Назва репозиторію"
           />
         </View>
 
         <Text variant="caption" className="mb-1 uppercase tracking-wider">
-          Fine-grained token {patConfigured ? '· configured ✓' : ''}
+          Fine-grained токен {patConfigured ? '· налаштовано ✓' : ''}
         </Text>
         <TextInput
           value={patInput}
           onChangeText={setPatInput}
-          placeholder={patConfigured ? 'Enter a new token to replace' : 'github_pat_…'}
+          placeholder={patConfigured ? 'Введи новий токен, щоб замінити' : 'github_pat_…'}
           placeholderTextColor={tokens.textMuted}
           autoCapitalize="none"
           autoCorrect={false}
           secureTextEntry
           className="rounded-xl border border-border bg-surface-2 px-3 py-2.5 font-ui text-base text-text"
-          accessibilityLabel="GitHub personal access token"
+          accessibilityLabel="Персональний токен доступу GitHub"
         />
         <Text variant="caption" className="mt-1.5">
-          Needs Contents access to the content repo — read-only for sync, read-write once backups
-          are enabled (T20). Stored in the Android Keystore, never in backups or logs.
+          Потрібен доступ Contents до репозиторію контенту — read-only для синхронізації, read-write
+          для резервних копій. Зберігається в Android Keystore, ніколи — у резервних копіях чи
+          логах.
         </Text>
         {patConfigured && (
           <Pressable onPress={removeToken} hitSlop={6} className="mt-2 self-start">
             <Text variant="caption" className="text-danger">
-              Remove saved token
+              Видалити збережений токен
             </Text>
           </Pressable>
         )}
@@ -142,16 +143,18 @@ export function SyncSettingsSection() {
           accessibilityRole="button"
           className="mt-3 items-center rounded-xl bg-accent px-4 py-2.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-text">{savedFlash ? 'Saved ✓' : 'Save'}</Text>
+          <Text className="font-ui-medium text-text">
+            {savedFlash ? 'Збережено ✓' : 'Зберегти'}
+          </Text>
         </Pressable>
       </View>
 
       <View className="mt-3 overflow-hidden rounded-xl border border-border bg-surface">
         <View className="flex-row items-center justify-between px-4 py-3.5">
           <View className="flex-1 gap-0.5 pr-3">
-            <Text className="font-ui-medium">Audio on Wi-Fi only</Text>
+            <Text className="font-ui-medium">Аудіо лише через Wi-Fi</Text>
             <Text variant="caption">
-              Narration files wait for Wi-Fi; stories and annotations always sync
+              Файли озвучення чекають на Wi-Fi; історії та розмітка синхронізуються завжди
             </Text>
           </View>
           <Switch
@@ -159,14 +162,14 @@ export function SyncSettingsSection() {
             onValueChange={toggleWifiOnly}
             trackColor={{ false: tokens.surface2, true: tokens.accent }}
             thumbColor={tokens.text}
-            accessibilityLabel="Audio on Wi-Fi only"
+            accessibilityLabel="Аудіо лише через Wi-Fi"
           />
         </View>
         <Link href="/packs" asChild>
           <Pressable className="flex-row items-center justify-between border-t border-border px-4 py-3.5 active:bg-surface-2">
             <View className="gap-0.5">
-              <Text className="font-ui-medium">Installed packs</Text>
-              <Text variant="caption">Versions, sizes, updates, remove</Text>
+              <Text className="font-ui-medium">Встановлені пакети</Text>
+              <Text variant="caption">Версії, розміри, оновлення, видалення</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
           </Pressable>

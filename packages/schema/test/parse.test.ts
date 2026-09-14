@@ -56,6 +56,17 @@ describe('manifest schema edge cases', () => {
     files: [{ path: 'pack.json', sha256: 'a'.repeat(64) }],
   };
 
+  it('accepts an empty manifest — the founded sutinki-content shape before the first pack (UT07)', () => {
+    const result = safeParseManifest({
+      schemaVersion: 1,
+      generatedAt: '2026-09-14T14:34:48.000Z',
+      packs: [],
+    });
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+    expect(result.data.packs).toEqual([]);
+  });
+
   it('rejects a malformed sha256 with a precise path', () => {
     const bad = structuredClone(entry);
     bad.files[0]!.sha256 = 'not-a-hash';

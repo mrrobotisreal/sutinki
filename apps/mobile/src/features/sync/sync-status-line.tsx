@@ -20,7 +20,7 @@ export function SyncStatusLine() {
   if (phase === 'checking') {
     return (
       <Row icon="cloud-outline" color={tokens.textMuted}>
-        <Text variant="caption">Checking for new content…</Text>
+        <Text variant="caption">Перевіряю новий контент…</Text>
       </Row>
     );
   }
@@ -29,7 +29,7 @@ export function SyncStatusLine() {
     return (
       <Row icon="cloud-download-outline" color={tokens.accent}>
         <Text variant="caption" numberOfLines={1}>
-          Downloading {progress.titleEn} ({progress.packIndex}/{progress.packCount}) · file{' '}
+          Завантажую {progress.titleEn} ({progress.packIndex}/{progress.packCount}) · файл{' '}
           {Math.min(progress.filesDone + 1, progress.fileCount)}/{progress.fileCount}
         </Text>
       </Row>
@@ -43,7 +43,7 @@ export function SyncStatusLine() {
     return (
       <Row icon="warning-outline" color={tokens.danger} onDismiss={dismissBanner}>
         <Text variant="caption" className="text-danger">
-          {detail || 'Sync failed — try again.'}
+          {detail || 'Синхронізація не вдалася — спробуй ще раз.'}
         </Text>
       </Row>
     );
@@ -57,9 +57,9 @@ export function SyncStatusLine() {
     <Row icon="checkmark-circle-outline" color={tokens.success} onDismiss={dismissBanner}>
       <Text variant="caption">
         {installedCount > 0
-          ? `Content updated: ${[...lastRun.installed, ...lastRun.updated].join(', ')}`
-          : 'Sync complete'}
-        {deferred > 0 ? ' · audio waiting for Wi-Fi' : ''}
+          ? `Контент оновлено: ${[...lastRun.installed, ...lastRun.updated].join(', ')}`
+          : 'Синхронізацію завершено'}
+        {deferred > 0 ? ' · аудіо чекає на Wi-Fi' : ''}
       </Text>
     </Row>
   );

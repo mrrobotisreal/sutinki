@@ -279,7 +279,8 @@ export function LibraryScreen() {
         <Ionicons name="library-outline" size={40} color={tokens.textMuted} />
         <Text className="font-reading-bold text-xl">Бібліотека порожня</Text>
         <Text variant="muted" className="text-center">
-          Sample packs import on first run; pull to sync new stories from the content repo.
+          Зразки встановлюються під час першого запуску; потягни вниз, щоб синхронізувати нові
+          історії з репозиторію контенту.
         </Text>
         <SyncStatusLine />
       </ScrollView>
