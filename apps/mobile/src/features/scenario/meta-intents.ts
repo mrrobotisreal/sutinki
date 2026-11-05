@@ -1,7 +1,7 @@
 import { normalizeScenarioText } from '@/db/normalize';
 import { scoreAttempt, scoringTokens, wordsMatch } from '@/features/pronunciation/scoring';
 
-import { isStopword, LEADING_FILLERS_RU, stemMatches } from './judge/slots';
+import { isStopword, leadingFillersFor, stemMatches } from './judge/slots';
 
 /**
  * Meta-intents (T60, SPEAKING_SCENARIOS §6): the global spoken commands
@@ -12,8 +12,8 @@ import { isStopword, LEADING_FILLERS_RU, stemMatches } from './judge/slots';
  * remainder is the query. Pure — no React, no DB; the resolvers that need
  * the glossary / Whisper / online take injected lookups.
  *
- * Language-parameterized from day one: `ru` is filled, `uk` is empty (the
- * Сутінки UT tickets fill it) — an empty table detects nothing.
+ * Language-parameterized from day one: `ru` (Sumrak) and `uk` (UT14) are
+ * both filled; the `uk` table detects only Ukrainian triggers.
  *
  * Recorded T60 decisions:
  * - **One-token triggers («что?», «а?») must be the WHOLE transcript** —
@@ -73,7 +73,32 @@ export const META_TRIGGERS: Record<ScenarioLanguage, readonly MetaTrigger[]> = {
     { intent: 'dont-understand', phrase: 'я не понял', takesQuery: false },
     { intent: 'dont-understand', phrase: 'я не поняла', takesQuery: false },
   ],
-  uk: [],
+  uk: [
+    // UT14 (ticket decision 3). Longer/more specific phrases first within an
+    // intent so «я не розумію слово» beats «я не розумію».
+    { intent: 'explain', phrase: 'я не розумію слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не розумію слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не зрозумів слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не зрозуміла слово', takesQuery: true },
+    { intent: 'explain', phrase: 'що означає', takesQuery: true },
+    { intent: 'explain', phrase: 'що значить', takesQuery: true },
+    { intent: 'explain', phrase: 'що таке', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як буде українською', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як це сказати', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як по-українськи', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як сказати', takesQuery: true },
+    { intent: 'repeat', phrase: 'повторіть', takesQuery: false },
+    { intent: 'repeat', phrase: 'повтори', takesQuery: false },
+    { intent: 'repeat', phrase: 'ще раз', takesQuery: false },
+    { intent: 'repeat', phrase: 'що', whole: true, takesQuery: false },
+    { intent: 'repeat', phrase: 'а', whole: true, takesQuery: false },
+    { intent: 'slower', phrase: 'повільніше', takesQuery: false },
+    { intent: 'slower', phrase: 'не так швидко', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не розумію', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'не розумію', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не зрозумів', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не зрозуміла', takesQuery: false },
+  ],
 };
 
 export interface MetaDetection {
@@ -105,7 +130,8 @@ export function detectMetaIntent(
   if (all.length === 0) return null;
   // Skip leading fillers, but keep at least one token.
   let start = 0;
-  while (start < all.length - 1 && LEADING_FILLERS_RU.has(all[start]!)) start++;
+  const fillers = leadingFillersFor(language);
+  while (start < all.length - 1 && fillers.has(all[start]!)) start++;
   const tokens = all.slice(start);
 
   let best: MetaDetection | null = null;
@@ -136,7 +162,7 @@ export function detectMetaIntent(
     // The first trigger word must be heard at the head (avoids «…значит» tails matching)
     // and every content word of the trigger must be heard (stopwords may slip).
     if (!words[0]?.matched) continue;
-    if (words.some((w) => !w.matched && !isStopword(w.target))) continue;
+    if (words.some((w) => !w.matched && !isStopword(w.target, language))) continue;
     const queryTokens = trigger.takesQuery ? tokens.slice(windowLen) : [];
     const cand: MetaDetection = {
       intent: trigger.intent,
@@ -186,6 +212,7 @@ export type MetaSource = 'glossary' | 'whisper' | 'online' | 'none';
 export function findGlossaryByRu(
   queryTokens: readonly string[],
   glossary: readonly GlossaryLookupEntry[],
+  language: ScenarioLanguage = 'ru',
 ): GlossaryLookupEntry | null {
   let best: { entry: GlossaryLookupEntry; at: number } | null = null;
   for (let at = 0; at < queryTokens.length; at++) {
@@ -195,7 +222,7 @@ export function findGlossaryByRu(
         wordsMatch(normalizeScenarioText(entry.ru), q) ||
         entry.forms.some((f) => {
           const n = normalizeScenarioText(f);
-          return n.endsWith('*') ? stemMatches(n.slice(0, -1), q) : wordsMatch(n, q);
+          return n.endsWith('*') ? stemMatches(n.slice(0, -1), q, language) : wordsMatch(n, q);
         });
       if (hit && (!best || at < best.at)) best = { entry, at };
     }
@@ -395,6 +422,8 @@ export interface ExplainResolverDeps {
   /** id → the `explain` clip's sentence id. */
   explainSentenceId: (entryId: string) => string | null;
   played: readonly PlayedToken[];
+  /** The scenario language (`uk` ⇒ Ukrainian stem alternations in glossary lookup). Default `ru`. */
+  language?: ScenarioLanguage;
   /** Online one-liner («„X“ — это Y»), null when offline / no key / failed. */
   online?: (query: string) => Promise<string | null>;
 }
@@ -404,7 +433,7 @@ export async function resolveExplain(
   deps: ExplainResolverDeps,
 ): Promise<Extract<MetaResolution, { intent: 'explain' }>> {
   if (detection.queryTokens.length === 0) return { intent: 'explain', source: 'none' };
-  const entry = findGlossaryByRu(detection.queryTokens, deps.glossary);
+  const entry = findGlossaryByRu(detection.queryTokens, deps.glossary, deps.language ?? 'ru');
   if (entry) {
     const sentenceId = deps.explainSentenceId(entry.id);
     if (sentenceId) {

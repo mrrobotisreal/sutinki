@@ -263,7 +263,7 @@ export default function DevJudgeScreen() {
           return;
         }
         const t0 = Date.now();
-        const judge = judgeAnswer(transcript, turn.expect);
+        const judge = judgeAnswer(transcript, turn.expect, { language: detail.scenario.language });
         const judgeMs = Date.now() - t0;
         const [online, key] = await Promise.all([isOnline(), hasApiKey()]);
         const gate = shouldRescue({ judge, online, rescueOnline: true, hasKey: key });

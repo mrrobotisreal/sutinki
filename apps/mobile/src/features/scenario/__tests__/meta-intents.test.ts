@@ -109,9 +109,10 @@ describe('detectMetaIntent — triggers ± noise', () => {
     expect(detectMetaIntent('что значит')).toMatchObject({ intent: 'explain', query: '' });
   });
 
-  it('uk has an empty table and detects nothing', () => {
-    expect(META_TRIGGERS.uk).toEqual([]);
-    expect(detectMetaIntent('повтори', 'uk')).toBeNull();
+  it('uk is filled (UT14) and the ru table does not fire on Ukrainian triggers', () => {
+    expect(META_TRIGGERS.uk.length).toBe(22);
+    expect(detectMetaIntent('повтори', 'uk')?.intent).toBe('repeat');
+    expect(detectMetaIntent('повільніше', 'ru')).toBeNull();
   });
 
   it('empty transcript ⇒ null', () => {

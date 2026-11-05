@@ -3,13 +3,14 @@ import type { Slot } from '@sutinki/schema';
 import { scoreAttempt, scoringTokens, type WordScore } from '@/features/pronunciation/scoring';
 
 import {
-  betterHit,
+  betterOptionHit,
   contentTokens,
   coveredTokenIndexes,
   hasNumeral,
   isContentToken,
   matchForms,
   type FormHit,
+  type SlotLanguage,
 } from './slots';
 
 /**
@@ -101,19 +102,23 @@ export interface JudgeResult {
 export interface JudgeContext {
   /** Override for the lab only; production uses `SCENARIO_ACCEPT_THRESHOLD`. */
   threshold?: number;
+  /** The scenario's language (`scenario.language`): stopwords, numerals, stems, negation tie-break. Default `ru` (Sumrak). */
+  language?: SlotLanguage;
 }
 
 function judgeFormsSlot(
   slot: Extract<Slot, { kind: 'forms' }>,
   tokens: readonly string[],
+  language: SlotLanguage,
 ): { hit: string | null; form?: string } {
   let best: { key: string; hit: FormHit } | null = null;
   for (const option of slot.options) {
-    const hit = matchForms(option.forms, tokens);
-    if (hit && betterHit(hit, best?.hit ?? null)) best = { key: option.key, hit };
+    const hit = matchForms(option.forms, tokens, language);
+    if (hit && betterOptionHit(hit, best?.hit ?? null, tokens, language))
+      best = { key: option.key, hit };
   }
   if (best) return { hit: best.key, form: best.hit.form };
-  if (slot.acceptsNumber && hasNumeral(tokens)) return { hit: NUMBER_KEY };
+  if (slot.acceptsNumber && hasNumeral(tokens, language)) return { hit: NUMBER_KEY };
   return { hit: null };
 }
 
@@ -122,8 +127,9 @@ function judgeFreeSlot(
   tokens: readonly string[],
   transcript: string,
   rejectCovered: ReadonlySet<number>,
+  language: SlotLanguage,
 ): { hit: string | null } {
-  const content = tokens.filter((t, i) => isContentToken(t) && !rejectCovered.has(i));
+  const content = tokens.filter((t, i) => isContentToken(t, language) && !rejectCovered.has(i));
   if (content.length < slot.minTokens) return { hit: null };
   if (slot.cues && slot.cues.length > 0) {
     const cueHit = slot.cues.some(
@@ -147,8 +153,9 @@ export function judgeAnswer(
   ctx: JudgeContext = {},
 ): JudgeResult {
   const threshold = ctx.threshold ?? SCENARIO_ACCEPT_THRESHOLD;
+  const language = ctx.language ?? 'ru';
   const tokens = scoringTokens(transcript);
-  const contentCount = contentTokens(tokens).length;
+  const contentCount = contentTokens(tokens, language).length;
 
   // 1. Nothing heard.
   if (tokens.length === 0) {
@@ -172,7 +179,7 @@ export function judgeAnswer(
   const rejects = expectation.reject ?? [];
   let rejectIndex: number | null = null;
   for (let i = 0; i < rejects.length; i++) {
-    if (matchForms(rejects[i]!.forms, tokens)) {
+    if (matchForms(rejects[i]!.forms, tokens, language)) {
       rejectIndex = i;
       break;
     }
@@ -180,12 +187,12 @@ export function judgeAnswer(
   const rejectCovered =
     rejectIndex === null
       ? new Set<number>()
-      : coveredTokenIndexes(rejects[rejectIndex]!.forms, tokens);
+      : coveredTokenIndexes(rejects[rejectIndex]!.forms, tokens, language);
 
   // 4. Slots.
   const slotResults: SlotResult[] = expectation.slots.map((slot) => {
     if (slot.kind === 'forms') {
-      const r = judgeFormsSlot(slot, tokens);
+      const r = judgeFormsSlot(slot, tokens, language);
       return {
         id: slot.id,
         required: slot.required,
@@ -197,10 +204,14 @@ export function judgeAnswer(
       return {
         id: slot.id,
         required: slot.required,
-        ...judgeFreeSlot(slot, tokens, transcript, rejectCovered),
+        ...judgeFreeSlot(slot, tokens, transcript, rejectCovered, language),
       };
     }
-    return { id: slot.id, required: slot.required, hit: hasNumeral(tokens) ? NUMBER_KEY : null };
+    return {
+      id: slot.id,
+      required: slot.required,
+      hit: hasNumeral(tokens, language) ? NUMBER_KEY : null,
+    };
   });
   const slots = Object.fromEntries(slotResults.map((s) => [s.id, s.hit]));
   const required = slotResults.filter((s) => s.required);

@@ -331,6 +331,7 @@ export function useScenarioRun(
             glossary,
             explainSentenceId: (id) => clips[id]?.explain ?? null,
             played: playedRef.current,
+            language: d.scenario.language,
             online: fetchExplainLine,
           });
         } else if (detection.intent === 'howtosay') {
@@ -360,7 +361,7 @@ export function useScenarioRun(
         return;
       }
       // The reducer's own TRACK effect reports scenario_judge (one event per verdict).
-      const result = judgeAnswer(transcript, turn.expect);
+      const result = judgeAnswer(transcript, turn.expect, { language: d.scenario.language });
       dispatchRef.current({ type: 'JUDGED', result });
     },
     [],
