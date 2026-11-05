@@ -1,30 +1,45 @@
 {
-  "_synthetic": "HAND-AUTHORED (UT13, no OpenRouter key in session) — recapture with scripts/capture-ai-fixtures.ts at the first live run; usage numbers are placeholders.",
   "input": {
     "language": "uk",
     "kind": "phrase",
     "headword": "добрий день",
-    "translation": "hello",
+    "translation": "good day (hello)",
     "level": "A1",
     "contexts": [
-      "Добрий день! Чим я можу вам допомогти?"
+      "Добрий день, чим можу допомогти?"
     ]
   },
-  "model": "synthetic/hand-authored",
+  "model": "anthropic/claude-sonnet-5",
   "choices": [
     {
       "message": {
-        "content": "{\n  \"v\": 1,\n  \"language\": \"uk\",\n  \"kind\": \"phrase\",\n  \"pos\": \"phrase\",\n  \"headword\": {\n    \"ru\": \"до́брий день\",\n    \"plain\": \"добрий день\"\n  },\n  \"overview\": {\n    \"gloss\": \"hello, good day\",\n    \"facts\": [\n      {\n        \"label\": \"Register\",\n        \"value\": \"neutral, polite — usable with ти and Ви\"\n      },\n      {\n        \"label\": \"Frequency\",\n        \"value\": \"very common, core A1 greeting\"\n      }\n    ],\n    \"notes\": [\n      \"Used from the morning until about the evening; «до́брий ра́нок» and «до́брий ве́чір» cover the other parts of the day.\"\n    ]\n  },\n  \"sections\": [\n    {\n      \"id\": \"phrase-structure\",\n      \"title\": {\n        \"en\": \"Word by word\",\n        \"ru\": \"Розбір за словами\"\n      },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"до́брий\",\n          \"plain\": \"добрий\",\n          \"gloss\": \"good (nom. sg. masc.)\",\n          \"note\": \"agrees with «день»\"\n        },\n        {\n          \"ru\": \"день\",\n          \"plain\": \"день\",\n          \"gloss\": \"day (nom. sg.)\",\n          \"note\": \"the greeting is a nominative phrase, not a vocative\"\n        }\n      ]\n    },\n    {\n      \"id\": \"phrase-usage\",\n      \"title\": {\n        \"en\": \"Usage & register\",\n        \"ru\": \"Вживання і стиль\"\n      },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"до́брий день!\",\n          \"plain\": \"добрий день!\",\n          \"gloss\": \"a daytime greeting\",\n          \"note\": \"say it entering a shop, a room, a call\",\n          \"example\": {\n            \"ru\": \"До́брий день! Чим я можу вам допомогти́?\",\n            \"en\": \"Hello! How can I help you?\"\n          }\n        },\n        {\n          \"ru\": \"До́брий день, па́не Тара́се\",\n          \"plain\": \"Добрий день, пане Тарасе\",\n          \"gloss\": \"greeting with a vocative name\",\n          \"note\": \"the name takes the vocative: Тара́с → Тара́се\",\n          \"example\": {\n            \"ru\": \"До́брий день, па́ні Окса́но!\",\n            \"en\": \"Hello, Mrs Oksana!\"\n          }\n        }\n      ]\n    },\n    {\n      \"id\": \"phrase-variants\",\n      \"title\": {\n        \"en\": \"Variants & synonyms\",\n        \"ru\": \"Варіанти і синоніми\"\n      },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"до́брого дня\",\n          \"plain\": \"доброго дня\",\n          \"gloss\": \"good day (genitive greeting)\",\n          \"note\": \"also used when parting or as a wish\"\n        },\n        {\n          \"ru\": \"приві́т\",\n          \"plain\": \"привіт\",\n          \"gloss\": \"hi (informal)\",\n          \"note\": \"with friends, with ти\"\n        },\n        {\n          \"ru\": \"віта́ю\",\n          \"plain\": \"вітаю\",\n          \"gloss\": \"I greet you (formal, warm)\",\n          \"note\": \"warmer, a bit festive\"\n        }\n      ]\n    }\n  ]\n}"
+        "content": "{\"v\": 1, \"language\": \"uk\", \"kind\": \"phrase\", \"pos\": \"phrase\", \"headword\": {\"ru\": \"до́брий день\", \"plain\": \"добрий день\"}, \"overview\": {\"gloss\": \"good day — polite greeting / hello\", \"facts\": [{\"label\": \"Register\", \"value\": \"neutral-polite, used all day\"}, {\"label\": \"Frequency\", \"value\": \"very common, standard greeting\"}, {\"label\": \"Structure\", \"value\": \"adjective + noun, fixed phrase\"}], \"notes\": [\"Used as a general greeting any time of day, more formal than «привіт».\", \"Often used by service staff, strangers, in business or official contexts.\", \"Can be shortened colloquially to «добридень» as one word.\"]}, \"sections\": [{\"id\": \"phrase-structure\", \"title\": {\"en\": \"Word by word\", \"ru\": \"Розбір за словами\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"до́брий\", \"plain\": \"добрий\", \"gloss\": \"good (masc. nom. sg. adjective)\", \"note\": \"modifies «день», agrees in gender/case/number\"}, {\"ru\": \"день\", \"plain\": \"день\", \"gloss\": \"day (masc. nom. sg. noun)\", \"note\": \"used here in greeting formula, not literal 'day'\"}]}, {\"id\": \"phrase-usage\", \"title\": {\"en\": \"Usage & register\", \"ru\": \"Вживання і стиль\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"До́брий день, чим мо́жу допомогти́?\", \"plain\": \"Добрий день, чим можу допомогти?\", \"gloss\": \"Good day, how may I help you?\", \"note\": \"typical in shops, offices, customer service\", \"example\": {\"ru\": \"До́брий день, чим мо́жу допомогти́?\", \"en\": \"Good day, how can I help you?\"}}, {\"ru\": \"До́брий день! Заходьте, будь ла́ска.\", \"plain\": \"Добрий день! Заходьте, будь ласка.\", \"gloss\": \"Good day! Please come in.\", \"note\": \"polite greeting when welcoming someone\", \"example\": {\"ru\": \"До́брий день! Заходьте, будь ла́ска.\", \"en\": \"Good day! Please come in.\"}}, {\"ru\": \"До́брий день усім прису́тнім.\", \"plain\": \"Добрий день усім присутнім.\", \"gloss\": \"Good day to everyone present.\", \"note\": \"formal opening, e.g. meetings, speeches\", \"example\": {\"ru\": \"До́брий день усім прису́тнім, почнімо нараду.\", \"en\": \"Good day everyone, let's start the meeting.\"}}]}, {\"id\": \"phrase-variants\", \"title\": {\"en\": \"Variants & synonyms\", \"ru\": \"Варіанти і синоніми\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"добри́день\", \"plain\": \"добридень\", \"gloss\": \"good day (informal fused variant)\", \"tags\": [\"colloquial\"]}, {\"ru\": \"до́брого дня\", \"plain\": \"доброго дня\", \"gloss\": \"good day (genitive, used as parting wish)\", \"note\": \"used when leaving, e.g. «Бувайте, доброго дня!»\"}, {\"ru\": \"приві́т\", \"plain\": \"привіт\", \"gloss\": \"hi / hello\", \"tags\": [\"colloquial\"], \"note\": \"more casual, used among friends/peers\"}, {\"ru\": \"до́брий ра́нок\", \"plain\": \"добрий ранок\", \"gloss\": \"good morning\", \"note\": \"used specifically in the morning\"}, {\"ru\": \"до́брий ве́чір\", \"plain\": \"добрий вечір\", \"gloss\": \"good evening\", \"note\": \"used specifically in the evening\"}]}]}"
       },
       "finish_reason": "stop"
     }
   ],
   "usage": {
-    "prompt_tokens": 3400,
-    "completion_tokens": 1500,
-    "cost": 0.03,
+    "prompt_tokens": 4921,
+    "completion_tokens": 1153,
+    "total_tokens": 6074,
+    "cost": 0.021372,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.021372,
+      "upstream_inference_prompt_cost": 0.009842,
+      "upstream_inference_completions_cost": 0.01153
+    },
     "completion_tokens_details": {
-      "reasoning_tokens": 0
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
     }
-  }
+  },
+  "_patched": "Live capture (see UT13b log); individual forms hand-corrected after reading: «почнімо нараду» (model wrote nonsense «наради»)"
 }

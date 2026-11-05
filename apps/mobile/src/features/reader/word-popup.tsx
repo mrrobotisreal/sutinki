@@ -1,4 +1,3 @@
-import { ukPending } from '@/config/flags';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -277,19 +276,17 @@ function WordPopupSheet({
               {inBank ? 'In bank ✓' : 'Add to word bank'}
             </Text>
           </Pressable>
-          {!ukPending('wordProfiles') && (
-            <Pressable
-              onPress={openForms}
-              disabled={formsBusy}
-              accessibilityRole="button"
-              accessibilityLabel="Word forms"
-              accessibilityState={{ disabled: formsBusy }}
-              className="flex-row items-center justify-center gap-2 rounded-xl border border-accent/40 px-4 py-3 active:bg-surface-2"
-            >
-              <Ionicons name="git-branch-outline" size={18} color={theme.accent} />
-              <Text className="font-ui-medium text-accent">Форми</Text>
-            </Pressable>
-          )}
+          <Pressable
+            onPress={openForms}
+            disabled={formsBusy}
+            accessibilityRole="button"
+            accessibilityLabel="Форми слова"
+            accessibilityState={{ disabled: formsBusy }}
+            className="flex-row items-center justify-center gap-2 rounded-xl border border-accent/40 px-4 py-3 active:bg-surface-2"
+          >
+            <Ionicons name="git-branch-outline" size={18} color={theme.accent} />
+            <Text className="font-ui-medium text-accent">Форми</Text>
+          </Pressable>
         </View>
       </View>
     </Modal>

@@ -1,5 +1,4 @@
 {
-  "_synthetic": "HAND-AUTHORED (UT13, no OpenRouter key in session) — recapture with scripts/capture-ai-fixtures.ts at the first live run; usage numbers are placeholders.",
   "input": {
     "language": "uk",
     "headword": "говорити",
@@ -78,7 +77,7 @@
           ],
           [
             {
-              "ru": "говоря́ть",
+              "ru": "гово́рять",
               "plain": "говорять"
             },
             {
@@ -88,7 +87,7 @@
           ]
         ]
       },
-      "note": "Imperfective: compound future with «бу́ду» + infinitive."
+      "note": "Stress stays on the ending in every form (говорю́, говори́ш, говори́ть, говори́мо, говори́те, говоря́ть). The future is compound: бу́ду + infinitive."
     },
     "sectionTitleEn": "Present & future",
     "facts": [
@@ -98,47 +97,68 @@
       },
       {
         "label": "Aspect partner",
-        "value": "сказа́ти (pf., to say)"
+        "value": "поговори́ти (to have a talk) / сказа́ти (to say)"
       },
       {
-        "label": "Conjugation class",
-        "value": "II (-иш, -ить, -имо, -ите, -ять)"
+        "label": "Conjugation",
+        "value": "II (-иш / -ить)"
       },
       {
         "label": "Stress pattern",
-        "value": "mobile — ending in the present, stem-fixed in the future periphrasis"
+        "value": "fixed on the ending in every form (говори́ти, говорю́, говори́ш, говори́ть, говоря́ть)"
       },
       {
         "label": "Transitivity",
-        "value": "intransitive (говори́ти з ким / про що)"
+        "value": "transitive (говори́ти пра́вду) or intransitive"
       },
       {
         "label": "Frequency",
-        "value": "very common, core A1 vocabulary"
+        "value": "very common, core A1 verb"
       }
     ],
     "encounters": [
       {
-        "ru": "Вона говорить тихо, але ясно."
+        "ru": "Він говорив тихо, але я все чув.",
+        "storyTitle": "Високий Пес"
+      },
+      {
+        "ru": "Не говори нікому.",
+        "storyTitle": "Жахлива правда"
       }
     ],
     "learnerLevel": "A1"
   },
-  "model": "synthetic/hand-authored",
+  "model": "anthropic/claude-sonnet-5",
   "choices": [
     {
       "message": {
-        "content": "## What this is and why it matters for «говорити»\n«Говори́ти» is the everyday verb for speaking and talking, and its present and future forms are the second-conjugation pattern you can reuse for dozens of verbs. Its endings differ from those of «чита́ти», which is first conjugation.\n\n## The pattern\nTake the stem «говор-» and add the second-conjugation endings: -ю́ in the first person, then -и́ш, -и́ть, -и́мо, -и́те, and -я́ть. The third-person plural is -ять, not -ють, which is the quickest sign of the second conjugation. The stress sits on the ending in every present form. The imperfective future is built with the auxiliary «бу́ду» plus the infinitive and never changes the stem. Unlike «хо́дити → хожу́», this verb has no consonant alternation in the first person.\n\n## The forms\n| Person | Present | Future |\n|---|---|---|\n| я | говорю́ | бу́ду говори́ти |\n| ти | говори́ш | бу́деш говори́ти |\n| він / вона / воно | говори́ть | бу́де говори́ти |\n| ми | говори́мо | бу́демо говори́ти |\n| ви | говори́те | бу́дете говори́ти |\n| вони | говоря́ть | бу́дуть говори́ти |\n\n## In the wild\n- Вона́ говори́ть ти́хо, але́ ясно. → She speaks quietly but clearly. → «говори́ть», third person singular present: one person, a habit or a current state.\n- За́втра я бу́ду говори́ти з дире́ктором. → Tomorrow I will be talking to the director. → «бу́ду говори́ти», compound future: the talking is a process, not a single act.\n- Ми говори́мо украї́нською вдо́ма. → We speak Ukrainian at home. → «говори́мо», first person plural present: a regular practice.\n\n## Watch out\n- Do not write «говорять» with -ють; the second conjugation uses -ять.\n- «Говори́ти» has no one-word future; use «бу́ду говори́ти», or switch to the perfective «ска́жу».\n- The polite singular «Ви говори́те» takes the plural ending, even when you address one person.\nMemory hook: second conjugation = -иш / -ить in the middle and -ять at the end of the plural.\n\n## Check yourself\n1. How do you say «they speak» in Ukrainian?\n2. Which auxiliary builds the future of an imperfective verb?\n3. What is the form of «говори́ти» for «you (ви) speak»?\n\n---\n1. Вони́ говоря́ть.\n2. «Бу́ти» (бу́ду, бу́деш, …) plus the infinitive.\n3. Ви говори́те.\n"
+        "content": "## What this is and why it matters for «говорити»\n\nThis section shows how to say \"I speak / will speak\" right now, using the present tense and the compound future. Because «говорити» is imperfective, its future is built with «бу́ду» + infinitive — not a single-word form. Mastering this pattern unlocks every other imperfective verb of the same conjugation class.\n\n## The pattern\n\n«Говори́ти» is a II-conjugation verb (infinitive in -ити, non-past in -иш/-ить). The present tense is built from the stem **говор-** plus personal endings: -ю́ (1st sg.), -и́ш, -и́ть, -и́мо, -и́те, -ять (говорю́ is the 1st-person exception: -ю́).\n\nKey feature: the stress is **fixed on the ending** in every single form — it never retreats to the stem, unlike many other II-conjugation verbs (compare «ба́чити» → «ба́чу», stem-stressed). This end-stress pattern is typical of verbs whose infinitive stress also falls on the last syllable (говори́ти, дзвони́ти, носи́ти with mixed patterns — always check each verb individually).\n\nThe future tense of imperfective verbs is always analytic: the auxiliary «бу́ду» (conjugated for person) + the imperfective infinitive. The auxiliary itself is stressed on the stem (бу́ду, бу́деш...), while «говори́ти» keeps its own stress unchanged inside the phrase.\n\n## The forms\n\n| Person | Present | Future |\n|---|---|---|\n| я | говорю́ (I speak) | бу́ду говори́ти (I will speak) |\n| ти | говори́ш (you speak) | бу́деш говори́ти (you will speak) |\n| він / вона́ / воно́ | говори́ть (he/she/it speaks) | бу́де говори́ти (he/she/it will speak) |\n| ми | говори́мо (we speak) | бу́демо говори́ти (we will speak) |\n| ви | говори́те (you speak, pl./formal) | бу́дете говори́ти (you will speak) |\n| вони́ | говоря́ть (they speak) | бу́дуть говори́ти (they will speak) |\n\n\n## In the wild\n\n- «Він говори́в ти́хо, але́ я все чув.» → \"He spoke quietly, but I heard everything.\"\n  Form note: this is past tense, included here only for context — compare to present «говори́ть», same stem.\n\n- «Не говори́ ніко́му.» → \"Don't tell anyone.\"\n  Form note: imperative, built from the same stem; shown because it's a common companion phrase to the present/future paradigm.\n\n- «Я говорю́ укра́їнською вдо́ма.» → \"I speak Ukrainian at home.\"\n  Form note: 1st person singular present, everyday statement of habit.\n\n- «За́втра ми бу́демо говори́ти про це.» → \"Tomorrow we will talk about this.\"\n  Form note: compound future, 1st person plural — note the auxiliary бу́демо carries the person marking, not говори́ти.\n\n## Watch out\n\n- Don't drop the auxiliary and say \"говоримо\" for future meaning without \"будемо\" — Ukrainian needs the full compound form for imperfective verbs.\n- Don't shift the stress to the stem (e.g., *го́вориш*) — it's always on the ending: **говори́ш**.\n- Russian speakers sometimes soften the 3rd-person ending as in Russian «говорит»; in Ukrainian it is «говори́ть» with a soft -ть.\n- Memory hook: think of the stress \"running to the finish line\" — every present/future form of говори́ти ends in a stressed syllable, like a sentence rushing to its final word.\n\n## Check yourself\n\n1. How do you say \"They will talk\" in Ukrainian?\n2. Where does the stress fall in «говори́мо»?\n3. Why can't you just conjugate «говори́ти» alone to express the future?\n\n---\n1. Вони́ бу́дуть говори́ти.\n2. On the ending: говори́мо.\n3. Because it's imperfective — the future must be formed analytically with «бу́ду» + infinitive."
       },
       "finish_reason": "stop"
     }
   ],
   "usage": {
-    "prompt_tokens": 1900,
-    "completion_tokens": 1100,
-    "cost": 0.02,
+    "prompt_tokens": 1566,
+    "completion_tokens": 1736,
+    "total_tokens": 3302,
+    "cost": 0.020492,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.020492,
+      "upstream_inference_prompt_cost": 0.003132,
+      "upstream_inference_completions_cost": 0.01736
+    },
     "completion_tokens_details": {
-      "reasoning_tokens": 0
+      "reasoning_tokens": 279,
+      "image_tokens": 0,
+      "audio_tokens": 0
     }
-  }
+  },
+  "_patched": "Live capture; hand-edited: removed bogus '-ля́ть' ending claim, spurious Caveat, nonsense reflexive bullet."
 }

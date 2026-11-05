@@ -59,15 +59,15 @@ export function VersionsSheet({
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={close}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={close} accessibilityLabel="Close" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={close} accessibilityLabel="Закрити" />
 
       <View
         className="rounded-t-2xl border-t border-border bg-surface px-5 pb-10 pt-4"
         style={{ maxHeight: '70%' }}
       >
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="font-ui-medium text-lg">Versions · {versions.length}</Text>
-          <Pressable onPress={close} hitSlop={8} accessibilityLabel="Close versions sheet">
+          <Text className="font-ui-medium text-lg">Версії · {versions.length}</Text>
+          <Pressable onPress={close} hitSlop={8} accessibilityLabel="Закрити перелік версій">
             <Ionicons name="close" size={22} color={theme.textMuted} />
           </Pressable>
         </View>
@@ -84,7 +84,7 @@ export function VersionsSheet({
                     }
                     disabled={v.isCurrent}
                     accessibilityRole="button"
-                    accessibilityLabel={`Version ${versions.length - i}${v.isCurrent ? ', current' : ''}`}
+                    accessibilityLabel={`Версія ${versions.length - i}${v.isCurrent ? ', поточна' : ''}`}
                     accessibilityState={{ selected: v.isCurrent }}
                     className={`flex-row items-center gap-3 px-4 py-3 ${
                       v.isCurrent ? 'bg-accent-soft' : 'active:bg-surface-2'
@@ -98,8 +98,8 @@ export function VersionsSheet({
                     <View className="flex-1">
                       <Text className="text-sm">{formatReceiptLine(v)}</Text>
                       <Text variant="caption" className="mt-0.5 text-xs">
-                        {v.isCurrent ? 'Current' : `Version ${versions.length - i}`}
-                        {v.profile ? '' : ' · unreadable payload'}
+                        {v.isCurrent ? 'Поточна' : `Версія ${versions.length - i}`}
+                        {v.profile ? '' : ' · вміст не читається'}
                       </Text>
                     </View>
                   </Pressable>
@@ -109,7 +109,7 @@ export function VersionsSheet({
                         onPress={() => promote(v.id)}
                         disabled={busy || !v.profile}
                         accessibilityRole="button"
-                        accessibilityLabel="Make current"
+                        accessibilityLabel="Зробити поточною"
                         accessibilityState={{ disabled: busy || !v.profile }}
                         className={`rounded-xl px-4 py-2 ${
                           busy || !v.profile ? 'bg-surface-2' : 'bg-accent active:opacity-80'
@@ -120,7 +120,7 @@ export function VersionsSheet({
                             busy || !v.profile ? 'text-text-muted' : 'text-text'
                           }`}
                         >
-                          Make current
+                          Зробити поточною
                         </Text>
                       </Pressable>
                     </View>

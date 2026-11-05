@@ -45,7 +45,8 @@ const LANGUAGE_SLOTS: Record<
       "Preserve ґ, ї, є, і and the apostrophe exactly as in standard spelling (п'ять, м'ясо, з'їсти) — never replace them with Russian ы э ъ ё.",
     homograph: 'за́мок / замо́к',
     extraRules: `
-9. Use standard literary Ukrainian (Український правопис 2019). Never offer Russian or surzhyk forms; if a form exists only in Russian, put null. Prefer the Ukrainian spelling of loanwords. Seven cases exist, including the vocative (кличний); the locative is "місцевий" and is used only after prepositions (у, в, на, по, при, о).`,
+9. Use standard literary Ukrainian (Український правопис 2019). Never offer Russian or surzhyk forms; if a form exists only in Russian, put null. Prefer the Ukrainian spelling of loanwords. Seven cases exist, including the vocative (кличний); the locative is "місцевий" and is used only after prepositions (у, в, на, по, при, о).
+10. Ukrainian stress is NOT Russian stress — never transfer it. Each word carries exactly ONE U+0301. Mark stress only on forms whose stress you are sure of; every stress statement in a note or fact MUST agree with the marks in the cells (no self-contradicting notes). Never put a "correct spelling is …" or other self-correction in a note: if a collocation or form is doubtful, omit it. Each overview fact value is at most 120 characters.`,
     facts:
       'aspect; aspect partner; conjugation class (I -еш/-єш, II -иш/-їш, irregular); motion verb (unidirectional / multidirectional); stress pattern (fixed on stem / fixed on ending / mobile — say where it moves); transitivity; gender; animacy; declension group (I–IV) and stem (hard / soft / mixed); vocative formation; alternations (к/г/х→ц/з/с, о/е→і, fleeting vowels); register; frequency remark',
   },

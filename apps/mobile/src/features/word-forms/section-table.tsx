@@ -54,11 +54,11 @@ export function SectionCard({
         onPress={onToggle}
         accessibilityRole="button"
         accessibilityState={{ expanded }}
-        accessibilityLabel={`${title.en} section`}
+        accessibilityLabel={`Розділ: ${title.ru}`}
         className="flex-row items-center gap-3 px-4 py-3 active:bg-surface-2"
       >
         <View className="flex-1">
-          <Text className="font-ui-medium">{title.en}</Text>
+          <Text className="font-ui-medium">{title.ru}</Text>
           <Text variant="caption" className="text-xs">
             {title.ru}
           </Text>
@@ -91,7 +91,7 @@ export function SectionCard({
                 onPress={() => setSheetOpen(true)}
                 disabled={learnDisabled}
                 accessibilityRole="button"
-                accessibilityLabel={online ? `Learn ${title.en}` : `Learn ${title.en}, offline`}
+                accessibilityLabel={online ? `Вчити: ${title.ru}` : `Вчити: ${title.ru}, офлайн`}
                 accessibilityState={{ disabled: learnDisabled, busy }}
                 className={cn('flex-row items-center gap-1.5', learnDisabled && 'opacity-40')}
               >
@@ -101,12 +101,12 @@ export function SectionCard({
                   <Ionicons name="sparkles-outline" size={15} color={theme.accent} />
                 )}
                 <Text className="font-ui-medium text-sm text-accent">
-                  {busy ? `Asking ${PROVIDER_LABELS[learn.run.provider]}…` : 'Learn'}
+                  {busy ? `Запит до ${PROVIDER_LABELS[learn.run.provider]}…` : 'Вчити'}
                 </Text>
               </Pressable>
               {!online && !busy && (
                 <Text variant="caption" className="text-xs">
-                  Offline — connect to learn
+                  Офлайн — підключіться, щоб вчитися
                 </Text>
               )}
             </View>
@@ -115,7 +115,7 @@ export function SectionCard({
                 onPress={() => setListOpen(true)}
                 hitSlop={6}
                 accessibilityRole="button"
-                accessibilityLabel={`Lessons, ${lessonCount}`}
+                accessibilityLabel={`Уроки, ${lessonCount}`}
                 className="flex-row items-center gap-1 active:opacity-70"
               >
                 <Ionicons name="school-outline" size={14} color={theme.textMuted} />
@@ -132,16 +132,16 @@ export function SectionCard({
               <Pressable
                 onPress={() => runLearn(item, profileRow, section, learn.run)}
                 accessibilityRole="button"
-                accessibilityLabel="Retry lesson"
+                accessibilityLabel="Повторити урок"
                 className="rounded-lg bg-accent px-3 py-1.5 active:opacity-80"
               >
-                <Text className="font-ui-medium text-xs">Retry</Text>
+                <Text className="font-ui-medium text-xs">Повторити</Text>
               </Pressable>
               <Pressable
                 onPress={dismiss}
                 hitSlop={6}
                 accessibilityRole="button"
-                accessibilityLabel="Dismiss lesson error"
+                accessibilityLabel="Закрити помилку уроку"
               >
                 <Ionicons name="close" size={16} color={theme.textMuted} />
               </Pressable>
@@ -153,7 +153,7 @@ export function SectionCard({
       <GenerateSheet
         open={sheetOpen}
         purpose="lesson"
-        title={`Learn: ${title.en}`}
+        title={`Вчити: ${title.ru}`}
         onClose={() => setSheetOpen(false)}
         onGenerate={(run) => {
           setSheetOpen(false);
@@ -164,7 +164,7 @@ export function SectionCard({
         open={listOpen}
         item={item}
         sectionId={section.id}
-        title={title.en}
+        title={title.ru}
         onClose={() => setListOpen(false)}
       />
     </View>
@@ -270,7 +270,7 @@ function GridCell({
   const { tokens: theme } = useAppTheme();
   if (!cell) {
     return (
-      <Text variant="caption" accessibilityLabel="no form">
+      <Text variant="caption" accessibilityLabel="немає форми">
         —
       </Text>
     );
@@ -290,7 +290,7 @@ function GridCell({
             onPress={onNote}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Show note"
+            accessibilityLabel="Показати примітку"
             className="mt-1"
           >
             <Ionicons name="information-circle-outline" size={14} color={theme.textMuted} />

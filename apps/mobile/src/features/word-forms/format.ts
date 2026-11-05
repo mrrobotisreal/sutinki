@@ -21,18 +21,18 @@ import type { ProfileSection, WordProfile } from './profile-schema';
 // --- receipts -----------------------------------------------------------------
 
 const MONTHS_EN = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
+  'січ.',
+  'лют.',
+  'бер.',
+  'квіт.',
+  'трав.',
+  'черв.',
+  'лип.',
+  'серп.',
+  'вер.',
+  'жовт.',
+  'лист.',
+  'груд.',
 ] as const;
 
 const pad2 = (n: number) => (n < 10 ? `0${n}` : String(n));
@@ -45,7 +45,7 @@ export function formatReceiptDate(ms: number): string {
 
 /** «$0.18» · «< $0.01» · «cost n/a» (usage missing from the response). */
 export function formatCost(costUsd: number | null | undefined): string {
-  if (costUsd === null || costUsd === undefined) return 'cost n/a';
+  if (costUsd === null || costUsd === undefined) return 'вартість н/д';
   if (costUsd < 0.005) return '< $0.01';
   return `$${costUsd.toFixed(2)}`;
 }
@@ -53,7 +53,7 @@ export function formatCost(costUsd: number | null | undefined): string {
 /** «65 s» · «2.4 s» for sub-10-second runs. */
 export function formatDuration(ms: number): string {
   const s = ms / 1000;
-  return s < 10 ? `${s.toFixed(1)} s` : `${Math.round(s)} s`;
+  return s < 10 ? `${s.toFixed(1)} с` : `${Math.round(s)} с`;
 }
 
 /**
@@ -87,7 +87,7 @@ export function formatReceiptLine(row: ReceiptLike): string {
     PROVIDER_LABELS[row.provider],
     modelHintFor(row.provider, row.quality, row.model),
     QUALITY_LABELS[row.quality],
-    row.effortApplied ? EFFORT_LABELS[row.effort] : 'effort n/a',
+    row.effortApplied ? EFFORT_LABELS[row.effort] : 'зусилля н/д',
     formatCost(row.costUsd),
     formatDuration(row.durationMs),
   ].join(' · ');
@@ -109,7 +109,7 @@ export function formatLessonReceipt(row: ReceiptLike): string {
     formatReceiptDate(row.createdAt),
     PROVIDER_LABELS[row.provider],
     `${modelHintFor(row.provider, row.quality, row.model)} (${QUALITY_LABELS[row.quality]})`,
-    row.effortApplied ? `${EFFORT_LABELS[row.effort]} effort` : 'effort n/a',
+    row.effortApplied ? `зусилля: ${EFFORT_LABELS[row.effort].toLowerCase()}` : 'зусилля н/д',
     formatCost(row.costUsd),
     formatDuration(row.durationMs),
   ].join(' · ');
@@ -125,7 +125,7 @@ export function formatLessonRow(row: ReceiptLike, opts: { timeOnly?: boolean } =
     opts.timeOnly ? formatReceiptTime(row.createdAt) : formatReceiptDate(row.createdAt),
     PROVIDER_LABELS[row.provider],
     QUALITY_LABELS[row.quality],
-    row.effortApplied ? EFFORT_LABELS[row.effort] : 'effort n/a',
+    row.effortApplied ? EFFORT_LABELS[row.effort] : 'зусилля н/д',
     modelHintFor(row.provider, row.quality, row.model),
   ].join(' · ');
 }
@@ -135,7 +135,7 @@ export function receiptBadges(row: ReceiptLike): string[] {
   return [
     PROVIDER_LABELS[row.provider],
     QUALITY_LABELS[row.quality],
-    row.effortApplied ? EFFORT_LABELS[row.effort] : 'effort n/a',
+    row.effortApplied ? EFFORT_LABELS[row.effort] : 'зусилля н/д',
   ];
 }
 

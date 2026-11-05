@@ -121,53 +121,79 @@ const WORD_PROFILE_INPUTS: { name: string; input: WordProfileInput }[] = [
   {
     name: 'word-profile-verb',
     input: {
-      language: 'ru',
+      language: 'uk',
       kind: 'word',
-      headword: 'говорить',
-      surface: 'говорил',
+      headword: 'говорити',
+      surface: 'говорив',
       translation: 'to speak, to talk',
       grammar: 'past, masc.',
       pos: 'verb',
       level: 'A1',
-      contexts: ['Он говорил тихо, но я всё слышал.', 'Не говори никому.'],
+      contexts: ['Він говорив тихо, але я все чув.', 'Не говори нікому.'],
+    },
+  },
+  {
+    name: 'word-profile-verb-motion',
+    input: {
+      language: 'uk',
+      kind: 'word',
+      headword: 'ходити',
+      surface: 'ходив',
+      translation: 'to walk, to go (habitually / on foot)',
+      grammar: 'past, masc.',
+      pos: 'verb',
+      level: 'A1',
+      contexts: ['Хтось ходить нагорі, але будинок порожній.'],
     },
   },
   {
     name: 'word-profile-noun',
     input: {
-      language: 'ru',
+      language: 'uk',
       kind: 'word',
-      headword: 'окно',
-      surface: 'окна',
-      translation: 'window',
+      headword: 'стіл',
+      surface: 'столом',
+      translation: 'table, desk',
       pos: 'noun',
       level: 'A1',
-      contexts: ['Кто-то стучал в окно, но за окном никого не было.'],
+      contexts: ['Він сидів за столом і мовчки дивився на двері.'],
+    },
+  },
+  {
+    name: 'word-profile-noun-fem',
+    input: {
+      language: 'uk',
+      kind: 'word',
+      headword: 'мама',
+      surface: 'мамою',
+      translation: 'mum, mother',
+      pos: 'noun',
+      level: 'A1',
+      contexts: ['Ми з мамою купили продукти в магазині.'],
     },
   },
   {
     name: 'word-profile-adj',
     input: {
-      language: 'ru',
+      language: 'uk',
       kind: 'word',
-      headword: 'страшный',
-      surface: 'страшно',
-      translation: 'scary, terrible',
-      grammar: 'short form / adverb',
+      headword: 'добрий',
+      surface: 'добре',
+      translation: 'good, kind',
       pos: 'adj',
-      level: 'A2',
-      contexts: ['Мне было страшно идти по тёмному коридору.'],
+      level: 'A1',
+      contexts: ['Добрий вечір, у вас усе добре?'],
     },
   },
   {
     name: 'word-profile-phrase',
     input: {
-      language: 'ru',
+      language: 'uk',
       kind: 'phrase',
-      headword: 'волосы встали дыбом',
-      translation: "one's hair stood on end",
-      level: 'B1',
-      contexts: ['Когда я услышал шаги наверху, у меня волосы встали дыбом.'],
+      headword: 'добрий день',
+      translation: 'good day (hello)',
+      level: 'A1',
+      contexts: ['Добрий день, чим можу допомогти?'],
     },
   },
 ];
@@ -180,7 +206,7 @@ const WORD_PROFILE_EXTRAS = {
 const WORD_PROFILE_MAX_TOKENS = 16_384;
 
 /**
- * T54 grammar-lesson input (WORD_FORMS §6.2 + §6.3): «говорить» ×
+ * T54 grammar-lesson input (WORD_FORMS §6.2 + §6.3): «говорити» ×
  * `verb-nonpast`, grounded in the STORED section of the captured verb
  * profile (`word-profile-verb.json`) so the fixture teaches from exactly
  * what the app would pass. Same notch as the profiles (Sonnet 5, medium).
@@ -199,7 +225,7 @@ function grammarLessonInput(): GrammarLessonInput {
   const section = profile.sections.find((s) => s.id === 'verb-nonpast');
   if (!section) throw new Error('word-profile-verb.json has no verb-nonpast section');
   return {
-    language: 'ru',
+    language: 'uk',
     headword: profile.headword.plain,
     pos: profile.pos,
     gloss: profile.overview.gloss,
@@ -207,8 +233,8 @@ function grammarLessonInput(): GrammarLessonInput {
     sectionTitleEn: 'Present & future',
     facts: profile.overview.facts,
     encounters: [
-      { ru: 'Он говорил тихо, но я всё слышал.', storyTitle: 'Высокий Пёс' },
-      { ru: 'Не говори никому.', storyTitle: 'Ужасная правда' },
+      { ru: 'Він говорив тихо, але я все чув.', storyTitle: 'Високий Пес' },
+      { ru: 'Не говори нікому.', storyTitle: 'Жахлива правда' },
     ],
     learnerLevel: 'A1',
   };

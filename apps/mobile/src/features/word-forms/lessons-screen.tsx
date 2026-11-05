@@ -60,14 +60,18 @@ export function LessonsScreen() {
           <TextInput
             value={search}
             onChangeText={setSearch}
-            placeholder="Search lessons by word…"
+            placeholder="Шукати уроки за словом…"
             placeholderTextColor={theme.textMuted}
             autoCorrect={false}
             className="flex-1 py-2.5 font-ui text-base text-text"
-            accessibilityLabel="Search lessons"
+            accessibilityLabel="Пошук уроків"
           />
           {search.length > 0 && (
-            <Pressable onPress={() => setSearch('')} hitSlop={8} accessibilityLabel="Clear search">
+            <Pressable
+              onPress={() => setSearch('')}
+              hitSlop={8}
+              accessibilityLabel="Очистити пошук"
+            >
               <Ionicons name="close-circle" size={16} color={theme.textMuted} />
             </Pressable>
           )}
@@ -100,12 +104,12 @@ export function LessonsScreen() {
             <View className="mt-10 items-center gap-2 rounded-xl border border-border bg-surface px-6 py-10">
               <Ionicons name="school-outline" size={26} color={theme.textMuted} />
               <Text className="font-ui-medium text-lg">
-                {query ? 'No lessons match' : 'No lessons yet'}
+                {query ? 'Уроків не знайдено' : 'Уроків ще немає'}
               </Text>
               <Text variant="caption" className="text-center">
                 {query
-                  ? `Nothing for «${query}» — try a shorter stem.`
-                  : 'Open a word → Forms → Learn to create your first one.'}
+                  ? `Нічого за запитом «${query}» — спробуйте коротшу основу.`
+                  : 'Відкрийте слово → Форми → Вчити, щоб створити перший.'}
               </Text>
             </View>
           }
@@ -115,14 +119,14 @@ export function LessonsScreen() {
                 onPress={() => void lessons.fetchNextPage()}
                 disabled={lessons.isFetchingNextPage}
                 accessibilityRole="button"
-                accessibilityLabel="Load more lessons"
+                accessibilityLabel="Завантажити більше уроків"
                 accessibilityState={{ busy: lessons.isFetchingNextPage }}
                 className="mt-4 items-center rounded-xl border border-border bg-surface py-3 active:bg-surface-2"
               >
                 {lessons.isFetchingNextPage ? (
                   <ActivityIndicator size="small" color={theme.accent} />
                 ) : (
-                  <Text className="font-ui-medium text-sm text-accent">Load more</Text>
+                  <Text className="font-ui-medium text-sm text-accent">Ще</Text>
                 )}
               </Pressable>
             ) : null
@@ -140,14 +144,14 @@ function LessonRow({ row, onPress }: { row: GrammarLessonRow; onPress: () => voi
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${row.headword}, ${title.en}`}
+      accessibilityLabel={`${row.headword}, ${title.ru}`}
       className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
     >
       <View className="flex-1">
         <View className="flex-row items-baseline gap-2">
           <Text className="font-reading text-lg text-text">{row.headword}</Text>
           <Text variant="caption" className="flex-shrink" numberOfLines={1}>
-            {title.en}
+            {title.ru}
           </Text>
         </View>
         <View className="mt-1 flex-row flex-wrap items-center gap-1.5">

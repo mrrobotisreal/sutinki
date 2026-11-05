@@ -53,7 +53,7 @@ export function RunProfileControls({
               onPress={() => onChange({ ...profile, provider })}
               accessibilityRole="radio"
               accessibilityState={{ selected: on }}
-              accessibilityLabel={`Provider: ${PROVIDER_LABELS[provider]}`}
+              accessibilityLabel={`Провайдер: ${PROVIDER_LABELS[provider]}`}
               className={cn(
                 'px-4 py-2',
                 on ? 'bg-accent-soft' : 'bg-surface-2 active:bg-border',
@@ -69,20 +69,20 @@ export function RunProfileControls({
       </View>
 
       <NotchSlider
-        label="Quality"
+        label="Якість"
         value={qualityIndex}
         notches={QUALITY_ORDER.map((q) => QUALITY_LABELS[q])}
-        accessibilityLabel="Quality"
+        accessibilityLabel="Якість"
         onChange={(i) => onChange({ ...profile, quality: QUALITY_ORDER[i] as AiQuality })}
         hint={`${MODEL_HINTS[profile.provider][profile.quality]} · ${slug}`}
         tokens={tokens}
       />
 
       <NotchSlider
-        label="Effort"
+        label="Зусилля"
         value={effortIndex}
         notches={EFFORT_ORDER.map((e) => EFFORT_LABELS[e])}
-        accessibilityLabel="Effort"
+        accessibilityLabel="Зусилля"
         onChange={(i) => onChange({ ...profile, effort: EFFORT_ORDER[i] as AiEffort })}
         hint={EFFORT_HINT}
         tokens={tokens}

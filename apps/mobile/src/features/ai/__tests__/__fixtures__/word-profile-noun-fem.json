@@ -1,0 +1,47 @@
+{
+  "input": {
+    "language": "uk",
+    "kind": "word",
+    "headword": "мама",
+    "surface": "мамою",
+    "translation": "mum, mother",
+    "pos": "noun",
+    "level": "A1",
+    "contexts": [
+      "Ми з мамою купили продукти в магазині."
+    ]
+  },
+  "model": "anthropic/claude-sonnet-5",
+  "choices": [
+    {
+      "message": {
+        "content": "{\"v\": 1, \"language\": \"uk\", \"kind\": \"word\", \"pos\": \"noun\", \"headword\": {\"ru\": \"ма́ма\", \"plain\": \"мама\"}, \"overview\": {\"gloss\": \"mum, mother (affectionate/everyday term)\", \"facts\": [{\"label\": \"Gender\", \"value\": \"feminine\"}, {\"label\": \"Animacy\", \"value\": \"animate\"}, {\"label\": \"Declension\", \"value\": \"I declension, hard stem\"}, {\"label\": \"Stress pattern\", \"value\": \"fixed on the first syllable (ма́-) throughout\"}, {\"label\": \"Vocative\", \"value\": \"ма́мо\"}, {\"label\": \"Register\", \"value\": \"neutral/affectionate, everyday; more formal word is «мати»\"}, {\"label\": \"Frequency\", \"value\": \"extremely common, core A1 vocabulary\"}], \"notes\": [\"«мама» is the everyday, affectionate word for 'mum/mom'; the neutral/literary word for 'mother' is «мати» (used in formal or official contexts, e.g. documents).\", \"The example sentence «Ми з мамою купили продукти в магазині» uses the instrumental «мамою» in the construction «ми з + instr.» meaning 'my mother and I' (literally 'we with mother').\"]}, \"sections\": [{\"id\": \"noun-declension\", \"title\": {\"en\": \"Declension\", \"ru\": \"Відмінювання\"}, \"layout\": \"grid\", \"grid\": {\"rowLabels\": [\"Nom. — називний\", \"Gen. — родовий\", \"Dat. — давальний\", \"Acc. — знахідний\", \"Instr. — орудний\", \"Loc. — місцевий\", \"Voc. — кличний\"], \"colLabels\": [\"Singular\", \"Plural\"], \"cells\": [[{\"ru\": \"ма́ма\", \"plain\": \"мама\"}, {\"ru\": \"ма́ми\", \"plain\": \"мами\"}], [{\"ru\": \"ма́ми\", \"plain\": \"мами\"}, {\"ru\": \"мам\", \"plain\": \"мам\"}], [{\"ru\": \"ма́мі\", \"plain\": \"мамі\"}, {\"ru\": \"ма́мам\", \"plain\": \"мамам\"}], [{\"ru\": \"ма́му\", \"plain\": \"маму\", \"note\": \"animate accusative = genitive in singular\"}, {\"ru\": \"мам\", \"plain\": \"мам\", \"note\": \"animate accusative = genitive in plural\"}], [{\"ru\": \"ма́мою\", \"plain\": \"мамою\"}, {\"ru\": \"ма́мами\", \"plain\": \"мамами\"}], [{\"ru\": \"ма́мі\", \"plain\": \"мамі\", \"note\": \"used after у, в, на, по, при, о\"}, {\"ru\": \"ма́мах\", \"plain\": \"мамах\"}], [{\"ru\": \"ма́мо\", \"plain\": \"мамо\"}, {\"ru\": \"ма́ми\", \"plain\": \"мами\", \"note\": \"plural vocative equals nominative\"}]]}, \"note\": \"Stress stays fixed on the first syllable in every form; no consonant or vowel alternations occur in this word.\"}, {\"id\": \"noun-family\", \"title\": {\"en\": \"Word family\", \"ru\": \"Родина слова\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"мату́ся\", \"plain\": \"матуся\", \"gloss\": \"mommy, mama (affectionate)\", \"tags\": [\"dim\"], \"example\": {\"ru\": \"Матуся спекла пиріг.\", \"en\": \"Mommy baked a pie.\"}}, {\"ru\": \"мату́син\", \"plain\": \"матусин\", \"gloss\": \"mommy's (possessive)\", \"tags\": [\"adj\"], \"example\": {\"ru\": \"Це матусин шарф.\", \"en\": \"This is mommy's scarf.\"}}, {\"ru\": \"ма́мин\", \"plain\": \"мамин\", \"gloss\": \"mom's, mother's (possessive)\", \"tags\": [\"adj\"], \"example\": {\"ru\": \"Це мамина сукня.\", \"en\": \"This is mom's dress.\"}}, {\"ru\": \"ма́тір\", \"plain\": \"матір\", \"gloss\": \"mother (more formal/literary)\", \"tags\": [\"noun\"], \"example\": {\"ru\": \"Вона — мати трьох дітей.\", \"en\": \"She is the mother of three children.\"}}, {\"ru\": \"матери́нський\", \"plain\": \"материнський\", \"gloss\": \"maternal (adjective)\", \"tags\": [\"adj\"], \"example\": {\"ru\": \"Це материнська любов.\", \"en\": \"That is a mother's (maternal) love.\"}}, {\"ru\": \"по-матери́нськи\", \"plain\": \"по-материнськи\", \"gloss\": \"motherly, in a motherly way\", \"tags\": [\"adv\"], \"example\": {\"ru\": \"Вона по-материнськи обійняла дитину.\", \"en\": \"She hugged the child in a motherly way.\"}}]}, {\"id\": \"noun-collocations\", \"title\": {\"en\": \"Collocations & usage\", \"ru\": \"Сполучуваність\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"ма́мина до́нька\", \"plain\": \"мамина донька\", \"gloss\": \"mommy's girl (clingy to mother)\", \"example\": {\"ru\": \"Вона справжня мамина донька.\", \"en\": \"She's a real mommy's girl.\"}}, {\"ru\": \"ми з ма́мою\", \"plain\": \"ми з мамою\", \"gloss\": \"my mother and I (lit. 'we with mother')\", \"example\": {\"ru\": \"Ми з мамою купили продукти в магазині.\", \"en\": \"My mother and I bought groceries at the store.\"}}, {\"ru\": \"сказа́ти ма́мі\", \"plain\": \"сказати мамі\", \"gloss\": \"to tell (one's) mom — dat.\", \"example\": {\"ru\": \"Треба сказати мамі правду.\", \"en\": \"We need to tell mom the truth.\"}}]}]}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 4940,
+    "completion_tokens": 2365,
+    "total_tokens": 7305,
+    "cost": 0.03353,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.03353,
+      "upstream_inference_prompt_cost": 0.00988,
+      "upstream_inference_completions_cost": 0.02365
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 571,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "_patched": "Live capture (see UT13b log); individual forms hand-corrected after reading: обійняла (surzhyk обняла), stress on матери́нський"
+}

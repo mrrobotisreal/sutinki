@@ -32,7 +32,7 @@ const LESSON_SLOTS: Record<ProfileLanguage, { spelling: string; extra: string }>
   uk: {
     spelling: 'ґ, ї, є, і and the apostrophe preserved',
     extra:
-      ' Teach standard literary Ukrainian only (Український правопис 2019): no Russian or surzhyk forms; when a Russian speaker would likely transfer a wrong pattern (ы/и, -ться, Russian case endings, no vocative), say so in "Watch out". Use the case names nominative, genitive, dative, accusative, instrumental, locative, vocative.',
+      ' Teach standard literary Ukrainian only (Український правопис 2019): no Russian or surzhyk forms; when a Russian speaker would likely transfer a wrong pattern (ы/и, -ться, Russian case endings, no vocative), say so in "Watch out". Mark stress only where you are sure and keep it identical to the stored table (one mark per word; never two); never write "по-руськи" (say "по-російськи"); do not invent Russian-vs-Ukrainian pronunciation claims. Use the case names nominative, genitive, dative, accusative, instrumental, locative, vocative.',
   },
 };
 

@@ -1,3 +1,4 @@
+import { pluralUk } from '@/lib/uk-plural';
 import { z } from 'zod';
 
 import { repos } from '@/db';
@@ -30,16 +31,16 @@ export const PROVIDER_ORDER: readonly AiProvider[] = ['anthropic', 'openai'];
 export const QUALITY_ORDER: readonly AiQuality[] = ['fastest', 'fast', 'normal', 'best'];
 export const EFFORT_ORDER: readonly AiEffort[] = ['low', 'medium', 'high', 'ultra'];
 export const QUALITY_LABELS: Record<AiQuality, string> = {
-  fastest: 'Fastest',
-  fast: 'Fast',
-  normal: 'Normal',
-  best: 'Best',
+  fastest: 'Найшвидша',
+  fast: 'Швидка',
+  normal: 'Звичайна',
+  best: 'Найкраща',
 };
 export const EFFORT_LABELS: Record<AiEffort, string> = {
-  low: 'Low',
-  medium: 'Medium',
-  high: 'High',
-  ultra: 'Ultra',
+  low: 'Низькі',
+  medium: 'Середні',
+  high: 'Високі',
+  ultra: 'Максимальні',
 };
 export const PROVIDER_LABELS: Record<AiProvider, string> = {
   anthropic: 'Anthropic',
@@ -354,11 +355,11 @@ export async function estimateRun(
  * is the batch count. Never shows a number without receipts.
  */
 export function formatEstimate(est: RunEstimate | null, multiplier = 1): string {
-  if (!est || est.n <= 0) return 'No data for this setting yet — the first run measures it';
+  if (!est || est.n <= 0) return 'Для цього налаштування ще немає даних — перший запуск їх виміряє';
   const cost = est.costUsd * multiplier;
   const seconds = (est.ms * multiplier) / 1000;
   const costText = cost >= 0.005 ? `~$${cost.toFixed(2)}` : '< $0.01';
   const timeText =
-    seconds >= 90 ? `~${Math.round(seconds / 60)} min` : `~${Math.max(1, Math.round(seconds))} s`;
-  return `${costText} · ${timeText} · from ${est.n} run${est.n === 1 ? '' : 's'}`;
+    seconds >= 90 ? `~${Math.round(seconds / 60)} хв` : `~${Math.max(1, Math.round(seconds))} с`;
+  return `${costText} · ${timeText} · за ${est.n} ${pluralUk(est.n, ['запуск', 'запуски', 'запусків'])}`;
 }

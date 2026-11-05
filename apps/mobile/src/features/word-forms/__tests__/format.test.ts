@@ -43,11 +43,11 @@ const receipt = {
 describe('formatReceiptLine (§7.2 versions row)', () => {
   it('renders date · Provider · MODEL_HINT · Quality · Effort · $cost · seconds', () => {
     expect(formatReceiptLine(receipt)).toBe(
-      '24 Sep 2026 14:05 · Anthropic · Claude Opus 5.5 · Normal · High · $0.18 · 65 s',
+      '24 вер. 2026 14:05 · Anthropic · Claude Opus 5.5 · Звичайна · Високі · $0.18 · 65 с',
     );
   });
   it('shows «effort n/a» when the effort param was rejected (§8)', () => {
-    expect(formatReceiptLine({ ...receipt, effortApplied: false })).toContain('· effort n/a ·');
+    expect(formatReceiptLine({ ...receipt, effortApplied: false })).toContain('· зусилля н/д ·');
   });
   it('falls back to the slug when the model is not the default for the notch', () => {
     expect(modelHintFor('openai', 'fast', 'openai/gpt-6-sol')).toBe('GPT-6 Sol');
@@ -57,12 +57,12 @@ describe('formatReceiptLine (§7.2 versions row)', () => {
     );
   });
   it('formats cost and duration edge cases', () => {
-    expect(formatCost(null)).toBe('cost n/a');
+    expect(formatCost(null)).toBe('вартість н/д');
     expect(formatCost(0.004)).toBe('< $0.01');
     expect(formatCost(0.04)).toBe('$0.04');
-    expect(formatDuration(2_400)).toBe('2.4 s');
-    expect(formatDuration(62_700)).toBe('63 s');
-    expect(formatReceiptDate(new Date(2026, 0, 3, 9, 7).getTime())).toBe('3 Jan 2026 09:07');
+    expect(formatDuration(2_400)).toBe('2.4 с');
+    expect(formatDuration(62_700)).toBe('63 с');
+    expect(formatReceiptDate(new Date(2026, 0, 3, 9, 7).getTime())).toBe('3 січ. 2026 09:07');
   });
 });
 
@@ -150,28 +150,28 @@ describe('gridScrollsHorizontally', () => {
 describe('T54 lesson receipt helpers (§7.3)', () => {
   it('formatLessonReceipt: date · Provider · MODEL (Quality) · Effort effort · $cost · s', () => {
     expect(formatLessonReceipt({ ...receipt, costUsd: 0.0184, durationMs: 41_200 })).toBe(
-      '24 Sep 2026 14:05 · Anthropic · Claude Opus 5.5 (Normal) · High effort · $0.02 · 41 s',
+      '24 вер. 2026 14:05 · Anthropic · Claude Opus 5.5 (Звичайна) · зусилля: високі · $0.02 · 41 с',
     );
     expect(formatLessonReceipt({ ...receipt, effortApplied: false })).toContain(
-      '(Normal) · effort n/a ·',
+      '(Звичайна) · зусилля н/д ·',
     );
   });
   it('formatLessonRow: when · Provider · Quality · Effort · MODEL_HINT (time-only under a day header)', () => {
     expect(formatLessonRow(receipt)).toBe(
-      '24 Sep 2026 14:05 · Anthropic · Normal · High · Claude Opus 5.5',
+      '24 вер. 2026 14:05 · Anthropic · Звичайна · Високі · Claude Opus 5.5',
     );
     expect(formatLessonRow(receipt, { timeOnly: true })).toBe(
-      '14:05 · Anthropic · Normal · High · Claude Opus 5.5',
+      '14:05 · Anthropic · Звичайна · Високі · Claude Opus 5.5',
     );
-    expect(formatLessonRow({ ...receipt, effortApplied: false })).toContain('· effort n/a ·');
+    expect(formatLessonRow({ ...receipt, effortApplied: false })).toContain('· зусилля н/д ·');
     expect(formatReceiptTime(new Date(2026, 0, 3, 9, 7).getTime())).toBe('09:07');
   });
   it('receiptBadges = [Provider, Quality, Effort | effort n/a]', () => {
-    expect(receiptBadges(receipt)).toEqual(['Anthropic', 'Normal', 'High']);
+    expect(receiptBadges(receipt)).toEqual(['Anthropic', 'Звичайна', 'Високі']);
     expect(receiptBadges({ ...receipt, effortApplied: false })).toEqual([
       'Anthropic',
-      'Normal',
-      'effort n/a',
+      'Звичайна',
+      'зусилля н/д',
     ]);
   });
   it('sectionRank follows the catalog, unknown ids last; sectionTitleById falls back to the profile, then the id', () => {

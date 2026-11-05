@@ -3,7 +3,6 @@ import { Tabs, useRouter } from 'expo-router';
 import * as React from 'react';
 import { Pressable, type ColorValue } from 'react-native';
 
-import { ukPending } from '@/config/flags';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
@@ -138,16 +137,14 @@ export default function TabsLayout() {
           tabBarIcon: tabIcon('bookmarks-outline'),
           headerRight: () => (
             <>
-              {!ukPending('wordProfiles') && (
-                <Pressable
-                  onPress={() => router.push('/lessons')}
-                  hitSlop={8}
-                  accessibilityLabel="Lessons"
-                  className="mr-4"
-                >
-                  <Ionicons name="school-outline" size={24} color={tokens.textMuted} />
-                </Pressable>
-              )}
+              <Pressable
+                onPress={() => router.push('/lessons')}
+                hitSlop={8}
+                accessibilityLabel="Уроки"
+                className="mr-4"
+              >
+                <Ionicons name="school-outline" size={24} color={tokens.textMuted} />
+              </Pressable>
               <Pressable
                 onPress={() => router.push('/bookmarks')}
                 hitSlop={8}

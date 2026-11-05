@@ -51,11 +51,11 @@ export function LessonsTab({ item }: { item: BankItemRow }) {
     return (
       <View className="mt-6 items-center gap-2 rounded-xl border border-border bg-surface px-6 py-10">
         <Ionicons name="school-outline" size={24} color={theme.textMuted} />
-        <Text className="font-ui-medium">No lessons yet</Text>
+        <Text className="font-ui-medium">Уроків ще немає</Text>
         <Text variant="caption" className="text-center">
           {key
-            ? 'Open the Forms tab and tap Learn on any section.'
-            : 'Word forms are keyed by the lemma, so the word needs one before it can be taught.'}
+            ? 'Відкрийте вкладку «Форми» й натисніть «Вчити» біля будь-якого розділу.'
+            : 'Форми слова прив’язані до леми, тож слову потрібна лема, щоб вчити його.'}
         </Text>
       </View>
     );
@@ -71,7 +71,7 @@ export function LessonsTab({ item }: { item: BankItemRow }) {
             className="overflow-hidden rounded-xl border border-border bg-surface"
           >
             <View className="border-b border-border px-4 py-3">
-              <Text className="font-ui-medium">{title.en}</Text>
+              <Text className="font-ui-medium">{title.ru}</Text>
               <Text variant="caption" className="text-xs">
                 {title.ru} · {group.rows.length}
               </Text>
@@ -81,7 +81,7 @@ export function LessonsTab({ item }: { item: BankItemRow }) {
                 key={row.id}
                 onPress={() => open(row.id)}
                 accessibilityRole="button"
-                accessibilityLabel={`${title.en} lesson ${group.rows.length - i}`}
+                accessibilityLabel={`${title.ru}, урок ${group.rows.length - i}`}
                 className={`flex-row items-center gap-3 px-4 py-3 active:bg-surface-2 ${
                   i > 0 ? 'border-t border-border' : ''
                 }`}
