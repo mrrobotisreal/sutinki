@@ -96,13 +96,13 @@ export interface ParsedDialogueDraft {
   warnings: DraftIssue[];
 }
 
-export type DraftKind = 'story' | 'dialogue' | 'scenario';
+export type DraftKind = 'story' | 'dialogue' | 'scenario' | 'exam';
 
 /**
  * Decide which parser a draft belongs to by peeking at its frontmatter keys:
  * a `dialogue:` section marks a dialogue draft, a `scenario:` section a
- * scenario draft (T56), anything else is a story draft (whose parser reports
- * the real errors). Filename is deliberately not the signal — content is.
+ * scenario draft (T56), an `exam:` section an exam draft (T67), anything else
+ * is a story draft (whose parser reports the real errors). Filename is deliberately not the signal — content is.
  */
 export function sniffDraftKind(file: string, source: string): DraftKind {
   const { fmText } = splitFrontmatter(file, source);
@@ -110,6 +110,7 @@ export function sniffDraftKind(file: string, source: string): DraftKind {
     const raw: unknown = YAML.parse(fmText);
     if (raw !== null && typeof raw === 'object' && 'dialogue' in raw) return 'dialogue';
     if (raw !== null && typeof raw === 'object' && 'scenario' in raw) return 'scenario';
+    if (raw !== null && typeof raw === 'object' && 'exam' in raw) return 'exam';
   } catch {
     // not even YAML — the story parser will report it
   }

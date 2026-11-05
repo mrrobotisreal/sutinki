@@ -17,9 +17,12 @@ export const packs = sqliteTable('packs', {
   version: integer('version').notNull(),
   // 'dialogue' joined the pack types in T25 (type-level only — dialogue
   // content tables + importer support landed in T26); 'scenario' in T56
-  // (type-level only — scenario content tables + importer land in T58).
+  // (type-level only — scenario content tables + importer land in T58);
+  // 'exam' in T67 (type-level; the `exams` table + importer landed in T68).
   type: text('type')
-    .$type<'stories' | 'course-unit' | 'checkpoint' | 'prompts' | 'dialogue' | 'scenario'>()
+    .$type<
+      'stories' | 'course-unit' | 'checkpoint' | 'prompts' | 'dialogue' | 'scenario' | 'exam'
+    >()
     .notNull(),
   titleUk: text('title_uk').notNull(),
   titleEn: text('title_en').notNull(),
@@ -586,4 +589,35 @@ export const scenarioAssets = sqliteTable(
     bytes: integer('bytes'),
   },
   (t) => [primaryKey({ columns: [t.packId, t.file] })],
+);
+
+/**
+ * Exams (T68, TORFL_EXAM_PREP §4.1): one row per `Pack.exams[i]`, the WHOLE
+ * validated `Exam` object as JSON — the `exercise_specs` precedent: new item
+ * fields never need a migration. The exams repo Zod-parses `json` on read
+ * (`ExamSchema`). Passages / scripts / examiner lines / model answers are
+ * ordinary stories of the same pack (the existing story tables). User data
+ * (`exam_attempts` / `exam_responses` / `exam_item_cards`, ./user.ts)
+ * references `packId` / `examId` / `itemId` as plain strings and survives
+ * reimport/removal.
+ */
+export const exams = sqliteTable(
+  'exams',
+  {
+    packId: text('pack_id')
+      .notNull()
+      .references(() => packs.id, { onDelete: 'cascade' }),
+    /** Stable exam id, unique within its pack. */
+    examId: text('exam_id').notNull(),
+    orderIdx: integer('order_idx').notNull(),
+    /** 'torfl' today (a literal in the schema; future formats add literals). */
+    format: text('format').notNull(),
+    level: text('level').$type<'A1' | 'A2' | 'B1' | 'B2' | 'C1'>().notNull(),
+    mode: text('mode').$type<'mock' | 'drill'>().notNull(),
+    titleUk: text('title_uk').notNull(),
+    titleEn: text('title_en').notNull(),
+    /** `JSON.stringify(ExamSchema.parse(exam))` — Zod-parsed on read. */
+    json: text('json').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.packId, t.examId] }), index('exams_mode_idx').on(t.mode)],
 );

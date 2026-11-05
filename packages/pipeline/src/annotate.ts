@@ -5,6 +5,7 @@ import { assemblePack } from './assemble.ts';
 import { parseDialogueDraft, sniffDraftKind, type ParsedDialogueDraft } from './dialogue-draft.ts';
 import { parseDraft, type ParsedDraft } from './draft.ts';
 import type { DraftIssue } from './errors.ts';
+import { parseExamDraft, type ParsedExamDraft } from './exam-draft.ts';
 import { loadExtras, type PackExtras } from './extras.ts';
 import { parseScenarioDraft, type ParsedScenarioDraft } from './scenario-draft.ts';
 import { scenarioLines } from '@sutinki/schema';
@@ -13,7 +14,9 @@ import { scenarioLines } from '@sutinki/schema';
  * `pipeline annotate`: draft file(s) → validated pack.json.
  * One draft file = one story (or, since T25, one dialogue — recognized by the
  * `dialogue:` frontmatter section, not the filename — or, since T56, one
- * scenario, recognized by `scenario:`); a multi-story pack is
+ * scenario, recognized by `scenario:` — or, since T67, one exam, recognized
+ * by `exam:`, assembled together with the story drafts it references); a
+ * multi-story pack is
  * several drafts with identical `pack` frontmatter, given in reading order.
  * `course-unit` / `checkpoint` / `prompts` packs add (or consist entirely of)
  * an extras file (`--extras`, T17) carrying lesson / prompts / exercises.
@@ -32,6 +35,7 @@ export function annotateDrafts(
   const storyDrafts: ParsedDraft[] = [];
   const dialogueDrafts: ParsedDialogueDraft[] = [];
   const scenarioDrafts: ParsedScenarioDraft[] = [];
+  const examDrafts: ParsedExamDraft[] = [];
   for (const f of files) {
     const kind = sniffDraftKind(f.path, f.source);
     if (kind === 'dialogue') {
@@ -40,13 +44,15 @@ export function annotateDrafts(
       warnings?.push(...draft.warnings);
     } else if (kind === 'scenario') {
       scenarioDrafts.push(parseScenarioDraft(f.path, f.source));
+    } else if (kind === 'exam') {
+      examDrafts.push(parseExamDraft(f.path, f.source));
     } else {
       const draft = parseDraft(f.path, f.source);
       storyDrafts.push(draft);
       warnings?.push(...draft.warnings);
     }
   }
-  return assemblePack(storyDrafts, extras, dialogueDrafts, scenarioDrafts);
+  return assemblePack(storyDrafts, extras, dialogueDrafts, scenarioDrafts, examDrafts);
 }
 
 export interface AnnotateSummary {
@@ -55,6 +61,7 @@ export interface AnnotateSummary {
   stories: number;
   dialogues: number;
   scenarios: number;
+  exams: number;
   sentences: number;
   tokens: number;
   /** Non-fatal draft findings, printed by the CLI after the success line. */
@@ -93,6 +100,7 @@ export function runAnnotate(
     stories: pack.stories.length,
     dialogues: pack.dialogues?.length ?? 0,
     scenarios: pack.scenarios?.length ?? 0,
+    exams: pack.exams?.length ?? 0,
     sentences: sentences.length,
     tokens: sentences.reduce((n, s) => n + s.tokens.length, 0),
     warnings,
