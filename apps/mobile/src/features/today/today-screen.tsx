@@ -6,7 +6,6 @@ import { Pressable, Text as RNText, ScrollView, View } from 'react-native';
 
 import { QueryError } from '@/components/query-error';
 import { Text } from '@/components/ui/text';
-import { ukPending } from '@/config/flags';
 import {
   useDialogues,
   useDueCardCount,
@@ -207,7 +206,7 @@ export function TodayScreen() {
       )}
 
       {/* blind speaking scenario (T62) — always the next thing to say out loud */}
-      {!ukPending('scenarios') && scenarioTarget && (
+      {scenarioTarget && (
         <Pressable
           onPress={() => {
             track('scenario_opened', {

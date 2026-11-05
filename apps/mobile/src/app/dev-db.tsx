@@ -45,6 +45,11 @@ const FIXTURE_PACKS = [
   // T58 (M17): the T56 «Проверка связи» scenario — audio-less here (the
   // readout shows localUri null); T57's rendered copy lands via sync.
   { id: 'a1-scenario-fixture', note: 'scenario · radio-a1 · 6 turns · 15 glossary' },
+  // UT14: the Ukrainian Piper fixture (audio under audio/ — push the dir over adb to packs/<id>/).
+  {
+    id: 'a1-scenario-fixture-uk',
+    note: 'scenario · radio-uk-a1 · 6 turns · 4 glossary · Piper audio',
+  },
 ] as const;
 type FixtureId = (typeof FIXTURE_PACKS)[number]['id'];
 
@@ -54,6 +59,8 @@ const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
   'a1-comedy-090': () => require('@sutinki/schema/fixtures/packs/a1-comedy-090/pack.json'),
   'a1-scenario-fixture': () =>
     require('@sutinki/schema/fixtures/packs/a1-scenario-fixture/pack.json'),
+  'a1-scenario-fixture-uk': () =>
+    require('@sutinki/schema/fixtures/packs/a1-scenario-fixture-uk/pack.json'),
 };
 
 /**

@@ -625,3 +625,61 @@ describe('scenario draft — normalization and glossary errors', () => {
     ).toBe(true);
   });
 });
+
+describe('Ukrainian fixture scenario (UT14)', () => {
+  const ukDraft = readFileSync(fixture('uk-scenario-fixture.scenario.md'), 'utf8');
+  const ukPackPath = join(
+    pkgDir,
+    '..',
+    'schema',
+    'fixtures',
+    'packs',
+    'a1-scenario-fixture-uk',
+    'pack.json',
+  );
+
+  it('annotates to a schema-valid Ukrainian scenario (language uk, 6 turns, 4 glossary)', () => {
+    const pack = annotate(ukDraft, 'uk.scenario.md');
+    expect(safeParsePack(pack).success).toBe(true);
+    const sc = pack.scenarios![0]!;
+    expect(sc.language).toBe('uk');
+    expect(sc.turns).toHaveLength(6);
+    expect(sc.glossary).toHaveLength(4);
+  });
+
+  it('glossary translit comes from the Ukrainian table: no ы э ё ъ anywhere', () => {
+    const pack = annotate(ukDraft, 'uk.scenario.md');
+    for (const g of pack.scenarios![0]!.glossary) {
+      expect(g.translit.length, g.id).toBeGreaterThan(0);
+      for (const t of g.translit) expect(/[ыэёъ]/u.test(t), `${g.id}: ${t}`).toBe(false);
+    }
+    const coffee = pack.scenarios![0]!.glossary.find((g) => g.en === 'coffee')!;
+    expect(coffee.translit).toContain('кофі');
+  });
+
+  it('the draft language picks the table: `language: ru` still selects the Russian table', () => {
+    const asRu = ukDraft.replace('language: uk', 'language: ru');
+    const pack = annotate(asRu, 'ru.scenario.md');
+    const connection = pack.scenarios![0]!.glossary.find((g) => g.en === 'connection')!;
+    expect(connection.translit.length).toBeGreaterThan(0);
+    const check = pack.scenarios![0]!.glossary.find((g) => g.en === 'check')!;
+    expect(check.translit).toContain('чек'); // authored extra first
+    expect(pack.scenarios![0]!.language).toBe('ru');
+  });
+
+  it('the shipped fixture pack is valid, Piper-voiced (all 31 lines with audio + mouth) and branch-mapped', () => {
+    const shipped = JSON.parse(readFileSync(ukPackPath, 'utf8'));
+    const parsed = safeParsePack(shipped);
+    expect(parsed.success).toBe(true);
+    const sc = shipped.scenarios[0] as Scenario;
+    const refs = scenarioLines(sc);
+    expect(refs).toHaveLength(31);
+    for (const ref of refs) {
+      expect(ref.line.audio?.file, ref.line.sentence.id).toMatch(/^audio\/radio-uk-a1\/.+\.opus$/);
+      expect(ref.line.audio?.mouth?.length).toBeGreaterThan(0);
+    }
+    const map = renderScenarioBranchMap(sc);
+    expect(map).toContain('love: yes → radio-uk-a1-t04y');
+    expect(renderCoverageReport(glossaryCoverage(sc))).toContain('Glossary coverage');
+  });
+});

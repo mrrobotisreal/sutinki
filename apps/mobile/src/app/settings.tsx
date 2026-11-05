@@ -7,7 +7,6 @@ import { Pressable, ScrollView, Switch, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
 import { AiSettingsSection } from '@/features/ai/ai-settings-section';
-import { ukPending } from '@/config/flags';
 import { GrammarPresetSection } from '@/features/ai/grammar-preset-section';
 import { AmbientSettingsSection } from '@/features/ambient-audio/ambient-settings-section';
 import { BackupSettingsSection } from '@/features/backup/backup-settings-section';
@@ -166,7 +165,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {!ukPending('scenarios') && <ScenarioSettingsSection />}
+      <ScenarioSettingsSection />
 
       <AmbientSettingsSection />
 
@@ -180,8 +179,8 @@ export default function SettingsScreen() {
 
       <VoicesSettingsSection />
       <AsrSettingsSection />
-      {!ukPending('scenarios') && <AssistSettingsSection />}
-      {!ukPending('scenarios') && <RecordingsSettingsSection />}
+      <AssistSettingsSection />
+      <RecordingsSettingsSection />
 
       <SyncSettingsSection />
 
