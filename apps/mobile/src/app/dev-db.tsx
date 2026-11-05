@@ -59,6 +59,9 @@ const FIXTURE_PACKS = [
   // T69 (M18): a 6-sentence `torfl:lexicon` story («bank a topic» on the S25) — never published;
   // «Delete exam fixture» removes it too (the words it banked are restored with the pre-DB).
   { id: 'a1-torfl-lexicon-fixture', note: 'stories/torfl · lx-fx-semya · torfl:lexicon' },
+  // T74 (M18): four `torfl`-tagged journal prompts («Мои ответы» on the S25) — never published;
+  // «Delete exam fixture» removes it too (entries written against it are restored with the pre-DB).
+  { id: 'a1-torfl-prompts-fixture', note: 'prompts/torfl · 4 prompts · torfl:<topic>' },
 ] as const;
 type FixtureId = (typeof FIXTURE_PACKS)[number]['id'];
 
@@ -73,10 +76,13 @@ const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
   'a1-exam-fixture': () => require('@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json'),
   'a1-torfl-lexicon-fixture': () =>
     require('@sutinki/schema/fixtures/packs/a1-torfl-lexicon-fixture/pack.json'),
+  'a1-torfl-prompts-fixture': () =>
+    require('@sutinki/schema/fixtures/packs/a1-torfl-prompts-fixture/pack.json'),
 };
 
 const EXAM_FIXTURE_ID = 'a1-exam-fixture';
 const LEXICON_FIXTURE_ID = 'a1-torfl-lexicon-fixture';
+const PROMPTS_FIXTURE_ID = 'a1-torfl-prompts-fixture';
 
 /** T68 dev readout: installed exams + the last 5 attempts + response counts + deck counts. */
 interface ExamReadout {
@@ -374,10 +380,11 @@ export default function DevDbScreen() {
     try {
       const user = await repos.exams.deleteUserRowsForPack(EXAM_FIXTURE_ID);
       await removePack(db, EXAM_FIXTURE_ID);
-      // T69: the lexicon fixture goes with it (pack + content + sync_state).
+      // T69: the lexicon fixture goes with it (pack + content + sync_state); T74: the prompts fixture too.
       await removePack(db, LEXICON_FIXTURE_ID);
+      await removePack(db, PROMPTS_FIXTURE_ID);
       let hadDir = false;
-      for (const id of [EXAM_FIXTURE_ID, LEXICON_FIXTURE_ID]) {
+      for (const id of [EXAM_FIXTURE_ID, LEXICON_FIXTURE_ID, PROMPTS_FIXTURE_ID]) {
         const dir = packDir(id);
         if (dir.exists) {
           dir.delete();
@@ -385,7 +392,7 @@ export default function DevDbScreen() {
         }
       }
       setExamLog(
-        `deleted fixtures: ${user.attempts} attempts (+ responses) · ${user.cards} deck cards · 2 packs + content + sync_state${hadDir ? ' · staged dir' : ''}`,
+        `deleted fixtures: ${user.attempts} attempts (+ responses) · ${user.cards} deck cards · 3 packs + content + sync_state${hadDir ? ' · staged dir' : ''}`,
       );
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.packs }),
@@ -506,6 +513,19 @@ export default function DevDbScreen() {
           origin: 'remote',
         });
         let status = `${result.action} · v${result.version}${planted ? ' · from packs dir' : ''}`;
+        if (result.counts.exams > 0) {
+          // T70: a planted exam-fixture dir may carry listening audio (adb-pushed) — set each
+          // track's localUri exactly as the Wi-Fi backfill would.
+          let audio = 0;
+          for (const row of await repos.content.listAudioTracksForPack(id)) {
+            const f = new File(packDir(id), ...row.file.split('/'));
+            if (f.exists) {
+              await repos.content.setAudioLocalUri(id, row.file, f.uri);
+              audio += 1;
+            }
+          }
+          if (audio > 0) status += ` · backfilled ${audio} exam audio`;
+        }
         if (result.counts.scenarios > 0) {
           const filled = await backfillFromPackDir(id);
           status += ` · backfilled ${filled.audio} audio / ${filled.scene} scene`;

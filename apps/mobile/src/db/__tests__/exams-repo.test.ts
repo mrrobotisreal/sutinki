@@ -123,10 +123,41 @@ describe('attempt lifecycle', () => {
     expect((await repos.exams.getActiveAttempt())?.id).toBe(a.id);
   });
 
+  it('T70: drill attempts are exempt — never block, replace or shadow a mock', async () => {
+    const mock = await startMock();
+    const d1 = await startDrill(T0 + MIN);
+    const d2 = await startDrill(T0 + 2 * MIN); // two drills at once is fine too
+    expect((await repos.exams.getActiveAttempt())?.id).toBe(mock.id);
+    expect((await repos.exams.getAttempt(mock.id))!.status).toBe('active');
+    // a replacing mock start abandons the old MOCK only, never a drill
+    await startMock({ replace: true, now: T0 + 3 * MIN });
+    expect((await repos.exams.getAttempt(mock.id))!.status).toBe('abandoned');
+    expect((await repos.exams.getAttempt(d1.id))!.status).toBe('active');
+    // orphan sweep: drills only, mocks untouched
+    expect(await repos.exams.abandonActiveDrills(T0 + 4 * MIN)).toBe(2);
+    expect((await repos.exams.getAttempt(d2.id))!.status).toBe('abandoned');
+    expect((await repos.exams.getActiveAttempt())?.status).toBe('active');
+    // and a drill can still record responses while it is active
+    const d3 = await startDrill(T0 + 5 * MIN);
+    await expect(
+      repos.exams.recordResponse({
+        attemptId: d3.id,
+        subtestId: 'lexgram',
+        itemId: 'dr01',
+        answer: { kind: 'choice', index: 0 },
+        points: 1,
+        maxPoints: 1,
+        gradingStatus: 'scored',
+      }),
+    ).resolves.toBeTruthy();
+  });
+
   it('single-active rule: a second start is refused; replace abandons the old one', async () => {
     const first = await startMock();
-    await expect(startDrill(T0 + MIN)).rejects.toBeInstanceOf(ExamAttemptActiveError);
-    await expect(startDrill(T0 + MIN)).rejects.toMatchObject({ activeAttemptId: first.id });
+    await expect(startMock({ now: T0 + MIN })).rejects.toBeInstanceOf(ExamAttemptActiveError);
+    await expect(startMock({ now: T0 + MIN })).rejects.toMatchObject({
+      activeAttemptId: first.id,
+    });
     expect(await repos.exams.listAttempts()).toHaveLength(1);
 
     const second = await startMock({ replace: true, now: T0 + 2 * MIN });
@@ -518,6 +549,73 @@ describe('topicStats + grading queue', () => {
       'sp03',
       'sp02',
     ]);
+  });
+});
+
+describe('T74 — recordings prune + lazy restore on the rows', () => {
+  async function speakingRows() {
+    const m = await startMock();
+    for (const [itemId, kind, path] of [
+      ['sp01', 'speaking-reply', 't1-sp01.ogg'],
+      ['sp02', 'speaking-situation', 't2-sp02.wav'],
+      ['sp03', 'speaking-monologue', null],
+    ] as const) {
+      await repos.exams.recordResponse({
+        attemptId: m.id,
+        subtestId: 'speaking',
+        itemId,
+        answer: { kind, transcript: 'я живу в колорадо', recordingPath: path, durationMs: 4000 },
+        points: 1,
+        maxPoints: 1,
+        gradingStatus: 'scored',
+        now: T0,
+      });
+    }
+    return m;
+  }
+
+  it('markRecordingsPruned nulls every recordingPath of the attempt; the rows stay', async () => {
+    const m = await speakingRows();
+    expect((await repos.exams.listAttemptsWithRecordings()).map((a) => a.id)).toEqual([m.id]);
+    expect(await repos.exams.markRecordingsPruned([m.id])).toBe(2);
+    expect(await repos.exams.listAttemptsWithRecordings()).toEqual([]);
+    const detail = await repos.exams.getAttempt(m.id);
+    expect(detail!.responses).toHaveLength(3);
+    for (const r of detail!.responses) {
+      expect(r.answer && 'recordingPath' in r.answer ? r.answer.recordingPath : null).toBeNull();
+    }
+  });
+
+  it('restoreRecordingPaths re-points speaking answers by item from the bundle file names, preferring .ogg', async () => {
+    const m = await speakingRows();
+    await repos.exams.markRecordingsPruned([m.id]);
+    const n = await repos.exams.restoreRecordingPaths(m.id, [
+      't1-sp01.wav',
+      't1-sp01.ogg',
+      't2-sp02.wav',
+      'notes.txt',
+      't3-sp99.ogg',
+    ]);
+    expect(n).toBe(2);
+    const byItem = new Map(
+      (await repos.exams.getAttempt(m.id))!.responses.map((r) => [
+        r.itemId,
+        r.answer && 'recordingPath' in r.answer ? r.answer.recordingPath : null,
+      ]),
+    );
+    expect(byItem.get('sp01')).toBe('t1-sp01.ogg');
+    expect(byItem.get('sp02')).toBe('t2-sp02.wav');
+    expect(byItem.get('sp03')).toBeNull();
+    expect((await repos.exams.listAttemptsWithRecordings()).map((a) => a.id)).toEqual([m.id]);
+  });
+
+  it('setPinned flips the attempt pin both ways', async () => {
+    const m = await startMock();
+    expect(m.pinned).toBe(false);
+    await repos.exams.setPinned(m.id, true);
+    expect((await repos.exams.getAttemptsByIds([m.id]))[0]!.pinned).toBe(true);
+    await repos.exams.setPinned(m.id, false);
+    expect((await repos.exams.getAttemptsByIds([m.id]))[0]!.pinned).toBe(false);
   });
 });
 

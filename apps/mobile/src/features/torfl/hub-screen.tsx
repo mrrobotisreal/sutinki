@@ -7,29 +7,38 @@ import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Text } from '@/components/ui/text';
-import { useExamAttempts, useExams } from '@/db/hooks';
+import { useActiveExamAttempt, useExamAttempts, useExams } from '@/db/hooks';
 import type { ExamAttempt } from '@/db/repositories/exams';
 import { useStudyAmbience } from '@/features/ambient-audio/activity';
 import { cn } from '@/lib/cn';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { useAnswers } from './answers/use-answers';
 import { ExamDateSheet } from './exam-date-sheet';
 import { ExamRow } from './exam-row';
-import { useExamDate, useExamListItems, useExamTexts } from './hooks';
+import { useExamDate, useExamListItems, useExamTexts, useTorflToday } from './hooks';
 import {
   MODE_LABELS,
   SPBU_RULE_LINE,
-  buildTopicTiles,
   countdownLabel,
   overallPct,
   placeholderReadiness,
   ruPlural,
   type ReadinessView,
 } from './hub-model';
+import { drillHref } from './drill/drill-model';
 import { ReadinessBars } from './readiness-bars';
+import { describeStep } from './today';
 import { TextRow } from './text-row';
 import { SUBTEST_LABELS, SUBTEST_ORDER, topicLabel } from './topics';
+import {
+  monologueTickets,
+  speakingPracticeEntries,
+  speakingPracticeHref,
+  ticketHref,
+} from './speaking/tickets-model';
+import { writingPracticeEntries, writingPracticeHref } from './writing/writing-practice-model';
 
 export type HubOpenedFrom = 'library' | 'today' | 'deeplink';
 
@@ -40,7 +49,8 @@ const TEXTS_PREVIEW = 5;
 /**
  * The «ТРКИ» hub (T69, TORFL_EXAM_PREP §5.3) — a calm study desk, top to
  * bottom: the header (title, countdown → date sheet, the SPbU rule),
- * «Готовность» (placeholders until T70), «Сегодня» (placeholder until T70),
+ * «Готовность» (T70: live bars + the predicted verdict), «Сегодня» (T70: the
+ * recommended next step), «Работа над ошибками» + «Молния» rows (T70),
  * «Пробные экзамены», «Тренировки» (a five-tab strip of topic tiles from
  * drill exams), «Тексты» (a five-row preview → the full browser),
  * «История» (attempts). Works with zero packs installed: every section
@@ -63,6 +73,8 @@ export function TorflHubScreen({
   const mocks = useExamListItems('mock');
   const texts = useExamTexts();
   const attempts = useExamAttempts({ limit: 20 });
+  const activeAttempt = useActiveExamAttempt();
+  const answers = useAnswers();
   const { date, today, setDate } = useExamDate();
   const [dateOpen, setDateOpen] = React.useState(false);
   const [tab, setTab] = React.useState<ExamSubtestKind>('lexgram');
@@ -80,7 +92,8 @@ export function TorflHubScreen({
     track('torfl_hub_opened', { from });
   }, [from]);
 
-  const tiles = React.useMemo(() => buildTopicTiles(exams.data ?? []), [exams.data]);
+  const torfl = useTorflToday();
+  const tiles = torfl.tiles;
   const titleOf = React.useMemo(() => {
     const map = new Map<string, string>();
     for (const e of exams.data ?? []) map.set(`${e.packId}/${e.examId}`, e.titleUk);
@@ -103,6 +116,11 @@ export function TorflHubScreen({
 
   const nothingInstalled = (exams.data ?? []).length === 0;
   const tabTiles = tiles[tab];
+  // T72: the Письмо tab lists letter tasks (drill sets first, then mocks) as untimed practice.
+  const writingEntries = tab === 'writing' ? writingPracticeEntries(exams.data ?? []) : [];
+  // T73: the Говорение tab lists task-1 / task-2 items for one-by-one practice; «Билеты» = task 3.
+  const speakingEntries = tab === 'speaking' ? speakingPracticeEntries(exams.data ?? []) : [];
+  const ticketCount = monologueTickets(exams.data ?? []).length;
   const preview = texts.groups.flatMap((g) => g.texts).slice(0, TEXTS_PREVIEW);
 
   return (
@@ -154,23 +172,92 @@ export function TorflHubScreen({
       {/* ---- readiness ---- */}
       <Section title="Готовность">
         <View className="rounded-xl border border-border bg-surface px-4 py-4">
-          <ReadinessBars rows={readiness ?? placeholderReadiness()} />
+          <ReadinessBars
+            rows={readiness ?? (torfl.isPending ? placeholderReadiness() : torfl.readiness)}
+          />
+          {!torfl.isPending && torfl.readiness.some((r) => r.pct !== null) && (
+            <Text
+              className={cn(
+                'mt-3 font-ui-medium text-sm',
+                torfl.predicted.verdict === 'fail' ? 'text-text-muted' : 'text-success',
+              )}
+              testID="torfl-predicted"
+            >
+              {torfl.predicted.text}
+            </Text>
+          )}
         </View>
       </Section>
 
       {/* ---- today ---- */}
       <Section title="Сегодня">
-        <View className="flex-row items-center gap-3 rounded-xl border border-dashed border-border px-4 py-3">
-          <Ionicons name="compass-outline" size={18} color={tokens.textMuted} />
-          <Text variant="muted" className="flex-1">
-            Здесь появится следующий шаг: самая слабая тема, карточки «Работы над ошибками» или
-            пробный экзамен.
-          </Text>
-        </View>
+        {torfl.step ? (
+          <Pressable
+            onPress={() => {
+              const action = torfl.action;
+              if (action?.kind === 'drill') {
+                router.push(
+                  action.source === 'deck'
+                    ? drillHref({ source: 'deck' })
+                    : drillHref({
+                        source: 'set',
+                        packId: action.packId,
+                        examId: action.examId,
+                        topic: action.topic,
+                      }),
+                );
+              }
+            }}
+            accessibilityRole="button"
+            testID="torfl-today-step"
+            className="flex-row items-center gap-3 rounded-xl border border-accent/40 bg-surface px-4 py-3 active:bg-surface-2"
+          >
+            <Ionicons name="compass-outline" size={20} color={tokens.accent} />
+            <View className="flex-1 gap-0.5">
+              <Text className="font-ui-medium">{describeStep(torfl.step).title}</Text>
+              <Text variant="caption">{describeStep(torfl.step).caption}</Text>
+            </View>
+            {torfl.action?.kind === 'drill' && (
+              <Ionicons name="play-circle" size={24} color={tokens.accent} />
+            )}
+          </Pressable>
+        ) : (
+          <View className="flex-row items-center gap-3 rounded-xl border border-dashed border-border px-4 py-3">
+            <Ionicons name="compass-outline" size={18} color={tokens.textMuted} />
+            <Text variant="muted" className="flex-1">
+              Решай тренировки — здесь появится следующий шаг: самая слабая тема, карточки «Работы
+              над ошибками» или пробный экзамен.
+            </Text>
+          </View>
+        )}
       </Section>
 
       {/* ---- mocks ---- */}
       <Section title="Пробные экзамены">
+        {activeAttempt.data?.status === 'active' && activeAttempt.data.mode === 'mock' && (
+          <Pressable
+            onPress={() =>
+              router.push({
+                pathname: '/exam/run/[attemptId]',
+                params: { attemptId: activeAttempt.data!.id },
+              })
+            }
+            accessibilityRole="button"
+            testID="torfl-resume-banner"
+            className="mb-2 flex-row items-center gap-3 rounded-xl border border-accent/40 bg-accent-soft px-4 py-3 active:opacity-80"
+          >
+            <Ionicons name="play-circle" size={22} color={tokens.accent} />
+            <View className="flex-1 gap-0.5">
+              <Text className="font-ui-medium">Продолжить пробный экзамен</Text>
+              <Text variant="caption">
+                {titleOf.get(`${activeAttempt.data.packId}/${activeAttempt.data.examId}`) ??
+                  activeAttempt.data.examId}{' '}
+                · таймер идёт по часам
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+          </Pressable>
+        )}
         {mocks.items.length === 0 ? (
           <EmptyLine text="Пробных экзаменов пока нет — они придут с синхронизацией." />
         ) : (
@@ -186,6 +273,60 @@ export function TorflHubScreen({
 
       {/* ---- drills ---- */}
       <Section title="Тренировки">
+        <View className="mb-3 gap-2">
+          <Pressable
+            onPress={() => router.push(drillHref({ source: 'deck' }))}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: torfl.deckDue === 0 }}
+            testID="torfl-deck-row"
+            className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+          >
+            <Ionicons name="albums-outline" size={20} color={tokens.accent} />
+            <View className="flex-1 gap-0.5">
+              <Text className="font-ui-medium">Работа над ошибками · {torfl.deckDue}</Text>
+              <Text variant="caption">
+                {torfl.deckDue > 0
+                  ? 'Карточки с твоими ошибками — пора повторить'
+                  : torfl.deckTotal > 0
+                    ? `Сегодня повторять нечего · в колоде ${torfl.deckTotal}`
+                    : 'Появится после первой тренировки'}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+          </Pressable>
+          {torfl.hasLightning && (
+            <Pressable
+              onPress={() => router.push(drillHref({ source: 'lightning' }))}
+              accessibilityRole="button"
+              testID="torfl-lightning-row"
+              className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+            >
+              <Ionicons name="flash-outline" size={20} color={tokens.accent} />
+              <View className="flex-1 gap-0.5">
+                <Text className="font-ui-medium">Молния</Text>
+                <Text variant="caption">20 заданий в темпе экзамена — 34 секунды на задание</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+            </Pressable>
+          )}
+          {ticketCount > 0 && (
+            <Pressable
+              onPress={() => router.push(ticketHref())}
+              accessibilityRole="button"
+              testID="torfl-tickets-row"
+              className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+            >
+              <Ionicons name="mic-outline" size={20} color={tokens.accent} />
+              <View className="flex-1 gap-0.5">
+                <Text className="font-ui-medium">Билеты · {ticketCount}</Text>
+                <Text variant="caption">
+                  Тянешь тему монолога — 8 минут подготовки, 2 минуты ответа, запись
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+            </Pressable>
+          )}
+        </View>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -195,7 +336,12 @@ export function TorflHubScreen({
         >
           {SUBTEST_ORDER.map((kind) => {
             const selected = kind === tab;
-            const n = tiles[kind].length;
+            const n =
+              kind === 'writing'
+                ? writingPracticeEntries(exams.data ?? []).length
+                : kind === 'speaking'
+                  ? speakingPracticeEntries(exams.data ?? []).length
+                  : tiles[kind].length;
             return (
               <Pressable
                 key={kind}
@@ -226,15 +372,86 @@ export function TorflHubScreen({
             );
           })}
         </ScrollView>
-        {tabTiles.length === 0 ? (
+        {tab === 'writing' ? (
+          writingEntries.length === 0 ? (
+            <EmptyLine text="Задания на письмо появятся вместе с экзаменами." />
+          ) : (
+            <View className="gap-2">
+              {writingEntries.map((e) => (
+                <Pressable
+                  key={`${e.packId}/${e.examId}/${e.item.id}`}
+                  onPress={() => router.push(writingPracticeHref(e))}
+                  accessibilityRole="button"
+                  testID={`torfl-writing-${e.item.id}`}
+                  className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+                >
+                  <Ionicons name="create-outline" size={20} color={tokens.accent} />
+                  <View className="flex-1 gap-0.5">
+                    <Text className="font-ui-medium" numberOfLines={2}>
+                      {e.item.task.ru}
+                    </Text>
+                    <Text variant="caption" numberOfLines={1}>
+                      {e.examTitleRu} · {e.item.bullets.length} пункт(ов) · без таймера
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+                </Pressable>
+              ))}
+            </View>
+          )
+        ) : tab === 'speaking' ? (
+          speakingEntries.length === 0 ? (
+            <EmptyLine text="Задания на говорение появятся вместе с экзаменами." />
+          ) : (
+            <View className="gap-2">
+              {speakingEntries.map((e) => (
+                <Pressable
+                  key={`${e.packId}/${e.examId}/${e.item.id}`}
+                  onPress={() => router.push(speakingPracticeHref(e))}
+                  accessibilityRole="button"
+                  testID={`torfl-speaking-${e.item.id}`}
+                  className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+                >
+                  <Ionicons name="mic-outline" size={20} color={tokens.accent} />
+                  <View className="flex-1 gap-0.5">
+                    <Text className="font-ui-medium" numberOfLines={2}>
+                      {e.item.kind === 'speaking-situation' && e.item.situation
+                        ? e.item.situation.ru
+                        : e.item.expect.accept[0]}
+                    </Text>
+                    <Text variant="caption" numberOfLines={1}>
+                      {e.examTitleRu} ·{' '}
+                      {e.item.kind === 'speaking-reply'
+                        ? 'задание 1 · ответ'
+                        : 'задание 2 · ситуация'}{' '}
+                      · без таймера
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+                </Pressable>
+              ))}
+            </View>
+          )
+        ) : tabTiles.length === 0 ? (
           <EmptyLine text={`Тренировок по разделу «${SUBTEST_LABELS[tab].ru}» пока нет.`} />
         ) : (
           <View className="flex-row flex-wrap gap-2">
             {tabTiles.map((tile) => (
               <Pressable
                 key={tile.topic}
-                onPress={() => openIntro(tile.packId, tile.examId)}
+                onPress={() =>
+                  router.push(
+                    drillHref({
+                      source: 'set',
+                      packId: tile.packId,
+                      examId: tile.examId,
+                      topic: tile.topic,
+                    }),
+                  )
+                }
+                onLongPress={() => openIntro(tile.packId, tile.examId)}
                 accessibilityRole="button"
+                accessibilityHint="Long press for the whole drill set"
                 accessibilityLabel={`${topicLabel(tile.topic).ru}: ${tile.itemCount} ${ruPlural(tile.itemCount, ITEMS)}`}
                 testID={`torfl-topic-${tile.topic}`}
                 className="w-[48.5%] gap-1 rounded-xl border border-border bg-surface px-3 py-3 active:bg-surface-2"
@@ -249,13 +466,44 @@ export function TorflHubScreen({
                   <Text variant="caption">
                     {tile.itemCount} {ruPlural(tile.itemCount, ITEMS)}
                   </Text>
-                  {/* T70 replaces this with the topic's accuracy */}
-                  <Text variant="caption">—</Text>
+                  <Text variant="caption" testID={`torfl-topic-acc-${tile.topic}`}>
+                    {torfl.accuracyByTopic.has(tile.topic)
+                      ? `${torfl.accuracyByTopic.get(tile.topic)}%`
+                      : '—'}
+                  </Text>
                 </View>
               </Pressable>
             ))}
           </View>
         )}
+      </Section>
+
+      {/* ---- my answers (T74) ---- */}
+      <Section
+        title="Мои ответы"
+        action={{ label: 'Все', onPress: () => router.push('/torfl/answers') }}
+      >
+        <Pressable
+          onPress={() => router.push('/torfl/answers')}
+          accessibilityRole="button"
+          testID="torfl-answers-row"
+          className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+        >
+          <Ionicons name="chatbubbles-outline" size={20} color={tokens.accent} />
+          <View className="flex-1 gap-0.5">
+            <Text className="font-ui-medium">
+              {answers.data && answers.data.entryCount > 0
+                ? `Мои ответы · ${answers.data.entryCount}`
+                : 'Мои ответы'}
+            </Text>
+            <Text variant="caption">
+              {answers.data && answers.data.promptCount > 0
+                ? `Твои ответы на ${answers.data.promptCount} ${ruPlural(answers.data.promptCount, ['тему', 'темы', 'тем'])} экзамена — напиши и отрепетируй вслух`
+                : 'Свои ответы на темы экзамена: написать, получить правку, отрепетировать вслух'}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
+        </Pressable>
       </Section>
 
       {/* ---- texts ---- */}
@@ -282,7 +530,28 @@ export function TorflHubScreen({
           <EmptyLine text="Попыток пока нет. Здесь будут пробные экзамены и тренировки." />
         ) : (
           (attempts.data ?? []).map((a) => (
-            <AttemptRow key={a.id} attempt={a} title={titleOf.get(`${a.packId}/${a.examId}`)} />
+            <AttemptRow
+              key={a.id}
+              attempt={a}
+              title={titleOf.get(`${a.packId}/${a.examId}`)}
+              onOpen={
+                a.mode !== 'mock'
+                  ? undefined
+                  : a.status === 'active'
+                    ? () =>
+                        router.push({
+                          pathname: '/exam/run/[attemptId]',
+                          params: { attemptId: a.id },
+                        })
+                    : a.status === 'finished'
+                      ? () =>
+                          router.push({
+                            pathname: '/exam/results/[attemptId]',
+                            params: { attemptId: a.id },
+                          })
+                      : undefined
+              }
+            />
           ))
         )}
       </Section>
@@ -342,23 +611,53 @@ const STATUS_LABELS: Record<ExamAttempt['status'], string> = {
   abandoned: 'прерван',
 };
 
-function AttemptRow({ attempt, title }: { attempt: ExamAttempt; title: string | undefined }) {
+function AttemptRow({
+  attempt,
+  title,
+  onOpen,
+}: {
+  attempt: ExamAttempt;
+  title: string | undefined;
+  onOpen?: () => void;
+}) {
   const pct = overallPct(attempt.results);
   const when = new Date(attempt.startedAt).toLocaleDateString('ru-RU', {
     day: 'numeric',
     month: 'short',
   });
+  const verdictText =
+    attempt.verdict === 'pass'
+      ? 'сдал бы'
+      : attempt.verdict === 'pass-borderline'
+        ? 'сдал бы (на грани)'
+        : attempt.verdict === 'fail'
+          ? 'не сдал'
+          : null;
+  const scope =
+    attempt.mode === 'mock'
+      ? attempt.scope === 'full'
+        ? ' · весь экзамен'
+        : ' · один субтест'
+      : '';
+  const Row = onOpen ? Pressable : View;
   return (
-    <View className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
+    <Row
+      {...(onOpen ? { onPress: onOpen, accessibilityRole: 'button' as const } : {})}
+      testID={`history-${attempt.id}`}
+      className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
+    >
       <View className="flex-1 gap-0.5">
         <Text className="font-ui-medium" numberOfLines={1}>
           {title ?? attempt.examId}
         </Text>
         <Text variant="caption">
-          {when} · {MODE_LABELS[attempt.mode]} · {STATUS_LABELS[attempt.status]}
+          {when} · {MODE_LABELS[attempt.mode]}
+          {scope} · {STATUS_LABELS[attempt.status]}
+          {verdictText ? ` · ${verdictText}` : ''}
         </Text>
       </View>
       <Text variant="caption">{pct === null ? '—' : `${pct.toLocaleString('ru-RU')} %`}</Text>
-    </View>
+      {onOpen ? <Ionicons name="chevron-forward" size={14} color="#888" /> : null}
+    </Row>
   );
 }

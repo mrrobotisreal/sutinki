@@ -64,12 +64,35 @@ export const ExamSubtestCursorSchema = z.looseObject({
 });
 export type ExamSubtestCursor = z.infer<typeof ExamSubtestCursorSchema>;
 
+export const SPEAKING_PHASES = [
+  'prompt',
+  'listening',
+  'recording',
+  'processing',
+  'choose',
+  'prep',
+  'answer',
+] as const;
+export type SpeakingPhase = (typeof SPEAKING_PHASES)[number];
+
+/**
+ * The speaking subtest's cursor inside the engine state (T71 declared it;
+ * T73 fills it): the task, its phase, the current item, the chosen
+ * monologue topic, and the two wall-clock deadlines — the part's time
+ * budget (300 / 300 / 600 s) and the task-3 prep / answer window.
+ */
 export const ExamSpeakingStateSchema = z.looseObject({
   /** 1 | 2 | 3 — the official task number. */
   task: int.min(1).max(3),
-  phase: z.enum(['prompt', 'listening', 'recording', 'prep', 'answer']),
+  phase: z.enum(SPEAKING_PHASES),
   phaseDeadlineAt: int.optional(),
+  partDeadlineAt: int.optional(),
+  itemId: z.string().min(1).nullable().optional(),
+  chosenId: z.string().min(1).optional(),
+  partIdx: nonNegInt.optional(),
+  partExpired: z.boolean().optional(),
 });
+export type ExamSpeakingState = z.infer<typeof ExamSpeakingStateSchema>;
 
 /**
  * Engine state for resume (`exam_attempts.stateJson`). The repo validates
@@ -137,15 +160,22 @@ export const ChoiceAnswerSchema = z.object({
 });
 export const TypedAnswerSchema = z.object({ kind: z.literal('typed'), text: z.string() });
 export const WritingAnswerSchema = z.object({ kind: z.literal('writing'), text: z.string() });
+/** T73: one ASR word with its stamps (ms from the recording start) — the sentence estimate's input. */
+export const SpeakingWordStampSchema = z.object({ w: z.string(), s: nonNegInt, e: nonNegInt });
+export type SpeakingWordStamp = z.infer<typeof SpeakingWordStampSchema>;
+
 export const SpeakingAnswerSchema = z.object({
   kind: z.enum(['speaking-reply', 'speaking-situation', 'speaking-monologue']),
   transcript: z.string(),
   /** The Whisper assist re-decode, when installed (§6.2: keep the higher judge score). */
   assistTranscript: z.string().optional(),
+  /** T73: the primary (Zipformer) transcript's word stamps — lets the pure grader + debrief run from the row. */
+  words: z.array(SpeakingWordStampSchema).optional(),
   /** Relative to the exam recordings root; null once pruned (§8.5). */
   recordingPath: z.string().nullable(),
   durationMs: nonNegInt,
 });
+export type SpeakingAnswer = z.infer<typeof SpeakingAnswerSchema>;
 
 export const ExamAnswerSchema = z.discriminatedUnion('kind', [
   ChoiceAnswerSchema,

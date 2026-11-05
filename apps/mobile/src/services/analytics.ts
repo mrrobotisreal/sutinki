@@ -167,6 +167,7 @@ export type AnalyticsEvent =
   | 'daily_session_started'
   | 'daily_session_empty'
   | 'daily_session_composed'
+  | 'daily_torfl_segment'
   | 'daily_item_graded'
   | 'daily_session_finished'
   | 'daily_session_abandoned'
@@ -327,8 +328,8 @@ export type AnalyticsEvent =
   // never `source`, which pron/listening items already use for other meanings).
   | 'bank_sort_changed'
   // M16 run profile (T51). Props: provider/quality/effort/model slugs + scope only — never the key.
-  // ai_grammar_preset_changed {provider, quality, effort, scope: 'default'|'run'} — the Settings
-  // preset (default) or a Generate-sheet run that differs from it (run);
+  // ai_grammar_preset_changed {provider, quality, effort, scope: 'default'|'run'|'exam-grading'} — the Settings
+  // preset (default), a Generate-sheet run that differs from it (run), or the T72 «Exam grading» preset;
   // ai_model_table_edited {provider, quality} — one slug in the Advanced table saved;
   // ai_effort_param_rejected {provider, model} — the §4.4 fallback fired (retried without effort).
   // ai_request_sent/succeeded/failed gain optional provider/quality/effort/model when a run profile is used.
@@ -466,6 +467,8 @@ export type AnalyticsEvent =
   // source, pct} · exam_grading_failed {kind, code} · exam_recording_saved {task, ms} ·
   // torfl_rehearsal_finished {topic, score} · torfl_ticket_drawn {topic}.
   // ai_request_* gain feature 'exam-writing' | 'exam-speaking' via the AiFeature union.
+  // T74 (§8.5): exam_attempt_pinned {pinned} · exam_debrief_download_failed {code}; the T63
+  // recordings_pruned / media_bundle_* events gain `root: 'exam'` for the exam root.
   | 'torfl_hub_opened'
   | 'torfl_exam_date_set'
   | 'torfl_topic_banked'
@@ -488,7 +491,9 @@ export type AnalyticsEvent =
   | 'exam_grading_failed'
   | 'exam_recording_saved'
   | 'torfl_rehearsal_finished'
-  | 'torfl_ticket_drawn';
+  | 'torfl_ticket_drawn'
+  | 'exam_attempt_pinned'
+  | 'exam_debrief_download_failed';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 

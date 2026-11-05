@@ -22,6 +22,8 @@ export interface ColorTokens {
   border: string;
   /** Warm «Сім’я»-track identity (T30) — icons/SVG the class system can't reach. */
   trackWarm: string;
+  /** Readiness «с запасом» band (T70). */
+  gold: string;
   /** Backdrop/shadow wash base (always used WITH an alpha) — scene layers (T31). */
   scrim: string;
 }
@@ -40,6 +42,7 @@ export const colors: Record<ThemeScheme, ColorTokens> = {
     danger: '#CF6E64',
     border: '#253047',
     trackWarm: '#D9A441',
+    gold: '#E9C032',
     scrim: '#000000',
   },
   light: {
@@ -55,6 +58,7 @@ export const colors: Record<ThemeScheme, ColorTokens> = {
     danger: '#96322B',
     border: '#E2DED8',
     trackWarm: '#8B6233',
+    gold: '#8A6A00',
     scrim: '#000000',
   },
 };

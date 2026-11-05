@@ -150,7 +150,53 @@ export default function RootLayout() {
                 />
                 <Stack.Screen name="torfl/index" options={{ title: 'ТРКИ' }} />
                 <Stack.Screen name="torfl/texts" options={{ title: 'Тексты' }} />
+                <Stack.Screen
+                  name="torfl/drill"
+                  options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
+                />
+                <Stack.Screen
+                  name="torfl/writing"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
                 <Stack.Screen name="exam/[packId]/[examId]" options={{ title: 'Экзамен' }} />
+                <Stack.Screen
+                  name="exam/run/[attemptId]"
+                  options={{
+                    headerShown: false,
+                    animation: 'fade',
+                    gestureEnabled: false,
+                    orientation: 'portrait',
+                  }}
+                />
+                <Stack.Screen
+                  name="exam/results/[attemptId]"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen
+                  name="exam/review/[attemptId]"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen
+                  name="exam/writing/[attemptId]"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen
+                  name="exam/speaking/[attemptId]"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen
+                  name="torfl/speak"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen
+                  name="torfl/tickets"
+                  options={{ headerShown: false, animation: 'fade' }}
+                />
+                <Stack.Screen name="torfl/answers" options={{ title: 'Мои ответы' }} />
+                <Stack.Screen
+                  name="torfl/rehearse"
+                  options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
+                />
                 <Stack.Screen name="dashboard/index" options={{ title: 'Progress' }} />
                 <Stack.Screen name="dashboard/assessment" options={{ title: 'AI assessment' }} />
                 <Stack.Screen name="path/[packId]/lesson" options={{ title: 'Lesson' }} />
