@@ -23,7 +23,7 @@
           "data": [{ "mimeType": "text/plain" }]
         }
       ],
-      "versionCode": 14
+      "versionCode": 15
     },
     "plugins": [
       "expo-router",
