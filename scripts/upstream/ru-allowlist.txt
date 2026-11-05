@@ -1,0 +1,1 @@
+# one bash glob per line, `# owner ticket — removal condition`

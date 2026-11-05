@@ -76,7 +76,7 @@ describe('BUILTIN_PROMPTS (UT04 fallback)', () => {
       expect(ids.has(p.id)).toBe(false);
       ids.add(p.id);
       // Ukrainian only: never a Russian-only letter, never Latin
-      expect(p.promptUk).not.toMatch(/[ёыэъЁЫЭЪa-zA-Z]/); // intentional: Russian input (guard regex)
+      expect(p.promptUk).not.toMatch(/[ёыэъЁЫЭЪa-zA-Z]/); // intentional: Russian input (guard regex) upstream-ok
       expect(p.promptUk.split(/\s+/).length).toBeLessThanOrEqual(6);
     }
   });

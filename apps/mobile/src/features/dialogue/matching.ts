@@ -10,7 +10,7 @@ import {
  * T12 scorer (normalize → token-Levenshtein → lenient 0–100), then decide
  * whether the best candidate wins the branch.
  *
- * THE TUNABLES (T27 recorded decision — see SUMRAK_TICKETS.md):
+ * THE TUNABLES (T27 recorded decision — see the Sumrak ticket log):
  *
  * - `CHOICE_SELECTION_THRESHOLD = 60`. The T12 rating mapping (≥80 Good /
  *   ≥50 Hard) grades *pronunciation quality*; selection answers a different
