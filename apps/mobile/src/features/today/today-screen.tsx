@@ -120,7 +120,7 @@ export function TodayScreen() {
             className="mt-4 flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
           >
             <Ionicons name="play" size={16} color={tokens.bg} />
-            <Text className="font-ui-medium text-bg">Start session</Text>
+            <Text className="font-ui-medium text-on-accent">Start session</Text>
           </Pressable>
         ) : (
           <Text variant="muted" className="mt-3">

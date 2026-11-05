@@ -12,7 +12,9 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:generate:custom": "drizzle-kit generate --custom",
-    "release:android": "./scripts/release-android.sh"
+    "release:android": "./scripts/release-android.sh",
+    "theme:grep": "./scripts/theme-grep.sh",
+    "theme:contrast": "node scripts/contrast.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/golos-text": "^0.4.2",

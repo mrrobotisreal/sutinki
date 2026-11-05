@@ -6,10 +6,10 @@ import { track } from '@/services/analytics';
 
 // Fixed palette on purpose (not theme tokens): the intro must look identical in
 // both themes and blend seamlessly with the native splash background declared
-// in app.json (#0B0B0E) and the crescent glow baked into the artwork.
-const BG = '#0B0B0E';
-const TITLE_RED = '#E8452F';
-const GLOW_RED = '#FF3B1F';
+// in app.json (#0A0E16) and the crescent glow baked into the artwork.
+const BG = '#0A0E16';
+const TITLE_GOLD = '#F2D35B';
+const GLOW_BLUE = '#3D7BFF';
 
 /**
  * In-app splash intro shown once per launch, immediately after the native
@@ -78,9 +78,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: 'RubikWetPaint_400Regular',
-    color: TITLE_RED,
+    color: TITLE_GOLD,
     letterSpacing: 2,
-    textShadowColor: GLOW_RED,
+    textShadowColor: GLOW_BLUE,
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 24,
   },

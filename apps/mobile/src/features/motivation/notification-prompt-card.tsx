@@ -70,7 +70,7 @@ export function NotificationPromptCard() {
         accessibilityRole="button"
         className="mt-3 items-center rounded-xl bg-accent py-3 active:opacity-80"
       >
-        <Text className="font-ui-medium text-bg">Enable reminders</Text>
+        <Text className="font-ui-medium text-on-accent">Enable reminders</Text>
       </Pressable>
     </View>
   );

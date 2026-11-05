@@ -125,7 +125,7 @@ export function LessonScreen({ packId }: { packId: string }) {
             accessibilityRole="button"
             className="mt-8 items-center rounded-xl bg-accent py-3.5 active:opacity-80"
           >
-            <Text className="font-ui-medium text-bg">Зрозуміло — done reading</Text>
+            <Text className="font-ui-medium text-on-accent">Зрозуміло — done reading</Text>
           </Pressable>
         </View>
       </ScrollView>

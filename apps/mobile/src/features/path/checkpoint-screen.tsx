@@ -186,7 +186,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
           accessibilityRole="button"
           className="mt-2 w-full items-center rounded-xl bg-accent py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Begin</Text>
+          <Text className="font-ui-medium text-on-accent">Begin</Text>
         </Pressable>
         <Pressable onPress={() => router.back()} accessibilityRole="button" hitSlop={8}>
           <Text variant="caption">Not yet</Text>
@@ -220,7 +220,7 @@ export function CheckpointScreen({ packId }: { packId: string }) {
           accessibilityRole="button"
           className="mt-2 w-full items-center rounded-xl bg-accent py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Done</Text>
+          <Text className="font-ui-medium text-on-accent">Done</Text>
         </Pressable>
       </View>
     );
@@ -292,7 +292,7 @@ function CheckpointPassed({
         accessibilityRole="button"
         className="mt-3 w-full items-center rounded-xl bg-accent py-3.5 active:opacity-80"
       >
-        <Text className="font-ui-medium text-bg">Continue</Text>
+        <Text className="font-ui-medium text-on-accent">Continue</Text>
       </Pressable>
     </View>
   );

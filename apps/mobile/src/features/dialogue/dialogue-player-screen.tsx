@@ -266,7 +266,7 @@ export function DialoguePlayerScreen() {
           accessibilityRole="button"
           className="mt-2 rounded-full bg-accent px-5 py-2.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Почати спочатку</Text>
+          <Text className="font-ui-medium text-on-accent">Почати спочатку</Text>
         </Pressable>
       </View>
     );

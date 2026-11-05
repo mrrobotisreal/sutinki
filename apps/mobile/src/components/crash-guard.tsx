@@ -59,7 +59,7 @@ export class CrashGuard extends React.Component<{ children: React.ReactNode }, C
           accessibilityLabel="Try again"
           className="mt-6 min-h-12 items-center justify-center rounded-xl bg-accent px-8 py-3 active:opacity-80"
         >
-          <Text className="font-ui-medium text-white">Try again</Text>
+          <Text className="font-ui-medium text-on-accent">Try again</Text>
         </Pressable>
         <Text variant="caption" className="mt-4 text-center">
           Details were saved to the error log (Settings → Diagnostics).

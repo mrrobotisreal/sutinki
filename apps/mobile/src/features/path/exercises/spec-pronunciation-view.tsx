@@ -113,7 +113,7 @@ export function SpecPronunciationView({ spec, onDone, onSkip }: Props) {
           accessibilityRole="button"
           className="mt-2 items-center rounded-xl bg-accent px-6 py-3 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Skip this item</Text>
+          <Text className="font-ui-medium text-on-accent">Skip this item</Text>
         </Pressable>
       </View>
     );
@@ -223,7 +223,7 @@ export function SpecPronunciationView({ spec, onDone, onSkip }: Props) {
               accessibilityRole="button"
               className="items-center rounded-xl bg-accent py-3.5 active:opacity-80"
             >
-              <Text className="font-ui-medium text-bg">Continue</Text>
+              <Text className="font-ui-medium text-on-accent">Continue</Text>
             </Pressable>
           </View>
         )}

@@ -17,6 +17,7 @@ import { hydrateReaderPrefsFromDb } from '@/store/reader-prefs';
 import { hydrateThemeFromDb } from '@/store/theme';
 
 import { logError } from '@/services/error-log';
+import { colors } from '@/theme/colors';
 
 import { runBootstrap } from './bootstrap';
 import { db, repos } from './index';
@@ -82,14 +83,14 @@ export function DbProvider({ children }: { children: React.ReactNode }) {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0B0B0E',
+          backgroundColor: colors.dark.bg,
           padding: 24,
         }}
       >
-        <Text style={{ color: '#E8E6E3', fontSize: 16, marginBottom: 8 }}>
+        <Text style={{ color: colors.dark.text, fontSize: 16, marginBottom: 8 }}>
           Database failed to initialize
         </Text>
-        <Text style={{ color: '#9A97A0', fontSize: 13, textAlign: 'center' }}>
+        <Text style={{ color: colors.dark.textMuted, fontSize: 13, textAlign: 'center' }}>
           {(migrationError ?? bootError)?.message}
         </Text>
       </View>

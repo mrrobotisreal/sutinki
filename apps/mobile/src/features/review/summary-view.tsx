@@ -81,7 +81,7 @@ export function SummaryView({ results, onDone, durationMs }: SummaryViewProps) {
         accessibilityLabel="Finish session"
         className="mt-12 w-full items-center rounded-xl bg-accent py-4 active:opacity-80"
       >
-        <Text className="font-ui-medium text-bg">Done</Text>
+        <Text className="font-ui-medium text-on-accent">Done</Text>
       </Pressable>
     </View>
   );

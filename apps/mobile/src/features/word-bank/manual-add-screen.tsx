@@ -168,7 +168,7 @@ export function ManualAddScreen() {
         accessibilityLabel="Save to word bank"
         className="mt-2 items-center rounded-xl bg-accent py-3 active:opacity-80"
       >
-        <Text className="font-ui-medium text-bg">Save to word bank</Text>
+        <Text className="font-ui-medium text-on-accent">Save to word bank</Text>
       </Pressable>
 
       <Text variant="caption" className="mt-3 text-center">

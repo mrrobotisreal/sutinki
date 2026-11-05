@@ -137,7 +137,7 @@ function SaveSheet({ target, onClose }: { target: BankSaveTarget; onClose: () =>
           className="mt-4 flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3 active:opacity-80"
         >
           <Ionicons name="bookmark-outline" size={18} color={theme.bg} />
-          <Text className="font-ui-medium text-bg">Save to word bank</Text>
+          <Text className="font-ui-medium text-on-accent">Save to word bank</Text>
         </Pressable>
       </View>
     </Modal>
