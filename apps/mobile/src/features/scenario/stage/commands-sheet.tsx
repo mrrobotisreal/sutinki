@@ -30,7 +30,7 @@ export function CommandsSheet({ visible, onClose }: { visible: boolean; onClose:
           style={{ paddingBottom: insets.bottom + 20 }}
         >
           <View className="flex-row items-center justify-between">
-            <Text className="font-ui-medium text-lg">Что можно сказать</Text>
+            <Text className="font-ui-medium text-lg">Що можна сказати</Text>
             <Pressable
               onPress={onClose}
               hitSlop={10}

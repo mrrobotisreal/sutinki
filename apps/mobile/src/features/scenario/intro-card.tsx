@@ -30,7 +30,7 @@ export function IntroCard({
 }: {
   detail: ScenarioDetail;
   spec: SceneSpec;
-  /** A resumable run was restored: the primary becomes «Продолжить», «Начать заново» appears. */
+  /** A resumable run was restored: the primary becomes «Продолжить», «Почати заново» appears. */
   resumed: boolean;
   onStart: () => void;
   onRestart: () => void;
@@ -103,7 +103,7 @@ export function IntroCard({
 
           <View className="gap-1.5">
             <Text variant="caption" className="uppercase tracking-wider">
-              Что можно сказать
+              Що можна сказати
             </Text>
             <View className="flex-row flex-wrap gap-1.5">
               {SPOKEN_COMMANDS.map((c) => (
@@ -128,7 +128,7 @@ export function IntroCard({
             className="flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
           >
             <Ionicons name={resumed ? 'play' : 'mic'} size={16} color={theme.bg} />
-            <Text className="font-ui-medium text-bg">{resumed ? 'Продолжить' : 'Начать'}</Text>
+            <Text className="font-ui-medium text-bg">{resumed ? 'Продовжити' : 'Почати'}</Text>
           </Pressable>
           {resumed && (
             <Pressable
@@ -137,7 +137,7 @@ export function IntroCard({
               className="items-center py-1 active:opacity-70"
             >
               <Text variant="caption" className="text-accent">
-                Начать заново
+                Почати заново
               </Text>
             </Pressable>
           )}

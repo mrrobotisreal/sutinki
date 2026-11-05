@@ -10,28 +10,28 @@ export function stateLineText(state: TurnState, host: string): string {
     case 'intro':
       return '';
     case 'saying':
-      return `${host} говорит…`;
+      return `${host} говорить…`;
     case 'listening':
-      return p.recording === 'idle' ? 'Твоя очередь — нажми и говори' : 'Слушаю…';
+      return p.recording === 'idle' ? 'Твоя черга — натисни й говори' : 'Слухаю…';
     case 'deciding':
       return 'Думаю…';
     case 'reacting':
       switch (p.reaction) {
         case 'confused':
         case 'react':
-          return `${host} переспрашивает…`;
+          return `${host} перепитує…`;
         case 'hint':
         case 'second':
         case 'dont-understand':
-          return `${host} подсказывает…`;
+          return `${host} підказує…`;
         case 'repeat':
         case 'slower':
-          return `${host} повторяет…`;
+          return `${host} повторює…`;
         case 'explain':
         case 'howtosay':
-          return `${host} объясняет…`;
+          return `${host} пояснює…`;
         default:
-          return `${host} говорит…`;
+          return `${host} говорить…`;
       }
     case 'ending':
       return '';

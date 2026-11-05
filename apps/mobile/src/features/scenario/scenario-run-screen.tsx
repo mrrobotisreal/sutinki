@@ -40,7 +40,7 @@ import { useScenarioRun } from './use-scenario-run';
  * The run screen (T62, SPEAKING_SCENARIOS §9.3; portrait-locked by the
  * route): top chip + visited-turn dots + close; the `SceneBox` at ~62 %;
  * the glass stage — state line · mic (level ring, halo, tap/hold) · «?» ·
- * lifeline · ⟳ (long-press = slower) · «Пропустить →» · subtitles. The
+ * lifeline · ⟳ (long-press = slower) · «Пропустити →» · subtitles. The
  * screen renders state and dispatches events — every rule is the T60
  * reducer's; the executor (`use-scenario-run.ts`) runs the effects.
  *
@@ -70,7 +70,7 @@ export function ScenarioRunScreen() {
 
   const spec = React.useMemo(() => (detail ? sceneSpecFor(detail) : null), [detail]);
   const host = React.useMemo(() => (detail ? hostOf(detail.cast) : null), [detail]);
-  const hostName = host?.name.uk ?? spec?.hostName ?? 'Ведущий';
+  const hostName = host?.name.uk ?? spec?.hostName ?? 'Ведучий';
   const turn = React.useMemo(
     () => detail?.turns.find((t) => t.id === state.turnId) ?? null,
     [detail, state.turnId],
@@ -240,7 +240,7 @@ export function ScenarioRunScreen() {
         style={{ paddingTop: insets.top }}
       >
         <Ionicons name="cloud-offline-outline" size={40} color={theme.textMuted} />
-        <Text className="font-ui-medium text-lg">Контент удалён</Text>
+        <Text className="font-ui-medium text-lg">Вміст видалено</Text>
         <Text variant="muted" className="text-center">
           This scenario&apos;s pack is no longer installed. Your runs are kept and reconnect when it
           is reinstalled.
@@ -388,7 +388,7 @@ export function ScenarioRunScreen() {
               accessibilityRole="button"
               className="flex-row items-center gap-2 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
             >
-              <Text className="font-ui-medium text-accent">Далее</Text>
+              <Text className="font-ui-medium text-accent">Далі</Text>
               <Ionicons name="arrow-forward" size={15} color={theme.accent} />
             </Pressable>
           )}
@@ -399,7 +399,7 @@ export function ScenarioRunScreen() {
               accessibilityLabel="Skip this turn"
               className="px-3 py-1.5 active:opacity-70"
             >
-              <Text variant="muted">Пропустить →</Text>
+              <Text variant="muted">Пропустити →</Text>
             </Pressable>
           )}
           {!prefs.subtitles && phase.kind === 'listening' && !state.skipAvailable && (
@@ -409,7 +409,7 @@ export function ScenarioRunScreen() {
               accessibilityLabel="Turn subtitles on"
               className="px-3 py-1.5 active:opacity-70"
             >
-              <Text variant="caption">субтитры</Text>
+              <Text variant="caption">субтитри</Text>
             </Pressable>
           )}
         </View>

@@ -33,7 +33,7 @@ export function LifelineChip({
         className="flex-row items-center gap-1.5 self-center rounded-full border border-accent/50 bg-accent-soft px-3 py-1.5 active:opacity-80"
       >
         <Ionicons name="bulb-outline" size={14} color={tokens.accent} />
-        <Text className="font-ui-medium text-sm text-accent">Подсказка</Text>
+        <Text className="font-ui-medium text-sm text-accent">Підказка</Text>
       </Pressable>
     );
   }

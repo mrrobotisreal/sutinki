@@ -11,8 +11,8 @@ import { useAppTheme } from '@/theme/use-app-theme';
 /**
  * The ending card (T62 §9.4): the tone treatment from `ending-view.tsx`
  * (icon + label), `title` + `recap` RU with EN reveal, the run's numbers,
- * «Смотреть разбор» (T63 — the runs stub until then) · «Ещё раз» ·
- * «Следующий уровень» when a higher rung is installed. Restrained — the XP
+ * «Переглянути розбір» (T63 — the runs stub until then) · «Ще раз» ·
+ * «Наступний рівень» when a higher rung is installed. Restrained — the XP
  * toast already celebrated; this is the record.
  */
 
@@ -23,9 +23,9 @@ const TONE_ICON: Record<Ending['tone'], React.ComponentProps<typeof Ionicons>['n
 };
 
 const TONE_LABEL: Record<Ending['tone'], string> = {
-  good: 'Хорошая концовка',
-  bad: 'Плохая концовка',
-  strange: 'Странная концовка',
+  good: 'Добра кінцівка',
+  bad: 'Погана кінцівка',
+  strange: 'Дивна кінцівка',
 };
 
 export function EndingCard({
@@ -65,7 +65,7 @@ export function EndingCard({
         <Ionicons name={TONE_ICON[ending.tone]} size={44} color={theme.accent} />
         <Text variant="caption" className="uppercase tracking-wider">
           {TONE_LABEL[ending.tone]}
-          {newEnding ? ' · новая' : ''}
+          {newEnding ? ' · нова' : ''}
         </Text>
         <RNText className="text-center font-reading text-3xl text-text">{ending.title.uk}</RNText>
         <Text variant="muted">{ending.title.en}</Text>
@@ -107,7 +107,7 @@ export function EndingCard({
         className="mt-6 flex-row items-center justify-center gap-2 rounded-xl border border-border bg-surface py-3.5 active:bg-surface-2"
       >
         <Ionicons name="list-outline" size={16} color={theme.accent} />
-        <Text className="font-ui-medium text-accent">Смотреть разбор</Text>
+        <Text className="font-ui-medium text-accent">Переглянути розбір</Text>
       </Pressable>
       <View className="mt-3 flex-row gap-3">
         <Pressable
@@ -116,7 +116,7 @@ export function EndingCard({
           className="flex-1 flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
         >
           <Ionicons name="refresh" size={16} color={theme.bg} />
-          <Text className="font-ui-medium text-bg">Ещё раз</Text>
+          <Text className="font-ui-medium text-bg">Ще раз</Text>
         </Pressable>
         {nextLevel && (
           <Pressable
@@ -124,7 +124,7 @@ export function EndingCard({
             accessibilityRole="button"
             className="flex-1 flex-row items-center justify-center gap-2 rounded-xl border border-accent/50 bg-accent-soft py-3.5 active:opacity-80"
           >
-            <Text className="font-ui-medium text-accent">Следующий уровень</Text>
+            <Text className="font-ui-medium text-accent">Наступний рівень</Text>
             <Ionicons name="arrow-forward" size={15} color={theme.accent} />
           </Pressable>
         )}

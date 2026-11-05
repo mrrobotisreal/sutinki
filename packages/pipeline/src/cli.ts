@@ -71,8 +71,8 @@ Usage:
                             pack.json from the Opus on disk (T57 tuning);
                             drafts are optional, zero provider calls
       --model <id>          ElevenLabs model (default ${DEFAULT_MODEL_ID};
-                            eleven_v3 opt-in — a draft's per-direction
-                            "model:" always wins over this flag)
+                            eleven_multilingual_v2 / eleven_v3 opt-in — a
+                            draft's per-direction "model:" always wins)
       --extras <file>       pack extras file (course-unit packs) — merged into
                             the written pack.json, same as annotate
       --yes                 confirm the pre-render summary without prompting
@@ -88,9 +88,9 @@ Usage:
       manifest.json, and commit. Pushes only with --push.
 
   pipeline models mirror --content <sutinki-content-dir> [--push] [-m msg]
-      Mirror the app's pinned speech-model archives (4 Piper TTS voices + the
-      ASR model, ~330 MB) from the k2-fsa release assets into the content
-      repo's models/{tts,asr}/, verifying each download against the pinned
+      Mirror the app's pinned speech-model archives (2 Piper uk_UA voices into
+      models/tts/; the Whisper assist model as a GitHub Release asset under
+      the 'models' tag) from the k2-fsa release assets, verifying each download against the pinned
       sha256 BEFORE writing into the repo, then emit models-manifest.json and
       commit. Idempotent: verified-present files are skipped, and model files
       are never deleted or overwritten. Pushes only with --push.

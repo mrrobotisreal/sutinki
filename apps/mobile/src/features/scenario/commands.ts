@@ -14,22 +14,22 @@ export interface SpokenCommand {
 
 export const SPOKEN_COMMANDS: readonly SpokenCommand[] = [
   { intent: 'repeat', ru: 'Повтори', en: 'Repeat', hint: 'The host says the line again.' },
-  { intent: 'slower', ru: 'Помедленнее', en: 'Slower', hint: 'The same line at 0.8×.' },
+  { intent: 'slower', ru: 'Повільніше', en: 'Slower', hint: 'The same line at 0.8×.' },
   {
     intent: 'explain',
-    ru: 'Что значит …?',
+    ru: 'Що означає …?',
     en: 'What does … mean?',
     hint: 'Say the Russian word you heard; the host explains it in character.',
   },
   {
     intent: 'howtosay',
-    ru: 'Как сказать …?',
+    ru: 'Як сказати …?',
     en: 'How do you say …?',
     hint: 'Say the English word; the host tells you the Russian.',
   },
   {
     intent: 'dont-understand',
-    ru: 'Я не понимаю',
+    ru: 'Я не розумію',
     en: "I don't understand",
     hint: 'The host gives a hint. Twice unlocks the text lifeline.',
   },

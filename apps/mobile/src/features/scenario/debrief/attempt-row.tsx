@@ -19,7 +19,7 @@ import type { ClipPlayer } from './use-clip-player';
 
 /**
  * One attempt inside a turn card (T63 §10.2): ▶ (WAV or OGG), the level
- * strip from the duration, `Услышал: …` with the T12 per-word ✓/✗ chips
+ * strip from the duration, `Почуто: …` with the T12 per-word ✓/✗ chips
  * against the target, and the badges. Media states: local file ⇒ playable;
  * pruned + bundle uploaded ⇒ «Recording archived — Download N KB» (one
  * button per run, rendered by the screen — the row just says archived);
@@ -66,7 +66,7 @@ export function AttemptRow({
       <View className="mt-2 flex-row items-center gap-2 pl-1">
         <Ionicons name="help-circle-outline" size={14} color={tokens.textMuted} />
         <Text variant="caption" className="flex-1" numberOfLines={2}>
-          Спросил: {metaLabel(attempt.outcome)}
+          Запитав: {metaLabel(attempt.outcome)}
           {q ? ` «${q}»` : ''}
           {src !== 'none' ? ` → ${src}` : ''}
         </Text>
@@ -145,7 +145,7 @@ export function AttemptRow({
 
       <View className="mt-2.5 flex-row flex-wrap items-center gap-1.5">
         <Text variant="caption" className="mr-1">
-          Услышал:
+          Почуто:
         </Text>
         {detail && detail.words.length > 0 ? (
           detail.words.map((w, i) => (
@@ -169,7 +169,7 @@ export function AttemptRow({
       </View>
       {detail && detail.words.some((w) => !w.matched && w.heard && w.heard !== w.target) && (
         <Text variant="caption" className="mt-1">
-          Ожидалось: {detail.words.map((w) => w.display).join(' ')}
+          Очікувалося: {detail.words.map((w) => w.display).join(' ')}
         </Text>
       )}
 

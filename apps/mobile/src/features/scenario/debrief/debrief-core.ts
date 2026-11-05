@@ -167,19 +167,19 @@ export interface TranscriptInput {
 /** The «Share transcript» text — plain, no audio, no ids; what was said and what was expected. */
 export function transcriptText(input: TranscriptInput): string {
   const lines: string[] = [];
-  lines.push(`Сумрак · Сценарий — ${input.familyTitle} (${input.level})`);
+  lines.push(`Сутінки · Сценарій — ${input.familyTitle} (${input.level})`);
   if (input.finishedAt) lines.push(new Date(input.finishedAt).toLocaleString());
-  if (input.endingTitle) lines.push(`Концовка: ${input.endingTitle}`);
+  if (input.endingTitle) lines.push(`Кінцівка: ${input.endingTitle}`);
   if (input.stats) {
     const s = input.stats;
     lines.push(
-      `Ходов ${s.turns} · чистых ${s.cleanTurns} · промахов ${s.misses} · подсказок ${s.lifelines} · пропусков ${s.skips}` +
-        (s.avgScore !== null ? ` · средний балл ${Math.round(s.avgScore)}` : ''),
+      `Ходів ${s.turns} · чистих ${s.cleanTurns} · промахів ${s.misses} · підказок ${s.lifelines} · пропусків ${s.skips}` +
+        (s.avgScore !== null ? ` · середній бал ${Math.round(s.avgScore)}` : ''),
     );
   }
   lines.push('');
   input.turns.forEach((turn, i) => {
-    lines.push(`${i + 1}. Ведущий: ${turn.hostLine ?? '…'}`);
+    lines.push(`${i + 1}. Ведучий: ${turn.hostLine ?? '…'}`);
     for (const a of turn.attempts) {
       if (a.kind === 'meta') {
         const q = a.detail?.kind === 'meta' ? a.detail.query : a.transcript;
@@ -203,17 +203,17 @@ export function transcriptText(input: TranscriptInput): string {
 export function metaLabel(outcome: string): string {
   switch (outcome) {
     case 'explain':
-      return 'что значит';
+      return 'що означає';
     case 'howtosay':
-      return 'как сказать';
+      return 'як сказати';
     case 'repeat':
       return 'повтори';
     case 'slower':
-      return 'помедленнее';
+      return 'повільніше';
     case 'dont-understand':
-      return 'не понимаю';
+      return 'не розумію';
     default:
-      return 'вопрос';
+      return 'питання';
   }
 }
 

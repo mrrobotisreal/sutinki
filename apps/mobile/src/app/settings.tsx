@@ -166,7 +166,7 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <ScenarioSettingsSection />
+      {!ukPending('scenarios') && <ScenarioSettingsSection />}
 
       <AmbientSettingsSection />
 
@@ -180,8 +180,8 @@ export default function SettingsScreen() {
 
       <VoicesSettingsSection />
       <AsrSettingsSection />
-      <AssistSettingsSection />
-      <RecordingsSettingsSection />
+      {!ukPending('scenarios') && <AssistSettingsSection />}
+      {!ukPending('scenarios') && <RecordingsSettingsSection />}
 
       <SyncSettingsSection />
 

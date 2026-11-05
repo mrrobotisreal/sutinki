@@ -68,19 +68,19 @@ export const ASSIST_CANDIDATES: readonly AssistModel[] = [
     'tiny',
     'c46116994e539aa165266d96b325252728429c12535eb9d8b6a2b10f129e66b1',
     116_204_861,
-    'Whisper tiny · hears the English word in «как сказать…»',
+    'Whisper tiny · hears the English word in «як сказати…»',
   ),
   whisperCandidate(
     'base',
     '911b2083efd7c0dca2ac3b358b75222660dc09fb716d64fbfc417ba6c99ff3de',
     207_557_382,
-    'Whisper base · hears the English word in «как сказать…»',
+    'Whisper base · hears the English word in «як сказати…»',
   ),
   whisperCandidate(
     'small',
     '486a46afbb7ba798507190ffe02fea2dd726049af212e774537efac6afb210a6',
     639_387_718,
-    'Whisper small · hears the English word in «как сказать…»',
+    'Whisper small · hears the English word in «як сказати…»',
   ),
 ] as const;
 

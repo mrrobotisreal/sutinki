@@ -96,6 +96,6 @@ describe('recordScenarioFinished', () => {
     ]) {
       expect(ACHIEVEMENTS_BY_ID.get(id)).toBeDefined();
     }
-    expect(ACHIEVEMENTS_BY_ID.get('first-scenario-finished')!.title).toBe('В эфире');
+    expect(ACHIEVEMENTS_BY_ID.get('first-scenario-finished')!.title).toBe('В ефірі');
   });
 });

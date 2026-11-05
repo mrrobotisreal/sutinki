@@ -66,11 +66,11 @@ export function TurnCard({
     <View className="rounded-2xl border border-border bg-surface p-4">
       <View className="flex-row items-center gap-2">
         <Text variant="caption" className="uppercase tracking-wider">
-          Ход {index + 1}
+          Хід {index + 1}
         </Text>
-        {turn.step.skipped && <Text variant="caption">· пропущен</Text>}
-        {turn.step.assisted && <Text variant="caption">· с подсказкой</Text>}
-        {turn.step.rescued && <Text variant="caption">· принято онлайн</Text>}
+        {turn.step.skipped && <Text variant="caption">· пропущено</Text>}
+        {turn.step.assisted && <Text variant="caption">· з підказкою</Text>}
+        {turn.step.rescued && <Text variant="caption">· прийнято онлайн</Text>}
         {turn.step.meta > 0 && <Text variant="caption">· {turn.step.meta} ❔</Text>}
         <View className="flex-1" />
         {promptUri && (
@@ -150,7 +150,7 @@ export function TurnCard({
         <View className="mt-3 rounded-xl border border-dashed border-border px-3 py-2.5">
           <View className="flex-row items-center gap-2">
             <Text variant="caption" className="flex-1 uppercase tracking-wider">
-              Можно было сказать
+              Можна було сказати
             </Text>
             {coachUri && (
               <Pressable

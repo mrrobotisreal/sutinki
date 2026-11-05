@@ -296,13 +296,13 @@ describe('transcriptText', () => {
         },
       ],
     });
-    expect(text).toContain('Сумрак · Сценарий — У врача (A1)');
-    expect(text).toContain('Концовка: Выздоравливайте');
+    expect(text).toContain('Сутінки · Сценарій — У врача (A1)');
+    expect(text).toContain('Кінцівка: Выздоравливайте');
     expect(text).toContain(
-      'Ходов 2 · чистых 1 · промахов 1 · подсказок 0 · пропусков 0 · средний балл 72',
+      'Ходів 2 · чистих 1 · промахів 1 · підказок 0 · пропусків 0 · середній бал 72',
     );
-    expect(text).toContain('1. Ведущий: Что у вас болит?');
-    expect(text).toContain('❔ что значит «болит»');
+    expect(text).toContain('1. Ведучий: Что у вас болит?');
+    expect(text).toContain('❔ що означає «болит»');
     expect(text).toContain('✗ Я: у меня голова (45)');
     expect(text).toContain('✓ Я: у меня болит живот (100)');
     expect(text).toContain('≈ У меня болит живот.');

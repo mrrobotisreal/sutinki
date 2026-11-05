@@ -31,7 +31,7 @@ export function AssistSettingsSection() {
     const bytes = useAssistStore.getState().installedBytes ?? 0;
     Alert.alert(
       'Delete assist model?',
-      `Frees ${formatBytes(bytes)}. Without it, «Как сказать…» in scenarios falls back to the glossary and the online model.`,
+      `Frees ${formatBytes(bytes)}. Without it, «Як сказати…» in scenarios falls back to the glossary and the online model.`,
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete', style: 'destructive', onPress: () => void deleteAssistModel() },
@@ -100,7 +100,7 @@ export function AssistSettingsSection() {
         )}
       </View>
       <Text variant="caption" className="mt-2 px-1">
-        Optional. In «Сценарии», lets «Как сказать …?» hear the English word on-device. Nothing is
+        Optional. In «Сценарії», lets «Як сказати …?» hear the English word on-device. Nothing is
         uploaded.
       </Text>
     </>

@@ -6,6 +6,7 @@ import { Pressable, Text as RNText, ScrollView, View } from 'react-native';
 
 import { QueryError } from '@/components/query-error';
 import { Text } from '@/components/ui/text';
+import { ukPending } from '@/config/flags';
 import {
   useDialogues,
   useDueCardCount,
@@ -206,7 +207,7 @@ export function TodayScreen() {
       )}
 
       {/* blind speaking scenario (T62) — always the next thing to say out loud */}
-      {scenarioTarget && (
+      {!ukPending('scenarios') && scenarioTarget && (
         <Pressable
           onPress={() => {
             track('scenario_opened', {
@@ -223,7 +224,7 @@ export function TodayScreen() {
           <View className="flex-row items-center justify-between gap-3">
             <View className="flex-1 gap-0.5">
               <Text variant="caption" className="uppercase tracking-wider">
-                Сценарий · {scenarioTarget.level}
+                Сценарій · {scenarioTarget.level}
               </Text>
               <RNText className="font-reading text-xl text-text" numberOfLines={1}>
                 {scenarioTarget.titleUk}

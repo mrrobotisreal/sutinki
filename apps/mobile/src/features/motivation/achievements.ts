@@ -92,7 +92,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   },
   {
     id: 'first-scenario-finished',
-    title: 'В эфире',
+    title: 'В ефірі',
     description: 'Finish your first blind speaking scenario',
     icon: 'radio-outline',
   },
@@ -104,7 +104,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   },
   {
     id: 'scenario-family-all-rungs',
-    title: 'Все уровни',
+    title: 'Усі рівні',
     description: 'Finish every installed level of one scenario',
     icon: 'layers-outline',
   },

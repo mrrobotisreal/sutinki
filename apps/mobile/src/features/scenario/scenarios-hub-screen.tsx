@@ -104,10 +104,10 @@ export function ScenariosHubScreen() {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-10">
         <Ionicons name="radio-outline" size={40} color={theme.textMuted} />
-        <Text className="font-reading-bold text-xl">Пока тихо</Text>
+        <Text className="font-reading-bold text-xl">Поки що тихо</Text>
         <Text variant="muted" className="text-center">
           No scenario packs installed yet. They arrive through content sync like any pack — pull to
-          refresh in Библиотека.
+          refresh in Бібліотека.
         </Text>
       </View>
     );
@@ -123,7 +123,7 @@ export function ScenariosHubScreen() {
         <View className="flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
           <Ionicons name="language-outline" size={20} color={theme.accent} />
           <View className="flex-1 gap-0.5">
-            <Text className="font-ui-medium">Want to ask «как сказать…» in English?</Text>
+            <Text className="font-ui-medium">Want to ask «як сказати…» in English?</Text>
             <Text variant="caption">
               Install the assist model — the host will hear the English word inside your question.
             </Text>
@@ -165,8 +165,8 @@ export function ScenariosHubScreen() {
       ))}
 
       <Text variant="caption" className="mt-3 px-1 text-center">
-        Someone talks to you — you answer out loud, in Russian, with no text. Ask «повтори»,
-        «помедленнее», «что значит…» or «как сказать…» any time. Subtitles and the mic gesture live
+        Someone talks to you — you answer out loud, in Ukrainian, with no text. Ask «повтори»,
+        «повільніше», «що означає…» or «як сказати…» any time. Subtitles and the mic gesture live
         in Settings → Scenarios.
       </Text>
     </ScrollView>
@@ -192,7 +192,7 @@ function GateCard({ gate }: { gate: NonNullable<HubGate> }) {
       <Text variant="caption">
         {gate === 'asr-missing'
           ? `Scenarios are judged offline by the Russian speech model (${mb} MB). Install it once; everything else stays on the device.`
-          : 'Нет доступа к микрофону — scenarios are spoken, so the mic is the whole game. Allow it in the system settings, then come back.'}
+          : 'Немає доступу до мікрофона — scenarios are spoken, so the mic is the whole game. Allow it in the system settings, then come back.'}
       </Text>
       <Pressable
         onPress={() => {
@@ -291,7 +291,7 @@ function FamilyCard({
                 }`}
               >
                 <Ionicons name="mic" size={15} color={theme.bg} />
-                <Text className="font-ui-medium text-bg">Начать · {nextRung.level}</Text>
+                <Text className="font-ui-medium text-bg">Почати · {nextRung.level}</Text>
               </Pressable>
             )}
             <Pressable

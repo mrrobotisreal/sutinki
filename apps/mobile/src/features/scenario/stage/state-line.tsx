@@ -9,7 +9,7 @@ import { stateLineText } from './state-line-text';
 
 /**
  * The stage's state line (T62 §9.3): «{Host} говорит…» · «Слушаю…» ·
- * «Думаю…» · «{Host} переспрашивает…» · «(принято)» for a second after an
+ * «Думаю…» · «{Host} переспрашивает…» · «(прийнято)» for a second after an
  * online rescue. Text from `state-line-text.ts`.
  */
 export function StateLine({
@@ -30,7 +30,7 @@ export function StateLine({
       </Text>
       {rescued && (
         <View className="rounded-full border border-success/50 bg-success/15 px-2 py-0.5">
-          <Text className="text-xs text-success">(принято)</Text>
+          <Text className="text-xs text-success">(прийнято)</Text>
         </View>
       )}
     </View>

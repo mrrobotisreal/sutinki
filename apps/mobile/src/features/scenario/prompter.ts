@@ -46,7 +46,7 @@ export function speakEn(text: string): Promise<void> {
 
 /** «„{ru}“ — это {en}»: Russian, then the English word in its own voice (§6 explain, bare-token hit). */
 export async function speakGloss(ru: string, en: string): Promise<void> {
-  await speakRu(`${ru} — это`);
+  await speakRu(`${ru} — це`);
   await waitForRu();
   await speakEn(en);
 }
@@ -55,7 +55,7 @@ export async function speakGloss(ru: string, en: string): Promise<void> {
 export async function speakHowToSay(en: string | null, ru: string): Promise<void> {
   if (en) {
     await speakEn(en);
-    await speakRu(`по-русски: ${ru}`);
+    await speakRu(`українською: ${ru}`);
   } else {
     await speakRu(ru);
   }
