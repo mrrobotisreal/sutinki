@@ -1,1 +1,15 @@
 # one bash glob per line, `# owner ticket — removal condition`
+apps/mobile/src/features/word-forms/profile-core.ts # UT13 — Ukrainian section catalog / CASES.uk / persons / rules; removed when UT13 merges
+apps/mobile/src/features/word-forms/profile-schema.ts # UT13 — profile JSON keeps the upstream `ru` field names until UT13 renames the contract; removed when UT13 merges
+apps/mobile/src/features/word-forms/format.ts # UT13 — sectionTitle returns the `ru` title field of the profile contract; removed when UT13 merges
+apps/mobile/src/features/word-forms/section-table.tsx # UT13 — renders profile `ru` cells/titles; removed when UT13 merges
+apps/mobile/src/features/word-forms/lesson-screen.tsx # UT13 — renders the profile `ru` section title; removed when UT13 merges
+apps/mobile/src/features/word-forms/lesson-service.ts # UT13 — LessonEncounter `ru` field feeds the lesson prompt; removed when UT13 merges
+apps/mobile/src/features/word-forms/__tests__/* # UT13 — Russian profile fixtures/tests; removed when UT13 merges
+apps/mobile/src/features/ai/prompts/word-profile.ts # UT13 — Russian-tutor profile prompt; removed when UT13 merges
+apps/mobile/src/features/ai/prompts/grammar-lesson.ts # UT13 — Russian-tutor lesson prompt; removed when UT13 merges
+apps/mobile/src/features/ai/__tests__/__fixtures__/* # UT13 — captured Russian AI fixtures; removed when UT13 merges
+apps/mobile/src/features/ai/__tests__/word-profile-prompt.test.ts # UT13 — pins the Russian prompt; removed when UT13 merges
+apps/mobile/scripts/capture-ai-fixtures.ts # UT13 — Russian AI fixture capture script (dev only, needs a key); removed when UT13 merges
+apps/mobile/src/features/word-forms/lessons-tab.tsx # UT13 — renders profile `ru` section titles; removed when UT13 merges
+apps/mobile/src/features/word-forms/overview-strip.tsx # UT13 — renders profile headword `ru`; removed when UT13 merges

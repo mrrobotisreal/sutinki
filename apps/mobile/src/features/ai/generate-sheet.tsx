@@ -24,7 +24,7 @@ import { RunProfileControls } from './run-profile-controls';
 export interface GenerateSheetProps {
   open: boolean;
   purpose: 'profile' | 'lesson' | 'batch';
-  /** «Generate forms for «говорить»», «Learn: Non-past conjugation», «Generate forms for 37 words». */
+  /** «Generate forms for «говорити»», «Learn: Non-past conjugation», «Generate forms for 37 words». */
   title: string;
   /** Batch only — the estimate multiplies by it. */
   count?: number;

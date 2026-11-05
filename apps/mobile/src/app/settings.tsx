@@ -7,6 +7,7 @@ import { Pressable, ScrollView, Switch, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
 import { AiSettingsSection } from '@/features/ai/ai-settings-section';
+import { ukPending } from '@/config/flags';
 import { GrammarPresetSection } from '@/features/ai/grammar-preset-section';
 import { AmbientSettingsSection } from '@/features/ambient-audio/ambient-settings-section';
 import { BackupSettingsSection } from '@/features/backup/backup-settings-section';
@@ -180,7 +181,7 @@ export default function SettingsScreen() {
       <BackupSettingsSection />
 
       <AiSettingsSection />
-      <GrammarPresetSection />
+      {!ukPending('wordProfiles') && <GrammarPresetSection />}
 
       <Text variant="caption" className="mb-2 mt-8 uppercase tracking-wider">
         Diagnostics

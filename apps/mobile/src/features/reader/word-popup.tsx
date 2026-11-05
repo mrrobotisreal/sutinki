@@ -1,3 +1,4 @@
+import { ukPending } from '@/config/flags';
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -128,7 +129,7 @@ function WordPopupSheet({
   /**
    * Add the word to the bank and resolve with the repository's `AddResult`
    * (T53 — was fire-and-forget). The Add button still ignores the promise
-   * and keeps its optimistic «In bank ✓»; only the «Формы» path awaits it
+   * and keeps its optimistic «In bank ✓»; only the «Форми» path awaits it
    * to learn the new item's id.
    */
   const addToBank = React.useCallback((): Promise<AddResult> => {
@@ -268,22 +269,27 @@ function WordPopupSheet({
               size={18}
               color={inBank ? theme.success : theme.bg}
             />
-            <Text className={inBank ? 'font-ui-medium text-text-muted' : 'font-ui-medium text-on-accent'}>
+            <Text
+              className={
+                inBank ? 'font-ui-medium text-text-muted' : 'font-ui-medium text-on-accent'
+              }
+            >
               {inBank ? 'In bank ✓' : 'Add to word bank'}
             </Text>
           </Pressable>
-          {/* Russian label on purpose — the popup sits on the Russian reading surface */}
-          <Pressable
-            onPress={openForms}
-            disabled={formsBusy}
-            accessibilityRole="button"
-            accessibilityLabel="Word forms"
-            accessibilityState={{ disabled: formsBusy }}
-            className="flex-row items-center justify-center gap-2 rounded-xl border border-accent/40 px-4 py-3 active:bg-surface-2"
-          >
-            <Ionicons name="git-branch-outline" size={18} color={theme.accent} />
-            <Text className="font-ui-medium text-accent">Форми</Text>
-          </Pressable>
+          {!ukPending('wordProfiles') && (
+            <Pressable
+              onPress={openForms}
+              disabled={formsBusy}
+              accessibilityRole="button"
+              accessibilityLabel="Word forms"
+              accessibilityState={{ disabled: formsBusy }}
+              className="flex-row items-center justify-center gap-2 rounded-xl border border-accent/40 px-4 py-3 active:bg-surface-2"
+            >
+              <Ionicons name="git-branch-outline" size={18} color={theme.accent} />
+              <Text className="font-ui-medium text-accent">Форми</Text>
+            </Pressable>
+          )}
         </View>
       </View>
     </Modal>

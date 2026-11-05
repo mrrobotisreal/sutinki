@@ -117,7 +117,7 @@ describe('word-forms repo — items without a profile (§5.4)', () => {
     const repo = createWordFormsRepo(db);
     const word = await bank.addWord({ lemma: 'Говорить', surface: 'говорю', translation: 'speak' });
     const phrase = await bank.addPhrase({
-      surface: 'Волосы  встали дыбом',
+      surface: 'Волосся  стало дибки',
       translation: 'hair stood',
     });
     const other = await bank.addWord({ lemma: 'окно', surface: 'окно', translation: 'window' });
@@ -214,35 +214,37 @@ describe('word-forms repo — lessons (§5.4, append-only)', () => {
     expect(await repo.listLessonsForKey('нет', 'word')).toEqual([]);
   });
 
-  it('listLessons: global newest first, paginated, ё/е-tolerant search on the headword', async () => {
+  it('listLessons: global newest first, paginated, ґ/г- and apostrophe-tolerant search on the headword', async () => {
     const repo = createWordFormsRepo(createTestDb());
     await repo.insertLesson(lesson({ createdAt: 1 }));
     await repo.insertLesson(
-      lesson({ lemmaNorm: 'еж', headword: 'ёж', sectionId: 'noun-declension', createdAt: 2 }),
+      // lemma key deliberately unrelated: only the headword fold can match this row
+      lesson({ lemmaNorm: 'k1', headword: 'Ґанок', sectionId: 'noun-declension', createdAt: 2 }),
     );
     await repo.insertLesson(
-      lesson({ lemmaNorm: 'окно', headword: 'окно', sectionId: 'noun-declension', createdAt: 3 }),
+      lesson({ lemmaNorm: 'вікно', headword: 'вікно', sectionId: 'noun-declension', createdAt: 3 }),
     );
     await repo.insertLesson(
-      lesson({ lemmaNorm: 'петр', headword: 'Пётр', sectionId: 'name-declension', createdAt: 4 }),
+      lesson({ lemmaNorm: 'k2', headword: "п'ять", sectionId: 'noun-declension', createdAt: 4 }),
     );
 
     const all = await repo.listLessons({ limit: 10, offset: 0 });
-    expect(all.map((l) => l.headword)).toEqual(['Пётр', 'окно', 'ёж', 'говорить']);
+    expect(all.map((l) => l.headword)).toEqual(["п'ять", 'вікно', 'Ґанок', 'говорить']);
     expect((await repo.listLessons({ limit: 2, offset: 1 })).map((l) => l.headword)).toEqual([
-      'окно',
-      'ёж',
+      'вікно',
+      'Ґанок',
     ]);
-    // е finds ё and ё finds ё; capitalized headwords match too.
+    // «Ґанок» finds «ганок» and «ґанок»; capitalized headwords match too.
     expect(
-      (await repo.listLessons({ search: 'еж', limit: 10, offset: 0 })).map((l) => l.headword),
-    ).toEqual(['ёж']);
+      (await repo.listLessons({ search: 'ганок', limit: 10, offset: 0 })).map((l) => l.headword),
+    ).toEqual(['Ґанок']);
     expect(
-      (await repo.listLessons({ search: 'ёж', limit: 10, offset: 0 })).map((l) => l.headword),
-    ).toEqual(['ёж']);
+      (await repo.listLessons({ search: 'ґанок', limit: 10, offset: 0 })).map((l) => l.headword),
+    ).toEqual(['Ґанок']);
+    // apostrophe variants fold to ʼ on both sides
     expect(
-      (await repo.listLessons({ search: 'пётр', limit: 10, offset: 0 })).map((l) => l.headword),
-    ).toEqual(['Пётр']);
+      (await repo.listLessons({ search: 'п’ять', limit: 10, offset: 0 })).map((l) => l.headword),
+    ).toEqual(["п'ять"]);
     expect(
       (await repo.listLessons({ search: 'ГОВОР', limit: 10, offset: 0 })).map((l) => l.headword),
     ).toEqual(['говорить']);

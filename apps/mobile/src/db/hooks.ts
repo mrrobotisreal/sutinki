@@ -520,7 +520,7 @@ export function useLessonsForKey(item: ProfileKeyItem | null | undefined) {
 export const LESSONS_PAGE_SIZE = 50;
 
 /**
- * The global list (ё/е-tolerant `search`), newest first, paged by
+ * The global list (ґ/г-tolerant `search`), newest first, paged by
  * `limit/offset` 50 through an infinite query — `fetchNextPage` is «Load
  * more»; a short page ends the list.
  */

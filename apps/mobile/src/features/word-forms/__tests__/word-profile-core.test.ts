@@ -160,7 +160,12 @@ describe('generateProfile — the one correction round (§5.5 step 3)', () => {
           });
     };
 
-    const result = await generateProfile(item, RUN, { contexts: ['Он говорил тихо.'] }, chat);
+    const result = await generateProfile(
+      item,
+      RUN,
+      { contexts: ['Он говорил тихо.'], language: 'ru' },
+      chat,
+    );
     expect(result.corrected).toBe(true);
     expect(result.profile.headword.plain).toBe('говорить');
     expect(calls).toHaveLength(2);

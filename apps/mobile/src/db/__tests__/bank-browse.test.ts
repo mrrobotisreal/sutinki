@@ -266,15 +266,15 @@ describe('bank repository — sorting + familiarity (T50)', () => {
     expect(page2.map((r) => r.lemma)).toEqual(['волк', 'город']);
   });
 
-  it('(f) ё sorts with е: «ёж» sits between «еда» and «ель» in А→Я', async () => {
+  it('(f) ґ sorts with г: «ґанок» sits between «гай» and «глина» in А→Я', async () => {
     const { add, list } = await setup();
-    await add('ель');
-    await add('ёж');
-    await add('еда');
-    await add('жук');
+    await add('глина');
+    await add('ґанок');
+    await add('гай');
+    await add('дім');
     const asc = (await list({ key: 'alpha-asc', familiarity: 'least' })).map((r) => r.lemma);
-    expect(asc).toEqual(['еда', 'ёж', 'ель', 'жук']);
+    expect(asc).toEqual(['гай', 'ґанок', 'глина', 'дім']);
     const desc = (await list({ key: 'alpha-desc', familiarity: 'least' })).map((r) => r.lemma);
-    expect(desc).toEqual(['жук', 'ель', 'ёж', 'еда']);
+    expect(desc).toEqual(['дім', 'глина', 'ґанок', 'гай']);
   });
 });

@@ -47,7 +47,7 @@ export type NewGrammarLesson = Omit<typeof grammarLessons.$inferInsert, 'id' | '
 };
 
 export interface ListLessonsOptions {
-  /** ё/е-tolerant substring match on the headword (normalized) / lemma key. */
+  /** ґ/г-tolerant substring match on the headword (normalized) / lemma key. */
   search?: string;
   limit: number;
   offset: number;
@@ -291,8 +291,8 @@ export function createWordFormsRepo(db: SutinkiDB) {
     },
 
     /**
-     * Global lessons list, newest first. `search` is ё/е-tolerant: it matches
-     * the already-normalized lemma key OR the headword with ё folded
+     * Global lessons list, newest first. `search` is ґ/г-tolerant: it matches
+     * the already-normalized lemma key OR the headword folded the way the FTS migration folds (apostrophes → ʼ, Ґ/ґ → г; lowercase so ASCII-only LIKE matches)
      * (SQLite's LIKE is ASCII-case-insensitive only, so the key column carries
      * the lowercase match and the headword fold covers capitalized names).
      */
@@ -304,7 +304,10 @@ export function createWordFormsRepo(db: SutinkiDB) {
         conds.push(
           or(
             like(grammarLessons.lemmaNorm, pattern),
-            like(sql`replace(replace(${grammarLessons.headword}, 'ё', 'е'), 'Ё', 'Е')`, pattern),
+            like(
+              sql`replace(replace(replace(replace(replace(replace(${grammarLessons.headword}, '''', 'ʼ'), '’', 'ʼ'), '\`', 'ʼ'), '´', 'ʼ'), 'Ґ', 'г'), 'ґ', 'г')`,
+              pattern,
+            ),
           ),
         );
       }

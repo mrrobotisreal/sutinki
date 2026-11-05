@@ -29,7 +29,7 @@ const PAUSE_COPY: Record<BatchPauseReason, string> = {
 /**
  * The Словарь batch row (WORD_FORMS §7.5), rendered under the chip row:
  *   idle + N > 0  → «{N} words without forms · Generate all» → Generate sheet (purpose 'batch')
- *   running       → «Generating forms · 12/37 · «страшный»…» + Cancel
+ *   running       → «Generating forms · 12/37 · «страшний»…» + Cancel
  *   paused        → the reason + Cancel (the worker resumes by itself)
  *   finished with failures → «3 failed · Retry» (+ dismiss)
  * Durable state lives in `grammar.batch`; this reads the zustand mirror.

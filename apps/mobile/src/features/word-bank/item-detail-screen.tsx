@@ -25,6 +25,7 @@ import type { CardDirection } from '@/db/schema';
 import { ExplainSheet } from '@/features/ai/explain-sheet';
 import { ChipRow } from '@/features/library/category-chips';
 import type { ChipItem } from '@/features/library/library-filter';
+import { ukPending } from '@/config/flags';
 import { FormsTab } from '@/features/word-forms/forms-tab';
 import { LessonsTab } from '@/features/word-forms/lessons-tab';
 import { DIRECTION_LABELS, formatDue, ratingName, stateName } from '@/features/review/format';
@@ -219,9 +220,11 @@ export function ItemDetailScreen({
       </View>
 
       {/* Overview · Forms · Lessons (M16/T53, §7.1) — the chip row already renders tabs */}
-      <View className="-mx-4 mt-4">
-        <ChipRow items={tabItems} selected={tab} onSelect={setTab} size="md" testID="item-tabs" />
-      </View>
+      {!ukPending('wordProfiles') && (
+        <View className="-mx-4 mt-4">
+          <ChipRow items={tabItems} selected={tab} onSelect={setTab} size="md" testID="item-tabs" />
+        </View>
+      )}
 
       {tab === 'overview' && (
         <>

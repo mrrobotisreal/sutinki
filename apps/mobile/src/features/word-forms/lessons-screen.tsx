@@ -18,7 +18,7 @@ const SEARCH_DEBOUNCE_MS = 200;
 /**
  * Global Lessons screen (WORD_FORMS §7.3, route `app/lessons/index`; entry
  * = the `school-outline` icon in the dictionary tab header): search box
- * (headword, ё/е-tolerant through the repository's normalized match), the
+ * (headword, ґ/г-tolerant through the repository's normalized match), the
  * list newest first grouped by local day with receipt badges, the empty
  * state «No lessons yet — open a word → Forms → Learn», pagination by
  * `limit/offset` 50 («Load more» = the infinite query's next page).

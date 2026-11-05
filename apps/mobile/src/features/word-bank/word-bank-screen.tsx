@@ -10,6 +10,7 @@ import { useBankFilterOptions, useBankItems, useBankMasteryCounts, useStories } 
 import type { BankFilter, BankListItem, MasteryFilter } from '@/db/repositories/bank';
 import { track } from '@/services/analytics';
 import { isDefaultBankSort, useBankPrefs } from '@/store/bank-prefs';
+import { ukPending } from '@/config/flags';
 import { WordFormsBatchRow } from '@/features/word-forms/batch-sheet';
 import { useAppTheme } from '@/theme/use-app-theme';
 
@@ -228,7 +229,7 @@ export function WordBankScreen() {
       )}
 
       {/* T55: the durable word-forms batch row (entry / progress / retry) */}
-      <WordFormsBatchRow />
+      {!ukPending('wordProfiles') && <WordFormsBatchRow />}
 
       {/* enrichment call-to-action (T16): visible whenever items are flagged */}
       {(enrichable.data?.length ?? 0) > 0 && (

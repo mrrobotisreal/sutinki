@@ -11,7 +11,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 export const BANK_SORT_OPTIONS: { key: BankSortKey; label: string; hint: string }[] = [
   { key: 'added-asc', label: 'Order added', hint: 'The order you met them' },
   { key: 'added-desc', label: 'Newest first', hint: 'Most recently added on top' },
-  { key: 'alpha-asc', label: 'А → Я', hint: 'Dictionary order — ё with е' },
+  { key: 'alpha-asc', label: 'А → Я', hint: 'Dictionary order — ґ with г' },
   { key: 'alpha-desc', label: 'Я → А', hint: 'Dictionary order, reversed' },
   {
     key: 'unpracticed-first',

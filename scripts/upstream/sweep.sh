@@ -8,7 +8,7 @@ cd "$(git rev-parse --show-toplevel)"
 export LC_ALL=en_US.UTF-8
 ALLOW="scripts/upstream/ru-allowlist.txt"
 fail=0
-allowed() { [ -f "$ALLOW" ] || return 1; local g; while IFS= read -r g; do g=${g%%#*}; g=$(echo $g); [ -z "$g" ] && continue; case "$1" in $g) return 0;; esac; done < "$ALLOW"; return 1; }
+allowed() { [ -f "$ALLOW" ] || return 1; local g; while IFS= read -r g; do g=${g%%#*}; g=$(set -f; echo $g); [ -z "$g" ] && continue; case "$1" in $g) return 0;; esac; done < "$ALLOW"; return 1; }
 filter() { # stdin: grep -n lines (path:line:text) -> prints non-allowlisted, sets nothing
   local line f; while IFS= read -r line; do [ -z "$line" ] && continue; f=${line%%:*}; allowed "$f" || echo "$line"; done
 }

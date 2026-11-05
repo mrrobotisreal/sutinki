@@ -16,6 +16,7 @@ import { STRESS, type ProfileLanguage, type ProfilePos, type WordProfile } from 
 
 // --- §5.3 fixed labels -------------------------------------------------------
 
+// UT13: Ukrainian catalog (section titles, persons, genders, rules, CASES.uk labels are still the Russian placeholders).
 /** Case row labels (★ fixed, verbatim). `uk` adds the vocative for Сутінки later. */
 export const CASES: Record<ProfileLanguage, readonly string[]> = {
   ru: [

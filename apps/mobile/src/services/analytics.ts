@@ -343,7 +343,7 @@ export type AnalyticsEvent =
   // never the headword. forms_tab_viewed {kind, hasProfile} — the tab focused (once per mount);
   // forms_section_expanded {sectionId} — a section card opened (once per section per mount);
   // word_profile_version_promoted {kind} — «Make current» in the Versions sheet;
-  // popup_forms_opened {banked} — the reader/dialogue popup's «Формы» (banked=false ⇒ the word
+  // popup_forms_opened {banked} — the reader/dialogue popup's «Форми» (banked=false ⇒ the word
   // was added to the bank on the way).
   | 'forms_tab_viewed'
   | 'forms_section_expanded'

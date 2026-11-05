@@ -240,7 +240,7 @@ export function GrammarPresetSection() {
           <GenerateSheet
             open={sheetOpen}
             purpose="profile"
-            title="Generate forms for «говорить» (dev preview)"
+            title="Generate forms for «говорити» (dev preview)"
             onClose={() => setSheetOpen(false)}
             onGenerate={(profile, opts) => {
               setSheetOpen(false);
