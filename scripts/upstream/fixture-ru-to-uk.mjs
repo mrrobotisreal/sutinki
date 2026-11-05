@@ -13,7 +13,9 @@ const flipLanguage = process.argv.includes('--language');
 function walk(v, key) {
   if (Array.isArray(v)) return v.map((x) => walk(x));
   if (v && typeof v === 'object')
-    return Object.fromEntries(Object.entries(v).map(([k, x]) => [isRuKey(k) ? rename(k) : k, walk(x, k)]));
+    return Object.fromEntries(
+      Object.entries(v).map(([k, x]) => [isRuKey(k) ? rename(k) : k, walk(x, k)]),
+    );
   if (v === 'ru-en') return 'uk-en';
   if (v === 'en-ru') return 'en-uk';
   if (flipLanguage && key === 'language' && v === 'ru') return 'uk';

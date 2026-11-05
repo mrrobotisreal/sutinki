@@ -3,10 +3,13 @@ import * as React from 'react';
 import { AppState } from 'react-native';
 
 import { useTtsStore } from '@/features/tts/store';
+import { track } from '@/services/analytics';
 import { logError } from '@/services/error-log';
+import { useAmbientCursors } from '@/store/ambient-cursors';
 import { useAmbientPrefs } from '@/store/ambient-prefs';
 
-import { useAmbientActivity } from './activity';
+import { effectiveTheme, useAmbientActivity } from './activity';
+import { AMBIENT_THEMES } from './beds';
 import { createAmbientController } from './controller';
 import { shouldPlayAmbience } from './playback-policy';
 
@@ -17,12 +20,21 @@ export function AmbientAudioHost({ ready }: { ready: boolean }) {
     const controller = createAmbientController(
       // Background narration owns its own policy. Do not change that global flag.
       () => setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'doNotMix' }),
-      () =>
-        createAudioPlayer(require('../../../assets/audio/creepy-bg-music-no-vocals.mp3'), {
+      // T48: the ONE ambient player; the controller swaps its source per theme.
+      (source) =>
+        createAudioPlayer(source, {
           updateInterval: 1000,
           keepAudioSessionActive: true,
         }),
       (error) => logError('manual', error),
+      {
+        themes: AMBIENT_THEMES,
+        // Cursors are read on start/switch and written by the controller; the
+        // host only watches the store's reset signal (below).
+        getCursor: (theme) => useAmbientCursors.getState().cursors[theme],
+        saveCursor: (theme, cursor) => useAmbientCursors.getState().setCursor(theme, cursor),
+        onEvent: (event, props) => track(event, props),
+      },
     );
     const update = () => {
       const prefs = useAmbientPrefs.getState();
@@ -37,14 +49,21 @@ export function AmbientAudioHost({ ready }: { ready: boolean }) {
         speaking: speech.speaking || speech.systemSpeaking,
         narrating: narrations.size > 0,
       });
-      const target = `${active}:${volume}`;
+      const theme = effectiveTheme(activities);
+      const target = `${active}:${volume}:${theme}`;
       if (target === previousTarget) return;
       previousTarget = target;
-      void controller.update(active, volume);
+      void controller.update(active, volume, theme);
     };
     const prefsSub = useAmbientPrefs.subscribe(update);
     const activitySub = useAmbientActivity.subscribe(update);
     const speechSub = useTtsStore.subscribe(update);
+    // T49 «Reset rotation»: restart the loaded theme from bed 1 @ 0.
+    const resetSub = useAmbientCursors.subscribe((state, previous) => {
+      if (state.resetRevision !== previous.resetRevision && state.lastReset) {
+        controller.restart(state.lastReset);
+      }
+    });
     // Synchronous pause on background/inactive, even if React hasn't rendered yet.
     const appSub = AppState.addEventListener('change', (state) => {
       foreground = state === 'active';
@@ -55,6 +74,7 @@ export function AmbientAudioHost({ ready }: { ready: boolean }) {
       prefsSub();
       activitySub();
       speechSub();
+      resetSub();
       appSub.remove();
       controller.dispose();
     };

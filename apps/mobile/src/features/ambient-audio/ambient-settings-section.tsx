@@ -6,6 +6,8 @@ import { Text } from '@/components/ui/text';
 import { useAmbientPrefs } from '@/store/ambient-prefs';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { SoundtracksList } from './soundtracks-list';
+
 export function AmbientSettingsSection() {
   const { enabled, volume, playDuringNarration, setPrefs } = useAmbientPrefs();
   const { tokens } = useAppTheme();
@@ -22,7 +24,10 @@ export function AmbientSettingsSection() {
         <View className="flex-row items-center justify-between px-4 py-3.5">
           <View className="flex-1 gap-0.5 pr-3">
             <Text className="font-ui-medium">Study ambience</Text>
-            <Text variant="caption">A creepy soundtrack for reading and games.</Text>
+            <Text variant="caption">
+              A soundtrack matched to what you&apos;re reading — creepy for stories, a newsroom bed
+              for news, upbeat for comedy, driving for action, focus music for study.
+            </Text>
           </View>
           <Switch
             value={enabled}
@@ -90,6 +95,7 @@ export function AmbientSettingsSection() {
                 accessibilityLabel="Play background music during narration"
               />
             </View>
+            <SoundtracksList />
           </>
         )}
       </View>

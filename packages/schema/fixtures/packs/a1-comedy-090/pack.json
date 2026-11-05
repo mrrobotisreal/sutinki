@@ -1,0 +1,333 @@
+{
+  "id": "a1-comedy-090",
+  "version": 1,
+  "type": "stories",
+  "title": {
+    "uk": "Комедія — тестова полиця",
+    "en": "Comedy — test shelf"
+  },
+  "level": "A1",
+  "tags": [
+    "comedy",
+    "test-fixture"
+  ],
+  "stories": [
+    {
+      "id": "com-090-s1",
+      "title": {
+        "uk": "Кіт і холодильник",
+        "en": "The cat and the fridge"
+      },
+      "level": "A1",
+      "sentences": [
+        {
+          "id": "com090s1-s01",
+          "uk": "У мене є кіт.",
+          "en": "I have a cat.",
+          "tokens": [
+            {
+              "text": "У",
+              "lemma": "у",
+              "translation": "at (possession)",
+              "pos": "prep",
+              "grammar": "+ gen.; у мене є = I have",
+              "level": "A1"
+            },
+            {
+              "text": "мене",
+              "lemma": "я",
+              "translation": "me",
+              "pos": "pron",
+              "grammar": "gen.",
+              "level": "A1"
+            },
+            {
+              "text": "є",
+              "lemma": "є",
+              "translation": "there is",
+              "pos": "pred",
+              "grammar": "existential (у мене є = I have)",
+              "level": "A1"
+            },
+            {
+              "text": "кіт",
+              "lemma": "кіт",
+              "translation": "a cat",
+              "pos": "noun",
+              "grammar": "m.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ],
+          "grammarTopics": [
+            "possession-u-genitive",
+            "existential"
+          ]
+        },
+        {
+          "id": "com090s1-s02",
+          "uk": "Кіт дуже любить холодильник.",
+          "en": "The cat loves the fridge very much.",
+          "tokens": [
+            {
+              "text": "Кіт",
+              "lemma": "кіт",
+              "translation": "the cat",
+              "pos": "noun",
+              "grammar": "m.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": "дуже",
+              "lemma": "дуже",
+              "translation": "very much",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "любить",
+              "lemma": "любити",
+              "translation": "loves",
+              "pos": "verb",
+              "grammar": "3sg. pres. (impf.)",
+              "level": "A1"
+            },
+            {
+              "text": "холодильник",
+              "lemma": "холодильник",
+              "translation": "the fridge",
+              "pos": "noun",
+              "grammar": "m.sg. acc.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ],
+          "grammarTopics": [
+            "present-tense",
+            "accusative-direct-object"
+          ]
+        },
+        {
+          "id": "com090s1-s03",
+          "uk": "Щоночі він сидить біля холодильника і чекає.",
+          "en": "Every night he sits by the fridge and waits.",
+          "tokens": [
+            {
+              "text": "Щоночі",
+              "lemma": "щоночі",
+              "translation": "every night",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "він",
+              "lemma": "він",
+              "translation": "he",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "сидить",
+              "lemma": "сидіти",
+              "translation": "sits",
+              "pos": "verb",
+              "grammar": "3sg. pres. (impf.)",
+              "level": "A1"
+            },
+            {
+              "text": "біля",
+              "lemma": "біля",
+              "translation": "by / near",
+              "pos": "prep",
+              "grammar": "+ gen.",
+              "level": "A1"
+            },
+            {
+              "text": "холодильника",
+              "lemma": "холодильник",
+              "translation": "the fridge",
+              "pos": "noun",
+              "grammar": "m.sg. gen.",
+              "level": "A1"
+            },
+            {
+              "text": "і",
+              "lemma": "і",
+              "translation": "and",
+              "pos": "conj",
+              "level": "A1"
+            },
+            {
+              "text": "чекає",
+              "lemma": "чекати",
+              "translation": "waits",
+              "pos": "verb",
+              "grammar": "3sg. pres. (impf.)",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ],
+          "grammarTopics": [
+            "present-tense",
+            "time-expressions",
+            "verbs-of-position"
+          ]
+        },
+        {
+          "id": "com090s1-s04",
+          "uk": "Він думає, що холодильник — це двері в рай.",
+          "en": "He thinks the fridge is a door to paradise.",
+          "tokens": [
+            {
+              "text": "Він",
+              "lemma": "він",
+              "translation": "he",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "думає",
+              "lemma": "думати",
+              "translation": "thinks",
+              "pos": "verb",
+              "grammar": "3sg. pres. (impf.)",
+              "level": "A1"
+            },
+            {
+              "text": ",",
+              "isPunct": true
+            },
+            {
+              "text": "що",
+              "lemma": "що",
+              "translation": "that",
+              "pos": "conj",
+              "grammar": "introduces the clause",
+              "level": "A1"
+            },
+            {
+              "text": "холодильник",
+              "lemma": "холодильник",
+              "translation": "the fridge",
+              "pos": "noun",
+              "grammar": "m.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": "—",
+              "isPunct": true,
+              "spaceBefore": true
+            },
+            {
+              "text": "це",
+              "lemma": "це",
+              "translation": "is",
+              "pos": "pron",
+              "grammar": "zero-copula marker: X — це Y",
+              "level": "A1"
+            },
+            {
+              "text": "двері",
+              "lemma": "двері",
+              "translation": "a door",
+              "pos": "noun",
+              "grammar": "f.pl. nom. (plural-only noun)",
+              "level": "A1"
+            },
+            {
+              "text": "в",
+              "lemma": "в",
+              "translation": "to",
+              "pos": "prep",
+              "grammar": "+ acc. (destination)",
+              "level": "A1"
+            },
+            {
+              "text": "рай",
+              "lemma": "рай",
+              "translation": "paradise",
+              "pos": "noun",
+              "grammar": "m.sg. acc.",
+              "level": "A2"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ],
+          "grammarTopics": [
+            "present-tense",
+            "reported-speech",
+            "zero-copula",
+            "accusative-direction"
+          ]
+        },
+        {
+          "id": "com090s1-s05",
+          "uk": "Може, він має рацію.",
+          "en": "Maybe he's right.",
+          "tokens": [
+            {
+              "text": "Може",
+              "lemma": "може",
+              "translation": "maybe",
+              "pos": "part",
+              "level": "A1"
+            },
+            {
+              "text": ",",
+              "isPunct": true
+            },
+            {
+              "text": "він",
+              "lemma": "він",
+              "translation": "he",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "має",
+              "lemma": "мати",
+              "translation": "has",
+              "pos": "verb",
+              "grammar": "3sg. pres. (impf.), in the fixed phrase мати рацію",
+              "level": "A1",
+              "note": "мати рацію = to be right"
+            },
+            {
+              "text": "рацію",
+              "lemma": "рація",
+              "translation": "(the) right",
+              "pos": "noun",
+              "grammar": "f.sg. acc., in the fixed phrase мати рацію",
+              "level": "A2"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ],
+          "grammarTopics": [
+            "present-tense",
+            "accusative-direct-object"
+          ]
+        }
+      ],
+      "audio": []
+    }
+  ],
+  "category": "stories",
+  "genre": "comedy"
+}
