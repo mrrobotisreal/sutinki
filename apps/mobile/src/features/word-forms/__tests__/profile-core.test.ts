@@ -55,7 +55,15 @@ describe('SECTION_CATALOG (§5.3)', () => {
       'Ins. — творительный',
       'Prep. — предложный',
     ]);
-    expect(CASES.uk).toEqual([...CASES.ru, 'Voc. — кличний']);
+    expect(CASES.uk).toEqual([
+      'Nom. — називний',
+      'Gen. — родовий',
+      'Dat. — давальний',
+      'Acc. — знахідний',
+      'Instr. — орудний',
+      'Loc. — місцевий',
+      'Voc. — кличний',
+    ]);
     expect(PERSONS).toEqual(['я', 'ты', 'он / она / оно', 'мы', 'вы', 'они']);
     expect(GENDERS).toEqual(['masc. (он)', 'fem. (она)', 'neut. (оно)', 'pl. (они)']);
     const decl = SECTION_CATALOG.find((e) => e.id === 'noun-declension')!;

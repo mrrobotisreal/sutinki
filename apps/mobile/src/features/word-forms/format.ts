@@ -9,7 +9,7 @@ import {
   type AiQuality,
 } from '@/features/ai/run-profile';
 
-import { getCatalogEntry, SECTION_CATALOG } from './profile-core';
+import { getCatalogEntry, SECTION_CATALOG_UK } from './profile-core';
 import type { ProfileSection, WordProfile } from './profile-schema';
 
 /**
@@ -141,7 +141,7 @@ export function receiptBadges(row: ReceiptLike): string[] {
 
 // --- section order ------------------------------------------------------------
 
-const CATALOG_INDEX = new Map(SECTION_CATALOG.map((e, i) => [e.id, i]));
+const CATALOG_INDEX = new Map(SECTION_CATALOG_UK.map((e, i) => [e.id, i]));
 
 /**
  * Sections in catalog order; model-added `x-…` (or otherwise unknown) ids
@@ -159,7 +159,7 @@ export function sectionOrder(profile: Pick<WordProfile, 'sections'>): ProfileSec
 
 /** Catalog title when the id is known (the model's own title otherwise). */
 export function sectionTitle(section: ProfileSection): { en: string; ru: string } {
-  return getCatalogEntry(section.id)?.title ?? section.title;
+  return getCatalogEntry(section.id, 'uk')?.title ?? section.title;
 }
 
 /** Catalog rank of a section id (unknown / `x-` ids sort last) — `groupBySection`'s order. */
@@ -176,7 +176,7 @@ export function sectionTitleById(
   sectionId: string,
   profile?: Pick<WordProfile, 'sections'> | null,
 ): { en: string; ru: string } {
-  const entry = getCatalogEntry(sectionId);
+  const entry = getCatalogEntry(sectionId, 'uk');
   if (entry) return entry.title;
   const own = profile?.sections.find((s) => s.id === sectionId)?.title;
   return own ?? { en: sectionId, ru: sectionId };

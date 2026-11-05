@@ -85,13 +85,14 @@ describe('captured grammar-lesson fixture (§6.3)', () => {
     const headings = lessonHeadings(lesson!);
     expect(headings).toHaveLength(LESSON_HEADINGS.length);
     LESSON_HEADINGS.forEach((h, i) => expect(headings[i]).toContain(h));
-    expect(headings[0]).toContain('«говорить»');
+    expect(headings[0]).toContain('«говорити»');
   });
 
   it('carries a markdown table and ≥ 2 stressed Russian sentences', () => {
     expect(hasMarkdownTable(lesson!)).toBe(true);
     expect(countStressedSentences(lesson!)).toBeGreaterThanOrEqual(2);
-    expect(lesson).toContain('ё'); // ё preserved (the profile has «серьёзный»/«придёт»… the lesson keeps its own)
+    expect(lesson).toContain('ї'); // Ukrainian letters preserved (украї́нською)
+    expect(lesson).not.toMatch(/[ыэъ]/); // intentional: Russian input guard
   });
 });
 

@@ -16,8 +16,7 @@ import { STRESS, type ProfileLanguage, type ProfilePos, type WordProfile } from 
 
 // --- §5.3 fixed labels -------------------------------------------------------
 
-// UT13: Ukrainian catalog (section titles, persons, genders, rules, CASES.uk labels are still the Russian placeholders).
-/** Case row labels (★ fixed, verbatim). `uk` adds the vocative for Сутінки later. */
+/** Case row labels (★ fixed, verbatim). `uk` has seven cases incl. the vocative (UT13, AUTHORING canon). */
 export const CASES: Record<ProfileLanguage, readonly string[]> = {
   ru: [
     'Nom. — именительный',
@@ -28,19 +27,28 @@ export const CASES: Record<ProfileLanguage, readonly string[]> = {
     'Prep. — предложный',
   ],
   uk: [
-    'Nom. — именительный',
-    'Gen. — родительный',
-    'Dat. — дательный',
-    'Acc. — винительный',
-    'Ins. — творительный',
-    'Prep. — предложный',
+    'Nom. — називний',
+    'Gen. — родовий',
+    'Dat. — давальний',
+    'Acc. — знахідний',
+    'Instr. — орудний',
+    'Loc. — місцевий',
     'Voc. — кличний',
   ],
 };
-/** Person rows ★. */
+/** Person rows ★ (Russian; kept for upstream tests — Ukrainian is `PERSONS_UK`). */
 export const PERSONS: readonly string[] = ['я', 'ты', 'он / она / оно', 'мы', 'вы', 'они'];
-/** Gender rows ★. */
+/** Gender rows ★ (Russian; Ukrainian is `GENDERS_UK`). */
 export const GENDERS: readonly string[] = ['masc. (он)', 'fem. (она)', 'neut. (оно)', 'pl. (они)'];
+/** Ukrainian person rows ★ (ти, not ты). */
+export const PERSONS_UK: readonly string[] = ['я', 'ти', 'він / вона / воно', 'ми', 'ви', 'вони'];
+/** Ukrainian gender rows ★. */
+export const GENDERS_UK: readonly string[] = [
+  'masc. (він)',
+  'fem. (вона)',
+  'neut. (воно)',
+  'pl. (вони)',
+];
 
 // --- §5.3 the catalog --------------------------------------------------------
 
@@ -249,10 +257,205 @@ export const SECTION_CATALOG: readonly CatalogEntry[] = [
   },
 ];
 
-const CATALOG_BY_ID = new Map(SECTION_CATALOG.map((e, i) => [e.id, { entry: e, index: i }]));
+// --- UT13: the Ukrainian catalog (same 23 ids and order; Ukrainian labels, rules and required sets) ---
 
-export function getCatalogEntry(id: string): CatalogEntry | undefined {
-  return CATALOG_BY_ID.get(id)?.entry;
+export const SECTION_CATALOG_UK: readonly CatalogEntry[] = [
+  {
+    id: 'verb-nonpast',
+    title: { en: 'Present & future', ru: 'Теперішній і майбутній час' },
+    layout: 'grid',
+    fixedRows: PERSONS_UK,
+    colLabels: ['Present', 'Future'],
+    requiredFor: ['verb'],
+    rule: 'imperfective: present forms (first conjugation -еш/-єш/-уть·-ють, second -иш/-їш/-ать·-ять; give the consonant alternation of "я" such as «хо́дити → хо́джу») + compound future («бу́ду чита́ти»); perfective: Present column all null + note "perfective verbs have no present", Future = simple future («зроблю́»)',
+  },
+  {
+    id: 'verb-past',
+    title: { en: 'Past & conditional', ru: 'Минулий і умовний час' },
+    layout: 'grid',
+    fixedRows: GENDERS_UK,
+    colLabels: ['Past', 'Conditional (б / би)'],
+    requiredFor: ['verb'],
+    rule: 'past = stem + -в / -ла / -ло / -ли (masc. ends in -в, not -л: «чита́в»); conditional = past + "б" after a vowel, "би" after a consonant («чита́в би», «чита́ла б»); note irregular or fleeting stems («міг, могла́»)',
+  },
+  {
+    id: 'verb-imperative',
+    title: { en: 'Imperative', ru: 'Наказовий спосіб' },
+    layout: 'grid',
+    fixedRows: ['ти', 'ви'],
+    colLabels: ['Imperative'],
+    requiredFor: ['verb'],
+    rule: 'ти / ви forms («чита́й / чита́йте»); put the inclusive «ми» form («чита́ймо», «ході́мо» / «дава́й» + inf.) in the section note; note on aspect choice: the negative imperative prefers the imperfective («не бери́», not «не візьми́»)',
+  },
+  {
+    id: 'verb-participles',
+    title: { en: 'Participles', ru: 'Дієприкметники' },
+    layout: 'grid',
+    fixedRows: ['Active present', 'Active past', 'Passive (-ний / -тий)'],
+    colLabels: ['Form'],
+    requiredFor: [],
+    rule: 'OPTIONAL and bookish — include only forms you are certain exist and are attested (null + note otherwise; intransitive ⇒ no passives); omit the section entirely if unsure',
+  },
+  {
+    id: 'verb-gerunds',
+    title: { en: 'Verbal adverbs', ru: 'Дієприслівники' },
+    layout: 'list',
+    requiredFor: [],
+    rule: 'OPTIONAL: rows: present (-учи / -ючи / -ачи / -ячи, imperfective only), past (-ши / -вши, perfective only); gloss "while …ing" / "having …ed"; omit the section if unsure',
+  },
+  {
+    id: 'verb-family',
+    title: { en: 'Aspect pair & word family', ru: 'Вид і родина слова' },
+    layout: 'list',
+    requiredFor: ['verb'],
+    rule: '≤ 14 rows total (validator-enforced); row 1 = aspect partner (tags ["partner", "pf"|"impf"]); for a MOTION verb (йти / ходити, їхати / їздити, нести / носити …) row 1 = the unidirectional ↔ multidirectional counterpart (tags ["partner", "uni"] or ["partner", "multi"]) and the prefixed derivatives follow (по-, при-, ви-, у-, пере-, ["pf", "prefix:при-"]); then other prefixed/derived verbs by frequency, reflexive counterparts (["refl"]), then nouns/adjectives/adverbs from the root (["noun"] …); every row has a gloss with the nuance ("to have a talk (completed)")',
+  },
+  {
+    id: 'verb-government',
+    title: { en: 'Government & collocations', ru: 'Керування і сполучуваність' },
+    layout: 'list',
+    requiredFor: ['verb'],
+    rule: 'rows = pattern in Cyrillic only (ru «розмовля́ти з ким-небудь», gloss "to talk with someone — з + instr.") + example',
+  },
+  {
+    id: 'noun-declension',
+    title: { en: 'Declension', ru: 'Відмінювання' },
+    layout: 'grid',
+    fixedRows: 'cases',
+    colLabels: ['Singular', 'Plural'],
+    requiredFor: ['noun'],
+    rule: 'seven cases INCLUDING the vocative (Voc. sg. «вода́ → во́до», «стіл → столе́», «Оле́на → Оле́но», «брат → бра́те»; Voc. pl. = nominative); singularia/pluralia tantum → whole column null + note; animate accusative shown as is; mention in the section note the alternations that occur (к/г/х→ц/з/с in loc. sg. «на руці́», fleeting vowels «сон / сну», о/е→і in closed syllables «стіл / сто́лу»)',
+  },
+  {
+    id: 'noun-family',
+    title: { en: 'Word family', ru: 'Родина слова' },
+    layout: 'list',
+    requiredFor: ['noun'],
+    rule: 'diminutive/augmentative, adjective(s), verb(s), person nouns; tags ["dim"] ["aug"] ["adj"] ["verb"]',
+  },
+  {
+    id: 'noun-collocations',
+    title: { en: 'Collocations & usage', ru: 'Сполучуваність' },
+    layout: 'list',
+    requiredFor: [],
+    rule: 'pattern + gloss + example',
+  },
+  {
+    id: 'adj-long',
+    title: { en: 'Declension', ru: 'Відмінювання' },
+    layout: 'grid',
+    fixedRows: 'cases',
+    colLabels: ['Masc.', 'Fem.', 'Neut.', 'Plural'],
+    requiredFor: ['adj'],
+    rule: 'animate/inanimate accusative as «но́вий / но́вого» in one cell + note; Ukrainian adjectives have no true vocative: the Voc. row repeats the nominative (or null + note «добрий друже»)',
+  },
+  {
+    id: 'adj-short',
+    title: { en: 'Short forms', ru: 'Короткі форми' },
+    layout: 'list',
+    requiredFor: [],
+    rule: 'OPTIONAL: Ukrainian short (predicative) forms exist for few adjectives and are archaic («рад», «повинен»); include only if attested, else omit the section',
+  },
+  {
+    id: 'adj-comparison',
+    title: { en: 'Comparative & superlative', ru: 'Ступені порівняння' },
+    layout: 'list',
+    requiredFor: ['adj'],
+    rule: 'simple (-іший / -ший, «новіший») + compound («більш новий») comparative, simple («найновіший») + compound («найбільш новий») superlative; suppletive forms («добрий → кращий / ліпший»)',
+  },
+  {
+    id: 'adj-adverb',
+    title: { en: 'Adverb', ru: 'Прислівник' },
+    layout: 'list',
+    requiredFor: [],
+    rule: '',
+  },
+  {
+    id: 'adj-family',
+    title: { en: 'Word family', ru: 'Родина слова' },
+    layout: 'list',
+    requiredFor: [],
+    rule: '',
+  },
+  {
+    id: 'pron-declension',
+    title: { en: 'Declension', ru: 'Відмінювання' },
+    layout: 'grid',
+    fixedRows: 'cases',
+    requiredFor: [],
+    rule: `pron: ${DECLENSION_FREE_COLS}; personal pronouns take the н- prefix after prepositions («у нього», «до неї», «з ним») — write it in a cell note; no vocative for pronouns → null`,
+  },
+  {
+    id: 'num-declension',
+    title: { en: 'Declension', ru: 'Відмінювання' },
+    layout: 'grid',
+    fixedRows: 'cases',
+    requiredFor: [],
+    rule: `num: ${DECLENSION_FREE_COLS}; optional and mainly for 1–4 and collective numerals («двоє», «троє»)`,
+  },
+  {
+    id: 'name-declension',
+    title: { en: 'Declension', ru: 'Відмінювання' },
+    layout: 'grid',
+    fixedRows: 'cases',
+    requiredFor: [],
+    rule: `name: ${DECLENSION_FREE_COLS}; the vocative of personal names matters («Олено», «Остапе», «Галю»)`,
+  },
+  {
+    id: 'usage',
+    title: { en: 'Usage & patterns', ru: 'Вживання' },
+    layout: 'list',
+    requiredFor: ['adv', 'prep', 'conj', 'part', 'other'],
+    rule: 'meanings, patterns, register, example each (any POS may add it); for prepositions give the case(s) they govern',
+  },
+  {
+    id: 'related',
+    title: { en: 'Related forms', ru: 'Споріднені форми' },
+    layout: 'list',
+    requiredFor: [],
+    rule: '',
+  },
+  {
+    id: 'phrase-structure',
+    title: { en: 'Word by word', ru: 'Розбір за словами' },
+    layout: 'list',
+    requiredFor: ['phrase'],
+    rule: 'one row per word: ru stressed, gloss = the form («gen. pl. of воло́сся»), note = meaning here',
+  },
+  {
+    id: 'phrase-usage',
+    title: { en: 'Usage & register', ru: 'Вживання і стиль' },
+    layout: 'list',
+    requiredFor: ['phrase'],
+    rule: 'situations, register, ≥ 2 examples via example',
+  },
+  {
+    id: 'phrase-variants',
+    title: { en: 'Variants & synonyms', ru: 'Варіанти і синоніми' },
+    layout: 'list',
+    requiredFor: [],
+    rule: 'variants, near-synonyms, antonyms',
+  },
+];
+
+/** The catalog for a language (Russian stays for upstream tests; Sutinki passes `'uk'`). */
+export function catalogFor(language: ProfileLanguage): readonly CatalogEntry[] {
+  return language === 'uk' ? SECTION_CATALOG_UK : SECTION_CATALOG;
+}
+
+const CATALOG_INDEXES: Record<
+  ProfileLanguage,
+  Map<string, { entry: CatalogEntry; index: number }>
+> = {
+  ru: new Map(SECTION_CATALOG.map((e, i) => [e.id, { entry: e, index: i }])),
+  uk: new Map(SECTION_CATALOG_UK.map((e, i) => [e.id, { entry: e, index: i }])),
+};
+
+export function getCatalogEntry(
+  id: string,
+  language: ProfileLanguage = 'ru',
+): CatalogEntry | undefined {
+  return CATALOG_INDEXES[language].get(id)?.entry;
 }
 
 /** The fixed row labels of an entry for a language, or null when rows are free. */
@@ -265,8 +468,10 @@ export function fixedRowLabels(
 }
 
 /** Catalog ids whose section MUST be present for `pos`, in catalog order. */
-export function requiredSectionIds(pos: ProfilePos): string[] {
-  return SECTION_CATALOG.filter((e) => e.requiredFor.includes(pos)).map((e) => e.id);
+export function requiredSectionIds(pos: ProfilePos, language: ProfileLanguage = 'ru'): string[] {
+  return catalogFor(language)
+    .filter((e) => e.requiredFor.includes(pos))
+    .map((e) => e.id);
 }
 
 /** `verb-family` row cap (§5.3, validator-enforced). */
@@ -285,7 +490,9 @@ function quoteList(labels: readonly string[]): string {
  * same table the validator enforces, never hand-copied.
  */
 export function renderCatalogForPrompt(language: ProfileLanguage): string {
-  return SECTION_CATALOG.map((e) => renderCatalogLine(e, language)).join('\n');
+  return catalogFor(language)
+    .map((e) => renderCatalogLine(e, language))
+    .join('\n');
 }
 
 export function renderCatalogLine(entry: CatalogEntry, language: ProfileLanguage): string {
@@ -312,7 +519,15 @@ export function stripStress(s: string): string {
 /** Characters a FORM (not an example sentence) may contain, once stress marks are removed. */
 export const FORM_CHARS = /^[\p{Script=Cyrillic}\s\-\/(),.…!?«»]+$/u;
 
+/** Ukrainian forms also allow the apostrophe (U+0027, U+02BC, U+2019 — ADR-0004 keeps it as authored). */
+export const FORM_CHARS_UK = /^[\p{Script=Cyrillic}\s\-\/(),.…!?«»'ʼ’]+$/u;
+
+/** Russian-only letters: a Ukrainian `plain` form containing one is a russism leak (UT13 guard). */
+export const RUSSIAN_ONLY_LETTERS = /[ыэъёЫЭЪЁ]/; // intentional: Russian input
+
 const VOWELS = /[аеёиоуыэюяАЕЁИОУЫЭЮЯ]/g;
+/** Ukrainian vowel letters (є, і, ї count; ы э ё do not exist). */
+const VOWELS_UK = /[аеєиіїоуюяАЕЄИІЇОУЮЯ]/g;
 
 export interface ValidationResult {
   ok: boolean;
@@ -334,6 +549,9 @@ function isNfc(s: string): boolean {
 export function validateProfile(p: WordProfile): ValidationResult {
   const issues: string[] = [];
   const warnings: string[] = [];
+  const language = p.language;
+  const uk = language === 'uk';
+  const catalogIndex = CATALOG_INDEXES[language];
 
   const checkForm = (path: string, ru: string, plain: string) => {
     if (!isNfc(ru)) issues.push(`${path}.ru: not NFC-normalized`);
@@ -341,17 +559,21 @@ export function validateProfile(p: WordProfile): ValidationResult {
     if (plain !== stripStress(ru)) {
       issues.push(`${path}.plain: must equal ru with every U+0301 removed (got "${plain}")`);
     }
-    if (!FORM_CHARS.test(plain)) {
+    if (!(uk ? FORM_CHARS_UK : FORM_CHARS).test(plain)) {
       issues.push(
-        `${path}.plain: a form may contain only Cyrillic letters, spaces and -/(),.…!?«» — no Latin letters, digits or labels (got "${plain}")`,
+        `${path}.plain: a form may contain only Cyrillic letters, spaces and -/(),.…!?«»${uk ? ' and the apostrophe' : ''} — no Latin letters, digits or labels (got "${plain}")`,
       );
     }
-    softStressCheck(path, ru, warnings);
+    if (uk && RUSSIAN_ONLY_LETTERS.test(plain)) {
+      issues.push(
+        `${path}.plain: contains a Russian-only letter (ы э ъ ё) — use standard Ukrainian forms, or null if the form exists only in Russian (got "${plain}")`,
+      );
+    }
+    softStressCheck(path, ru, warnings, uk);
   };
 
   checkForm('headword', p.headword.ru, p.headword.plain);
 
-  const language = p.language;
   const seen = new Set<string>();
   let lastCatalogIndex = -1;
   let sawExtra = false;
@@ -364,7 +586,7 @@ export function validateProfile(p: WordProfile): ValidationResult {
 
     // Rule 3: catalog order; x- sections last; unknown non-x ids rejected.
     const isExtra = section.id.startsWith('x-');
-    const catalog = CATALOG_BY_ID.get(section.id);
+    const catalog = catalogIndex.get(section.id);
     if (isExtra) {
       sawExtra = true;
     } else if (!catalog) {
@@ -445,7 +667,7 @@ export function validateProfile(p: WordProfile): ValidationResult {
   });
 
   // Rule 3: required sections per POS.
-  for (const id of requiredSectionIds(p.pos)) {
+  for (const id of requiredSectionIds(p.pos, language)) {
     if (!seen.has(id)) {
       issues.push(`sections: required section "${id}" for pos "${p.pos}" is missing`);
     }
@@ -464,10 +686,10 @@ function labelsMatch(expected: readonly string[], got: readonly string[]): boole
  * any U+0301 is probably missing its stress. Checked per whitespace-/slash-
  * separated token so a half-stressed compound («бу́ду говорить») still warns.
  */
-function softStressCheck(path: string, ru: string, warnings: string[]) {
+function softStressCheck(path: string, ru: string, warnings: string[], uk = false) {
   for (const token of ru.split(/[\s/]+/)) {
-    if (token.includes(STRESS) || /ё/i.test(token)) continue;
-    const vowels = token.match(VOWELS)?.length ?? 0;
+    if (token.includes(STRESS) || (!uk && /ё/i.test(token))) continue;
+    const vowels = token.match(uk ? VOWELS_UK : VOWELS)?.length ?? 0;
     if (vowels >= 2) {
       warnings.push(`${path}.ru: "${token}" has ${vowels} vowels but no stress mark`);
     }
