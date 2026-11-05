@@ -110,7 +110,7 @@ describe('detectMetaIntent — triggers ± noise', () => {
   });
 
   it('uk is filled (UT14) and the ru table does not fire on Ukrainian triggers', () => {
-    expect(META_TRIGGERS.uk.length).toBe(22);
+    expect(META_TRIGGERS.uk.length).toBe(30); // 22 Ukrainian + 8 NeMo ru-spelling aliases
     expect(detectMetaIntent('повтори', 'uk')?.intent).toBe('repeat');
     expect(detectMetaIntent('повільніше', 'ru')).toBeNull();
   });
