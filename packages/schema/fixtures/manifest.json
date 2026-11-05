@@ -8,10 +8,10 @@
       "type": "stories",
       "level": "A1",
       "title": {
-        "uk": "Стук в стене",
+        "uk": "Стукіт у стіні",
         "en": "The Knock in the Wall"
       },
-      "bytes": 37776,
+      "bytes": 37635,
       "files": [
         {
           "path": "audio/knock-in-the-wall-anton-creepy.opus",
@@ -19,7 +19,7 @@
         },
         {
           "path": "pack.json",
-          "sha256": "c1a103b007c4b3841765c57a10bc573602fc1427f1b9a3deff7c48cba03ead9c"
+          "sha256": "2640d926487dde474696c994ad198f4a2b8a4fecfbe593733044f19558c9c085"
         }
       ]
     },
@@ -29,14 +29,14 @@
       "type": "stories",
       "level": "A1",
       "title": {
-        "uk": "Фотография",
+        "uk": "Фотографія",
         "en": "The Photograph"
       },
-      "bytes": 17805,
+      "bytes": 19111,
       "files": [
         {
           "path": "pack.json",
-          "sha256": "a4a0a2920c07a4573192c99b967da8950d1629f95095bef61411caca87333dff"
+          "sha256": "d4b5037a96b61ae0bbef1a2b41fb6fe692c43f594b20765f66fba3f4a8a58bc7"
         }
       ]
     },
@@ -46,14 +46,14 @@
       "type": "prompts",
       "level": "A1",
       "title": {
-        "uk": "Первые страницы",
+        "uk": "Перші сторінки",
         "en": "First Pages"
       },
-      "bytes": 5001,
+      "bytes": 5281,
       "files": [
         {
           "path": "pack.json",
-          "sha256": "e8e22ad6abe17cbfe22f17f5b1707d6a12b1076d92c774d280d6a19671d87da6"
+          "sha256": "385724c1198963e631b816c2a3b779dcbe93f43b6ec18629eb99e68dd498bbc8"
         }
       ]
     }

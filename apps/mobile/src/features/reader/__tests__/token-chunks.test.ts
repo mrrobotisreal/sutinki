@@ -36,15 +36,15 @@ function tok(
   };
 }
 
-/** «Я думаю: «Это соседи».» — the fixture sentence with quote overrides. */
+/** «Я думаю: «Це сусіди».» — the fixture sentence with quote overrides. */
 function quotedSentence(): TokenRow[] {
   const tokens = [
     tok('Я', { translation: 'I' }),
     tok('думаю', { translation: 'think' }),
     tok(':', { isPunct: true }),
     tok('«', { isPunct: true, spaceBefore: true }),
-    tok('Это', { spaceBefore: false, translation: 'it (is)' }),
-    tok('соседи', { translation: 'the neighbours' }),
+    tok('Це', { spaceBefore: false, translation: 'it (is)' }),
+    tok('сусіди', { translation: 'the neighbours' }),
     tok('»', { isPunct: true }),
     tok('.', { isPunct: true }),
   ];
@@ -56,12 +56,12 @@ function quotedSentence(): TokenRow[] {
 describe('buildChunks', () => {
   it('groups punctuation with its word so nothing wraps apart', () => {
     const chunks = buildChunks(quotedSentence());
-    expect(chunks.map((c) => c.text)).toEqual(['Я', 'думаю:', '«Это', 'соседи».']);
+    expect(chunks.map((c) => c.text)).toEqual(['Я', 'думаю:', '«Це', 'сусіди».']);
   });
 
   it('reconstructs the sentence exactly when joined with single spaces', () => {
     const chunks = buildChunks(quotedSentence());
-    expect(chunks.map((c) => c.text).join(' ')).toBe('Я думаю: «Это соседи».');
+    expect(chunks.map((c) => c.text).join(' ')).toBe('Я думаю: «Це сусіди».');
   });
 
   it('exposes the word token of each chunk; punctuation-only chunks have none', () => {
@@ -106,13 +106,13 @@ describe('selection ranges', () => {
   });
 
   it('phraseSurface is an exact substring of the sentence', () => {
-    expect(phraseSurface(chunks, { start: 2, end: 3 })).toBe('«Это соседи».');
-    expect('Я думаю: «Это соседи».').toContain(phraseSurface(chunks, { start: 1, end: 2 }));
+    expect(phraseSurface(chunks, { start: 2, end: 3 })).toBe('«Це сусіди».');
+    expect('Я думаю: «Це сусіди».').toContain(phraseSurface(chunks, { start: 1, end: 2 }));
   });
 
   it('full-sentence selection reproduces the whole sentence', () => {
     expect(phraseSurface(chunks, { start: 0, end: chunks.length - 1 })).toBe(
-      'Я думаю: «Это соседи».',
+      'Я думаю: «Це сусіди».',
     );
   });
 
@@ -122,6 +122,6 @@ describe('selection ranges', () => {
 
   it('wordTokensInRange excludes punctuation tokens', () => {
     const words = wordTokensInRange(chunks, { start: 2, end: 3 });
-    expect(words.map((w) => w.text)).toEqual(['Это', 'соседи']);
+    expect(words.map((w) => w.text)).toEqual(['Це', 'сусіди']);
   });
 });

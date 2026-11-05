@@ -16,23 +16,22 @@
     {
       "id": "kitchen-knives",
       "title": {
-        "uk": "Ножи на кухне",
+        "uk": "Ножі на кухні",
         "en": "The Knives in the Kitchen"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "kitch-s01",
-          "uk": "Утром я иду на кухню.",
+          "uk": "Вранці я йду на кухню.",
           "en": "In the morning I go to the kitchen.",
           "tokens": [
             {
-              "text": "Утром",
-              "lemma": "утро",
+              "text": "Вранці",
+              "lemma": "вранці",
               "translation": "in the morning",
-              "pos": "noun",
-              "level": "A1",
-              "grammar": "instr., used as adverb"
+              "pos": "adv",
+              "level": "A1"
             },
             {
               "text": "я",
@@ -42,8 +41,8 @@
               "level": "A1"
             },
             {
-              "text": "иду",
-              "lemma": "идти",
+              "text": "йду",
+              "lemma": "йти",
               "translation": "go",
               "pos": "verb",
               "level": "A1",
@@ -73,20 +72,20 @@
         },
         {
           "id": "kitch-s02",
-          "uk": "Ножи лежат не так.",
+          "uk": "Ножі лежать не так.",
           "en": "The knives are not lying the same way.",
           "tokens": [
             {
-              "text": "Ножи",
-              "lemma": "нож",
+              "text": "Ножі",
+              "lemma": "ніж",
               "translation": "knives",
               "pos": "noun",
               "level": "A1",
               "grammar": "nom.pl."
             },
             {
-              "text": "лежат",
-              "lemma": "лежать",
+              "text": "лежать",
+              "lemma": "лежати",
               "translation": "lie",
               "pos": "verb",
               "level": "A2",
@@ -114,38 +113,37 @@
         },
         {
           "id": "kitch-s03",
-          "uk": "Кто был здесь ночью?",
+          "uk": "Хто був тут уночі?",
           "en": "Who was here at night?",
           "tokens": [
             {
-              "text": "Кто",
-              "lemma": "кто",
+              "text": "Хто",
+              "lemma": "хто",
               "translation": "who",
               "pos": "pron",
               "level": "A1"
             },
             {
-              "text": "был",
-              "lemma": "быть",
+              "text": "був",
+              "lemma": "бути",
               "translation": "was",
               "pos": "verb",
               "level": "A1",
               "grammar": "m.sg. past"
             },
             {
-              "text": "здесь",
-              "lemma": "здесь",
+              "text": "тут",
+              "lemma": "тут",
               "translation": "here",
               "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "ночью",
-              "lemma": "ночь",
+              "text": "уночі",
+              "lemma": "уночі",
               "translation": "at night",
-              "pos": "noun",
-              "level": "A1",
-              "grammar": "instr., used as adverb"
+              "pos": "adv",
+              "level": "A1"
             },
             {
               "text": "?",
@@ -160,10 +158,10 @@
   "lesson": {
     "id": "u091-lesson",
     "title": {
-      "uk": "Что ты видишь?",
+      "uk": "Що ти бачиш?",
       "en": "What do you see?"
     },
-    "body": "## Что ты видишь?\n\nWhat you see, take, put — the accusative case marks the direct object.\n",
+    "body": "## Що ти бачиш?\n\nWhat you see, take, put — the accusative case marks the direct object.\n",
     "grammarTopics": [
       "accusative-direct-object"
     ]

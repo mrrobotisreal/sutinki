@@ -55,7 +55,7 @@ describe('charDistance / allowedEdits / wordsMatch', () => {
 
 describe('scoreAttempt', () => {
   it('perfect attempt scores 100 with every word green', () => {
-    const r = scoreAttempt('Я слышу стук в стене', 'я слышу стук в стене');
+    const r = scoreAttempt('Я чую стукіт у стіні', 'я чую стукіт у стіні');
     expect(r.score).toBe(100);
     expect(r.words.every((w) => w.matched)).toBe(true);
   });
@@ -69,27 +69,27 @@ describe('scoreAttempt', () => {
   });
 
   it('a deliberately wrong word turns exactly that word red', () => {
-    const r = scoreAttempt('Я слышу стук в стене', 'я слышу голос в стене');
+    const r = scoreAttempt('Я чую стукіт у стіні', 'я чую голос у стіні');
     expect(r.words.map((w) => w.matched)).toEqual([true, true, false, true, true]);
     expect(r.words[2]!.heard).toBe('голос');
     expect(r.score).toBe(80);
   });
 
   it('missing words fail their slots without derailing the rest', () => {
-    const r = scoreAttempt('Он открыл старую дверь', 'он открыл дверь');
+    const r = scoreAttempt('Він відчинив старі двері', 'він відчинив двері');
     expect(r.matchedCount).toBe(3);
     const missed = r.words.find((w) => !w.matched)!;
-    expect(missed.target).toBe('старую');
+    expect(missed.target).toBe('старі');
     expect(missed.heard).toBeNull();
   });
 
   it('extra transcript words never hurt the score', () => {
-    const r = scoreAttempt('дом', 'ну дом да');
+    const r = scoreAttempt('дім', 'ну дім так');
     expect(r.score).toBe(100);
   });
 
   it('empty transcript = zero, all red', () => {
-    const r = scoreAttempt('Я слышу стук', '');
+    const r = scoreAttempt('Я чую стукіт', '');
     expect(r.score).toBe(0);
     expect(r.words.every((w) => !w.matched)).toBe(true);
   });

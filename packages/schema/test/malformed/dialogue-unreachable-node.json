@@ -30,7 +30,7 @@
         {
           "id": "player",
           "name": {
-            "uk": "Ты",
+            "uk": "Ти",
             "en": "You"
           },
           "voice": "elevenlabs:Ivan",
@@ -67,19 +67,19 @@
           "speakerId": "mama",
           "sentence": {
             "id": "dlg-n2",
-            "uk": "Ты голодный?",
+            "uk": "Ти голодний?",
             "en": "test",
             "tokens": [
               {
-                "text": "Ты",
-                "lemma": "ты",
+                "text": "Ти",
+                "lemma": "ти",
                 "translation": "x",
                 "pos": "noun",
                 "level": "A1"
               },
               {
-                "text": "голодный",
-                "lemma": "голодный",
+                "text": "голодний",
+                "lemma": "голодний",
                 "translation": "x",
                 "pos": "noun",
                 "level": "A1"
@@ -95,7 +95,7 @@
               "id": "dlg-n2-c1",
               "sentence": {
                 "id": "dlg-n2-c1",
-                "uk": "Да.",
+                "uk": "Так.",
                 "en": "test",
                 "tokens": [
                   {
@@ -215,7 +215,7 @@
             "en": "Good"
           },
           "recap": {
-            "uk": "Всё хорошо.",
+            "uk": "Усе добре.",
             "en": "All good."
           },
           "tone": "good"
@@ -227,7 +227,7 @@
             "en": "Bad"
           },
           "recap": {
-            "uk": "Всё плохо.",
+            "uk": "Усе погано.",
             "en": "All bad."
           },
           "tone": "bad"

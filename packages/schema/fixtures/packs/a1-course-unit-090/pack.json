@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "uk": "Прихожая",
+    "uk": "Передпокій",
     "en": "The Entryway"
   },
   "level": "A1",
@@ -16,37 +16,37 @@
     {
       "id": "hallway-coats",
       "title": {
-        "uk": "Чужие куртки",
+        "uk": "Чужі куртки",
         "en": "The Coats That Belong to No One"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "hall-s01",
-          "uk": "Это наша прихожая.",
+          "uk": "Це наш передпокій.",
           "en": "This is our entryway.",
           "grammarTopics": [
             "nominative-subject"
           ],
           "tokens": [
             {
-              "text": "Это",
-              "lemma": "это",
+              "text": "Це",
+              "lemma": "це",
               "translation": "this is",
               "pos": "pron",
               "level": "A1"
             },
             {
-              "text": "наша",
+              "text": "наш",
               "lemma": "наш",
               "translation": "our",
               "pos": "pron",
               "level": "A1",
-              "grammar": "f.sg. nom."
+              "grammar": "m.sg. nom."
             },
             {
-              "text": "прихожая",
-              "lemma": "прихожая",
+              "text": "передпокій",
+              "lemma": "передпокій",
               "translation": "entryway",
               "pos": "noun",
               "level": "A2"
@@ -59,19 +59,19 @@
         },
         {
           "id": "hall-s02",
-          "uk": "Здесь висит куртка.",
+          "uk": "Тут висить куртка.",
           "en": "A jacket hangs here.",
           "tokens": [
             {
-              "text": "Здесь",
-              "lemma": "здесь",
+              "text": "Тут",
+              "lemma": "тут",
               "translation": "here",
               "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "висит",
-              "lemma": "висеть",
+              "text": "висить",
+              "lemma": "висіти",
               "translation": "hangs",
               "pos": "verb",
               "level": "A2",
@@ -92,12 +92,12 @@
         },
         {
           "id": "hall-s03",
-          "uk": "Это не моя куртка.",
+          "uk": "Це не моя куртка.",
           "en": "It is not my jacket.",
           "tokens": [
             {
-              "text": "Это",
-              "lemma": "это",
+              "text": "Це",
+              "lemma": "це",
               "translation": "it is",
               "pos": "pron",
               "level": "A1"
@@ -111,7 +111,7 @@
             },
             {
               "text": "моя",
-              "lemma": "мой",
+              "lemma": "мій",
               "translation": "my",
               "pos": "pron",
               "level": "A1",
@@ -137,10 +137,10 @@
   "lesson": {
     "id": "u090-lesson",
     "title": {
-      "uk": "Что здесь?",
+      "uk": "Що тут?",
       "en": "What is here?"
     },
-    "body": "## Что здесь?\n\nNaming what you see in the dark: «Это куртка.» — the nominative case names things.\n",
+    "body": "## Що тут?\n\nNaming what you see in the dark: «Це куртка.» — the nominative case names things.\n",
     "grammarTopics": [
       "nominative-subject"
     ]

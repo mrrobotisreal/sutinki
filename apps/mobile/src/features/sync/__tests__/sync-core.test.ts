@@ -183,7 +183,7 @@ describe('planPackFiles', () => {
 });
 
 describe('verifyFileSha256', () => {
-  const bytes = new TextEncoder().encode('привет, Сумрак');
+  const bytes = new TextEncoder().encode('привіт, Сутінки');
 
   it('passes when the hash matches', async () => {
     const expected = createHash('sha256').update(bytes).digest('hex');

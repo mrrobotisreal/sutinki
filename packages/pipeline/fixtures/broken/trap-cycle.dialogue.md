@@ -17,8 +17,8 @@ characters:
     style: warm
 endings:
   - id: end-x
-    title: { uk: 'Конец', en: 'End' }
-    recap: { uk: 'Всё.', en: 'Done.' }
+    title: { uk: 'Кінець', en: 'End' }
+    recap: { uk: 'Усе.', en: 'Done.' }
     tone: good
 ---
 
@@ -26,12 +26,12 @@ endings:
 
 SPEAKER: mama
 
-UK: Привет.
+UK: Привіт.
 EN: Hello.
 
 | text   | lemma  | translation | pos    | grammar | level | note |
 | ------ | ------ | ----------- | ------ | ------- | ----- | ---- |
-| Привет | привет | hello       | interj |         | A1    |      |
+| Привіт | привіт | hello       | interj |         | A1    |      |
 | .      |        |             |        |         |       |      |
 
 NEXT: tc-n2
@@ -40,12 +40,12 @@ NEXT: tc-n2
 
 SPEAKER: mama
 
-UK: Опять.
+UK: Знову.
 EN: Again.
 
 | text  | lemma | translation | pos | grammar | level | note |
 | ----- | ----- | ----------- | --- | ------- | ----- | ---- |
-| Опять | опять | again       | adv |         | A2    |      |
+| Знову | знову | again       | adv |         | A2    |      |
 | .     |       |             |     |         |       |      |
 
 NEXT: tc-n1

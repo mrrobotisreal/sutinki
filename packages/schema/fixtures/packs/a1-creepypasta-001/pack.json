@@ -3,7 +3,7 @@
   "version": 1,
   "type": "stories",
   "title": {
-    "uk": "Стук в стене",
+    "uk": "Стукіт у стіні",
     "en": "The Knock in the Wall"
   },
   "level": "A1",
@@ -18,7 +18,7 @@
     {
       "id": "knock-in-the-wall",
       "title": {
-        "uk": "Стук в стене",
+        "uk": "Стукіт у стіні",
         "en": "The Knock in the Wall"
       },
       "level": "A1",
@@ -390,11 +390,11 @@
       "sentences": [
         {
           "id": "knock-s01",
-          "uk": "Я живу один в старой квартире.",
+          "uk": "Я живу сам у старій квартирі.",
           "en": "I live alone in an old apartment.",
           "grammarTopics": [
             "present-tense",
-            "prepositional-case"
+            "locative-location"
           ],
           "tokens": [
             {
@@ -407,42 +407,42 @@
             },
             {
               "text": "живу",
-              "lemma": "жить",
+              "lemma": "жити",
               "translation": "live",
               "pos": "verb",
               "grammar": "1sg. pres. (impf.)",
               "level": "A1"
             },
             {
-              "text": "один",
-              "lemma": "один",
+              "text": "сам",
+              "lemma": "сам",
               "translation": "alone",
               "pos": "num",
               "grammar": "m.sg. nom., used as \"alone\"",
               "level": "A1"
             },
             {
-              "text": "в",
-              "lemma": "в",
+              "text": "у",
+              "lemma": "у",
               "translation": "in",
               "pos": "prep",
-              "grammar": "+ prep. (location)",
+              "grammar": "+ loc. (location)",
               "level": "A1"
             },
             {
-              "text": "старой",
-              "lemma": "старый",
+              "text": "старій",
+              "lemma": "старий",
               "translation": "old",
               "pos": "adj",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {
-              "text": "квартире",
+              "text": "квартирі",
               "lemma": "квартира",
               "translation": "apartment",
               "pos": "noun",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {
@@ -453,20 +453,19 @@
         },
         {
           "id": "knock-s02",
-          "uk": "Ночью я слышу стук в стене.",
+          "uk": "Уночі я чую стукіт у стіні.",
           "en": "At night I hear a knocking in the wall.",
           "grammarTopics": [
             "present-tense",
-            "instrumental-adverbial",
-            "prepositional-case"
+            "time-expressions",
+            "locative-location"
           ],
           "tokens": [
             {
-              "text": "Ночью",
-              "lemma": "ночь",
+              "text": "Уночі",
+              "lemma": "уночі",
               "translation": "at night",
-              "pos": "noun",
-              "grammar": "f.sg. instr., used adverbially",
+              "pos": "adv",
               "level": "A1"
             },
             {
@@ -478,35 +477,35 @@
               "level": "A1"
             },
             {
-              "text": "слышу",
-              "lemma": "слышать",
+              "text": "чую",
+              "lemma": "чути",
               "translation": "hear",
               "pos": "verb",
               "grammar": "1sg. pres. (impf.)",
               "level": "A1"
             },
             {
-              "text": "стук",
-              "lemma": "стук",
+              "text": "стукіт",
+              "lemma": "стукіт",
               "translation": "knocking",
               "pos": "noun",
               "grammar": "m.sg. acc.",
               "level": "A2"
             },
             {
-              "text": "в",
-              "lemma": "в",
+              "text": "у",
+              "lemma": "у",
               "translation": "in",
               "pos": "prep",
-              "grammar": "+ prep. (location)",
+              "grammar": "+ loc. (location)",
               "level": "A1"
             },
             {
-              "text": "стене",
-              "lemma": "стена",
+              "text": "стіні",
+              "lemma": "стіна",
               "translation": "wall",
               "pos": "noun",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {
@@ -517,7 +516,7 @@
         },
         {
           "id": "knock-s03",
-          "uk": "Стук тихий, но он не останавливается.",
+          "uk": "Стукіт тихий, але він не припиняється.",
           "en": "The knocking is quiet, but it does not stop.",
           "grammarTopics": [
             "adjective-agreement",
@@ -526,8 +525,8 @@
           ],
           "tokens": [
             {
-              "text": "Стук",
-              "lemma": "стук",
+              "text": "Стукіт",
+              "lemma": "стукіт",
               "translation": "the knocking",
               "pos": "noun",
               "grammar": "m.sg. nom.",
@@ -546,15 +545,15 @@
               "isPunct": true
             },
             {
-              "text": "но",
-              "lemma": "но",
+              "text": "але",
+              "lemma": "але",
               "translation": "but",
               "pos": "conj",
               "level": "A1"
             },
             {
-              "text": "он",
-              "lemma": "он",
+              "text": "він",
+              "lemma": "він",
               "translation": "it",
               "pos": "pron",
               "grammar": "m.sg. nom. (refers to стук)",
@@ -568,8 +567,8 @@
               "level": "A1"
             },
             {
-              "text": "останавливается",
-              "lemma": "останавливаться",
+              "text": "припиняється",
+              "lemma": "припинятися",
               "translation": "stops",
               "pos": "verb",
               "grammar": "3sg. pres. (impf., refl.)",
@@ -583,7 +582,7 @@
         },
         {
           "id": "knock-s04",
-          "uk": "Я думаю: «Это соседи».",
+          "uk": "Я думаю: «Це сусіди».",
           "en": "I think: \"It's the neighbours.\"",
           "grammarTopics": [
             "present-tense",
@@ -600,7 +599,7 @@
             },
             {
               "text": "думаю",
-              "lemma": "думать",
+              "lemma": "думати",
               "translation": "think",
               "pos": "verb",
               "grammar": "1sg. pres. (impf.)",
@@ -616,8 +615,8 @@
               "spaceBefore": true
             },
             {
-              "text": "Это",
-              "lemma": "это",
+              "text": "Це",
+              "lemma": "це",
               "translation": "it (is)",
               "pos": "pron",
               "grammar": "demonstrative, nom.",
@@ -625,8 +624,8 @@
               "spaceBefore": false
             },
             {
-              "text": "соседи",
-              "lemma": "сосед",
+              "text": "сусіди",
+              "lemma": "сусід",
               "translation": "the neighbours",
               "pos": "noun",
               "grammar": "m.pl. nom.",
@@ -644,32 +643,32 @@
         },
         {
           "id": "knock-s05",
-          "uk": "Но сосед говорит: «За этой стеной нет квартиры».",
+          "uk": "Але сусід каже: «За цією стіною немає квартири».",
           "en": "But the neighbour says: \"There is no apartment behind that wall.\"",
           "grammarTopics": [
-            "instrumental-case",
+            "instrumental-location",
             "genitive-negation",
             "direct-speech"
           ],
           "tokens": [
             {
-              "text": "Но",
-              "lemma": "но",
+              "text": "Але",
+              "lemma": "але",
               "translation": "but",
               "pos": "conj",
               "level": "A1"
             },
             {
-              "text": "сосед",
-              "lemma": "сосед",
+              "text": "сусід",
+              "lemma": "сусід",
               "translation": "the neighbour",
               "pos": "noun",
               "grammar": "m.sg. nom.",
               "level": "A1"
             },
             {
-              "text": "говорит",
-              "lemma": "говорить",
+              "text": "каже",
+              "lemma": "казати",
               "translation": "says",
               "pos": "verb",
               "grammar": "3sg. pres. (impf.)",
@@ -694,35 +693,35 @@
               "spaceBefore": false
             },
             {
-              "text": "этой",
-              "lemma": "этот",
+              "text": "цією",
+              "lemma": "цей",
               "translation": "that",
               "pos": "pron",
               "grammar": "f.sg. instr.",
               "level": "A1"
             },
             {
-              "text": "стеной",
-              "lemma": "стена",
+              "text": "стіною",
+              "lemma": "стіна",
               "translation": "wall",
               "pos": "noun",
               "grammar": "f.sg. instr.",
               "level": "A1"
             },
             {
-              "text": "нет",
-              "lemma": "нет",
+              "text": "немає",
+              "lemma": "немає",
               "translation": "there is no",
               "pos": "pred",
               "grammar": "+ gen.",
               "level": "A1"
             },
             {
-              "text": "квартиры",
+              "text": "квартири",
               "lemma": "квартира",
               "translation": "apartment",
               "pos": "noun",
-              "grammar": "f.sg. gen. (after нет)",
+              "grammar": "f.sg. gen. (after немає)",
               "level": "A1"
             },
             {
@@ -737,7 +736,7 @@
         },
         {
           "id": "knock-s06",
-          "uk": "Сегодня ночью стук очень громкий.",
+          "uk": "Сьогодні вночі стукіт дуже гучний.",
           "en": "Tonight the knocking is very loud.",
           "grammarTopics": [
             "adjective-agreement",
@@ -745,38 +744,37 @@
           ],
           "tokens": [
             {
-              "text": "Сегодня",
-              "lemma": "сегодня",
+              "text": "Сьогодні",
+              "lemma": "сьогодні",
               "translation": "today",
               "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "ночью",
-              "lemma": "ночь",
+              "text": "вночі",
+              "lemma": "вночі",
               "translation": "at night",
-              "pos": "noun",
-              "grammar": "f.sg. instr., used adverbially; сегодня ночью = tonight",
+              "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "стук",
-              "lemma": "стук",
+              "text": "стукіт",
+              "lemma": "стукіт",
               "translation": "the knocking",
               "pos": "noun",
               "grammar": "m.sg. nom.",
               "level": "A2"
             },
             {
-              "text": "очень",
-              "lemma": "очень",
+              "text": "дуже",
+              "lemma": "дуже",
               "translation": "very",
               "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "громкий",
-              "lemma": "громкий",
+              "text": "гучний",
+              "lemma": "гучний",
               "translation": "loud",
               "pos": "adj",
               "grammar": "m.sg. nom.",
@@ -790,7 +788,7 @@
         },
         {
           "id": "knock-s07",
-          "uk": "Я стою у стены и слушаю.",
+          "uk": "Я стою біля стіни і слухаю.",
           "en": "I stand at the wall and listen.",
           "grammarTopics": [
             "present-tense",
@@ -807,41 +805,41 @@
             },
             {
               "text": "стою",
-              "lemma": "стоять",
+              "lemma": "стояти",
               "translation": "stand",
               "pos": "verb",
               "grammar": "1sg. pres. (impf.)",
               "level": "A1"
             },
             {
-              "text": "у",
-              "lemma": "у",
+              "text": "біля",
+              "lemma": "біля",
               "translation": "at, by",
               "pos": "prep",
-              "grammar": "+ gen.",
+              "grammar": "+ gen. (location)",
               "level": "A1"
             },
             {
-              "text": "стены",
-              "lemma": "стена",
+              "text": "стіни",
+              "lemma": "стіна",
               "translation": "the wall",
               "pos": "noun",
               "grammar": "f.sg. gen.",
               "level": "A1"
             },
             {
-              "text": "и",
-              "lemma": "и",
+              "text": "і",
+              "lemma": "і",
               "translation": "and",
               "pos": "conj",
               "level": "A1"
             },
             {
-              "text": "слушаю",
-              "lemma": "слушать",
+              "text": "слухаю",
+              "lemma": "слухати",
               "translation": "listen",
               "pos": "verb",
-              "grammar": "1sg. pres. (impf.); слушать = listen, слышать = hear",
+              "grammar": "1sg. pres. (impf.); слухати = listen, чути = hear",
               "level": "A1"
             },
             {
@@ -852,30 +850,30 @@
         },
         {
           "id": "knock-s08",
-          "uk": "Вдруг стук останавливается.",
+          "uk": "Раптом стукіт припиняється.",
           "en": "Suddenly the knocking stops.",
           "grammarTopics": [
             "reflexive-verbs"
           ],
           "tokens": [
             {
-              "text": "Вдруг",
-              "lemma": "вдруг",
+              "text": "Раптом",
+              "lemma": "раптом",
               "translation": "suddenly",
               "pos": "adv",
               "level": "A2"
             },
             {
-              "text": "стук",
-              "lemma": "стук",
+              "text": "стукіт",
+              "lemma": "стукіт",
               "translation": "the knocking",
               "pos": "noun",
               "grammar": "m.sg. nom.",
               "level": "A2"
             },
             {
-              "text": "останавливается",
-              "lemma": "останавливаться",
+              "text": "припиняється",
+              "lemma": "припинятися",
               "translation": "stops",
               "pos": "verb",
               "grammar": "3sg. pres. (impf., refl.)",
@@ -889,7 +887,7 @@
         },
         {
           "id": "knock-s09",
-          "uk": "Потом я слышу тихий голос: «Ты дома».",
+          "uk": "Потім я чую тихий голос: «Ти вдома».",
           "en": "Then I hear a quiet voice: \"You are home.\"",
           "grammarTopics": [
             "accusative-case",
@@ -897,8 +895,8 @@
           ],
           "tokens": [
             {
-              "text": "Потом",
-              "lemma": "потом",
+              "text": "Потім",
+              "lemma": "потім",
               "translation": "then",
               "pos": "adv",
               "level": "A1"
@@ -912,8 +910,8 @@
               "level": "A1"
             },
             {
-              "text": "слышу",
-              "lemma": "слышать",
+              "text": "чую",
+              "lemma": "чути",
               "translation": "hear",
               "pos": "verb",
               "grammar": "1sg. pres. (impf.)",
@@ -945,8 +943,8 @@
               "spaceBefore": true
             },
             {
-              "text": "Ты",
-              "lemma": "ты",
+              "text": "Ти",
+              "lemma": "ти",
               "translation": "you",
               "pos": "pron",
               "grammar": "nom. (informal)",
@@ -954,11 +952,11 @@
               "spaceBefore": false
             },
             {
-              "text": "дома",
-              "lemma": "дома",
+              "text": "вдома",
+              "lemma": "вдома",
               "translation": "at home",
               "pos": "adv",
-              "grammar": "дома (adv.) = at home; дом = house",
+              "grammar": "вдома (adv.) = at home; дім = home",
               "level": "A1"
             },
             {
@@ -973,11 +971,11 @@
         },
         {
           "id": "knock-s10",
-          "uk": "Голос не в стене.",
+          "uk": "Голос не у стіні.",
           "en": "The voice is not in the wall.",
           "grammarTopics": [
             "negation",
-            "prepositional-case"
+            "locative-location"
           ],
           "tokens": [
             {
@@ -996,19 +994,19 @@
               "level": "A1"
             },
             {
-              "text": "в",
-              "lemma": "в",
+              "text": "у",
+              "lemma": "у",
               "translation": "in",
               "pos": "prep",
-              "grammar": "+ prep. (location)",
+              "grammar": "+ loc. (location)",
               "level": "A1"
             },
             {
-              "text": "стене",
-              "lemma": "стена",
+              "text": "стіні",
+              "lemma": "стіна",
               "translation": "the wall",
               "pos": "noun",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {
@@ -1019,43 +1017,43 @@
         },
         {
           "id": "knock-s11",
-          "uk": "Он в моей комнате.",
+          "uk": "Він у моїй кімнаті.",
           "en": "It is in my room.",
           "grammarTopics": [
-            "prepositional-case",
+            "locative-location",
             "possessive-pronouns"
           ],
           "tokens": [
             {
-              "text": "Он",
-              "lemma": "он",
+              "text": "Він",
+              "lemma": "він",
               "translation": "it",
               "pos": "pron",
               "grammar": "m.sg. nom. (refers to голос)",
               "level": "A1"
             },
             {
-              "text": "в",
-              "lemma": "в",
+              "text": "у",
+              "lemma": "у",
               "translation": "in",
               "pos": "prep",
-              "grammar": "+ prep. (location)",
+              "grammar": "+ loc. (location)",
               "level": "A1"
             },
             {
-              "text": "моей",
-              "lemma": "мой",
+              "text": "моїй",
+              "lemma": "мій",
               "translation": "my",
               "pos": "pron",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {
-              "text": "комнате",
-              "lemma": "комната",
+              "text": "кімнаті",
+              "lemma": "кімната",
               "translation": "room",
               "pos": "noun",
-              "grammar": "f.sg. prep.",
+              "grammar": "f.sg. loc.",
               "level": "A1"
             },
             {

@@ -68,7 +68,7 @@ export function makeValidDialoguePack(): Record<string, unknown> {
           },
           {
             id: 'player',
-            name: { uk: 'Ты', en: 'You' },
+            name: { uk: 'Ти', en: 'You' },
             voice: 'elevenlabs:Ivan',
             style: 'neutral',
           },
@@ -76,9 +76,9 @@ export function makeValidDialoguePack(): Record<string, unknown> {
         startNodeId: 'dlg-n1',
         nodes: [
           makeNode('dlg-n1', 'mama', 'Привет.', { next: 'dlg-n2' }),
-          makeNode('dlg-n2', 'mama', 'Ты голодный?', {
+          makeNode('dlg-n2', 'mama', 'Ти голодний?', {
             choices: [
-              makeChoice('dlg-n2-c1', 'Да.', 'dlg-n3'),
+              makeChoice('dlg-n2-c1', 'Так.', 'dlg-n3'),
               makeChoice('dlg-n2-c2', 'Нет.', 'dlg-n4'),
             ],
           }),
@@ -89,13 +89,13 @@ export function makeValidDialoguePack(): Record<string, unknown> {
           {
             id: 'e-good',
             title: { uk: 'Хорошо', en: 'Good' },
-            recap: { uk: 'Всё хорошо.', en: 'All good.' },
+            recap: { uk: 'Усе добре.', en: 'All good.' },
             tone: 'good',
           },
           {
             id: 'e-bad',
             title: { uk: 'Плохо', en: 'Bad' },
-            recap: { uk: 'Всё плохо.', en: 'All bad.' },
+            recap: { uk: 'Усе погано.', en: 'All bad.' },
             tone: 'bad',
           },
         ],

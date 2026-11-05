@@ -170,7 +170,7 @@ describe('findDistractors', () => {
     await mk('стена', 'wall', 'noun', 'A1');
     await mk('дверь', 'door', 'noun', 'A2');
     await mk('идти', 'to go', 'verb', 'A1');
-    await mk('тёмный', 'dark', 'adj', 'A1');
+    await mk('темний', 'dark', 'adj', 'A1');
     return target.item;
   }
 

@@ -109,7 +109,7 @@ describe('pack importer', () => {
     expect(item!.encounters).toHaveLength(1);
     const resolved = await content.resolveSentence('knock-s02');
     expect(resolved).not.toBeNull();
-    expect(resolved!.sentence.uk).toBe('Ночью я слышу стук в стене.');
+    expect(resolved!.sentence.uk).toBe('Уночі я чую стукіт у стіні.');
     expect(resolved!.story!.id).toBe('knock-in-the-wall');
   });
 

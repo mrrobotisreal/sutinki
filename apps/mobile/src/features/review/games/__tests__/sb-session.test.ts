@@ -43,24 +43,24 @@ describe('buildSbSession', () => {
       sentences: [
         {
           id: 's0',
-          uk: 'Кто-то стучит в стену',
+          uk: 'Хтось стукає в стіну',
           en: 'Someone knocks on the wall',
-          lemmas: ['кто-то', 'стучать', 'в', 'стена'],
+          lemmas: ['хтось', 'стукати', 'в', 'стіна'],
           punct: '.',
         },
       ],
     });
     await repos.reading.markFinished('p1', 'st1');
-    await repos.bank.addWord({ lemma: 'стена', surface: 'стену', translation: 'wall' });
+    await repos.bank.addWord({ lemma: 'стіна', surface: 'стіну', translation: 'wall' });
 
     const session = await buildSbSession(repos);
     expect(session).toHaveLength(1);
     const item = session[0]!;
-    expect(item.answerTokens.map((t) => t.text)).toEqual(['Кто-то', 'стучит', 'в', 'стену']);
+    expect(item.answerTokens.map((t) => t.text)).toEqual(['Хтось', 'стукає', 'в', 'стіну']);
     expect(item.tiles).toHaveLength(4); // no distractors at A1, no punctuation tile
     expect(item.tiles.every((t) => !t.distractor)).toBe(true);
     const tileTexts = item.tiles.map((t) => t.text).sort();
-    expect(tileTexts).toEqual(['в', 'кто-то', 'стену', 'стучит'].sort());
+    expect(tileTexts).toEqual(['в', 'хтось', 'стіну', 'стукає'].sort());
   });
 
   it('higher-level stories add level-scaled distractor tiles that never collide with the sentence', async () => {
@@ -73,16 +73,16 @@ describe('buildSbSession', () => {
       sentences: [
         {
           id: 's0',
-          uk: 'Зеркало помнит всё',
+          uk: "Дзеркало пам'ятає все",
           en: 'The mirror remembers everything',
-          lemmas: ['зеркало', 'помнить', 'всё'],
+          lemmas: ['дзеркало', "пам'ятати", 'все'],
         },
       ],
     });
     await repos.reading.markFinished('p1', 'st1');
     await repos.bank.addWord({
-      lemma: 'зеркало',
-      surface: 'зеркало',
+      lemma: 'дзеркало',
+      surface: 'дзеркало',
       translation: 'mirror',
       pos: 'noun',
       level: 'C1',
@@ -90,8 +90,8 @@ describe('buildSbSession', () => {
     // distractor pool
     for (let i = 0; i < 8; i++) {
       await repos.bank.addWord({
-        lemma: `сосед${i}`,
-        surface: `сосед${i}`,
+        lemma: `сусід${i}`,
+        surface: `сусід${i}`,
         translation: `neighbor-${i}`,
         pos: 'noun',
         level: 'C1',
@@ -123,13 +123,13 @@ describe('buildSbSession', () => {
       packId: 'p1',
       storyId: 'unread',
       sentences: [
-        { id: 's2', uk: 'Он ждёт тебя', en: 'He waits for you', lemmas: ['он', 'ждать', 'ты'] },
+        { id: 's2', uk: 'Він чекає тебе', en: 'He waits for you', lemmas: ['він', 'чекати', 'ти'] },
       ],
     });
     await repos.reading.markFinished('p1', 'long');
     await repos.bank.addWord({ lemma: 'слово0', surface: 'слово0', translation: 'w' });
     await repos.bank.addWord({ lemma: 'тишина', surface: 'тишина', translation: 'silence' });
-    await repos.bank.addWord({ lemma: 'ждать', surface: 'ждёт', translation: 'waits' });
+    await repos.bank.addWord({ lemma: 'чекати', surface: 'чекає', translation: 'waits' });
 
     expect(await buildSbSession(repos)).toHaveLength(0);
   });

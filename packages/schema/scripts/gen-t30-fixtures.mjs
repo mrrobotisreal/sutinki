@@ -11,8 +11,8 @@ import { fileURLToPath } from 'node:url';
 
 const packsDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'fixtures', 'packs');
 
-/** Mirror of reconstructSentenceRu's spacing rule (words spaced, punct attached). */
-function ru(tokens) {
+/** Mirror of the sentence-reconstruction's spacing rule (words spaced, punct attached). */
+function uk(tokens) {
   let out = '';
   tokens.forEach((tok, i) => {
     const space = tok.spaceBefore ?? (i > 0 && !tok.isPunct);
@@ -32,7 +32,7 @@ const w = (text, lemma, translation, pos, level, grammar) => ({
 const p = (text) => ({ text, isPunct: true });
 
 function sentence(id, en, tokens, grammarTopics) {
-  return { id, ru: ru(tokens), en, ...(grammarTopics ? { grammarTopics } : {}), tokens };
+  return { id, uk: uk(tokens), en, ...(grammarTopics ? { grammarTopics } : {}), tokens };
 }
 
 function unit({ id, title, level, tags, theme, track, lesson, story, prompts }) {
@@ -54,42 +54,42 @@ function unit({ id, title, level, tags, theme, track, lesson, story, prompts }) 
 const packs = [
   unit({
     id: 'a1-course-unit-090',
-    title: { ru: 'Прихожая', en: 'The Entryway' },
+    title: { uk: 'Передпокій', en: 'The Entryway' },
     level: 'A1',
     tags: ['course', 'house', 'fixture'],
     theme: { scene: 'hallway' },
     lesson: {
       id: 'u090-lesson',
-      title: { ru: 'Что здесь?', en: 'What is here?' },
-      body: '## Что здесь?\n\nNaming what you see in the dark: «Это куртка.» — the nominative case names things.\n',
+      title: { uk: 'Що тут?', en: 'What is here?' },
+      body: '## Що тут?\n\nNaming what you see in the dark: «Це куртка.» — the nominative case names things.\n',
       grammarTopics: ['nominative-subject'],
     },
     story: {
       id: 'hallway-coats',
-      title: { ru: 'Чужие куртки', en: 'The Coats That Belong to No One' },
+      title: { uk: 'Чужі куртки', en: 'The Coats That Belong to No One' },
       level: 'A1',
       sentences: [
         sentence(
           'hall-s01',
           'This is our entryway.',
           [
-            w('Это', 'это', 'this is', 'pron', 'A1'),
-            w('наша', 'наш', 'our', 'pron', 'A1', 'f.sg. nom.'),
-            w('прихожая', 'прихожая', 'entryway', 'noun', 'A2'),
+            w('Це', 'це', 'this is', 'pron', 'A1'),
+            w('наш', 'наш', 'our', 'pron', 'A1', 'm.sg. nom.'),
+            w('передпокій', 'передпокій', 'entryway', 'noun', 'A2'),
             p('.'),
           ],
           ['nominative-subject'],
         ),
         sentence('hall-s02', 'A jacket hangs here.', [
-          w('Здесь', 'здесь', 'here', 'adv', 'A1'),
-          w('висит', 'висеть', 'hangs', 'verb', 'A2', '3sg. pres. (impf.)'),
+          w('Тут', 'тут', 'here', 'adv', 'A1'),
+          w('висить', 'висіти', 'hangs', 'verb', 'A2', '3sg. pres. (impf.)'),
           w('куртка', 'куртка', 'jacket', 'noun', 'A1'),
           p('.'),
         ]),
         sentence('hall-s03', 'It is not my jacket.', [
-          w('Это', 'это', 'it is', 'pron', 'A1'),
+          w('Це', 'це', 'it is', 'pron', 'A1'),
           w('не', 'не', 'not', 'part', 'A1'),
-          w('моя', 'мой', 'my', 'pron', 'A1', 'f.sg. nom.'),
+          w('моя', 'мій', 'my', 'pron', 'A1', 'f.sg. nom.'),
           w('куртка', 'куртка', 'jacket', 'noun', 'A1'),
           p('.'),
         ]),
@@ -98,41 +98,41 @@ const packs = [
   }),
   unit({
     id: 'a1-course-unit-091',
-    title: { ru: 'Кухня', en: 'The Kitchen' },
+    title: { uk: 'Кухня', en: 'The Kitchen' },
     level: 'A1',
     tags: ['course', 'house', 'fixture'],
     theme: { scene: 'kitchen', accent: '#8A4B2F' },
     lesson: {
       id: 'u091-lesson',
-      title: { ru: 'Что ты видишь?', en: 'What do you see?' },
-      body: '## Что ты видишь?\n\nWhat you see, take, put — the accusative case marks the direct object.\n',
+      title: { uk: 'Що ти бачиш?', en: 'What do you see?' },
+      body: '## Що ти бачиш?\n\nWhat you see, take, put — the accusative case marks the direct object.\n',
       grammarTopics: ['accusative-direct-object'],
     },
     story: {
       id: 'kitchen-knives',
-      title: { ru: 'Ножи на кухне', en: 'The Knives in the Kitchen' },
+      title: { uk: 'Ножі на кухні', en: 'The Knives in the Kitchen' },
       level: 'A1',
       sentences: [
         sentence('kitch-s01', 'In the morning I go to the kitchen.', [
-          w('Утром', 'утро', 'in the morning', 'noun', 'A1', 'instr., used as adverb'),
+          w('Вранці', 'вранці', 'in the morning', 'adv', 'A1'),
           w('я', 'я', 'I', 'pron', 'A1'),
-          w('иду', 'идти', 'go', 'verb', 'A1', '1sg. pres. (impf.)'),
+          w('йду', 'йти', 'go', 'verb', 'A1', '1sg. pres. (impf.)'),
           w('на', 'на', 'to', 'prep', 'A1', '+acc.'),
           w('кухню', 'кухня', 'kitchen', 'noun', 'A1', 'acc.sg.'),
           p('.'),
         ]),
         sentence('kitch-s02', 'The knives are not lying the same way.', [
-          w('Ножи', 'нож', 'knives', 'noun', 'A1', 'nom.pl.'),
-          w('лежат', 'лежать', 'lie', 'verb', 'A2', '3pl. pres. (impf.)'),
+          w('Ножі', 'ніж', 'knives', 'noun', 'A1', 'nom.pl.'),
+          w('лежать', 'лежати', 'lie', 'verb', 'A2', '3pl. pres. (impf.)'),
           w('не', 'не', 'not', 'part', 'A1'),
           w('так', 'так', 'that way', 'adv', 'A1'),
           p('.'),
         ]),
         sentence('kitch-s03', 'Who was here at night?', [
-          w('Кто', 'кто', 'who', 'pron', 'A1'),
-          w('был', 'быть', 'was', 'verb', 'A1', 'm.sg. past'),
-          w('здесь', 'здесь', 'here', 'adv', 'A1'),
-          w('ночью', 'ночь', 'at night', 'noun', 'A1', 'instr., used as adverb'),
+          w('Хто', 'хто', 'who', 'pron', 'A1'),
+          w('був', 'бути', 'was', 'verb', 'A1', 'm.sg. past'),
+          w('тут', 'тут', 'here', 'adv', 'A1'),
+          w('уночі', 'уночі', 'at night', 'adv', 'A1'),
           p('?'),
         ]),
       ],
@@ -140,31 +140,31 @@ const packs = [
   }),
   unit({
     id: 'a1-course-unit-092',
-    title: { ru: 'Подвал', en: 'The Cellar' },
+    title: { uk: 'Підвал', en: 'The Cellar' },
     level: 'A1',
     tags: ['course', 'house', 'fixture'],
     theme: { scene: 'cellar' },
     lesson: {
       id: 'u092-lesson',
-      title: { ru: 'С кем ты?', en: 'With whom are you?' },
-      body: '## С кем ты?\n\nWith what — and with whom: the instrumental case walks down the stairs with you.\n',
-      grammarTopics: ['instrumental-with-s'],
+      title: { uk: 'З ким ти?', en: 'With whom are you?' },
+      body: '## З ким ти?\n\nWith what — and with whom: the instrumental case walks down the stairs with you.\n',
+      grammarTopics: ['instrumental-with-z'],
     },
     story: {
       id: 'cellar-wait',
-      title: { ru: 'В подвале', en: 'In the Cellar' },
+      title: { uk: 'У підвалі', en: 'In the Cellar' },
       level: 'A1',
       sentences: [
         sentence('cell-s01', 'The house has a cellar.', [
-          w('В', 'в', 'in', 'prep', 'A1', '+prep.'),
-          w('доме', 'дом', 'house', 'noun', 'A1', 'prep.sg.'),
-          w('есть', 'есть', 'there is', 'verb', 'A1'),
-          w('подвал', 'подвал', 'cellar', 'noun', 'A2'),
+          w('У', 'у', 'in', 'prep', 'A1', '+loc.'),
+          w('будинку', 'будинок', 'house', 'noun', 'A1', 'loc.sg.'),
+          w('є', 'є', 'there is', 'verb', 'A1'),
+          w('підвал', 'підвал', 'cellar', 'noun', 'A2'),
           p('.'),
         ]),
         sentence('cell-s02', 'It is always dark there.', [
           w('Там', 'там', 'there', 'adv', 'A1'),
-          w('всегда', 'всегда', 'always', 'adv', 'A1'),
+          w('завжди', 'завжди', 'always', 'adv', 'A1'),
           w('темно', 'темно', 'dark', 'adv', 'A1'),
           p('.'),
         ]),
@@ -172,7 +172,7 @@ const packs = [
           w('Я', 'я', 'I', 'pron', 'A1'),
           w('там', 'там', 'there', 'adv', 'A1'),
           w('не', 'не', 'not', 'part', 'A1'),
-          w('один', 'один', 'alone', 'num', 'A1', 'm.sg. nom., used as "alone"'),
+          w('сам', 'сам', 'alone', 'num', 'A1', 'm.sg. nom., used as "alone"'),
           p('.'),
         ]),
       ],
@@ -182,33 +182,33 @@ const packs = [
   // the default (non-house) path presentation for this unit.
   unit({
     id: 'a1-course-unit-093',
-    title: { ru: 'Оранжерея', en: 'The Greenhouse' },
+    title: { uk: 'Оранжерея', en: 'The Greenhouse' },
     level: 'A1',
     tags: ['course', 'fixture'],
     theme: { scene: 'greenhouse' },
     lesson: {
       id: 'u093-lesson',
-      title: { ru: 'За домом', en: 'Behind the house' },
-      body: '## За домом\n\nA scene the app does not know yet — the unit must render like any other.\n',
-      grammarTopics: ['instrumental-with-s'],
+      title: { uk: 'За будинком', en: 'Behind the house' },
+      body: '## За будинком\n\nA scene the app does not know yet — the unit must render like any other.\n',
+      grammarTopics: ['instrumental-with-z'],
     },
     story: {
       id: 'greenhouse-flowers',
-      title: { ru: 'Ночные цветы', en: 'The Night Flowers' },
+      title: { uk: 'Нічні квіти', en: 'The Night Flowers' },
       level: 'A1',
       sentences: [
         sentence('green-s01', 'A greenhouse stands behind the house.', [
           w('За', 'за', 'behind', 'prep', 'A1', '+instr.'),
-          w('домом', 'дом', 'house', 'noun', 'A1', 'instr.sg.'),
-          w('стоит', 'стоять', 'stands', 'verb', 'A1', '3sg. pres. (impf.)'),
+          w('будинком', 'будинок', 'house', 'noun', 'A1', 'instr.sg.'),
+          w('стоїть', 'стояти', 'stands', 'verb', 'A1', '3sg. pres. (impf.)'),
           w('оранжерея', 'оранжерея', 'greenhouse', 'noun', 'B1'),
           p('.'),
         ]),
         sentence('green-s02', 'The flowers there grow at night.', [
-          w('Цветы', 'цветок', 'flowers', 'noun', 'A1', 'nom.pl.'),
+          w('Квіти', 'квітка', 'flowers', 'noun', 'A1', 'nom.pl.'),
           w('там', 'там', 'there', 'adv', 'A1'),
-          w('растут', 'расти', 'grow', 'verb', 'A2', '3pl. pres. (impf.)'),
-          w('ночью', 'ночь', 'at night', 'noun', 'A1', 'instr., used as adverb'),
+          w('ростуть', 'рости', 'grow', 'verb', 'A2', '3pl. pres. (impf.)'),
+          w('уночі', 'уночі', 'at night', 'adv', 'A1'),
           p('.'),
         ]),
       ],
@@ -216,47 +216,47 @@ const packs = [
   }),
   unit({
     id: 'a2-family-090',
-    title: { ru: 'Знакомство', en: 'Meeting the Family' },
+    title: { uk: 'Знайомство', en: 'Meeting the Family' },
     level: 'A2',
     tags: ['course', 'family', 'fixture'],
     track: 'family',
     lesson: {
       id: 'fam090-lesson',
-      title: { ru: 'Вы и ты', en: 'Formal and informal you' },
-      body: '## Вы и ты\n\nPoliteness formulas: «вы» for the parents until they offer «ты».\n',
+      title: { uk: 'Ви і ти', en: 'Formal and informal you' },
+      body: '## Ви і ти\n\nPoliteness formulas: «ви» for the parents until they offer «ти».\n',
       grammarTopics: ['politeness-vy-ty'],
     },
     prompts: [
       {
         id: 'fam090-p1',
         level: 'A2',
-        prompt: { ru: 'Напишите тост для семьи.', en: 'Write a toast for the family.' },
+        prompt: { uk: 'Напишіть тост для родини.', en: 'Write a toast for the family.' },
         tags: ['family'],
       },
     ],
     story: {
       id: 'family-arrival',
-      title: { ru: 'Приезд', en: 'The Arrival' },
+      title: { uk: 'Приїзд', en: 'The Arrival' },
       level: 'A2',
       sentences: [
         sentence('fam-s01', 'Very nice to meet you.', [
-          w('Очень', 'очень', 'very', 'adv', 'A1'),
-          w('приятно', 'приятно', 'nice', 'adv', 'A2'),
-          w('познакомиться', 'познакомиться', 'to meet', 'verb', 'A2', 'inf. (pf.)'),
+          w('Дуже', 'дуже', 'very', 'adv', 'A1'),
+          w('приємно', 'приємно', 'nice', 'adv', 'A2'),
+          w('познайомитися', 'познайомитися', 'to meet', 'verb', 'A2', 'inf. (pf.)'),
           p('.'),
         ]),
         sentence('fam-s02', "Alina's mom is cooking dinner.", [
           w('Мама', 'мама', 'mom', 'noun', 'A1'),
-          w('Алины', 'Алина', 'of Alina', 'name', 'A1', 'gen.sg.'),
-          w('готовит', 'готовить', 'is cooking', 'verb', 'A1', '3sg. pres. (impf.)'),
-          w('ужин', 'ужин', 'dinner', 'noun', 'A1', 'acc.sg.'),
+          w('Аліни', 'Аліна', 'of Alina', 'name', 'A1', 'gen.sg.'),
+          w('готує', 'готувати', 'is cooking', 'verb', 'A1', '3sg. pres. (impf.)'),
+          w('вечерю', 'вечеря', 'dinner', 'noun', 'A1', 'acc.sg.'),
           p('.'),
         ]),
         sentence('fam-s03', 'We talk about family.', [
-          w('Мы', 'мы', 'we', 'pron', 'A1'),
-          w('говорим', 'говорить', 'talk', 'verb', 'A1', '1pl. pres. (impf.)'),
-          w('о', 'о', 'about', 'prep', 'A1', '+prep.'),
-          w('семье', 'семья', 'family', 'noun', 'A1', 'prep.sg.'),
+          w('Ми', 'ми', 'we', 'pron', 'A1'),
+          w('говоримо', 'говорити', 'talk', 'verb', 'A1', '1pl. pres. (impf.)'),
+          w('про', 'про', 'about', 'prep', 'A1', '+acc.'),
+          w('родину', 'родина', 'family', 'noun', 'A1', 'acc.sg.'),
           p('.'),
         ]),
       ],

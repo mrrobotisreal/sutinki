@@ -75,7 +75,7 @@ describe('path repo — unit lemma stats (out-of-order credit)', () => {
       reviewed: 0,
     });
 
-    // Bank two words "from the Library" (path never involved). ё/е-fold:
+    // Bank two words "from the Library" (path never involved). ґ/г-fold:
     // the е-spelled surface still matches the unit's lemma_norm shadow.
     const bed = await repos.bank.addWord({
       lemma: 'кровать',

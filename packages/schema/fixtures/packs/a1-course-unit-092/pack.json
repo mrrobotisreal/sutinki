@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "uk": "Подвал",
+    "uk": "Підвал",
     "en": "The Cellar"
   },
   "level": "A1",
@@ -16,42 +16,42 @@
     {
       "id": "cellar-wait",
       "title": {
-        "uk": "В подвале",
+        "uk": "У підвалі",
         "en": "In the Cellar"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "cell-s01",
-          "uk": "В доме есть подвал.",
+          "uk": "У будинку є підвал.",
           "en": "The house has a cellar.",
           "tokens": [
             {
-              "text": "В",
-              "lemma": "в",
+              "text": "У",
+              "lemma": "у",
               "translation": "in",
               "pos": "prep",
               "level": "A1",
-              "grammar": "+prep."
+              "grammar": "+loc."
             },
             {
-              "text": "доме",
-              "lemma": "дом",
+              "text": "будинку",
+              "lemma": "будинок",
               "translation": "house",
               "pos": "noun",
               "level": "A1",
-              "grammar": "prep.sg."
+              "grammar": "loc.sg."
             },
             {
-              "text": "есть",
-              "lemma": "есть",
+              "text": "є",
+              "lemma": "є",
               "translation": "there is",
               "pos": "verb",
               "level": "A1"
             },
             {
-              "text": "подвал",
-              "lemma": "подвал",
+              "text": "підвал",
+              "lemma": "підвал",
               "translation": "cellar",
               "pos": "noun",
               "level": "A2"
@@ -64,7 +64,7 @@
         },
         {
           "id": "cell-s02",
-          "uk": "Там всегда темно.",
+          "uk": "Там завжди темно.",
           "en": "It is always dark there.",
           "tokens": [
             {
@@ -75,8 +75,8 @@
               "level": "A1"
             },
             {
-              "text": "всегда",
-              "lemma": "всегда",
+              "text": "завжди",
+              "lemma": "завжди",
               "translation": "always",
               "pos": "adv",
               "level": "A1"
@@ -96,7 +96,7 @@
         },
         {
           "id": "cell-s03",
-          "uk": "Я там не один.",
+          "uk": "Я там не сам.",
           "en": "I am not alone there.",
           "tokens": [
             {
@@ -121,8 +121,8 @@
               "level": "A1"
             },
             {
-              "text": "один",
-              "lemma": "один",
+              "text": "сам",
+              "lemma": "сам",
               "translation": "alone",
               "pos": "num",
               "level": "A1",
@@ -141,12 +141,12 @@
   "lesson": {
     "id": "u092-lesson",
     "title": {
-      "uk": "С кем ты?",
+      "uk": "З ким ти?",
       "en": "With whom are you?"
     },
-    "body": "## С кем ты?\n\nWith what — and with whom: the instrumental case walks down the stairs with you.\n",
+    "body": "## З ким ти?\n\nWith what — and with whom: the instrumental case walks down the stairs with you.\n",
     "grammarTopics": [
-      "instrumental-with-s"
+      "instrumental-with-z"
     ]
   },
   "theme": {

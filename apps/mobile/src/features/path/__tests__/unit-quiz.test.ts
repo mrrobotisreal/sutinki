@@ -10,7 +10,7 @@ function word(text: string, lemma: string, translation: string, pos = 'noun'): Q
     isPunct: false,
     spaceBefore: true,
     lemma,
-    lemmaNorm: lemma.toLowerCase().replaceAll('ё', 'е'),
+    lemmaNorm: lemma.toLowerCase().replaceAll('ґ', 'г'),
     translation,
     pos,
   };
@@ -79,7 +79,7 @@ const SENTENCES: QuizSentence[] = [
     's5',
     [
       ['Я', 'я', 'I'],
-      ['слышу', 'слышать', 'hear'],
+      ['чую', 'чути', 'hear'],
       ['стук', 'стук', 'a knock'],
     ],
     'I hear a knock.',

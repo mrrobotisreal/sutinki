@@ -53,7 +53,7 @@ describe('stats repo — motivation additions (T19)', () => {
       surface: 'стена',
       translation: 'wall',
     });
-    await repos.bank.addPhrase({ surface: 'всё в порядке', translation: 'all good' });
+    await repos.bank.addPhrase({ surface: 'все гаразд', translation: 'all good' });
 
     expect(await repos.reviews.countMasteredLemmas()).toBe(0); // nothing reviewed
 

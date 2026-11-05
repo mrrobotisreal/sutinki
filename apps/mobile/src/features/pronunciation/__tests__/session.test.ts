@@ -105,7 +105,7 @@ describe('buildPronunciationSession', () => {
     // Content tables need an installed pack to resolve for real; stub the
     // resolver — the unit under test is the prompt policy, not the join.
     const sentences: Record<string, string> = {
-      's-short': 'Я слышу стук в стене.',
+      's-short': 'Я чую стукіт у стіні.',
       's-long': Array.from({ length: MAX_PROMPT_WORDS + 3 }, (_, i) => `слово${i}`).join(' '),
     };
     repos.content.resolveSentence = async (id: string) =>
@@ -117,7 +117,7 @@ describe('buildPronunciationSession', () => {
     const session = await buildPronunciationSession(repos);
     const short = session.find((s) => s.item.lemma === 'стена')!;
     expect(short.source).toBe('sentence');
-    expect(short.promptUk).toBe('Я слышу стук в стене.');
+    expect(short.promptUk).toBe('Я чую стукіт у стіні.');
 
     const long = session.find((s) => s.item.lemma === 'ночь')!;
     expect(long.source).toBe('word');

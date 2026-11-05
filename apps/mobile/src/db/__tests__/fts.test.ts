@@ -52,9 +52,9 @@ describe('FTS5 search', () => {
     await importPack(db, pack1);
     const content = createContentRepo(db);
 
-    const hits = await content.searchTokens('стена');
+    const hits = await content.searchTokens('стіна');
     expect(hits.length).toBeGreaterThan(0);
-    expect(hits.some((h) => h.lemma === 'стена')).toBe(true);
+    expect(hits.some((h) => h.lemma === 'стіна')).toBe(true);
     expect(hits[0]!.packId).toBe('a1-creepypasta-001');
   });
 
@@ -110,9 +110,9 @@ describe('FTS5 search', () => {
     const db = createTestDb();
     await importPack(db, pack1);
     const content = createContentRepo(db);
-    const before = (await content.searchTokens('стена')).length;
+    const before = (await content.searchTokens('стіна')).length;
     await importPack(db, { ...pack1, version: 2 } as Pack);
-    const after = (await content.searchTokens('стена')).length;
+    const after = (await content.searchTokens('стіна')).length;
     expect(after).toBe(before);
   });
 
@@ -146,7 +146,7 @@ describe('FTS5 search', () => {
   it('never throws on hostile query input', async () => {
     const db = createTestDb();
     const content = createContentRepo(db);
-    for (const q of ['"', 'AND OR NOT', '(((', '*', '  ', 'стена" OR "1']) {
+    for (const q of ['"', 'AND OR NOT', '(((', '*', '  ', 'стіна" OR "1']) {
       await expect(content.searchTokens(q)).resolves.toBeDefined();
     }
   });

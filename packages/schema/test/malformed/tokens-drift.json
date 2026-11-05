@@ -20,7 +20,7 @@
       "sentences": [
         {
           "id": "bad-s01",
-          "uk": "Я дома.",
+          "uk": "Я вдома.",
           "en": "I am home.",
           "tokens": [
             {
@@ -32,7 +32,7 @@
             },
             {
               "text": "тут",
-              "lemma": "дома",
+              "lemma": "вдома",
               "translation": "at home",
               "pos": "adv",
               "level": "A1"

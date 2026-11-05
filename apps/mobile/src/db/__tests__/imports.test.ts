@@ -13,8 +13,8 @@ import { createTestDb } from './helpers';
 
 const STUB_INPUT = {
   packId: 'imported-20260825-vecher',
-  title: 'Тёмный вечер',
-  text: 'Это тёмный вечер. Кто-то стучит в дверь!',
+  title: 'Темний вечір',
+  text: 'Це темний вечір. Хтось стукає у двері!',
 };
 
 /**

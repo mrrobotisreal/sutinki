@@ -25,16 +25,16 @@ function issuesOf(fn: () => unknown) {
 const unitExtras = `---
 lesson:
   id: unit-lesson
-  title: { uk: 'Где стоит?', en: 'Where does it stand?' }
-  grammarTopics: [prepositional-location]
+  title: { uk: 'Де стоїть?', en: 'Where does it stand?' }
+  grammarTopics: [locative-location]
 prompts:
   - id: unit-prompt-1
     level: A1
-    prompt: { uk: 'Опишите вашу комнату.', en: 'Describe your room.' }
+    prompt: { uk: 'Опишіть вашу кімнату.', en: 'Describe your room.' }
 ---
-## Где стоит?
+## Де стоїть?
 
-В **моей** комнате стоит зеркало.
+У **моїй** кімнаті стоїть дзеркало.
 `;
 
 const checkpointExtras = `---
@@ -54,9 +54,9 @@ exercises:
     correctIndex: 0
   - id: ex-cloze-1
     kind: cloze
-    sentenceUk: 'В комнате стоит ___.'
-    answer: 'зеркало'
-    choices: ['зеркало', 'окно', 'стол']
+    sentenceUk: 'У кімнаті стоїть ___.'
+    answer: 'дзеркало'
+    choices: ['дзеркало', 'вікно', 'стіл']
 ---
 `;
 
@@ -65,21 +65,21 @@ describe('parseExtras', () => {
     const extras = parseExtras('unit.extras.md', unitExtras);
     expect(extras.lesson).toMatchObject({
       id: 'unit-lesson',
-      grammarTopics: ['prepositional-location'],
+      grammarTopics: ['locative-location'],
     });
-    expect(extras.lesson!.body).toContain('В **моей** комнате стоит зеркало.');
+    expect(extras.lesson!.body).toContain('У **моїй** кімнаті стоїть дзеркало.');
     expect(extras.prompts).toHaveLength(1);
     expect(extras.pack).toBeUndefined();
   });
 
-  it('NFC-normalizes and preserves ё in the body and frontmatter', () => {
-    // и + combining breve (decomposed й) must come out composed; ё stays ё.
+  it('NFC-normalizes and preserves the apostrophe in the body and frontmatter', () => {
+    // и + combining breve (decomposed й) must come out composed; the apostrophe stays as authored.
     const decomposed = unitExtras
-      .replace('моей', 'мое\u0438\u0306')
-      .replace('зеркало', 'ещё зеркало');
+      .replace('моїй', 'моїи\u0306')
+      .replace('дзеркало', "п'ять дзеркало");
     const extras = parseExtras('unit.extras.md', decomposed);
-    expect(extras.lesson!.body).toContain('моей');
-    expect(extras.lesson!.body).toContain('ещё');
+    expect(extras.lesson!.body).toContain('моїй');
+    expect(extras.lesson!.body).toContain("п'ять");
   });
 
   it('rejects a lesson without a body, and a body without lesson meta', () => {
@@ -151,13 +151,13 @@ describe('assemblePack with extras', () => {
 
 describe('theme & track extras (T30)', () => {
   const themedExtras = unitExtras.replace(
-    '---\n## Где стоит?',
+    '---\n## Де стоїть?',
     `theme:
   scene: hallway
   accent: '#C08A4A'
 track: family
 ---
-## Где стоит?`,
+## Де стоїть?`,
   );
 
   it('round-trips theme + track from extras frontmatter into the pack JSON', () => {

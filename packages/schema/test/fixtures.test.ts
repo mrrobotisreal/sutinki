@@ -10,13 +10,13 @@ const loadPack = (id: string): Pack =>
   parsePack(JSON.parse(readFileSync(join(packDir(id), 'pack.json'), 'utf8')));
 
 describe('sample pack fixtures', () => {
-  it('a1-creepypasta-001 («Стук в стене») validates', () => {
+  it('a1-creepypasta-001 («Стукіт у стіні») validates', () => {
     const pack = loadPack('a1-creepypasta-001');
     expect(pack.stories).toHaveLength(1);
     expect(pack.stories[0]!.sentences.length).toBeGreaterThanOrEqual(8);
   });
 
-  it('a1-creepypasta-002 («Фотография») validates', () => {
+  it('a1-creepypasta-002 («Фотографія») validates', () => {
     const pack = loadPack('a1-creepypasta-002');
     expect(pack.stories[0]!.sentences.length).toBeGreaterThanOrEqual(8);
   });
@@ -57,7 +57,7 @@ describe('sample pack fixtures', () => {
     expect(family.prompts).toHaveLength(1);
   });
 
-  it('a1-prompts-001 («Первые страницы») validates as a prompts pack', () => {
+  it('a1-prompts-001 («Перші сторінки») validates as a prompts pack', () => {
     const pack = loadPack('a1-prompts-001');
     expect(pack.type).toBe('prompts');
     expect(pack.stories).toHaveLength(0);
@@ -71,7 +71,7 @@ describe('sample pack fixtures', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('a2-dialogue-001 («Ужин у мамы») validates as a dialogue pack', () => {
+  it('a2-dialogue-001 («Вечеря в мами») validates as a dialogue pack', () => {
     const pack = loadPack('a2-dialogue-001');
     expect(pack.type).toBe('dialogue');
     expect(pack.stories).toHaveLength(0);
@@ -85,7 +85,7 @@ describe('sample pack fixtures', () => {
     expect(dialogue.endings.map((e) => e.tone).sort()).toEqual(['bad', 'good', 'strange']);
     expect(dialogue.nodes.some((n) => n.choices?.some((c) => c.asrAlternates))).toBe(true);
     expect(dialogue.nodes.some((n) => n.choices?.some((c) => c.hint))).toBe(true);
-    // the «Ещё борща?» loop: din-n07 cycles back to the choice point din-n06
+    // the «Ще борщу?» loop: din-n07 cycles back to the choice point din-n06
     expect(dialogue.nodes.find((n) => n.id === 'din-n07')!.next).toBe('din-n06');
     // every dialogue word token is fully annotated, story-style
     for (const node of dialogue.nodes) {
@@ -103,10 +103,11 @@ describe('sample pack fixtures', () => {
     }
   });
 
-  it('ё is preserved in content (never normalized to е)', () => {
-    const raw = readFileSync(join(packDir('a1-creepypasta-002'), 'pack.json'), 'utf8');
-    expect(raw).toContain('чёрные');
-    expect(raw).toContain('моём');
+  it('the apostrophe is content: kept as authored (U+0027), never folded or stripped', () => {
+    const raw = readFileSync(join(packDir('a1-prompts-001'), 'pack.json'), 'utf8');
+    expect(raw).toContain("пам'ятаєш");
+    expect(raw).not.toContain('памятаєш');
+    expect(raw).not.toContain('пам\u2019ятаєш');
   });
 
   it('the karaoke fixture track has monotonic, in-range word stamps and a real audio file', () => {

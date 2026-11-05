@@ -3,12 +3,12 @@ pack:
   id: a2-dialogue-001
   version: 1
   type: dialogue
-  title: { uk: 'Ужин у мамы', en: "Dinner at Mama's" }
+  title: { uk: 'Вечеря в мами', en: "Dinner at Mama's" }
   level: A2
   tags: ['dialogue', 'family']
 dialogue:
   id: dinner-mini
-  title: { uk: 'Ужин у мамы', en: "Dinner at Mama's" }
+  title: { uk: 'Вечеря в мами', en: "Dinner at Mama's" }
   level: A2
   startNodeId: din-n01
 characters:
@@ -18,57 +18,57 @@ characters:
     style: warm
     audioTag: '[warm]'
   - id: babushka
-    name: { uk: 'Бабушка', en: 'Grandmother' }
+    name: { uk: 'Бабуся', en: 'Grandmother' }
     voice: elevenlabs:Kate
     style: gentle
     audioTag: '[gentle]'
   - id: player
-    name: { uk: 'Ты', en: 'You' }
+    name: { uk: 'Ти', en: 'You' }
     voice: elevenlabs:Ivan
     style: neutral
 endings:
   - id: end-good
-    title: { uk: 'Отличное впечатление', en: 'A great impression' }
+    title: { uk: 'Чудове враження', en: 'A great impression' }
     recap:
       {
-        uk: 'Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.',
+        uk: 'Ти добре поїв, похвалив борщ, і бабуся тобою задоволена.',
         en: 'You ate well, praised the borscht, and Grandmother is pleased with you.',
       }
     tone: good
   - id: end-awkward
-    title: { uk: 'Неловкий вечер', en: 'An awkward evening' }
+    title: { uk: 'Незручний вечір', en: 'An awkward evening' }
     recap:
       {
-        uk: 'Ты сказал нет — и за столом стало очень тихо.',
+        uk: 'Ти сказав «ні» — і за столом стало дуже тихо.',
         en: 'You said no — and the table went very quiet.',
       }
     tone: bad
   - id: end-strange
-    title: { uk: 'Она тоже видит', en: 'She sees it too' }
+    title: { uk: 'Вона теж бачить', en: 'She sees it too' }
     recap:
       {
-        uk: 'На стене что-то есть, и бабушка это знает.',
+        uk: 'На стіні щось є, і бабуся це знає.',
         en: 'There is something on the wall, and Grandmother knows it.',
       }
     tone: strange
 ---
 
-# Ужин у мамы — Dinner at Mama's
+# Вечеря в мами — Dinner at Mama's
 
 ## din-n01
 
 SPEAKER: mama
 
-UK: Проходи, дорогой!
+UK: Заходь, любий!
 EN: Come in, dear!
 GRAMMAR: imperative
 
-| text    | lemma     | translation | pos  | grammar                     | level | note |
-| ------- | --------- | ----------- | ---- | --------------------------- | ----- | ---- |
-| Проходи | проходить | come in     | verb | 2sg. imper. (impf.)         | A2    |      |
-| ,       |           |             |      |                             |       |      |
-| дорогой | дорогой   | dear        | adj  | m.sg. nom. (as an address)  | A2    |      |
-| !       |           |             |      |                             |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Заходь | заходити | come in | verb | 2sg. imper. (impf.) | A2 |  |
+| , |  |  |  |  |  |  |
+| любий | любий | dear | adj | m.sg. nom. (as an address) | A2 |  |
+| ! |  |  |  |  |  |  |
 
 NEXT: din-n02
 
@@ -76,83 +76,83 @@ NEXT: din-n02
 
 SPEAKER: mama
 
-UK: Ты голодный?
+UK: Ти голодний?
 EN: Are you hungry?
 GRAMMAR: adjective-predicate
 
-| text     | lemma    | translation | pos  | grammar    | level | note |
-| -------- | -------- | ----------- | ---- | ---------- | ----- | ---- |
-| Ты       | ты       | you         | pron | nom. (informal) | A1 |     |
-| голодный | голодный | hungry      | adj  | m.sg. nom. | A2    |      |
-| ?        |          |             |      |            |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Ти | ти | you | pron | nom. (informal) | A1 |  |
+| голодний | голодний | hungry | adj | m.sg. nom. | A2 |  |
+| ? |  |  |  |  |  |  |
 
 CHOICES:
 
 ### din-n02-c1 -> din-n03
 
-UK: Да, я очень голодный.
+UK: Так, я дуже голодний.
 EN: Yes, I'm very hungry.
 
-| text     | lemma    | translation | pos  | grammar    | level | note |
-| -------- | -------- | ----------- | ---- | ---------- | ----- | ---- |
-| Да       | да       | yes         | part |            | A1    |      |
-| ,        |          |             |      |            |       |      |
-| я        | я        | I           | pron | nom.       | A1    |      |
-| очень    | очень    | very        | adv  |            | A1    |      |
-| голодный | голодный | hungry      | adj  | m.sg. nom. | A2    |      |
-| .        |          |             |      |            |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Так | так | yes | part |  | A1 |  |
+| , |  |  |  |  |  |  |
+| я | я | I | pron | nom. | A1 |  |
+| дуже | дуже | very | adv |  | A1 |  |
+| голодний | голодний | hungry | adj | m.sg. nom. | A2 |  |
+| . |  |  |  |  |  |  |
 
-ALT: Да, очень.
+ALT: Так, дуже.
 
 ### din-n02-c2 -> din-n04
 
-UK: Нет, спасибо, я не голодный.
+UK: Ні, дякую, я не голодний.
 EN: No, thank you, I'm not hungry.
 
-| text     | lemma    | translation | pos    | grammar    | level | note |
-| -------- | -------- | ----------- | ------ | ---------- | ----- | ---- |
-| Нет      | нет      | no          | part   |            | A1    |      |
-| ,        |          |             |        |            |       |      |
-| спасибо  | спасибо  | thank you   | interj |            | A1    |      |
-| ,        |          |             |        |            |       |      |
-| я        | я        | I           | pron   | nom.       | A1    |      |
-| не       | не       | not         | part   | negation   | A1    |      |
-| голодный | голодный | hungry      | adj    | m.sg. nom. | A2    |      |
-| .        |          |             |        |            |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Ні | ні | no | part |  | A1 |  |
+| , |  |  |  |  |  |  |
+| дякую | дякувати | thank you | verb | 1sg. pres. (impf.); дякую = thank you | A1 |  |
+| , |  |  |  |  |  |  |
+| я | я | I | pron | nom. | A1 |  |
+| не | не | not | part | negation | A1 |  |
+| голодний | голодний | hungry | adj | m.sg. nom. | A2 |  |
+| . |  |  |  |  |  |  |
 
-HINT: Вежливый отказ — но мама не сдастся. | A polite refusal — but Mama won't take no for an answer.
+HINT: Ввічлива відмова — але мама не здасться. | A polite refusal — but Mama won't take no for an answer.
 
 ### din-n02-c3 -> din-n09
 
-UK: А что это на стене?
+UK: А що це на стіні?
 EN: And what is that on the wall?
-GRAMMAR: prepositional-location
+GRAMMAR: locative-location
 
-| text  | lemma | translation | pos  | grammar            | level | note |
-| ----- | ----- | ----------- | ---- | ------------------ | ----- | ---- |
-| А     | а     | and         | conj |                    | A1    |      |
-| что   | что   | what        | pron | nom.               | A1    |      |
-| это   | это   | that        | pron | demonstrative      | A1    |      |
-| на    | на    | on          | prep | + prep. (location) | A1    |      |
-| стене | стена | wall        | noun | f.sg. prep.        | A1    |      |
-| ?     |       |             |      |                    |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| А | а | and | conj |  | A1 |  |
+| що | що | what | pron | nom. | A1 |  |
+| це | це | that | pron | demonstrative | A1 |  |
+| на | на | on | prep | + loc. (location) | A1 |  |
+| стіні | стіна | wall | noun | f.sg. loc. | A1 |  |
+| ? |  |  |  |  |  |  |
 
 ## din-n03
 
 SPEAKER: mama
 
-UK: Отлично, я сделала борщ!
+UK: Чудово, я зварила борщ!
 EN: Great, I made borscht!
 GRAMMAR: past-tense, accusative-direct-object
 
-| text    | lemma   | translation | pos  | grammar                  | level | note                                                  |
-| ------- | ------- | ----------- | ---- | ------------------------ | ----- | ----------------------------------------------------- |
-| Отлично | отлично | great       | adv  |                          | A2    |                                                       |
-| ,       |         |             |      |                          |       |                                                       |
-| я       | я       | I           | pron | nom.                     | A1    |                                                       |
-| сделала | сделать | made        | verb | f.sg. past (pf. of делать) | A1  |                                                       |
-| борщ    | борщ    | borscht     | noun | m.sg. acc.               | A2    | beet soup — the centerpiece of a Russian family table |
-| !       |         |             |      |                          |       |                                                       |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Чудово | чудово | great | adv |  | A2 |  |
+| , |  |  |  |  |  |  |
+| я | я | I | pron | nom. | A1 |  |
+| зварила | зварити | made | verb | f.sg. past (pf. of варити) | A1 |  |
+| борщ | борщ | borscht | noun | m.sg. acc. | A2 | beet soup — the centerpiece of a Ukrainian family table |
+| ! |  |  |  |  |  |  |
 
 NEXT: din-n05
 
@@ -160,19 +160,19 @@ NEXT: din-n05
 
 SPEAKER: mama
 
-UK: Ничего, борщ уже на столе.
+UK: Нічого, борщ уже на столі.
 EN: No matter, the borscht is already on the table.
-GRAMMAR: prepositional-location
+GRAMMAR: locative-location
 
-| text   | lemma  | translation | pos  | grammar                  | level | note                              |
-| ------ | ------ | ----------- | ---- | ------------------------ | ----- | --------------------------------- |
-| Ничего | ничего | no matter   | pred | colloquial ("it's nothing") | A2 | here = "never mind / no matter"   |
-| ,      |        |             |      |                          |       |                                   |
-| борщ   | борщ   | borscht     | noun | m.sg. nom.               | A2    |                                   |
-| уже    | уже    | already     | adv  |                          | A1    |                                   |
-| на     | на     | on          | prep | + prep. (location)       | A1    |                                   |
-| столе  | стол   | table       | noun | m.sg. prep.              | A1    |                                   |
-| .      |        |             |      |                          |       |                                   |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Нічого | нічого | no matter | pred | colloquial ("it's nothing") | A2 | here = "never mind / no matter" |
+| , |  |  |  |  |  |  |
+| борщ | борщ | borscht | noun | m.sg. nom. | A2 |  |
+| уже | уже | already | adv |  | A1 |  |
+| на | на | on | prep | + loc. (location) | A1 |  |
+| столі | стіл | table | noun | m.sg. loc. | A1 |  |
+| . |  |  |  |  |  |  |
 
 NEXT: din-n05
 
@@ -180,18 +180,18 @@ NEXT: din-n05
 
 SPEAKER: babushka
 
-UK: Наш борщ — самый вкусный.
+UK: Наш борщ — дуже смачний.
 EN: Our borscht is the tastiest.
 GRAMMAR: superlative
 
-| text    | lemma   | translation | pos  | grammar                  | level | note |
-| ------- | ------- | ----------- | ---- | ------------------------ | ----- | ---- |
-| Наш     | наш     | our         | pron | m.sg. nom.               | A1    |      |
-| борщ    | борщ    | borscht     | noun | m.sg. nom.               | A2    |      |
-| —       |         |             |      |                          |       |      |
-| самый   | самый   | the most    | pron | m.sg. nom. (superlative) | A2    |      |
-| вкусный | вкусный | tasty       | adj  | m.sg. nom.               | A1    |      |
-| .       |         |             |      |                          |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Наш | наш | our | pron | m.sg. nom. | A1 |  |
+| борщ | борщ | borscht | noun | m.sg. nom. | A2 |  |
+| — |  |  |  |  |  |  |
+| дуже | дуже | the most | pron |  | A2 |  |
+| смачний | смачний | tasty | adj | m.sg. nom. | A1 |  |
+| . |  |  |  |  |  |  |
 
 NEXT: din-n06
 
@@ -199,81 +199,81 @@ NEXT: din-n06
 
 SPEAKER: mama
 
-UK: Хочешь ещё борща?
+UK: Хочеш ще борщу?
 EN: Do you want more borscht?
 GRAMMAR: genitive-partitive
 
-| text   | lemma  | translation | pos  | grammar               | level | note |
-| ------ | ------ | ----------- | ---- | --------------------- | ----- | ---- |
-| Хочешь | хотеть | you want    | verb | 2sg. pres. (impf.)    | A1    |      |
-| ещё    | ещё    | more        | adv  |                       | A1    |      |
-| борща  | борщ   | borscht     | noun | m.sg. gen. (partitive) | A2   |      |
-| ?      |        |             |      |                       |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Хочеш | хотіти | you want | verb | 2sg. pres. (impf.) | A1 |  |
+| ще | ще | more | adv |  | A1 |  |
+| борщу | борщ | borscht | noun | m.sg. gen. (partitive) | A2 |  |
+| ? |  |  |  |  |  |  |
 
 CHOICES:
 
 ### din-n06-c1 -> din-n07
 
-UK: Да, можно ещё немного.
+UK: Так, можна ще трохи.
 EN: Yes, a little more, please.
 
-| text    | lemma   | translation  | pos  | grammar    | level | note |
-| ------- | ------- | ------------ | ---- | ---------- | ----- | ---- |
-| Да      | да      | yes          | part |            | A1    |      |
-| ,       |         |              |      |            |       |      |
-| можно   | можно   | one may have | pred | impersonal | A1    |      |
-| ещё     | ещё     | more         | adv  |            | A1    |      |
-| немного | немного | a little     | adv  |            | A2    |      |
-| .       |         |              |      |            |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Так | так | yes | part |  | A1 |  |
+| , |  |  |  |  |  |  |
+| можна | можна | one may have | pred | impersonal | A1 |  |
+| ще | ще | more | adv |  | A1 |  |
+| трохи | трохи | a little | adv |  | A2 |  |
+| . |  |  |  |  |  |  |
 
-ALT: Да, ещё немного, пожалуйста.
+ALT: Так, ще трохи, будь ласка.
 
 ### din-n06-c2 -> din-n08
 
-UK: Спасибо, я сыт, всё было очень вкусно.
+UK: Дякую, я ситий, усе було дуже смачно.
 EN: Thank you, I'm full, everything was very tasty.
 GRAMMAR: short-adjectives, past-tense
 
-| text    | lemma   | translation | pos    | grammar            | level | note                                                   |
-| ------- | ------- | ----------- | ------ | ------------------ | ----- | ------------------------------------------------------ |
-| Спасибо | спасибо | thank you   | interj |                    | A1    |                                                        |
-| ,       |         |             |        |                    |       |                                                        |
-| я       | я       | I           | pron   | nom.               | A1    |                                                        |
-| сыт     | сытый   | full        | adj    | m.sg. short form   | A2    | the short form is the normal way to say "I'm full"     |
-| ,       |         |             |        |                    |       |                                                        |
-| всё     | весь    | everything  | pron   | n.sg. nom.         | A1    |                                                        |
-| было    | быть    | was         | verb   | n.sg. past (impf.) | A1    |                                                        |
-| очень   | очень   | very        | adv    |                    | A1    |                                                        |
-| вкусно  | вкусно  | tasty       | adv    | predicative        | A1    |                                                        |
-| .       |         |             |        |                    |       |                                                        |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Дякую | дякувати | thank you | verb | 1sg. pres. (impf.); дякую = thank you | A1 |  |
+| , |  |  |  |  |  |  |
+| я | я | I | pron | nom. | A1 |  |
+| ситий | ситий | full | adj | m.sg. short form | A2 | the short form is the normal way to say "I'm full" |
+| , |  |  |  |  |  |  |
+| усе | увесь | everything | pron | n.sg. nom. | A1 |  |
+| було | бути | was | verb | n.sg. past (impf.) | A1 |  |
+| дуже | дуже | very | adv |  | A1 |  |
+| смачно | смачно | tasty | adv | predicative | A1 |  |
+| . |  |  |  |  |  |  |
 
-ALT: Спасибо, было очень вкусно.
-HINT: Скажи спасибо и похвали еду. | Say thank you and praise the food.
+ALT: Дякую, було дуже смачно.
+HINT: Подякуй і похвали їжу. | Say thank you and praise the food.
 
 ### din-n06-c3 -> din-n10
 
-UK: Нет.
+UK: Ні.
 EN: No.
 
-| text | lemma | translation | pos  | grammar | level | note |
-| ---- | ----- | ----------- | ---- | ------- | ----- | ---- |
-| Нет  | нет   | no          | part |         | A1    |      |
-| .    |       |             |      |         |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Ні | ні | no | part |  | A1 |  |
+| . |  |  |  |  |  |  |
 
 ## din-n07
 
 SPEAKER: mama
 
-UK: Кушай, кушай!
+UK: Їж, їж!
 EN: Eat, eat!
 GRAMMAR: imperative
 
-| text  | lemma  | translation | pos  | grammar             | level | note                                                        |
-| ----- | ------ | ----------- | ---- | ------------------- | ----- | ----------------------------------------------------------- |
-| Кушай | кушать | eat         | verb | 2sg. imper. (impf.) | A2    | кушать — homely, affectionate "to eat", beloved by mamas    |
-| ,     |        |             |      |                     |       |                                                             |
-| кушай | кушать | eat         | verb | 2sg. imper. (impf.) | A2    |                                                             |
-| !     |        |             |      |                     |       |                                                             |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Їж | їсти | eat | verb | 2sg. imper. (impf.) | A2 | the insistent, affectionate imperative of every mother and grandmother at the table |
+| , |  |  |  |  |  |  |
+| їж | їсти | eat | verb | 2sg. imper. (impf.) | A2 |  |
+| ! |  |  |  |  |  |  |
 
 NEXT: din-n06
 
@@ -281,19 +281,19 @@ NEXT: din-n06
 
 SPEAKER: babushka
 
-UK: Молодец, приходи к нам ещё.
+UK: Молодець, приходь до нас ще.
 EN: Good boy, come visit us again.
 GRAMMAR: imperative, dative-direction
 
-| text    | lemma     | translation | pos  | grammar             | level | note                                  |
-| ------- | --------- | ----------- | ---- | ------------------- | ----- | ------------------------------------- |
-| Молодец | молодец   | good boy    | noun | m.sg. nom. (praise) | A2    | universal Russian praise — "well done!" |
-| ,       |           |             |      |                     |       |                                       |
-| приходи | приходить | come        | verb | 2sg. imper. (impf.) | A2    |                                       |
-| к       | к         | to          | prep | + dat.              | A1    |                                       |
-| нам     | мы        | us          | pron | dat.                | A1    |                                       |
-| ещё     | ещё       | again       | adv  |                     | A1    |                                       |
-| .       |           |             |      |                     |       |                                       |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Молодець | молодець | good boy | noun | m.sg. nom. (praise) | A2 | universal Ukrainian praise — "well done!" |
+| , |  |  |  |  |  |  |
+| приходь | приходити | come | verb | 2sg. imper. (impf.) | A2 |  |
+| до | до | to | prep | + dat. | A1 |  |
+| нас | ми | us | pron | dat. | A1 |  |
+| ще | ще | again | adv |  | A1 |  |
+| . |  |  |  |  |  |  |
 
 ENDING: end-good
 
@@ -301,16 +301,16 @@ ENDING: end-good
 
 SPEAKER: mama
 
-UK: Там ничего нет.
+UK: Там нічого немає.
 EN: There is nothing there.
 GRAMMAR: genitive-negation
 
-| text   | lemma | translation | pos  | grammar                | level | note |
-| ------ | ----- | ----------- | ---- | ---------------------- | ----- | ---- |
-| Там    | там   | there       | adv  |                        | A1    |      |
-| ничего | ничто | nothing     | pron | gen. (object of нет)   | A2    |      |
-| нет    | нет   | there is no | pred | + gen. = there is no … | A1    |      |
-| .      |       |             |      |                        |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Там | там | there | adv |  | A1 |  |
+| нічого | ніщо | nothing | pron | gen. (object of немає) | A2 |  |
+| немає | немає | there is no | pred | + gen. = there is no … | A1 |  |
+| . |  |  |  |  |  |  |
 
 NEXT: din-n11
 
@@ -318,14 +318,14 @@ NEXT: din-n11
 
 SPEAKER: mama
 
-UK: Ну ладно.
+UK: Ну гаразд.
 EN: Well, alright.
 
-| text  | lemma | translation | pos  | grammar | level | note |
-| ----- | ----- | ----------- | ---- | ------- | ----- | ---- |
-| Ну    | ну    | well        | part |         | A1    |      |
-| ладно | ладно | alright     | part |         | A2    |      |
-| .     |       |             |      |         |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Ну | ну | well | part |  | A1 |  |
+| гаразд | гаразд | alright | part |  | A2 |  |
+| . |  |  |  |  |  |  |
 
 ENDING: end-awkward
 
@@ -333,16 +333,16 @@ ENDING: end-awkward
 
 SPEAKER: babushka
 
-UK: Она тоже это видит.
+UK: Вона теж це бачить.
 EN: She sees it too.
 GRAMMAR: accusative-direct-object
 
-| text  | lemma  | translation | pos  | grammar            | level | note |
-| ----- | ------ | ----------- | ---- | ------------------ | ----- | ---- |
-| Она   | она    | she         | pron | nom.               | A1    |      |
-| тоже  | тоже   | too         | adv  |                    | A1    |      |
-| это   | это    | it          | pron | acc.               | A1    |      |
-| видит | видеть | sees        | verb | 3sg. pres. (impf.) | A1    |      |
-| .     |        |             |      |                    |       |      |
+| text | lemma | translation | pos | grammar | level | note |
+| --- | --- | --- | --- | --- | --- | --- |
+| Вона | вона | she | pron | nom. | A1 |  |
+| теж | теж | too | adv |  | A1 |  |
+| це | це | it | pron | acc. | A1 |  |
+| бачить | бачити | sees | verb | 3sg. pres. (impf.) | A1 |  |
+| . |  |  |  |  |  |  |
 
 ENDING: end-strange

@@ -95,17 +95,17 @@ describe('buildClozeSession', () => {
       packId: 'p1',
       storyId: 'st1',
       sentences: [
-        { id: 's0', uk: 'Тень растёт', en: 'The shadow grows', lemmas: ['тень', 'расти'] },
+        { id: 's0', uk: 'Тінь росте', en: 'The shadow grows', lemmas: ['тінь', 'рости'] },
       ],
     });
     await repos.reading.markFinished('p1', 'st1');
-    await repos.bank.addWord({ lemma: 'тень', surface: 'тень', translation: 'shadow' });
-    await repos.bank.addPhrase({ surface: 'в темноте', translation: 'in the dark' });
+    await repos.bank.addWord({ lemma: 'тінь', surface: 'тінь', translation: 'shadow' });
+    await repos.bank.addPhrase({ surface: 'у темряві', translation: 'in the dark' });
 
     const session = await buildClozeSession(repos);
     // phrase excluded; the lone word has no distractor pool → typed
     expect(session).toHaveLength(1);
-    expect(session[0]!.item.lemma).toBe('тень');
+    expect(session[0]!.item.lemma).toBe('тінь');
     expect(session[0]!.variant).toBe('typed');
     expect(session[0]!.tiles).toBeUndefined();
   });

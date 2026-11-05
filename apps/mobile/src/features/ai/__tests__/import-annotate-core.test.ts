@@ -105,7 +105,7 @@ describe('recorded fixture (real Sonnet response)', () => {
 
   it('handles the recorded edge cases: «» quotes, digits, emoji, latin, names', () => {
     const byId = new Map(response.sentences.map((s) => [s.id, s]));
-    // c2: «Пятёрочка» hugs its quotes (spaceBefore derivation) + latin Yandex
+    // c2: «Рукавичка» hugs its quotes (spaceBefore derivation) + latin Yandex
     const c2 = buildSentenceFromResponse(
       fixture.sentences[1]!.uk,
       byId.get('c2')!.en,
@@ -128,8 +128,8 @@ describe('recorded fixture (real Sonnet response)', () => {
       byId.get('c4')!.en,
       byId.get('c4')!.tokens,
     );
-    const anna = c4.tokens.find((t) => t.text === 'Анна')!;
-    expect(anna.lemma).toBe('Анна');
+    const anna = c4.tokens.find((t) => t.text === 'Леся')!;
+    expect(anna.lemma).toBe('Леся');
   });
 });
 
@@ -146,10 +146,10 @@ describe('buildSentenceFromResponse failure honesty', () => {
 
   it('rejects altered token text with a ⟨here⟩ marker at the break point', () => {
     expect(() =>
-      buildSentenceFromResponse('Я чёрный кот.', 'I am a black cat.', [
+      buildSentenceFromResponse('Я чорний кіт.', 'I am a black cat.', [
         { text: 'Я', lemma: 'я', translation: 'I' },
-        { text: 'черный', lemma: 'чёрный', translation: 'black' }, // ё folded — must fail
-        { text: 'кот', lemma: 'кот', translation: 'cat' },
+        { text: 'чорній', lemma: 'чорний', translation: 'black' }, // altered token text — must fail
+        { text: 'кіт', lemma: 'кіт', translation: 'cat' },
         { text: '.' },
       ]),
     ).toThrow(/⟨here⟩/);
@@ -241,12 +241,12 @@ describe('envelope + boundary edits', () => {
   });
 
   it('merge joins with the next sentence and resets to pending', () => {
-    const env = newEnvelope('Это был не сон. А что-то другое.');
+    const env = newEnvelope('Це був не сон. А щось інше.');
     env.sentences[0]!.status = 'ok';
     const merged = mergeWithNext(env, env.sentences[0]!.uid);
     expect(merged.sentences).toHaveLength(1);
     expect(merged.sentences[0]).toMatchObject({
-      uk: 'Это был не сон. А что-то другое.',
+      uk: 'Це був не сон. А щось інше.',
       status: 'pending',
     });
   });

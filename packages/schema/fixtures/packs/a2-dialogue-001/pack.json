@@ -3,7 +3,7 @@
   "version": 1,
   "type": "dialogue",
   "title": {
-    "uk": "Ужин у мамы",
+    "uk": "Вечеря в мами",
     "en": "Dinner at Mama's"
   },
   "level": "A2",
@@ -16,7 +16,7 @@
     {
       "id": "dinner-mini",
       "title": {
-        "uk": "Ужин у мамы",
+        "uk": "Вечеря в мами",
         "en": "Dinner at Mama's"
       },
       "level": "A2",
@@ -34,7 +34,7 @@
         {
           "id": "babushka",
           "name": {
-            "uk": "Бабушка",
+            "uk": "Бабуся",
             "en": "Grandmother"
           },
           "voice": "elevenlabs:Kate",
@@ -44,7 +44,7 @@
         {
           "id": "player",
           "name": {
-            "uk": "Ты",
+            "uk": "Ти",
             "en": "You"
           },
           "voice": "elevenlabs:Ivan",
@@ -57,12 +57,12 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n01",
-            "uk": "Проходи, дорогой!",
+            "uk": "Заходь, любий!",
             "en": "Come in, dear!",
             "tokens": [
               {
-                "text": "Проходи",
-                "lemma": "проходить",
+                "text": "Заходь",
+                "lemma": "заходити",
                 "translation": "come in",
                 "pos": "verb",
                 "grammar": "2sg. imper. (impf.)",
@@ -73,8 +73,8 @@
                 "isPunct": true
               },
               {
-                "text": "дорогой",
-                "lemma": "дорогой",
+                "text": "любий",
+                "lemma": "любий",
                 "translation": "dear",
                 "pos": "adj",
                 "grammar": "m.sg. nom. (as an address)",
@@ -96,20 +96,20 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n02",
-            "uk": "Ты голодный?",
+            "uk": "Ти голодний?",
             "en": "Are you hungry?",
             "tokens": [
               {
-                "text": "Ты",
-                "lemma": "ты",
+                "text": "Ти",
+                "lemma": "ти",
                 "translation": "you",
                 "pos": "pron",
                 "grammar": "nom. (informal)",
                 "level": "A1"
               },
               {
-                "text": "голодный",
-                "lemma": "голодный",
+                "text": "голодний",
+                "lemma": "голодний",
                 "translation": "hungry",
                 "pos": "adj",
                 "grammar": "m.sg. nom.",
@@ -129,12 +129,12 @@
               "id": "din-n02-c1",
               "sentence": {
                 "id": "din-n02-c1",
-                "uk": "Да, я очень голодный.",
+                "uk": "Так, я дуже голодний.",
                 "en": "Yes, I'm very hungry.",
                 "tokens": [
                   {
-                    "text": "Да",
-                    "lemma": "да",
+                    "text": "Так",
+                    "lemma": "так",
                     "translation": "yes",
                     "pos": "part",
                     "level": "A1"
@@ -152,15 +152,15 @@
                     "level": "A1"
                   },
                   {
-                    "text": "очень",
-                    "lemma": "очень",
+                    "text": "дуже",
+                    "lemma": "дуже",
                     "translation": "very",
                     "pos": "adv",
                     "level": "A1"
                   },
                   {
-                    "text": "голодный",
-                    "lemma": "голодный",
+                    "text": "голодний",
+                    "lemma": "голодний",
                     "translation": "hungry",
                     "pos": "adj",
                     "grammar": "m.sg. nom.",
@@ -174,19 +174,19 @@
               },
               "next": "din-n03",
               "asrAlternates": [
-                "Да, очень."
+                "Так, дуже."
               ]
             },
             {
               "id": "din-n02-c2",
               "sentence": {
                 "id": "din-n02-c2",
-                "uk": "Нет, спасибо, я не голодный.",
+                "uk": "Ні, дякую, я не голодний.",
                 "en": "No, thank you, I'm not hungry.",
                 "tokens": [
                   {
-                    "text": "Нет",
-                    "lemma": "нет",
+                    "text": "Ні",
+                    "lemma": "ні",
                     "translation": "no",
                     "pos": "part",
                     "level": "A1"
@@ -196,10 +196,11 @@
                     "isPunct": true
                   },
                   {
-                    "text": "спасибо",
-                    "lemma": "спасибо",
+                    "text": "дякую",
+                    "lemma": "дякувати",
                     "translation": "thank you",
-                    "pos": "interj",
+                    "pos": "verb",
+                    "grammar": "1sg. pres. (impf.); дякую = thank you",
                     "level": "A1"
                   },
                   {
@@ -223,8 +224,8 @@
                     "level": "A1"
                   },
                   {
-                    "text": "голодный",
-                    "lemma": "голодный",
+                    "text": "голодний",
+                    "lemma": "голодний",
                     "translation": "hungry",
                     "pos": "adj",
                     "grammar": "m.sg. nom.",
@@ -238,7 +239,7 @@
               },
               "next": "din-n04",
               "hint": {
-                "uk": "Вежливый отказ — но мама не сдастся.",
+                "uk": "Ввічлива відмова — але мама не здасться.",
                 "en": "A polite refusal — but Mama won't take no for an answer."
               }
             },
@@ -246,7 +247,7 @@
               "id": "din-n02-c3",
               "sentence": {
                 "id": "din-n02-c3",
-                "uk": "А что это на стене?",
+                "uk": "А що це на стіні?",
                 "en": "And what is that on the wall?",
                 "tokens": [
                   {
@@ -257,16 +258,16 @@
                     "level": "A1"
                   },
                   {
-                    "text": "что",
-                    "lemma": "что",
+                    "text": "що",
+                    "lemma": "що",
                     "translation": "what",
                     "pos": "pron",
                     "grammar": "nom.",
                     "level": "A1"
                   },
                   {
-                    "text": "это",
-                    "lemma": "это",
+                    "text": "це",
+                    "lemma": "це",
                     "translation": "that",
                     "pos": "pron",
                     "grammar": "demonstrative",
@@ -277,15 +278,15 @@
                     "lemma": "на",
                     "translation": "on",
                     "pos": "prep",
-                    "grammar": "+ prep. (location)",
+                    "grammar": "+ loc. (location)",
                     "level": "A1"
                   },
                   {
-                    "text": "стене",
-                    "lemma": "стена",
+                    "text": "стіні",
+                    "lemma": "стіна",
                     "translation": "wall",
                     "pos": "noun",
-                    "grammar": "f.sg. prep.",
+                    "grammar": "f.sg. loc.",
                     "level": "A1"
                   },
                   {
@@ -294,7 +295,7 @@
                   }
                 ],
                 "grammarTopics": [
-                  "prepositional-location"
+                  "locative-location"
                 ]
               },
               "next": "din-n09"
@@ -306,12 +307,12 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n03",
-            "uk": "Отлично, я сделала борщ!",
+            "uk": "Чудово, я зварила борщ!",
             "en": "Great, I made borscht!",
             "tokens": [
               {
-                "text": "Отлично",
-                "lemma": "отлично",
+                "text": "Чудово",
+                "lemma": "чудово",
                 "translation": "great",
                 "pos": "adv",
                 "level": "A2"
@@ -329,11 +330,11 @@
                 "level": "A1"
               },
               {
-                "text": "сделала",
-                "lemma": "сделать",
+                "text": "зварила",
+                "lemma": "зварити",
                 "translation": "made",
                 "pos": "verb",
-                "grammar": "f.sg. past (pf. of делать)",
+                "grammar": "f.sg. past (pf. of варити)",
                 "level": "A1"
               },
               {
@@ -343,7 +344,7 @@
                 "pos": "noun",
                 "grammar": "m.sg. acc.",
                 "level": "A2",
-                "note": "beet soup — the centerpiece of a Russian family table"
+                "note": "beet soup — the centerpiece of a Ukrainian family table"
               },
               {
                 "text": "!",
@@ -362,12 +363,12 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n04",
-            "uk": "Ничего, борщ уже на столе.",
+            "uk": "Нічого, борщ уже на столі.",
             "en": "No matter, the borscht is already on the table.",
             "tokens": [
               {
-                "text": "Ничего",
-                "lemma": "ничего",
+                "text": "Нічого",
+                "lemma": "нічого",
                 "translation": "no matter",
                 "pos": "pred",
                 "grammar": "colloquial (\"it's nothing\")",
@@ -398,15 +399,15 @@
                 "lemma": "на",
                 "translation": "on",
                 "pos": "prep",
-                "grammar": "+ prep. (location)",
+                "grammar": "+ loc. (location)",
                 "level": "A1"
               },
               {
-                "text": "столе",
-                "lemma": "стол",
+                "text": "столі",
+                "lemma": "стіл",
                 "translation": "table",
                 "pos": "noun",
-                "grammar": "m.sg. prep.",
+                "grammar": "m.sg. loc.",
                 "level": "A1"
               },
               {
@@ -415,7 +416,7 @@
               }
             ],
             "grammarTopics": [
-              "prepositional-location"
+              "locative-location"
             ]
           },
           "next": "din-n05"
@@ -425,7 +426,7 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n05",
-            "uk": "Наш борщ — самый вкусный.",
+            "uk": "Наш борщ — дуже смачний.",
             "en": "Our borscht is the tastiest.",
             "tokens": [
               {
@@ -450,16 +451,15 @@
                 "spaceBefore": true
               },
               {
-                "text": "самый",
-                "lemma": "самый",
+                "text": "дуже",
+                "lemma": "дуже",
                 "translation": "the most",
                 "pos": "pron",
-                "grammar": "m.sg. nom. (superlative)",
                 "level": "A2"
               },
               {
-                "text": "вкусный",
-                "lemma": "вкусный",
+                "text": "смачний",
+                "lemma": "смачний",
                 "translation": "tasty",
                 "pos": "adj",
                 "grammar": "m.sg. nom.",
@@ -481,26 +481,26 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n06",
-            "uk": "Хочешь ещё борща?",
+            "uk": "Хочеш ще борщу?",
             "en": "Do you want more borscht?",
             "tokens": [
               {
-                "text": "Хочешь",
-                "lemma": "хотеть",
+                "text": "Хочеш",
+                "lemma": "хотіти",
                 "translation": "you want",
                 "pos": "verb",
                 "grammar": "2sg. pres. (impf.)",
                 "level": "A1"
               },
               {
-                "text": "ещё",
-                "lemma": "ещё",
+                "text": "ще",
+                "lemma": "ще",
                 "translation": "more",
                 "pos": "adv",
                 "level": "A1"
               },
               {
-                "text": "борща",
+                "text": "борщу",
                 "lemma": "борщ",
                 "translation": "borscht",
                 "pos": "noun",
@@ -521,12 +521,12 @@
               "id": "din-n06-c1",
               "sentence": {
                 "id": "din-n06-c1",
-                "uk": "Да, можно ещё немного.",
+                "uk": "Так, можна ще трохи.",
                 "en": "Yes, a little more, please.",
                 "tokens": [
                   {
-                    "text": "Да",
-                    "lemma": "да",
+                    "text": "Так",
+                    "lemma": "так",
                     "translation": "yes",
                     "pos": "part",
                     "level": "A1"
@@ -536,23 +536,23 @@
                     "isPunct": true
                   },
                   {
-                    "text": "можно",
-                    "lemma": "можно",
+                    "text": "можна",
+                    "lemma": "можна",
                     "translation": "one may have",
                     "pos": "pred",
                     "grammar": "impersonal",
                     "level": "A1"
                   },
                   {
-                    "text": "ещё",
-                    "lemma": "ещё",
+                    "text": "ще",
+                    "lemma": "ще",
                     "translation": "more",
                     "pos": "adv",
                     "level": "A1"
                   },
                   {
-                    "text": "немного",
-                    "lemma": "немного",
+                    "text": "трохи",
+                    "lemma": "трохи",
                     "translation": "a little",
                     "pos": "adv",
                     "level": "A2"
@@ -565,21 +565,22 @@
               },
               "next": "din-n07",
               "asrAlternates": [
-                "Да, ещё немного, пожалуйста."
+                "Так, ще трохи, будь ласка."
               ]
             },
             {
               "id": "din-n06-c2",
               "sentence": {
                 "id": "din-n06-c2",
-                "uk": "Спасибо, я сыт, всё было очень вкусно.",
+                "uk": "Дякую, я ситий, усе було дуже смачно.",
                 "en": "Thank you, I'm full, everything was very tasty.",
                 "tokens": [
                   {
-                    "text": "Спасибо",
-                    "lemma": "спасибо",
+                    "text": "Дякую",
+                    "lemma": "дякувати",
                     "translation": "thank you",
-                    "pos": "interj",
+                    "pos": "verb",
+                    "grammar": "1sg. pres. (impf.); дякую = thank you",
                     "level": "A1"
                   },
                   {
@@ -595,8 +596,8 @@
                     "level": "A1"
                   },
                   {
-                    "text": "сыт",
-                    "lemma": "сытый",
+                    "text": "ситий",
+                    "lemma": "ситий",
                     "translation": "full",
                     "pos": "adj",
                     "grammar": "m.sg. short form",
@@ -608,31 +609,31 @@
                     "isPunct": true
                   },
                   {
-                    "text": "всё",
-                    "lemma": "весь",
+                    "text": "усе",
+                    "lemma": "увесь",
                     "translation": "everything",
                     "pos": "pron",
                     "grammar": "n.sg. nom.",
                     "level": "A1"
                   },
                   {
-                    "text": "было",
-                    "lemma": "быть",
+                    "text": "було",
+                    "lemma": "бути",
                     "translation": "was",
                     "pos": "verb",
                     "grammar": "n.sg. past (impf.)",
                     "level": "A1"
                   },
                   {
-                    "text": "очень",
-                    "lemma": "очень",
+                    "text": "дуже",
+                    "lemma": "дуже",
                     "translation": "very",
                     "pos": "adv",
                     "level": "A1"
                   },
                   {
-                    "text": "вкусно",
-                    "lemma": "вкусно",
+                    "text": "смачно",
+                    "lemma": "смачно",
                     "translation": "tasty",
                     "pos": "adv",
                     "grammar": "predicative",
@@ -650,10 +651,10 @@
               },
               "next": "din-n08",
               "asrAlternates": [
-                "Спасибо, было очень вкусно."
+                "Дякую, було дуже смачно."
               ],
               "hint": {
-                "uk": "Скажи спасибо и похвали еду.",
+                "uk": "Подякуй і похвали їжу.",
                 "en": "Say thank you and praise the food."
               }
             },
@@ -661,12 +662,12 @@
               "id": "din-n06-c3",
               "sentence": {
                 "id": "din-n06-c3",
-                "uk": "Нет.",
+                "uk": "Ні.",
                 "en": "No.",
                 "tokens": [
                   {
-                    "text": "Нет",
-                    "lemma": "нет",
+                    "text": "Ні",
+                    "lemma": "ні",
                     "translation": "no",
                     "pos": "part",
                     "level": "A1"
@@ -686,25 +687,25 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n07",
-            "uk": "Кушай, кушай!",
+            "uk": "Їж, їж!",
             "en": "Eat, eat!",
             "tokens": [
               {
-                "text": "Кушай",
-                "lemma": "кушать",
+                "text": "Їж",
+                "lemma": "їсти",
                 "translation": "eat",
                 "pos": "verb",
                 "grammar": "2sg. imper. (impf.)",
                 "level": "A2",
-                "note": "кушать — homely, affectionate \"to eat\", beloved by mamas"
+                "note": "the insistent, affectionate imperative of every mother and grandmother at the table"
               },
               {
                 "text": ",",
                 "isPunct": true
               },
               {
-                "text": "кушай",
-                "lemma": "кушать",
+                "text": "їж",
+                "lemma": "їсти",
                 "translation": "eat",
                 "pos": "verb",
                 "grammar": "2sg. imper. (impf.)",
@@ -726,49 +727,49 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n08",
-            "uk": "Молодец, приходи к нам ещё.",
+            "uk": "Молодець, приходь до нас ще.",
             "en": "Good boy, come visit us again.",
             "tokens": [
               {
-                "text": "Молодец",
-                "lemma": "молодец",
+                "text": "Молодець",
+                "lemma": "молодець",
                 "translation": "good boy",
                 "pos": "noun",
                 "grammar": "m.sg. nom. (praise)",
                 "level": "A2",
-                "note": "universal Russian praise — \"well done!\""
+                "note": "universal Ukrainian praise — \"well done!\""
               },
               {
                 "text": ",",
                 "isPunct": true
               },
               {
-                "text": "приходи",
-                "lemma": "приходить",
+                "text": "приходь",
+                "lemma": "приходити",
                 "translation": "come",
                 "pos": "verb",
                 "grammar": "2sg. imper. (impf.)",
                 "level": "A2"
               },
               {
-                "text": "к",
-                "lemma": "к",
+                "text": "до",
+                "lemma": "до",
                 "translation": "to",
                 "pos": "prep",
                 "grammar": "+ dat.",
                 "level": "A1"
               },
               {
-                "text": "нам",
-                "lemma": "мы",
+                "text": "нас",
+                "lemma": "ми",
                 "translation": "us",
                 "pos": "pron",
                 "grammar": "dat.",
                 "level": "A1"
               },
               {
-                "text": "ещё",
-                "lemma": "ещё",
+                "text": "ще",
+                "lemma": "ще",
                 "translation": "again",
                 "pos": "adv",
                 "level": "A1"
@@ -790,7 +791,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n09",
-            "uk": "Там ничего нет.",
+            "uk": "Там нічого немає.",
             "en": "There is nothing there.",
             "tokens": [
               {
@@ -801,16 +802,16 @@
                 "level": "A1"
               },
               {
-                "text": "ничего",
-                "lemma": "ничто",
+                "text": "нічого",
+                "lemma": "ніщо",
                 "translation": "nothing",
                 "pos": "pron",
-                "grammar": "gen. (object of нет)",
+                "grammar": "gen. (object of немає)",
                 "level": "A2"
               },
               {
-                "text": "нет",
-                "lemma": "нет",
+                "text": "немає",
+                "lemma": "немає",
                 "translation": "there is no",
                 "pos": "pred",
                 "grammar": "+ gen. = there is no …",
@@ -832,7 +833,7 @@
           "speakerId": "mama",
           "sentence": {
             "id": "din-n10",
-            "uk": "Ну ладно.",
+            "uk": "Ну гаразд.",
             "en": "Well, alright.",
             "tokens": [
               {
@@ -843,8 +844,8 @@
                 "level": "A1"
               },
               {
-                "text": "ладно",
-                "lemma": "ладно",
+                "text": "гаразд",
+                "lemma": "гаразд",
                 "translation": "alright",
                 "pos": "part",
                 "level": "A2"
@@ -862,35 +863,35 @@
           "speakerId": "babushka",
           "sentence": {
             "id": "din-n11",
-            "uk": "Она тоже это видит.",
+            "uk": "Вона теж це бачить.",
             "en": "She sees it too.",
             "tokens": [
               {
-                "text": "Она",
-                "lemma": "она",
+                "text": "Вона",
+                "lemma": "вона",
                 "translation": "she",
                 "pos": "pron",
                 "grammar": "nom.",
                 "level": "A1"
               },
               {
-                "text": "тоже",
-                "lemma": "тоже",
+                "text": "теж",
+                "lemma": "теж",
                 "translation": "too",
                 "pos": "adv",
                 "level": "A1"
               },
               {
-                "text": "это",
-                "lemma": "это",
+                "text": "це",
+                "lemma": "це",
                 "translation": "it",
                 "pos": "pron",
                 "grammar": "acc.",
                 "level": "A1"
               },
               {
-                "text": "видит",
-                "lemma": "видеть",
+                "text": "бачить",
+                "lemma": "бачити",
                 "translation": "sees",
                 "pos": "verb",
                 "grammar": "3sg. pres. (impf.)",
@@ -913,11 +914,11 @@
         {
           "id": "end-good",
           "title": {
-            "uk": "Отличное впечатление",
+            "uk": "Чудове враження",
             "en": "A great impression"
           },
           "recap": {
-            "uk": "Ты хорошо поел, похвалил борщ, и бабушка тобой довольна.",
+            "uk": "Ти добре поїв, похвалив борщ, і бабуся тобою задоволена.",
             "en": "You ate well, praised the borscht, and Grandmother is pleased with you."
           },
           "tone": "good"
@@ -925,11 +926,11 @@
         {
           "id": "end-awkward",
           "title": {
-            "uk": "Неловкий вечер",
+            "uk": "Незручний вечір",
             "en": "An awkward evening"
           },
           "recap": {
-            "uk": "Ты сказал нет — и за столом стало очень тихо.",
+            "uk": "Ти сказав «ні» — і за столом стало дуже тихо.",
             "en": "You said no — and the table went very quiet."
           },
           "tone": "bad"
@@ -937,11 +938,11 @@
         {
           "id": "end-strange",
           "title": {
-            "uk": "Она тоже видит",
+            "uk": "Вона теж бачить",
             "en": "She sees it too"
           },
           "recap": {
-            "uk": "На стене что-то есть, и бабушка это знает.",
+            "uk": "На стіні щось є, і бабуся це знає.",
             "en": "There is something on the wall, and Grandmother knows it."
           },
           "tone": "strange"

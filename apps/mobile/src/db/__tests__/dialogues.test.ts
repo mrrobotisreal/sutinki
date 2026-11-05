@@ -101,8 +101,8 @@ describe('dialogue pack import', () => {
     expect(sentenceRows.every((s) => s.storyId === DIALOGUE_ID)).toBe(true);
     const tokenRows = await db.select().from(tokens);
     expect(tokenRows.every((t) => t.storyId === DIALOGUE_ID)).toBe(true);
-    // ё-folded shadow columns populated like story tokens.
-    const borshch = tokenRows.find((t) => t.text === 'борща');
+    // ґ/г-folded shadow columns populated like story tokens.
+    const borshch = tokenRows.find((t) => t.text === 'борщу');
     expect(borshch?.lemmaNorm).toBe('борщ');
   });
 
@@ -110,8 +110,8 @@ describe('dialogue pack import', () => {
     const db = createTestDb();
     await importPack(db, dialoguePackJson);
     const content = createContentRepo(db);
-    // «Проходи» is din-n01's first token; е-typed search must match too.
-    const hits = await content.searchTokens('проходи');
+    // «Заходь» is din-n01's first token; lowercase search must match too.
+    const hits = await content.searchTokens('заходь');
     expect(hits.length).toBeGreaterThan(0);
     const raw = await db.all<{ n: number }>(
       sql`SELECT COUNT(*) AS n FROM tokens_fts WHERE tokens_fts MATCH 'борщ'`,
@@ -215,7 +215,7 @@ describe('dialogues repository', () => {
     expect(graph.nodes).toHaveLength(11);
     expect(graph.nodes.map((n) => n.id)[0]).toBe('din-n01');
     const n02 = graph.nodes.find((n) => n.id === 'din-n02')!;
-    expect(n02.sentence!.uk).toBe('Ты голодный?');
+    expect(n02.sentence!.uk).toBe('Ти голодний?');
     expect(n02.sentence!.tokens.length).toBeGreaterThan(0);
     expect(n02.choices).toHaveLength(3);
     expect(n02.choices[0]!.sentence!.tokens.length).toBeGreaterThan(0);

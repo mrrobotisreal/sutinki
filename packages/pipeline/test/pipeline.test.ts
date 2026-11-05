@@ -56,13 +56,13 @@ const minimalDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     '## test-s01',
     '',
-    'UK: Всё хорошо.',
+    'UK: Усе добре.',
     'EN: Everything is fine.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
     '| --- | --- | --- | --- | --- | --- | --- |',
-    '| Всё | весь | everything | pron | n.sg. nom. | A1 |  |',
-    '| хорошо | хорошо | fine | adv |  | A1 |  |',
+    '| Усе | увесь | everything | pron | n.sg. nom. | A1 |  |',
+    '| добре | добре | fine | adv |  | A1 |  |',
     '| . |  |  |  |  |  |  |',
     '',
   ];
@@ -77,24 +77,27 @@ describe('reference draft round-trip', () => {
     expect(pack).toEqual(sample);
   });
 
-  it('preserves ё exactly through parse → normalize → emit', () => {
-    const pack = annotate(referenceDraft);
-    const emitted = JSON.stringify(pack);
-    expect(emitted).toContain('чёрные'); // token text
-    expect(emitted).toContain('чёрный'); // lemma
-    expect(emitted).toContain('моём');
-    expect(emitted).not.toContain('черные');
+  it('keeps the apostrophe exactly as authored through parse → normalize → emit', () => {
+    const draft = minimalDraft((lines) => {
+      lines[16] = "UK: Пам'ятай добре.";
+      lines[21] = "| Пам'ятай | пам'ятати | remember | verb | 2sg. imper. (impf.) | A1 |  |";
+    });
+    const emitted = JSON.stringify(annotate(draft));
+    expect(emitted).toContain("Пам'ятай"); // token text + sentence
+    expect(emitted).toContain("пам'ятати"); // lemma
+    expect(emitted).not.toContain('Памятай');
   });
 
-  it('composes decomposed ё (е + combining diaeresis) to NFC without folding to е', () => {
-    const eWithDiaeresis = 'ё'; // NFD: е + U+0308, two code points; NFC must compose it back to ё
+  it('composes decomposed й (и + combining breve) to NFC without folding it away', () => {
+    const decomposedY = 'и\u0306'; // NFD: и + U+0306, two code points; NFC must compose it back to й
     const draft = minimalDraft((lines) => {
-      lines[16] = `UK: Вс${eWithDiaeresis} хорошо.`;
-      lines[21] = `| Вс${eWithDiaeresis} | весь | everything | pron | n.sg. nom. | A1 |  |`;
+      lines[16] = `UK: Мі${decomposedY} друг.`;
+      lines[21] = `| Мі${decomposedY} | мій | my | pron | m.sg. nom. | A1 |  |`;
+      lines[22] = '| друг | друг | friend | noun | m.sg. nom. | A1 |  |';
     });
     const pack = annotate(draft);
     const uk = pack.stories[0]!.sentences[0]!.uk;
-    expect(uk).toBe('Всё хорошо.'); // composed ё, single code point
+    expect(uk).toBe('Мій друг.'); // composed й, single code point
     expect(uk.normalize('NFC')).toBe(uk);
   });
 });
@@ -102,7 +105,7 @@ describe('reference draft round-trip', () => {
 describe('spaceBefore derivation («» quoting)', () => {
   it('derives spaceBefore overrides from the sentence text', () => {
     const draft = minimalDraft((lines) => {
-      lines[16] = 'UK: Я думаю: «Это соседи».';
+      lines[16] = 'UK: Я думаю: «Це сусіди».';
       lines[17] = 'EN: I think: "It is the neighbors."';
       lines.splice(
         21,
@@ -111,17 +114,17 @@ describe('spaceBefore derivation («» quoting)', () => {
         '| думаю | думать | think | verb | 1sg. pres. (impf.) | A1 |  |',
         '| : |  |  |  |  |  |  |',
         '| « |  |  |  |  |  |  |',
-        '| Это | это | it (is) | pron | demonstrative, nom. | A1 |  |',
-        '| соседи | сосед | the neighbors | noun | m.pl. nom. | A1 |  |',
+        '| Це | це | it (is) | pron | demonstrative, nom. | A1 |  |',
+        '| сусіди | сусід | the neighbors | noun | m.pl. nom. | A1 |  |',
         '| » |  |  |  |  |  |  |',
         '| . |  |  |  |  |  |  |',
       );
     });
     const pack = annotate(draft);
     const tokens = pack.stories[0]!.sentences[0]!.tokens;
-    // « gets a space (non-default for punct); Это directly follows it (non-default for a word).
+    // « gets a space (non-default for punct); Це directly follows it (non-default for a word).
     expect(tokens[3]).toMatchObject({ text: '«', isPunct: true, spaceBefore: true });
-    expect(tokens[4]).toMatchObject({ text: 'Это', spaceBefore: false });
+    expect(tokens[4]).toMatchObject({ text: 'Це', spaceBefore: false });
     // Default cases carry no spaceBefore key at all.
     expect(tokens[0]!.spaceBefore).toBeUndefined();
     expect(tokens[1]!.spaceBefore).toBeUndefined();
@@ -135,7 +138,7 @@ describe('fail-loud gap checks', () => {
     const issues = issuesOf(() => annotate(source, 'missing-lemma.draft.md'));
     expect(issues).toHaveLength(2);
     expect(issues[0]).toMatchObject({ file: 'missing-lemma.draft.md', line: 23 });
-    expect(issues[0]!.message).toContain('слышу');
+    expect(issues[0]!.message).toContain('чую');
     expect(issues[0]!.message).toContain('missing its lemma');
     expect(issues[1]).toMatchObject({ line: 24 });
     expect(issues[1]!.message).toContain('missing its translation');
@@ -145,7 +148,7 @@ describe('fail-loud gap checks', () => {
     const source = readFileSync(fixture('broken', 'misaligned.draft.md'), 'utf8');
     const issues = issuesOf(() => annotate(source, 'misaligned.draft.md'));
     expect(issues.length).toBeGreaterThanOrEqual(1);
-    expect(issues[0]!.line).toBe(27); // the "стук" row, where alignment first breaks
+    expect(issues[0]!.line).toBe(27); // the "стукіт" row, where alignment first breaks
     expect(issues[0]!.message).toContain('does not match sentence');
     expect(issues[0]!.message).toContain('⟨here⟩');
   });
@@ -170,7 +173,7 @@ describe('fail-loud gap checks', () => {
 
   it('an invalid CEFR level cell is an error', () => {
     const draft = minimalDraft((lines) => {
-      lines[21] = '| Всё | весь | everything | pron | n.sg. nom. | A7 |  |';
+      lines[21] = '| Усе | увесь | everything | pron | n.sg. nom. | A7 |  |';
     });
     const issues = issuesOf(() => annotate(draft));
     expect(issues[0]!.message).toContain('invalid CEFR level "A7"');
@@ -202,7 +205,7 @@ describe('draft grammar errors', () => {
 
   it('a row with the wrong number of cells is an error', () => {
     const draft = minimalDraft((lines) => {
-      lines[22] = '| хорошо | хорошо | fine | adv | A1 |  |';
+      lines[22] = '| добре | добре | fine | adv | A1 |  |';
     });
     const issues = issuesOf(() => annotate(draft));
     expect(issues[0]!.message).toContain('6 cells, expected 7');
@@ -250,7 +253,7 @@ describe('draft grammar errors', () => {
 
   it('escaped pipes in cells survive as literal "|"', () => {
     const draft = minimalDraft((lines) => {
-      lines[22] = '| хорошо | хорошо | fine \\| well | adv |  | A1 |  |';
+      lines[22] = '| добре | добре | fine \\| well | adv |  | A1 |  |';
     });
     const pack = annotate(draft);
     expect(pack.stories[0]!.sentences[0]!.tokens[1]!.translation).toBe('fine | well');

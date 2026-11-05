@@ -7,7 +7,7 @@ import { graph, path } from './fixtures';
 /**
  * Engine tests (T27): replaying pathJson against the T26 graph shape —
  * including the force-close resume cases the recorded resume-in-place
- * decision depends on. The fixture mirrors «Ужин у мамы» (a2-dialogue-001):
+ * decision depends on. The fixture mirrors «Вечеря в мами» (a2-dialogue-001):
  * linear intro → choice point → loop-capable second choice → endings.
  */
 
@@ -74,7 +74,7 @@ describe('buildEngineState', () => {
     expect(state.ending?.id).toBe('end-good');
   });
 
-  it('walks legal cycles without flinching (Ещё борща? loop)', () => {
+  it('walks legal cycles without flinching (Ще борщу? loop)', () => {
     const state = buildEngineState(
       graph,
       path([

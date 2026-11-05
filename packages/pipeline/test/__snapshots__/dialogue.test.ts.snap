@@ -1,28 +1,28 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`branch map > renders the fixture dialogue deterministically (snapshot) 1`] = `
-"Branch map — «Ужин у мамы» (dinner-mini, A2)
+"Branch map — «Вечеря в мами» (dinner-mini, A2)
   11 nodes · 2 choice points · 3 endings (3 reachable)
 
-din-n01 mama: «Проходи, дорогой!»
-└─ din-n02 mama: «Ты голодный?»
-   ├─ [din-n02-c1] «Да, я очень голодный.»
-   │  └─ din-n03 mama: «Отлично, я сделала борщ!»
-   │     └─ din-n05 babushka: «Наш борщ — самый вкусный.»
-   │        └─ din-n06 mama: «Хочешь ещё борща?»
-   │           ├─ [din-n06-c1] «Да, можно ещё немного.»
-   │           │  └─ din-n07 mama: «Кушай, кушай!»
+din-n01 mama: «Заходь, любий!»
+└─ din-n02 mama: «Ти голодний?»
+   ├─ [din-n02-c1] «Так, я дуже голодний.»
+   │  └─ din-n03 mama: «Чудово, я зварила борщ!»
+   │     └─ din-n05 babushka: «Наш борщ — дуже смачний.»
+   │        └─ din-n06 mama: «Хочеш ще борщу?»
+   │           ├─ [din-n06-c1] «Так, можна ще трохи.»
+   │           │  └─ din-n07 mama: «Їж, їж!»
    │           │     └─ din-n06 ↩ (shown above)
-   │           ├─ [din-n06-c2] «Спасибо, я сыт, всё было очень вкусно.»
-   │           │  └─ din-n08 babushka: «Молодец, приходи к нам ещё.»  ⇒ end-good
-   │           └─ [din-n06-c3] «Нет.»
-   │              └─ din-n10 mama: «Ну ладно.»  ⇒ end-awkward
-   ├─ [din-n02-c2] «Нет, спасибо, я не голодный.»
-   │  └─ din-n04 mama: «Ничего, борщ уже на столе.»
+   │           ├─ [din-n06-c2] «Дякую, я ситий, усе було дуже смачно.»
+   │           │  └─ din-n08 babushka: «Молодець, приходь до нас ще.»  ⇒ end-good
+   │           └─ [din-n06-c3] «Ні.»
+   │              └─ din-n10 mama: «Ну гаразд.»  ⇒ end-awkward
+   ├─ [din-n02-c2] «Ні, дякую, я не голодний.»
+   │  └─ din-n04 mama: «Нічого, борщ уже на столі.»
    │     └─ din-n05 ↩ (shown above)
-   └─ [din-n02-c3] «А что это на стене?»
-      └─ din-n09 mama: «Там ничего нет.»
-         └─ din-n11 babushka: «Она тоже это видит.»  ⇒ end-strange
+   └─ [din-n02-c3] «А що це на стіні?»
+      └─ din-n09 mama: «Там нічого немає.»
+         └─ din-n11 babushka: «Вона теж це бачить.»  ⇒ end-strange
 
 paths: shortest 4 nodes · longest 6 nodes (cycles not counted)
 endings: end-good (good) ✓ · end-awkward (bad) ✓ · end-strange (strange) ✓
