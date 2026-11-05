@@ -21,7 +21,7 @@ import {
 import type { DraftIssue } from './errors.ts';
 import type { DraftSentence } from './draft.ts';
 import type { ParsedScenarioDraft } from './scenario-draft.ts';
-import { mergeTranslit, transliterate } from './translit.ts';
+import { mergeTranslit, translitFor } from './translit.ts';
 
 /**
  * Scenario assembly (T56): a parsed `*.scenario.md` → a `Scenario` (SCENARIOS
@@ -352,7 +352,7 @@ export function assembleScenario(
       });
     }
     seenHeadwords.set(ruKey, g.line);
-    const translit = mergeTranslit(transliterate(g.en), g.translit);
+    const translit = mergeTranslit(translitFor(meta.language ?? 'uk')(g.en), g.translit);
     if (translit.length === 0) {
       issues.push({
         file,

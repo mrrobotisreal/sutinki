@@ -214,12 +214,14 @@ export default function DevJudgeScreen() {
               glossary,
               explainSentenceId: (id) => clips[id]?.explain ?? null,
               played: playedRef.current,
+              language: detail.scenario.language,
               online: fetchExplainLine,
             });
           } else if (detection.intent === 'howtosay') {
             resolution = await resolveHowToSay(detection, {
               glossary,
               howToSaySentenceId: (id) => clips[id]?.howToSay ?? null,
+              language: detail.scenario.language,
               whisper:
                 wavPath && isAssistInstalled()
                   ? async () => {

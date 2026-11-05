@@ -338,6 +338,7 @@ export function useScenarioRun(
           resolution = await resolveHowToSay(detection, {
             glossary,
             howToSaySentenceId: (id) => clips[id]?.howToSay ?? null,
+            language: d.scenario.language,
             whisper:
               wavPath && isAssistInstalled()
                 ? async () => (await transcribeEnglish(wavPath)).text

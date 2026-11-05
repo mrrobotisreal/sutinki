@@ -98,6 +98,19 @@ export const META_TRIGGERS: Record<ScenarioLanguage, readonly MetaTrigger[]> = {
     { intent: 'dont-understand', phrase: 'не розумію', takesQuery: false },
     { intent: 'dont-understand', phrase: 'я не зрозумів', takesQuery: false },
     { intent: 'dont-understand', phrase: 'я не зрозуміла', takesQuery: false },
+    // NeMo's model is ru+uk with no language hint: on real Ukrainian speech it
+    // often writes the trigger with Russian spellings (calibration, UT14:
+    // «Что значит», «Что означает», «Что такая», «Повторить», «Не так швыдко»).
+    // These are recognition aliases of the SAME Ukrainian commands, never shown
+    // or authored as content.
+    { intent: 'explain', phrase: 'что означает', takesQuery: true },
+    { intent: 'explain', phrase: 'что значит', takesQuery: true },
+    { intent: 'explain', phrase: 'что такое', takesQuery: true },
+    { intent: 'howtosay', phrase: 'как сказать', takesQuery: true },
+    { intent: 'repeat', phrase: 'повторить', takesQuery: false },
+    { intent: 'repeat', phrase: 'что', whole: true, takesQuery: false },
+    { intent: 'slower', phrase: 'не так быстро', takesQuery: false },
+    { intent: 'slower', phrase: 'медленнее', takesQuery: false },
   ],
 };
 
@@ -283,6 +296,9 @@ function charDistanceLocal(a: string, b: string): number {
   return prev[n]!;
 }
 
+const FOLD_RU: Record<string, string> = { ы: 'и', э: 'е', ё: 'е', ъ: 'ʼ' };
+const FOLD_RU_RE = /[ыэёъ]/g;
+
 /** Minimum similarity for a translit garble to count as a hit (tolerant, but not a coin flip). */
 export const TRANSLIT_MIN_SIMILARITY = 70;
 
@@ -296,19 +312,35 @@ export const TRANSLIT_MIN_SIMILARITY = 70;
 export function findGlossaryByTranslit(
   queryTokens: readonly string[],
   glossary: readonly GlossaryLookupEntry[],
+  language: ScenarioLanguage = 'ru',
 ): TranslitHit | null {
   if (queryTokens.length === 0) return null;
-  const joined = queryTokens.map(normalizeScenarioText).join(' ');
+  // uk: NeMo writes English through its Russian side too (э/ы/ё) — compare on
+  // the Ukrainian letters (UT14 calibration), both sides folded.
+  const fold = (t: string) =>
+    language === 'uk'
+      ? normalizeScenarioText(t).replace(FOLD_RU_RE, (c) => FOLD_RU[c]!)
+      : normalizeScenarioText(t);
+  // uk: the multilingual model often writes the English word itself, in Latin
+  // («appointment», «station») — compare that to the entry's `en` directly.
+  if (language === 'uk') {
+    const latin = queryTokens.map((t) => t.toLowerCase()).filter((t) => /^[a-z][a-z'-]*$/.test(t));
+    if (latin.length > 0) {
+      const en = findGlossaryByEnglish(latin, glossary);
+      if (en) return { entry: en, score: 100, candidate: en.en };
+    }
+  }
+  const joined = queryTokens.map(fold).join(' ');
   const windows = new Set<string>([joined]);
   for (let i = 1; i < queryTokens.length; i++)
-    windows.add(queryTokens.slice(i).map(normalizeScenarioText).join(' '));
-  for (let i = 0; i < queryTokens.length; i++) windows.add(normalizeScenarioText(queryTokens[i]!));
+    windows.add(queryTokens.slice(i).map(fold).join(' '));
+  for (let i = 0; i < queryTokens.length; i++) windows.add(fold(queryTokens[i]!));
   const compact = [...windows].map((w) => w.replace(/[\s-]/g, ''));
 
   let best: TranslitHit | null = null;
   for (const entry of glossary) {
     for (const raw of entry.translit) {
-      const cand = normalizeScenarioText(raw).replace(/[\s-]/g, '');
+      const cand = fold(raw).replace(/[\s-]/g, '');
       if (cand.length === 0) continue;
       for (const w of compact) {
         if (w.length === 0) continue;
@@ -467,6 +499,8 @@ export async function resolveExplain(
 export interface HowToSayResolverDeps {
   glossary: readonly GlossaryLookupEntry[];
   howToSaySentenceId: (entryId: string) => string | null;
+  /** The scenario language (`uk` ⇒ Ukrainian translit comparison). Default `ru`. */
+  language?: ScenarioLanguage;
   /** Whisper re-decode of the same WAV as English, null when the assist model is absent / failed. */
   whisper?: () => Promise<string | null>;
   /** Online translation spoken by the суфлёр, null when offline / no key / failed. */
@@ -477,7 +511,7 @@ export async function resolveHowToSay(
   detection: MetaDetection,
   deps: HowToSayResolverDeps,
 ): Promise<Extract<MetaResolution, { intent: 'howtosay' }>> {
-  const hit = findGlossaryByTranslit(detection.queryTokens, deps.glossary);
+  const hit = findGlossaryByTranslit(detection.queryTokens, deps.glossary, deps.language ?? 'ru');
   if (hit) {
     const sentenceId = deps.howToSaySentenceId(hit.entry.id);
     if (sentenceId) {
