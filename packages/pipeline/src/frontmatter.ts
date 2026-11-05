@@ -61,10 +61,10 @@ export const VoiceSettingsSchema = z.strictObject({
   useSpeakerBoost: z.boolean().optional(),
 });
 
-/** Provider-prefixed voice id, e.g. "elevenlabs:Anton". */
+/** Provider-prefixed voice id, e.g. "elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z" (legacy: "elevenlabs:<voice-name>"). */
 const VoiceIdSchema = z
   .string()
-  .regex(/^[a-z0-9-]+:.+$/, 'voice is provider-prefixed, e.g. "elevenlabs:<voice-name>"');
+  .regex(/^[a-z0-9-]+:.+$/, 'voice is provider-prefixed, e.g. "elevenlabs:id:<voice_id>"');
 
 /** One or more `[bracketed]` Eleven v3 audio tags, e.g. "[whispers] [fearful]". */
 const AudioTagSchema = z
@@ -87,7 +87,7 @@ export const VoiceDirectionSchema = z
      * `settings`, `stylePrompt` and `style` are all absent (see registers.ts).
      */
     register: z.enum(REGISTER_SLUGS).optional(),
-    /** Provider-prefixed voice id, e.g. "elevenlabs:Anton". Required unless `register` is set. */
+    /** Provider-prefixed voice id, e.g. "elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z" (legacy: "elevenlabs:<voice-name>"). Required unless `register` is set. */
     voice: VoiceIdSchema.optional(),
     /** Emotional/delivery style label: "creepy-whisper", "neutral", ... Required unless `register` is set. */
     style: z.string().min(1).optional(),

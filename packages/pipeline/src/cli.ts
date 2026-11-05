@@ -11,7 +11,7 @@ import {
 } from './audio.ts';
 import type { StampResult } from './stamps.ts';
 import { DEFAULT_MODEL_ID, ElevenLabsClient } from './elevenlabs.ts';
-import { resolveEnvVar } from './env.ts';
+import { resolveElevenKey } from './env.ts';
 import { runModelsMirror } from './models.ts';
 import { runPublish } from './publish.ts';
 import { runValidate } from './validate.ts';
@@ -45,7 +45,7 @@ Usage:
       Validate existing pack.json file(s) against the schema.
 
   pipeline audio <draft.md> [more-drafts.md ...] -o <pack-dir> [options]
-      Render narration via ElevenLabs (needs ELEVENLABS_API_KEY in the env or
+      Render narration via ElevenLabs (needs ELEVENLABS_API_KEY_2 in the env or
       a gitignored .env at the repo root; the value is never printed).
       Every run first prints a pre-render summary (tracks, dialogue nodes,
       request + character counts) and asks for confirmation — pass --yes to
@@ -200,14 +200,19 @@ function describeStamps(r: StampResult): string {
 }
 
 function makeClient(): ElevenLabsClient {
-  const apiKey = resolveEnvVar('ELEVENLABS_API_KEY');
-  if (apiKey === undefined) {
+  const key = resolveElevenKey();
+  if (key === undefined) {
     fail(
-      'ELEVENLABS_API_KEY is not set — export it or put it in a gitignored .env at the repo root (the pipeline never prints its value)',
+      'ELEVENLABS_API_KEY_2 is not set — export it or put it in a gitignored .env at the repo root (the pipeline never prints its value)',
       2,
     );
   }
-  return new ElevenLabsClient(apiKey);
+  if (key.name !== 'ELEVENLABS_API_KEY_2') {
+    console.warn(
+      'using ELEVENLABS_API_KEY (not _2) — Sutinki renders belong on ELEVENLABS_API_KEY_2',
+    );
+  }
+  return new ElevenLabsClient(key.value);
 }
 
 /**

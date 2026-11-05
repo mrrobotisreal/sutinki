@@ -193,16 +193,6 @@ function parseAll(
   return { drafts, pack, cues };
 }
 
-function providerVoiceName(direction: ResolvedVoiceDirection, voice = direction.voice): string {
-  const [provider, ...rest] = voice.split(':');
-  if (provider !== 'elevenlabs' || rest.length === 0) {
-    throw new Error(
-      `track "${direction.id}": unsupported voice "${voice}" — only "elevenlabs:<name>" is implemented`,
-    );
-  }
-  return rest.join(':');
-}
-
 /**
  * Insert `insert` into the narration text at character offset `at` (always a
  * token boundary), shifting every span at or after it by the inserted length.
@@ -572,7 +562,7 @@ async function renderDirection(
       rendered.push({ run, result: null });
       continue;
     }
-    const voiceId = await client.resolveVoiceId(providerVoiceName(direction, run.voice));
+    const voiceId = await client.resolveProviderVoice(run.voice, `track "${direction.id}"`);
     const result = await client.renderWithTimestamps({
       voiceId,
       text: run.narration.text,

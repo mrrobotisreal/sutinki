@@ -61,10 +61,10 @@ root).
    read-write) saved. Then Library → pull-to-refresh (or Packs → Check for
    updates). Audio can defer to Wi-Fi per the Wi-Fi-only toggle.
 
-> Voices note: the pipeline currently reads `ELEVENLABS_API_KEY` (inherited);
-> Sutinki's policy key is `ELEVENLABS_API_KEY_2` and the pipeline switches to it
-> with the v4 gate in UP03. Until then a render ticket exports the policy key's
-> value under the name the CLI reads, for that shell only.
+> Voices note (UP03): the pipeline renders with **`ELEVENLABS_API_KEY_2`**
+> (env or the gitignored `.env`; the plain `ELEVENLABS_API_KEY` is only a
+> fallback and logs a warning), voices are named `elevenlabs:id:<voice_id>`,
+> and the default model is `eleven_v4` (ADR-0012, ADR-0014).
 
 **Variant — a non-fiction pack (news / education / podcast / documentary /
 travel, M14 / ADR-0016).** Same five steps, with three differences:

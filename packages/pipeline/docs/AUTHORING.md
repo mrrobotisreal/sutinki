@@ -28,7 +28,7 @@ env -u NODE_OPTIONS pnpm pipeline annotate s1.draft.md s2.draft.md s3.draft.md -
 # validate an existing pack.json independently
 env -u NODE_OPTIONS pnpm pipeline validate path/to/pack.json
 
-# narration (needs ELEVENLABS_API_KEY in the env or a gitignored .env at the
+# narration (needs ELEVENLABS_API_KEY_2 in the env or a gitignored .env at the
 # repo root — the pipeline never prints the value). First audition:
 env -u NODE_OPTIONS pnpm pipeline audio s1.draft.md s2.draft.md -o packs/my-pack --audition 3
 # …listen to packs/my-pack/audition/*.mp3, pick a seed per track, finalize:
@@ -44,11 +44,11 @@ env -u NODE_OPTIONS pnpm pipeline publish packs/my-pack --content ../sutinki-con
 
 `annotate` prints `✓ <pack> v<n> → <file>` plus story/sentence/token counts on success. It may also print `warning: file:line: …` lines afterwards — those are non-fatal (today: a `UK:` line that mixes apostrophe code points, see the apostrophe rule). Errors are `file:line: message`, all of them at once; fix them all, re-run.
 
-**Voice ids must resolve to a voice on the ElevenLabs account** — the resolver matches the alias before " - tagline" in the account's voice list. Copy the id from a recently published draft rather than inventing one; a wrong id fails at the first render call (annotate only shape-checks it). The default voice is **`elevenlabs:Mr. Wintrow`** (id `HQ4Xi3gPf8Q6bJUlao6z`) — a direction that names a `register:` and no `voice:` renders with it. Character voices are cast per family in its `SERIES.md` / `docs/design/VOICE_CAST.md`. (Sutinki's render policy — `eleven_v4`, `ELEVENLABS_API_KEY_2` — lands with UP03; until then the pipeline's default is the inherited `eleven_multilingual_v2` path described here.)
+**Voices are named by id: `voice: elevenlabs:id:<voice_id>`** (UP03, ADR-0012) — the 20-character ElevenLabs voice id, validated `^[A-Za-z0-9]{20}$`, **no `/v1/voices` lookup** (it renders on the `ELEVENLABS_API_KEY_2` account regardless of that account's voice list). The legacy `elevenlabs:<name>` form still resolves a name through the account's voice list (alias before " - tagline"), and a bare 20-character id after `elevenlabs:` passes through. The default voice is **Mr. Wintrow**, `elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z` — a direction that names a `register:` and no `voice:` renders with it. The cast ids (ADR-0012) are in `docs/design/VOICE_CAST.md`. Credentials: **`ELEVENLABS_API_KEY_2`** (env or a gitignored `.env`); the plain `ELEVENLABS_API_KEY` is only a fallback that logs a warning.
 
-### Narration audio — the default path (Multilingual v2 · Mr. Wintrow · registers)
+### Narration audio — the default path (Eleven v4 · Mr. Wintrow · registers)
 
-`pipeline audio` renders every story track with **`eleven_multilingual_v2` · `language_code: uk` · `elevenlabs:Mr. Wintrow` · `mp3_44100_192` · speaker boost on** unless a direction says otherwise (ADR-0016, 2026-09-20 — the CT011e re-voice made default). Multilingual v2 accepts `previous_text` (our `stylePrompt`) and continuous voice settings but has **no audio-tag channel**; expressiveness comes from the register preset, the `stylePrompt`, `settings`, and `contextCues` (next section).
+`pipeline audio` renders every story track with **`eleven_v4` · `elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z` · `mp3_44100_192`** unless a direction says otherwise (Sutinki UP03; overrides Sumrak's ADR-0016 Multilingual v2 default). v4 is a tagged model: inline `[audio tags]` steer delivery (rules: «Eleven v3 / v4 tags» below), and the request carries **no `previous_text`, no `language_code`, no speaker boost**. Every voice block that is rendered should pin `model: eleven_v4` explicitly. The register presets' `settings` and `stylePrompt` apply to **untagged models only** (e.g. a direction that pins `model: eleven_multilingual_v2`, which accepts `previous_text`, `language_code: uk`, continuous voice settings and speaker boost but has no tag channel); with v4 they are unused.
 
 A **register** is a preset that fills a direction's defaults — `voice`, `style` (the register slug, which the app shows as a Ukrainian label), `settings` and `stylePrompt`. Name it in the `voice:` block and omit everything the preset already covers:
 

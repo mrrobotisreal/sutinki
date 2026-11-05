@@ -109,13 +109,25 @@ describe('renderLine request body per model family', () => {
     expect(req.voice_settings).toEqual({ stability: 0.4 });
   });
 
-  it('eleven_multilingual_v2: no tag, previous_text sent, language_code ru, boost defaults on', async () => {
+  it('eleven_multilingual_v2: no tag, previous_text sent, language_code uk, boost defaults on', async () => {
     const { req, rendered } = await render('eleven_multilingual_v2');
     expect(req.text).toBe('Так. Слушаю вас.');
     expect(req.previous_text).toBe('Ночь. Дежурная часть.');
-    expect(req.language_code).toBe('ru');
+    expect(req.language_code).toBe('uk');
     expect(req.voice_settings).toEqual({ stability: 0.4, use_speaker_boost: true });
     expect(rendered.narration).toBe(SPEC.narration);
+  });
+
+  it('Sutinki default (UP03): with no model given the request is eleven_v4 — tag prefixed, no previous_text, no language_code, no speaker boost', async () => {
+    const captured: Captured[] = [];
+    const client = new ElevenLabsClient('test-key', { fetchImpl: fakeFetch(captured) });
+    await renderLine(client, SPEC, 7, undefined);
+    const req = captured[0]!;
+    expect(req.model_id).toBe('eleven_v4');
+    expect(req.text.startsWith('[serious, commanding] ')).toBe(true);
+    expect(req.previous_text).toBeUndefined();
+    expect(req.language_code).toBeUndefined();
+    expect(req.voice_settings).not.toHaveProperty('use_speaker_boost');
   });
 
   it('eleven_v4_turbo is refused before any request is made', async () => {

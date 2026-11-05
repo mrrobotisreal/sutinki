@@ -29,7 +29,11 @@ const dir = path.resolve('drizzle');
 const sutTags = tags(fs.readFileSync(path.join(dir, 'meta/_journal.json'), 'utf8'));
 const sut = build(sutTags.map((t) => fs.readFileSync(path.join(dir, `${t}.sql`), 'utf8')));
 
-const ru2uk = (s) => s.replace(/\b(\w*?)_ru\b/g, '$1_uk').replace(/\bru_(?=norm\b)/g, 'uk_').replace(/(?<![\w])ru(?![\w])/g, 'uk');
+const ru2uk = (s) =>
+  s
+    .replace(/\b(\w*?)_ru\b/g, '$1_uk')
+    .replace(/\bru_(?=norm\b)/g, 'uk_')
+    .replace(/(?<![\w])ru(?![\w])/g, 'uk');
 const ws = (s) =>
   ru2uk(
     s

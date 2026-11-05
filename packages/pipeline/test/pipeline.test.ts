@@ -147,7 +147,7 @@ describe('M14 fixtures (a2-news-090, a2-podcast-090, a1-comedy-090)', () => {
           expect(direction.voice).toBeUndefined(); // the drafts pin neither
           expect(direction.style).toBeUndefined();
           const resolved = applyRegister(direction, category);
-          expect(resolved.voice).toBe('elevenlabs:Mr. Wintrow');
+          expect(resolved.voice).toBe('elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z');
           expect(resolved.style).toBe(style);
           expect(resolved.settings?.useSpeakerBoost).toBe(true);
           expect(resolved.stylePrompt).toBeDefined();
@@ -162,10 +162,9 @@ describe('M14 fixtures (a2-news-090, a2-podcast-090, a1-comedy-090)', () => {
       {
         storyId: 'news-090-a1',
         trackId: 'nw090a1-wintrow-anchor',
-        voice: 'elevenlabs:Mr. Wintrow',
+        voice: 'elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z',
         style: 'anchor',
-        model: 'eleven_multilingual_v2',
-        languageCode: 'uk',
+        model: 'eleven_v4',
         requests: 1,
         chars: expect.any(Number),
       },

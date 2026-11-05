@@ -33,7 +33,9 @@ export {
   ElevenLabsError,
   OUTPUT_FORMAT,
   isTaggedModel,
+  parseProviderVoice,
   type ElevenLabsVoice,
+  type ParsedProviderVoice,
   type RenderRequest,
   type RenderResult,
 } from './elevenlabs.ts';
@@ -72,7 +74,6 @@ export {
 } from './models.ts';
 export {
   finalizeLine,
-  providerVoiceOf,
   renderLine,
   RequestPacer,
   REQUEST_GAP_MS,

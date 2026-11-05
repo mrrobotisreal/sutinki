@@ -34,8 +34,11 @@ export interface Register {
   stylePrompt: string;
 }
 
-/** The default narration voice (ADR-0016): Mitch's professional clone on the new account. */
-export const DEFAULT_VOICE = 'elevenlabs:Mr. Wintrow';
+/**
+ * The default narration voice (ADR-0012): Mr. Wintrow by voice id — no name
+ * lookup, so it renders on the Sutinki ElevenLabs account (`ELEVENLABS_API_KEY_2`).
+ */
+export const DEFAULT_VOICE = 'elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z';
 
 export const REGISTERS: Record<RegisterSlug, Register> = {
   // The CT011e v2 settings pinned in sutinki-content/series/no-end-house/

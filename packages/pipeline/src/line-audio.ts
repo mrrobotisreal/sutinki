@@ -72,17 +72,6 @@ export class RequestPacer {
   }
 }
 
-/** The provider voice name after the `elevenlabs:` prefix; throws on any other provider. */
-export function providerVoiceOf(voice: string, characterId: string): string {
-  const voiceName = voice.split(':').slice(1).join(':');
-  if (voiceName === '' || !voice.startsWith('elevenlabs:')) {
-    throw new Error(
-      `character "${characterId}": unsupported voice "${voice}" — only "elevenlabs:<name>" is implemented`,
-    );
-  }
-  return voiceName;
-}
-
 /**
  * Render one line. On tagged models (v3 / v4) the audio tag becomes part of
  * the rendered text (every span shifts by the prefix length); on other
@@ -109,7 +98,7 @@ export async function renderLine(
         })),
       }
     : base;
-  const voiceId = await client.resolveVoiceId(providerVoiceOf(spec.voice, spec.characterId));
+  const voiceId = await client.resolveProviderVoice(spec.voice, `character "${spec.characterId}"`);
   const render = async () =>
     client.renderWithTimestamps({
       voiceId,

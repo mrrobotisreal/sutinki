@@ -216,6 +216,7 @@ describe('scenario audition (fake provider, real ffmpeg)', () => {
     const result = await runAudition([FIXTURE_DRAFT], outDir, client, {
       takes: 2,
       playerAudio: true,
+      modelId: 'eleven_multilingual_v2',
     });
     expect(result.story).toHaveLength(0);
     expect(result.dialogue).toHaveLength(0);
@@ -247,12 +248,13 @@ describe('scenario finalize (fake provider, real ffmpeg)', () => {
     const summary = await runFinalize([FIXTURE_DRAFT], outDir, client, {
       playerAudio: true,
       seeds: { 'radio-a1/host': 11, 'radio-a1/player': 33 },
+      modelId: 'eleven_multilingual_v2',
     });
     expect(summary.reports).toHaveLength(0);
     expect(summary.dialogueReports).toHaveLength(0);
     expect(summary.scenarioReports).toHaveLength(FIXTURE_LINES + 2);
 
-    // Seeds follow the per-character groups; every request is v2 + ru.
+    // Seeds follow the per-character groups; every request is v2 (these steering tests pin the untagged model: v4 has no previous_text channel).
     for (const r of summary.scenarioReports) {
       expect(r.seed).toBe(r.characterId === 'host' ? 11 : 33);
       if (r.variant !== 'coach') {
