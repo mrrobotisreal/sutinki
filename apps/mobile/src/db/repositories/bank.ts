@@ -145,7 +145,7 @@ const MIN_CORE_STABILITY = sql`(SELECT MIN(c.stability) FROM cards c
  */
 const QUALIFYING_GRADES_FROM = sql`FROM review_log r JOIN cards c ON c.id = r.card_id
   WHERE c.bank_item_id = bank_items.id
-    AND c.direction IN ('ru-en', 'en-ru')
+    AND c.direction IN ('uk-en', 'en-uk')
     AND (r.source = 'flashcard' OR r.source IS NULL)`;
 
 /** Mean of (rating − 1) / 3 over the last 10 qualifying grades; NULL when none. */

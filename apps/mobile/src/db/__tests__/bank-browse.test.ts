@@ -112,7 +112,7 @@ describe('bank repository — sorting + familiarity (T50)', () => {
     };
     const grade = async (
       itemId: string,
-      direction: 'ru-en' | 'en-ru' | 'listening' | 'production',
+      direction: 'uk-en' | 'en-uk' | 'listening' | 'production',
       rating: 1 | 2 | 3 | 4,
       source: Src,
     ) => {
@@ -127,8 +127,8 @@ describe('bank repository — sorting + familiarity (T50)', () => {
   it('(a) MC-only grades do not count as practice', async () => {
     const { add, grade, list } = await setup();
     const a = await add('окно');
-    await grade(a.id, 'ru-en', 3, 'mc');
-    await grade(a.id, 'en-ru', 4, 'mc');
+    await grade(a.id, 'uk-en', 3, 'mc');
+    await grade(a.id, 'en-uk', 4, 'mc');
     const [row] = await list();
     expect(row!.practiceCount).toBe(0);
     expect(row!.familiarity).toBeNull();
@@ -138,8 +138,8 @@ describe('bank repository — sorting + familiarity (T50)', () => {
   it('(b) NULL-source legacy rows count best-effort', async () => {
     const { add, grade, list } = await setup();
     const a = await add('стол');
-    await grade(a.id, 'ru-en', 3, undefined);
-    await grade(a.id, 'ru-en', 1, undefined);
+    await grade(a.id, 'uk-en', 3, undefined);
+    await grade(a.id, 'uk-en', 1, undefined);
     const [row] = await list();
     expect(row!.practiceCount).toBe(2);
     expect(row!.latestRating).toBe(1);
@@ -163,8 +163,8 @@ describe('bank repository — sorting + familiarity (T50)', () => {
     const { add, grade, list } = await setup();
     const a = await add('нога');
     // Oldest grade is Again (0); the ten that follow are all Easy (1).
-    await grade(a.id, 'ru-en', 1, 'flashcard');
-    for (let i = 0; i < 10; i++) await grade(a.id, i % 2 ? 'ru-en' : 'en-ru', 4, 'flashcard');
+    await grade(a.id, 'uk-en', 1, 'flashcard');
+    for (let i = 0; i < 10; i++) await grade(a.id, i % 2 ? 'uk-en' : 'en-uk', 4, 'flashcard');
     const [row] = await list();
     expect(row!.practiceCount).toBe(11);
     expect(row!.familiarity).toBe(1);
@@ -179,12 +179,12 @@ describe('bank repository — sorting + familiarity (T50)', () => {
     const b = await add('берег', 'shore'); // practiced: Good, Easy → 5/6
     const g = await add('город', 'city'); // practiced: Hard → 1/3 (one grade)
     const e = await add('ель', 'spruce'); // unpracticed, MC-only
-    await grade(v.id, 'ru-en', 1, 'flashcard');
-    await grade(v.id, 'en-ru', 1, 'flashcard');
-    await grade(b.id, 'ru-en', 3, 'flashcard');
-    await grade(b.id, 'en-ru', 4, 'flashcard');
-    await grade(g.id, 'ru-en', 2, 'flashcard');
-    await grade(e.id, 'ru-en', 4, 'mc');
+    await grade(v.id, 'uk-en', 1, 'flashcard');
+    await grade(v.id, 'en-uk', 1, 'flashcard');
+    await grade(b.id, 'uk-en', 3, 'flashcard');
+    await grade(b.id, 'en-uk', 4, 'flashcard');
+    await grade(g.id, 'uk-en', 2, 'flashcard');
+    await grade(e.id, 'uk-en', 4, 'mc');
 
     const lemmas = async (sort: Parameters<typeof list>[0]) =>
       (await list(sort)).map((r) => r.lemma);

@@ -76,9 +76,9 @@ export async function getLessonEncounters(item: BankItemRow): Promise<LessonEnco
   const out: LessonEncounter[] = [];
   for (const id of ids) {
     const resolved = await repos.content.resolveSentence(id);
-    const ru = resolved?.sentence.ru.trim();
+    const ru = resolved?.sentence.uk.trim();
     if (ru && !out.some((e) => e.ru === ru)) {
-      out.push({ ru, storyTitle: resolved?.story?.titleRu ?? null });
+      out.push({ ru, storyTitle: resolved?.story?.titleUk ?? null });
     }
     if (out.length >= MAX_ENCOUNTERS) break;
   }

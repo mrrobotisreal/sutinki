@@ -263,7 +263,7 @@ describe('0003_review-source upgrade from 0002', () => {
     sqlite
       .prepare(
         `INSERT INTO cards (id, bank_item_id, direction, due_at, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review_at, created_at)
-         VALUES ('c-old', 'bi-old', 'ru-en', 0, 1, 5, 0, 0, 0, 1, 0, 1, 0, 0)`,
+         VALUES ('c-old', 'bi-old', 'uk-en', 0, 1, 5, 0, 0, 0, 1, 0, 1, 0, 0)`,
       )
       .run();
     sqlite

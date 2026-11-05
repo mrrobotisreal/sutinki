@@ -432,7 +432,7 @@ export const wordProfiles = sqliteTable(
   'word_profiles',
   {
     id: text('id').primaryKey(),
-    /** Profile key — the bank dedup key: normalizeRu(lemma) for words, normalizePhrase(surface) for phrases. */
+    /** Profile key — the bank dedup key: normalizeUk(lemma) for words, normalizePhrase(surface) for phrases. */
     lemmaNorm: text('lemma_norm').notNull(),
     kind: text('kind').$type<ProfileKind>().notNull(),
     /** Headword as stored on the bank item at generation time (ё preserved, no stress marks). */

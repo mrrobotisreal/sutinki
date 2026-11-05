@@ -116,7 +116,7 @@ describe('gradeCard (ts-fsrs pipeline)', () => {
       surface: 'путь',
       translation: 'path',
     });
-    const card = (await repos.reviews.getCard(item.id, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(item.id, 'uk-en'))!;
     const now = Date.now();
     const first = await repos.reviews.gradeCard(card.id, Rating.Good, { now });
     expect(first.log.source).toBeNull();

@@ -80,7 +80,7 @@ export async function getProfileContexts(item: BankItemRow): Promise<string[]> {
   const out: string[] = [];
   for (const id of ids) {
     const resolved = await repos.content.resolveSentence(id);
-    const ru = resolved?.sentence.ru.trim();
+    const ru = resolved?.sentence.uk.trim();
     if (ru && !out.includes(ru)) out.push(ru);
     if (out.length >= MAX_CONTEXTS) break;
   }
@@ -132,7 +132,7 @@ export async function generateProfile(
       'This word has no lemma yet — add one (Edit or Enrich) first.',
     );
   }
-  const language = opts.language ?? 'ru';
+  const language = opts.language ?? 'uk';
   const headword = item.kind === 'word' ? (item.lemma ?? item.surface) : item.surface;
   const regenerate =
     opts.regenerate ?? (await repos.wordForms.getCurrentProfile(key.lemmaNorm, key.kind)) !== null;

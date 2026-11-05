@@ -4,9 +4,9 @@ import { WordProfileSchema, type WordProfile } from '@/features/word-forms/profi
 import { track } from '@/services/analytics';
 
 import { newId } from '../ids';
-import { normalizeRu } from '../normalize';
+import { normalizeUk } from '../normalize';
 import { bankItems, grammarLessons, wordProfiles, type ProfileKind } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import type { BankItemRow } from './bank';
 
 /**
@@ -56,7 +56,7 @@ export interface ListLessonsOptions {
 /** The (lemma_norm ?? normalized) key expression of a bank item, as SQL (§5.4). */
 const BANK_PROFILE_KEY = sql`CASE WHEN ${bankItems.kind} = 'word' THEN ${bankItems.lemmaNorm} ELSE ${bankItems.normalized} END`;
 
-export function createWordFormsRepo(db: SumrakDB) {
+export function createWordFormsRepo(db: SutinkiDB) {
   const parseWarned = new Set<string>();
 
   function toRecord(row: WordProfileRow): WordProfileRecord {
@@ -300,7 +300,7 @@ export function createWordFormsRepo(db: SumrakDB) {
       const conds = [];
       const q = opts.search?.trim();
       if (q) {
-        const pattern = `%${normalizeRu(q)}%`;
+        const pattern = `%${normalizeUk(q)}%`;
         conds.push(
           or(
             like(grammarLessons.lemmaNorm, pattern),
