@@ -5,7 +5,7 @@ import { AMBIENT_BED_SOURCES, type AmbientBedSlug } from './sources';
  * soundtrack, by theme, in rotation order. Hand-written (Metro needs literal
  * `require()` calls — they live in `sources.ts`, keyed by slug); `beds.test.ts`
  * reconciles it against the generated ledger `assets/audio/ambient/beds.json`
- * (slugs, order, durations). Re-encode with `pnpm --filter sumrak-mobile encode:ambient`.
+ * (slugs, order, durations). Re-encode with `pnpm --filter sutinki-mobile encode:ambient`.
  */
 
 export type AmbientThemeId = 'horror' | 'news' | 'comedy' | 'action' | 'education';
@@ -23,7 +23,7 @@ export interface AmbientBed {
 
 export interface AmbientTheme {
   id: AmbientThemeId;
-  label: { en: string; ru: string };
+  label: { en: string; uk: string };
   /** Rotation order; length ≥ 1. */
   beds: readonly AmbientBed[];
 }
@@ -43,7 +43,7 @@ export const AMBIENT_THEME_ORDER: readonly AmbientThemeId[] = [
 export const AMBIENT_THEMES: Record<AmbientThemeId, AmbientTheme> = {
   horror: {
     id: 'horror',
-    label: { en: 'Horror & everything else', ru: 'Ужасы и всё остальное' },
+    label: { en: 'Horror & everything else', uk: 'Жахи та решта' },
     beds: [
       {
         slug: 'creepy-bg-music',
@@ -55,7 +55,7 @@ export const AMBIENT_THEMES: Record<AmbientThemeId, AmbientTheme> = {
   },
   news: {
     id: 'news',
-    label: { en: 'News', ru: 'Новости' },
+    label: { en: 'News', uk: 'Новини' },
     beds: [
       {
         slug: 'global-affairs-briefing-1',
@@ -73,7 +73,7 @@ export const AMBIENT_THEMES: Record<AmbientThemeId, AmbientTheme> = {
   },
   comedy: {
     id: 'comedy',
-    label: { en: 'Comedy', ru: 'Комедия' },
+    label: { en: 'Comedy', uk: 'Комедія' },
     beds: [
       {
         slug: 'return-to-the-motif-1',
@@ -91,7 +91,7 @@ export const AMBIENT_THEMES: Record<AmbientThemeId, AmbientTheme> = {
   },
   action: {
     id: 'action',
-    label: { en: 'Action', ru: 'Боевик' },
+    label: { en: 'Action', uk: 'Бойовик' },
     beds: [
       {
         slug: 'tactical-breach-1',
@@ -109,7 +109,7 @@ export const AMBIENT_THEMES: Record<AmbientThemeId, AmbientTheme> = {
   },
   education: {
     id: 'education',
-    label: { en: 'Study focus', ru: 'Учёба' },
+    label: { en: 'Study focus', uk: 'Навчання' },
     beds: [
       {
         slug: 'mechanical-focus-1',

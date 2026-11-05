@@ -55,7 +55,7 @@ describe('AMBIENT_THEMES invariants', () => {
       const theme = AMBIENT_THEMES[id];
       expect(theme.id).toBe(id);
       expect(theme.label.en.length).toBeGreaterThan(0);
-      expect(theme.label.ru.length).toBeGreaterThan(0);
+      expect(theme.label.uk.length).toBeGreaterThan(0);
       for (const bed of theme.beds) {
         expect(bed.slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
         expect(bed.title.length).toBeGreaterThan(0);

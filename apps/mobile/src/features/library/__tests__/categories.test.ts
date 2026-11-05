@@ -104,7 +104,7 @@ describe('classifyPack — the §2.4 default table', () => {
     });
   });
 
-  it("origin 'local' (Share-to-Сумрак paste, type stories) → stories/null", () => {
+  it("origin 'local' (Share-to-Сутінки paste, type stories) → stories/null", () => {
     expect(classifyPack(pack({ origin: 'local' }))).toEqual({ category: 'stories', genre: null });
     // A local pack with an authored genre still keeps it (nothing is dropped).
     expect(classifyPack(pack({ origin: 'local', genre: 'absurd' }))).toEqual({
@@ -132,7 +132,7 @@ describe('classifyPack — the §2.4 default table', () => {
 describe('labels', () => {
   it('known category → table entry', () => {
     expect(labelForCategory('news')).toEqual({
-      ru: 'Новости',
+      uk: 'Новини',
       en: 'News',
       icon: 'newspaper-outline',
     });
@@ -141,7 +141,7 @@ describe('labels', () => {
 
   it('unknown category → raw slug + albums-outline', () => {
     expect(labelForCategory('recipes')).toEqual({
-      ru: 'recipes',
+      uk: 'recipes',
       en: 'recipes',
       icon: 'albums-outline',
     });
@@ -149,7 +149,7 @@ describe('labels', () => {
 
   it('known genre → table entry', () => {
     expect(labelForGenre('horror')).toEqual({
-      ru: 'Страшилки',
+      uk: 'Жахи',
       en: 'Horror',
       icon: 'skull-outline',
     });
@@ -157,7 +157,7 @@ describe('labels', () => {
   });
 
   it('unknown genre → raw slug + pricetag-outline', () => {
-    expect(labelForGenre('soup')).toEqual({ ru: 'soup', en: 'soup', icon: 'pricetag-outline' });
+    expect(labelForGenre('soup')).toEqual({ uk: 'soup', en: 'soup', icon: 'pricetag-outline' });
   });
 
   it('never resolves prototype keys as known slugs', () => {
@@ -200,12 +200,12 @@ describe('sets & order', () => {
 
   it('REGISTER_LABELS covers the six §2.5 registers', () => {
     expect(REGISTER_LABELS).toEqual({
-      narrator: 'Рассказчик',
+      narrator: 'Оповідач',
       anchor: 'Диктор',
       lecturer: 'Лектор',
-      host: 'Ведущий',
-      voiceover: 'Закадровый голос',
-      guide: 'Гид',
+      host: 'Ведучий',
+      voiceover: 'Закадровий голос',
+      guide: 'Гід',
     });
   });
 });

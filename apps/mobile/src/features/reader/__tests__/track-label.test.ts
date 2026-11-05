@@ -5,9 +5,9 @@ import { REGISTER_LABELS } from '@/features/library/categories';
 import { trackLabel } from '../track-label';
 
 describe('trackLabel (T10 label + M14 §2.5 register mapping, T46)', () => {
-  it('maps every register slug in AudioTrack.style to its Russian label', () => {
+  it('maps every register slug in AudioTrack.style to its Ukrainian label', () => {
     expect(trackLabel({ voice: 'elevenlabs:Mr. Wintrow', style: 'narrator' })).toBe(
-      'Mr. Wintrow · Рассказчик',
+      'Mr. Wintrow · Оповідач',
     );
     expect(trackLabel({ voice: 'elevenlabs:Mr. Wintrow', style: 'anchor' })).toBe(
       'Mr. Wintrow · Диктор',
@@ -16,13 +16,13 @@ describe('trackLabel (T10 label + M14 §2.5 register mapping, T46)', () => {
       'Mr. Wintrow · Лектор',
     );
     expect(trackLabel({ voice: 'elevenlabs:Mr. Wintrow', style: 'host' })).toBe(
-      'Mr. Wintrow · Ведущий',
+      'Mr. Wintrow · Ведучий',
     );
     expect(trackLabel({ voice: 'elevenlabs:Mr. Wintrow', style: 'voiceover' })).toBe(
-      'Mr. Wintrow · Закадровый голос',
+      'Mr. Wintrow · Закадровий голос',
     );
     expect(trackLabel({ voice: 'elevenlabs:Mr. Wintrow', style: 'guide' })).toBe(
-      'Mr. Wintrow · Гид',
+      'Mr. Wintrow · Гід',
     );
     // The table and the mapping never drift apart.
     for (const [slug, ru] of Object.entries(REGISTER_LABELS)) {
@@ -51,9 +51,7 @@ describe('trackLabel (T10 label + M14 §2.5 register mapping, T46)', () => {
       'ru_RU-irina · Диктор',
     );
     // No prefix at all → the voice string as-is.
-    expect(trackLabel({ voice: 'Mr. Wintrow', style: 'narrator' })).toBe(
-      'Mr. Wintrow · Рассказчик',
-    );
+    expect(trackLabel({ voice: 'Mr. Wintrow', style: 'narrator' })).toBe('Mr. Wintrow · Оповідач');
   });
 
   it('is an exact-key match — prototype names and dashed lookalikes fall through', () => {

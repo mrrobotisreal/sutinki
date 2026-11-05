@@ -62,11 +62,11 @@ describe('sample pack fixtures', () => {
     expect(news.category).toBe('news');
     expect(news.genre).toBeUndefined();
     expect(news.stories).toHaveLength(2);
-    expect(news.stories[0]!.subtitle?.ru).toBe('Мост через реку Зальцах строили два года');
+    expect(news.stories[0]!.subtitle?.uk).toBe('Міст через річку Зальцах будували два роки');
     expect(news.stories[0]!.source).toEqual({
-      name: 'Сумрак-тест',
+      name: 'Сутінки-тест',
       publishedAt: '2026-09-10',
-      author: 'Редакция',
+      author: 'Редакція',
     });
     expect(news.stories[1]!.source?.author).toBeUndefined();
     expect(news.stories[1]!.source?.url).toBe('https://example.invalid/first-snow');
@@ -76,8 +76,8 @@ describe('sample pack fixtures', () => {
 
     const podcast = loadPack('a2-podcast-090');
     expect(podcast.category).toBe('podcast');
-    expect(podcast.stories[0]!.subtitle).toEqual({ ru: 'Эпизод 1', en: 'Episode 1' });
-    expect(podcast.stories[0]!.source?.author).toBe('Мистер Уинтроу');
+    expect(podcast.stories[0]!.subtitle).toEqual({ uk: 'Епізод 1', en: 'Episode 1' });
+    expect(podcast.stories[0]!.source?.author).toBe('Містер Вінтроу');
 
     const comedy = loadPack('a1-comedy-090');
     expect(comedy.category).toBe('stories');

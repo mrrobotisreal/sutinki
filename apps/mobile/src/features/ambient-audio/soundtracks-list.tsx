@@ -85,7 +85,7 @@ export function SoundtracksList() {
           <View
             key={id}
             className="flex-row items-center gap-3 border-t border-border px-4 py-3"
-            accessibilityLabel={`${theme.label.en} · ${theme.label.ru}`}
+            accessibilityLabel={`${theme.label.en} · ${theme.label.uk}`}
           >
             <Ionicons name={SOUNDTRACK_ICONS[id]} size={20} color={tokens.textMuted} />
             <View className="flex-1 gap-0.5">

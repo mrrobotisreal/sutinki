@@ -1,4 +1,4 @@
-import { formatRuDate } from '@/lib/ru-date';
+import { formatUkDate } from '@/lib/uk-date';
 
 /** Story provenance (M14 §2.2 → the four `stories.source_*` columns). */
 export interface StorySourceProps {
@@ -9,14 +9,14 @@ export interface StorySourceProps {
 }
 
 /**
- * Reader-header source line (M14 §5, T46): `name · 14 сент. 2026 · author`
+ * Reader-header source line (M14 §5, T46): `name · 14 вер. 2026 · author`
  * — missing parts omitted, order fixed. Pure (no RN import) so the fixture
  * shapes are pinned by a unit test; the header decides pressability from
  * `url` separately.
  */
 export function formatSourceLine(source: StorySourceProps): string {
   const parts = [source.name];
-  if (source.publishedAt) parts.push(formatRuDate(source.publishedAt));
+  if (source.publishedAt) parts.push(formatUkDate(source.publishedAt));
   if (source.author) parts.push(source.author);
   return parts.join(' · ');
 }

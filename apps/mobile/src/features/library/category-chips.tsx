@@ -10,11 +10,11 @@ import { useAppTheme } from '@/theme/use-app-theme';
 /**
  * Single-select horizontal chip row (M14, T45 — LIBRARY_CATEGORIES §4.1):
  * the category shelf row (`md`, 44dp) and the genre sub-row (`sm`, 36dp)
- * inside «Истории». Plain `ScrollView` + `Pressable` — zero new
+ * inside «Історії». Plain `ScrollView` + `Pressable` — zero new
  * dependencies (§1.2). Chips are icon + label + optional count badge; the
  * selected chip is an accent wash + accent border + accent text, the rest
  * sit quietly on the surface. On mount the selected chip scrolls into view
- * (a persisted «Путешествия» must not start off-screen).
+ * (a persisted «Подорожі» must not start off-screen).
  */
 export function ChipRow<T extends string>({
   items,

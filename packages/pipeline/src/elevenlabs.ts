@@ -24,7 +24,7 @@ export const DEFAULT_MODEL_ID = 'eleven_multilingual_v2';
  * Sent as `language_code` on every non-v3 request whose direction pins no
  * `language` (v3 rejects the field, so it stays off there).
  */
-export const DEFAULT_LANGUAGE_CODE = 'ru';
+export const DEFAULT_LANGUAGE_CODE = 'uk';
 
 /** v3-family models differ in accepted params (no previous_text, no language_code; audio tags instead). */
 export function isV3Model(modelId: string): boolean {

@@ -531,7 +531,7 @@ async function renderDirection(
   // exact, and the tags' own characters (near-silent in the alignment) are
   // never stamped. On non-v3 models the tags are simply not applied (plain
   // text renders). Context cues (any model) are rendered and then cut out.
-  // `language_code` (default ru) and speaker boost (default on) are filled
+  // `language_code` (default uk) and speaker boost (default on) are filled
   // in by the client for non-v3 requests.
   const runs = planNarrationRuns(story, direction, v3, draftDir);
   const rendered: {

@@ -165,7 +165,7 @@ describe('M14 fixtures (a2-news-090, a2-podcast-090, a1-comedy-090)', () => {
         voice: 'elevenlabs:Mr. Wintrow',
         style: 'anchor',
         model: 'eleven_multilingual_v2',
-        languageCode: 'ru',
+        languageCode: 'uk',
         requests: 1,
         chars: expect.any(Number),
       },
@@ -182,12 +182,12 @@ describe('M14 fixtures (a2-news-090, a2-podcast-090, a1-comedy-090)', () => {
     expect(pack.category).toBe('news');
     expect(pack.stories.map((s: { id: string }) => s.id)).toEqual(['news-090-a1', 'news-090-a2']);
     expect(pack.stories[0].source).toEqual({
-      name: 'Сумрак-тест',
+      name: 'Сутінки-тест',
       publishedAt: '2026-09-10',
-      author: 'Редакция',
+      author: 'Редакція',
     });
     expect(pack.stories[1].source).toEqual({
-      name: 'Сумрак-тест',
+      name: 'Сутінки-тест',
       url: 'https://example.invalid/first-snow',
       publishedAt: '2026-09-14',
     });
@@ -203,22 +203,22 @@ describe('category / genre / subtitle / source round-trip (M14)', () => {
   it('copies pack category+genre and story subtitle+source into the pack, never emitting undefined keys', () => {
     const draft = minimalDraft((lines) => {
       lines.splice(8, 0, '  category: stories', '  genre: comedy');
-      lines.splice(13, 0, '  subtitle: { ru: "Эпизод 1", en: "Episode 1" }');
+      lines.splice(13, 0, '  subtitle: { uk: "Епізод 1", en: "Episode 1" }');
       lines.splice(
         14,
         0,
-        '  source: { name: "Сумрак", publishedAt: "2026-09-01", author: "Мистер Уинтроу" }',
+        '  source: { name: "Сутінки", publishedAt: "2026-09-01", author: "Містер Вінтроу" }',
       );
     });
     const pack = annotate(draft);
     expect(pack.category).toBe('stories');
     expect(pack.genre).toBe('comedy');
     const story = pack.stories[0]!;
-    expect(story.subtitle).toEqual({ ru: 'Эпизод 1', en: 'Episode 1' });
+    expect(story.subtitle).toEqual({ uk: 'Епізод 1', en: 'Episode 1' });
     expect(story.source).toEqual({
-      name: 'Сумрак',
+      name: 'Сутінки',
       publishedAt: '2026-09-01',
-      author: 'Мистер Уинтроу',
+      author: 'Містер Вінтроу',
     });
     // Key order: subtitle/source sit between title and level, like the schema declares.
     expect(Object.keys(story)).toEqual([
@@ -244,7 +244,7 @@ describe('category / genre / subtitle / source round-trip (M14)', () => {
 
   it('a bad source date in a draft fails with the frontmatter path', () => {
     const draft = minimalDraft((lines) => {
-      lines.splice(12, 0, '  source: { name: "Сумрак", publishedAt: "14.09.2026" }');
+      lines.splice(12, 0, '  source: { name: "Сутінки", publishedAt: "14.09.2026" }');
     });
     const issues = issuesOf(() => annotate(draft));
     expect(issues[0]!.message).toContain('story.source.publishedAt');

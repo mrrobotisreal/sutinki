@@ -4,10 +4,10 @@ import { ALL_GENRES } from '../categories';
 import {
   categoryChipItems,
   categoryCounts,
-  detectRuDatePath,
+  detectUkDatePath,
   filterSectionsByCategory,
-  formatRuDate,
-  formatRuDateFallback,
+  formatUkDate,
+  formatUkDateFallback,
   genreRowItems,
   orderRowsForCategory,
   storyRowCaption,
@@ -57,7 +57,7 @@ describe('filterSectionsByCategory', () => {
     ]);
   });
 
-  it('default-classified legacy packs land in «Истории»', () => {
+  it('default-classified legacy packs land in «Історії»', () => {
     expect(ids(filterSectionsByCategory(all, { category: 'stories', genre: ALL_GENRES }))).toEqual([
       'a1-tall-dog-001',
       'a1-comedy-090',
@@ -66,7 +66,7 @@ describe('filterSectionsByCategory', () => {
     ]);
   });
 
-  it('genre filter compares `genre ?? ""` — the genre-less dialogue only shows under «Все»', () => {
+  it('genre filter compares `genre ?? ""` — the genre-less dialogue only shows under «Усі»', () => {
     expect(ids(filterSectionsByCategory(all, { category: 'stories', genre: 'horror' }))).toEqual([
       'a1-tall-dog-001',
       'a2-tall-dog-002',
@@ -77,14 +77,14 @@ describe('filterSectionsByCategory', () => {
     expect(filterSectionsByCategory(all, { category: 'stories', genre: 'drama' })).toEqual([]);
   });
 
-  it('ignores the genre outside «Истории» (a genre on a news pack is meaningless)', () => {
+  it('ignores the genre outside «Історії» (a genre on a news pack is meaningless)', () => {
     const genreNews = section({ id: 'news-x', category: 'news', genre: 'horror' });
     expect(
       ids(filterSectionsByCategory([genreNews, news], { category: 'news', genre: 'comedy' })),
     ).toEqual(['news-x', 'news-090-a2']);
   });
 
-  it('an empty category yields an empty list (the «Пока пусто» state)', () => {
+  it('an empty category yields an empty list (the «Поки порожньо» state)', () => {
     expect(filterSectionsByCategory(all, { category: 'travel', genre: ALL_GENRES })).toEqual([]);
   });
 
@@ -117,22 +117,22 @@ describe('genreRowItems — the ≥2-distinct-values rule (§3)', () => {
     expect(genreRowItems([])).toBeNull();
   });
 
-  it('a genre-less pack counts as a value: horror + dialogue → «Все · Страшилки»', () => {
+  it('a genre-less pack counts as a value: horror + dialogue → «Все · Жахи»', () => {
     expect(genreRowItems([legacyHorror, dialogue])).toEqual([
-      { key: ALL_GENRES, label: 'Все' },
-      { key: 'horror', label: 'Страшилки', icon: 'skull-outline' },
+      { key: ALL_GENRES, label: 'Усі' },
+      { key: 'horror', label: 'Жахи', icon: 'skull-outline' },
     ]);
   });
 
-  it('horror + comedy + dialogue → «Все · Страшилки · Комедия» in GENRE_ORDER', () => {
+  it('horror + comedy + dialogue → «Все · Жахи · Комедія» in GENRE_ORDER', () => {
     expect(genreRowItems([comedy, dialogue, legacyHorror, legacyHorrorA2])).toEqual([
-      { key: ALL_GENRES, label: 'Все' },
-      { key: 'horror', label: 'Страшилки', icon: 'skull-outline' },
-      { key: 'comedy', label: 'Комедия', icon: 'happy-outline' },
+      { key: ALL_GENRES, label: 'Усі' },
+      { key: 'horror', label: 'Жахи', icon: 'skull-outline' },
+      { key: 'comedy', label: 'Комедія', icon: 'happy-outline' },
     ]);
   });
 
-  it('only counts remote «Истории» sections — news, podcasts and local packs never add a value', () => {
+  it('only counts remote «Історії» sections — news, podcasts and local packs never add a value', () => {
     expect(genreRowItems([legacyHorror, news, podcast, local])).toBeNull();
   });
 
@@ -191,7 +191,7 @@ describe('categoryChipItems — six known chips always, unknown installed catego
       'travel',
     ]);
     expect(items.map((i) => i.count)).toEqual([22, 1, 0, 1, 0, 0]);
-    expect(items[0]).toEqual({ key: 'stories', label: 'Истории', icon: 'book-outline', count: 22 });
+    expect(items[0]).toEqual({ key: 'stories', label: 'Історії', icon: 'book-outline', count: 22 });
   });
 
   it('adds a seventh chip for an unknown installed category with its raw slug + generic icon', () => {
@@ -279,81 +279,81 @@ describe('storyRowCaption (§4.3)', () => {
 
   it('sourced rows render `source · date`', () => {
     expect(
-      storyRowCaption({ ...fiction, sourceName: 'Сумрак-тест', sourcePublishedAt: '2026-09-14' }),
-    ).toBe('Сумрак-тест · 14 сент. 2026');
+      storyRowCaption({ ...fiction, sourceName: 'Сутінки-тест', sourcePublishedAt: '2026-09-14' }),
+    ).toBe('Сутінки-тест · 14 вер. 2026');
   });
 
   it('sourced rows without a date omit the date part (no dangling separator)', () => {
-    expect(storyRowCaption({ ...fiction, sourceName: 'Сумрак' })).toBe('Сумрак');
+    expect(storyRowCaption({ ...fiction, sourceName: 'Сутінки' })).toBe('Сутінки');
   });
 });
 
-describe('formatRuDate', () => {
+describe('formatUkDate', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it('fallback table: genitive short months, «мая» and «сент.» spelled per the design', () => {
-    expect(formatRuDateFallback('2026-09-14')).toBe('14 сент. 2026');
-    expect(formatRuDateFallback('2026-09-10')).toBe('10 сент. 2026');
-    expect(formatRuDateFallback('2026-09-01')).toBe('1 сент. 2026');
-    expect(formatRuDateFallback('2026-05-09')).toBe('9 мая 2026');
-    expect(formatRuDateFallback('2026-01-31')).toBe('31 янв. 2026');
-    expect(formatRuDateFallback('2026-12-25')).toBe('25 дек. 2026');
+  it('fallback table: genitive short months, «мая» and «вер.» spelled per the design', () => {
+    expect(formatUkDateFallback('2026-09-14')).toBe('14 вер. 2026');
+    expect(formatUkDateFallback('2026-09-10')).toBe('10 вер. 2026');
+    expect(formatUkDateFallback('2026-09-01')).toBe('1 вер. 2026');
+    expect(formatUkDateFallback('2026-05-09')).toBe('9 трав. 2026');
+    expect(formatUkDateFallback('2026-01-31')).toBe('31 січ. 2026');
+    expect(formatUkDateFallback('2026-12-25')).toBe('25 груд. 2026');
   });
 
   it('fallback table: every month has an entry', () => {
     const months = Array.from({ length: 12 }, (_, i) =>
-      formatRuDateFallback(`2026-${String(i + 1).padStart(2, '0')}-05`),
+      formatUkDateFallback(`2026-${String(i + 1).padStart(2, '0')}-05`),
     );
     expect(months).toEqual([
-      '5 янв. 2026',
-      '5 февр. 2026',
-      '5 мар. 2026',
-      '5 апр. 2026',
-      '5 мая 2026',
-      '5 июн. 2026',
-      '5 июл. 2026',
-      '5 авг. 2026',
-      '5 сент. 2026',
-      '5 окт. 2026',
-      '5 нояб. 2026',
-      '5 дек. 2026',
+      '5 січ. 2026',
+      '5 лют. 2026',
+      '5 бер. 2026',
+      '5 квіт. 2026',
+      '5 трав. 2026',
+      '5 черв. 2026',
+      '5 лип. 2026',
+      '5 серп. 2026',
+      '5 вер. 2026',
+      '5 жовт. 2026',
+      '5 лист. 2026',
+      '5 груд. 2026',
     ]);
   });
 
   it('malformed input is returned as-is (never throws on a hand-staged row)', () => {
-    expect(formatRuDateFallback('not-a-date')).toBe('not-a-date');
-    expect(formatRuDateFallback('2026-13-01')).toBe('2026-13-01');
-    expect(formatRuDate('')).toBe('');
+    expect(formatUkDateFallback('not-a-date')).toBe('not-a-date');
+    expect(formatUkDateFallback('2026-13-01')).toBe('2026-13-01');
+    expect(formatUkDate('')).toBe('');
   });
 
   it('Intl path: used when the runtime produces Cyrillic output', () => {
     // Node ships full ICU, so this exercises the real Intl branch.
-    expect(detectRuDatePath()).toBe('intl');
+    expect(detectUkDatePath()).toBe('intl');
     // ICU's « г.» suffix is stripped so both paths yield the same string.
-    expect(formatRuDate('2026-09-14')).toBe('14 сент. 2026');
-    expect(formatRuDate('2026-05-09')).toBe('9 мая 2026');
-    expect(formatRuDate('2026-09-14')).toBe(formatRuDateFallback('2026-09-14'));
+    expect(formatUkDate('2026-09-14')).toBe('14 вер. 2026');
+    expect(formatUkDate('2026-05-09')).toBe('9 трав. 2026');
+    expect(formatUkDate('2026-09-14')).toBe(formatUkDateFallback('2026-09-14'));
   });
 
-  it('falls back to the table when Intl output has no Cyrillic (Hermes with no ru-RU data)', () => {
+  it('falls back to the table when Intl output has no Cyrillic (Hermes with no uk-UA data)', () => {
     vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(
       () => ({ format: () => 'Sep 14, 2026' }) as unknown as Intl.DateTimeFormat,
     );
-    expect(formatRuDate('2026-09-14')).toBe('14 сент. 2026');
+    expect(formatUkDate('2026-09-14')).toBe('14 вер. 2026');
   });
 
   it('falls back to the table when Intl throws (RangeError on an unsupported locale)', () => {
     vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => {
       throw new RangeError('Incorrect locale information provided');
     });
-    expect(formatRuDate('2026-09-14')).toBe('14 сент. 2026');
+    expect(formatUkDate('2026-09-14')).toBe('14 вер. 2026');
   });
 
-  it('detectRuDatePath reports the fallback when Intl yields numerals only', () => {
+  it('detectUkDatePath reports the fallback when Intl yields numerals only', () => {
     vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(
       () => ({ format: () => '9/14/2026' }) as unknown as Intl.DateTimeFormat,
     );
-    expect(detectRuDatePath()).toBe('fallback');
-    expect(formatRuDate('2026-09-14')).toBe('14 сент. 2026');
+    expect(detectUkDatePath()).toBe('fallback');
+    expect(formatUkDate('2026-09-14')).toBe('14 вер. 2026');
   });
 });

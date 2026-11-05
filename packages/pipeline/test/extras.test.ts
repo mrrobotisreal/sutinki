@@ -216,8 +216,8 @@ describe('category & genre in extras pack meta (M14)', () => {
     const withCategory = categorizedExtras
       .replace('id: a1-checkpoint-test', 'id: a1-creepypasta-002')
       .replace(
-        "title: { ru: 'Тест', en: 'Test' }",
-        `title: { ru: 'Фотография', en: 'The Photograph' }`,
+        "title: { uk: 'Тест', en: 'Test' }",
+        `title: { uk: 'Фотографія', en: 'The Photograph' }`,
       )
       .replace(
         "tags: ['news']",

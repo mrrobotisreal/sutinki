@@ -5,7 +5,7 @@ import type { VoiceDirection, VoiceSettings } from './frontmatter.ts';
  * presets that fill a voice direction's defaults — provider settings, the
  * `stylePrompt` sent as `previous_text`, the voice (`Mr. Wintrow`) and the
  * `style` label the app shows (the register slug itself, which T46 maps to a
- * Russian label: «Диктор», «Ведущий», …). Nothing new enters `pack.json`'s
+ * Ukrainian label: «Диктор», «Ведучий», …). Nothing new enters `pack.json`'s
  * shape: `AudioTrack.style` simply carries the slug.
  *
  * Presets are starting points; a family/anthology bible may pin tuned
@@ -27,10 +27,10 @@ export type RegisterSlug = (typeof REGISTER_SLUGS)[number];
 export type RegisterSettings = Required<VoiceSettings>;
 
 export interface Register {
-  /** Russian label the app shows for `AudioTrack.style === slug` (T46). */
+  /** Ukrainian label the app shows for `AudioTrack.style === slug` (T46). */
   label: string;
   settings: RegisterSettings;
-  /** Sent as `previous_text` on v2 — the narrator's "preceding lines", in Russian. */
+  /** Sent as `previous_text` on v2 — the narrator's "preceding lines", in Ukrainian. */
   stylePrompt: string;
 }
 
@@ -38,15 +38,15 @@ export interface Register {
 export const DEFAULT_VOICE = 'elevenlabs:Mr. Wintrow';
 
 export const REGISTERS: Record<RegisterSlug, Register> = {
-  // The CT011e v2 settings pinned in sumrak-content/series/no-end-house/
+  // The CT011e v2 settings pinned in sutinki-content/series/no-end-house/
   // SERIES.md §5.6 (CT011e, 2026-09-19): "the clone's own defaults stability
   // 0.5 / style 0 / similarityBoost 0.75 / useSpeakerBoost true" — no speed
   // pinned there, so 1.00.
   narrator: {
-    label: 'Рассказчик',
+    label: 'Оповідач',
     settings: { stability: 0.5, similarityBoost: 0.75, style: 0, speed: 1, useSpeakerBoost: true },
     stylePrompt:
-      'Я рассказываю эту историю медленно, тихо, будто вспоминаю то, чего не хотел бы помнить.',
+      'Я розповідаю цю історію повільно, тихо, ніби згадую те, чого не хотів би пам’ятати.',
   },
   anchor: {
     label: 'Диктор',
@@ -57,7 +57,7 @@ export const REGISTERS: Record<RegisterSlug, Register> = {
       speed: 1.05,
       useSpeakerBoost: true,
     },
-    stylePrompt: 'Добрый вечер. В эфире вечерний выпуск новостей. Коротко о главном.',
+    stylePrompt: 'Добрий вечір. В ефірі вечірній випуск новин. Коротко про головне.',
   },
   lecturer: {
     label: 'Лектор',
@@ -69,10 +69,10 @@ export const REGISTERS: Record<RegisterSlug, Register> = {
       useSpeakerBoost: true,
     },
     stylePrompt:
-      'Итак, продолжим лекцию. Сегодня мы разберём эту тему спокойно и по порядку. Обратите внимание на примеры.',
+      'Отже, продовжимо лекцію. Сьогодні ми розберемо цю тему спокійно й по порядку. Зверніть увагу на приклади.',
   },
   host: {
-    label: 'Ведущий',
+    label: 'Ведучий',
     settings: {
       stability: 0.35,
       similarityBoost: 0.75,
@@ -81,10 +81,10 @@ export const REGISTERS: Record<RegisterSlug, Register> = {
       useSpeakerBoost: true,
     },
     stylePrompt:
-      'Привет-привет! Вы слушаете наш подкаст. Устраивайтесь поудобнее — сегодня будет интересно, и я, честно говоря, сам не могу дождаться.',
+      'Привіт-привіт! Ви слухаєте наш подкаст. Влаштовуйтеся зручніше — сьогодні буде цікаво, і я, чесно кажучи, сам не можу дочекатися.',
   },
   voiceover: {
-    label: 'Закадровый голос',
+    label: 'Закадровий голос',
     settings: {
       stability: 0.6,
       similarityBoost: 0.8,
@@ -93,10 +93,10 @@ export const REGISTERS: Record<RegisterSlug, Register> = {
       useSpeakerBoost: true,
     },
     stylePrompt:
-      'Здесь, вдали от городов, природа живёт по своим законам. Каждый год здесь повторяется одна и та же история.',
+      'Тут, далеко від міст, природа живе за своїми законами. Щороку тут повторюється та сама історія.',
   },
   guide: {
-    label: 'Гид',
+    label: 'Гід',
     settings: {
       stability: 0.4,
       similarityBoost: 0.75,
@@ -105,7 +105,7 @@ export const REGISTERS: Record<RegisterSlug, Register> = {
       useSpeakerBoost: true,
     },
     stylePrompt:
-      'Смотрите, мы только что приехали, и я вам сейчас всё покажу. Это место — одно из моих любимых.',
+      'Дивіться, ми щойно приїхали, і я зараз усе вам покажу. Це місце — одне з моїх улюблених.',
   },
 };
 

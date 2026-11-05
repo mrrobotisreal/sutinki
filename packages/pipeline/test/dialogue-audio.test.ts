@@ -212,7 +212,7 @@ describe('dialogue finalize (fake provider, real ffmpeg)', () => {
     }
   }, 60_000);
 
-  it('omits coach audio entirely without playerAudio; default requests are v2 + language_code ru', async () => {
+  it('omits coach audio entirely without playerAudio; default requests are v2 + language_code uk', async () => {
     const work = tempDir();
     const mp3 = makeSilentMp3(work, 4);
     const captured: { text: string; model_id?: string; language_code?: string }[] = [];
@@ -229,7 +229,7 @@ describe('dialogue finalize (fake provider, real ffmpeg)', () => {
     expect(captured.length).toBe(11);
     for (const req of captured) {
       expect(req.model_id).toBe('eleven_multilingual_v2');
-      expect(req.language_code).toBe('ru');
+      expect(req.language_code).toBe('uk');
       expect(req.text.startsWith('[')).toBe(false); // tags are not applied on v2
     }
   }, 60_000);

@@ -4,7 +4,7 @@ import { REGISTER_LABELS } from '@/features/library/categories';
 /**
  * Audio-bar / lockscreen label (T10; M14 §5 register mapping in T46). A
  * `style` that is a narration register slug (§2.5 — `narrator`, `anchor`, …)
- * maps to its Russian name:
+ * maps to its Ukrainian name:
  *   "elevenlabs:Mr. Wintrow" + "narrator" → "Mr. Wintrow · Рассказчик".
  * Anything else keeps the pre-M14 output byte-for-byte (every track
  * published before the ADR-0016 flip goes through this branch):

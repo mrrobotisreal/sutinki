@@ -12,14 +12,14 @@ interface CategoryBadgeProps {
   category: string;
   /** Genre slug (null/undefined = genre-less). Only consulted for `stories`. */
   genre?: string | null;
-  /** `sm` = 14px icon in a pill; `md` = 16px icon + the Russian label. */
+  /** `sm` = 14px icon in a pill; `md` = 16px icon + the Ukrainian label. */
   size?: 'sm' | 'md';
   className?: string;
 }
 
 /**
  * Category / genre badge (M14 §5, T46 — UI_DESIGN component inventory):
- * the same glyph the Библиотека chips use, wherever a story is read or
+ * the same glyph the Бібліотека chips use, wherever a story is read or
  * found (reader header, search hits, bookmark cards, packs screen). A
  * fiction pack WITH a genre shows the genre (skull for horror, not the
  * generic book); everything else shows its category. Unknown slugs fall
@@ -32,18 +32,18 @@ export function CategoryBadge({ category, genre, size = 'sm', className }: Categ
     return (
       <View
         className={cn('flex-row items-center gap-1', className)}
-        accessibilityLabel={label.ru}
+        accessibilityLabel={label.uk}
         accessible
       >
         <Ionicons name={label.icon} size={16} color={tokens.textMuted} />
-        <Text variant="caption">{label.ru}</Text>
+        <Text variant="caption">{label.uk}</Text>
       </View>
     );
   }
   return (
     <View
       className={cn('rounded-full bg-surface-2 p-1', className)}
-      accessibilityLabel={label.ru}
+      accessibilityLabel={label.uk}
       accessible
     >
       <Ionicons name={label.icon} size={14} color={tokens.textMuted} />

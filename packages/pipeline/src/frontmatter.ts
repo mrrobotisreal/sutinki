@@ -153,11 +153,11 @@ export const VoiceDirectionSchema = z
     contextCues: z.record(StableIdSchema, z.string().min(1)).optional(),
     /**
      * Optional ISO 639-1 language to enforce on the provider (`language_code`),
-     * e.g. 'ru' — for models that accept it (multilingual v2 does).
+     * e.g. 'uk' — for models that accept it (multilingual v2 does).
      */
     language: z
       .string()
-      .regex(/^[a-z]{2}$/, 'language is an ISO 639-1 code, e.g. "ru"')
+      .regex(/^[a-z]{2}$/, 'language is an ISO 639-1 code, e.g. "uk"')
       .optional(),
   })
   .superRefine((direction, ctx) => {

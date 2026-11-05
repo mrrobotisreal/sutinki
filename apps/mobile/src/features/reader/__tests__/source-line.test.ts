@@ -6,34 +6,34 @@ describe('formatSourceLine (M14 §5 reader-header source line, T46)', () => {
   it('news-090-a2 fixture: name · date (no author)', () => {
     expect(
       formatSourceLine({
-        name: 'Сумрак-тест',
+        name: 'Сутінки-тест',
         url: 'https://example.invalid/first-snow',
         publishedAt: '2026-09-14',
         author: null,
       }),
-    ).toBe('Сумрак-тест · 14 сент. 2026');
+    ).toBe('Сутінки-тест · 14 вер. 2026');
   });
 
   it('news-090-a1 fixture: name · date · author (no url — pressability is the header’s call)', () => {
     expect(
       formatSourceLine({
-        name: 'Сумрак-тест',
+        name: 'Сутінки-тест',
         url: null,
         publishedAt: '2026-09-10',
-        author: 'Редакция',
+        author: 'Редакція',
       }),
-    ).toBe('Сумрак-тест · 10 сент. 2026 · Редакция');
+    ).toBe('Сутінки-тест · 10 вер. 2026 · Редакція');
   });
 
   it('podcast fixture: all four parts present', () => {
     expect(
       formatSourceLine({
-        name: 'Сумрак',
+        name: 'Сутінки',
         url: null,
         publishedAt: '2026-09-01',
-        author: 'Мистер Уинтроу',
+        author: 'Містер Вінтроу',
       }),
-    ).toBe('Сумрак · 1 сент. 2026 · Мистер Уинтроу');
+    ).toBe('Сутінки · 1 вер. 2026 · Містер Вінтроу');
   });
 
   it('name alone when nothing else is authored; author without a date keeps the order', () => {

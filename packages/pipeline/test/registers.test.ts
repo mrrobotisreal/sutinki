@@ -18,7 +18,7 @@ import {
 const parse = (raw: unknown): VoiceDirection => VoiceDirectionSchema.parse(raw);
 
 describe('REGISTERS table', () => {
-  it('covers every slug with a complete five-knob settings block and a Russian NFC stylePrompt', () => {
+  it('covers every slug with a complete five-knob settings block and a Ukrainian NFC stylePrompt', () => {
     for (const slug of REGISTER_SLUGS) {
       const r = REGISTERS[slug];
       expect(Object.keys(r.settings).sort()).toEqual(
@@ -26,7 +26,7 @@ describe('REGISTERS table', () => {
       );
       expect(r.settings.useSpeakerBoost).toBe(true);
       expect(r.stylePrompt).toBe(r.stylePrompt.normalize('NFC'));
-      expect(/[А-Яа-яЁё]/.test(r.stylePrompt)).toBe(true);
+      expect(/[А-Яа-яІіЇїЄєҐґ]/.test(r.stylePrompt)).toBe(true);
       expect(r.label).toBe(r.label.normalize('NFC'));
     }
   });
@@ -176,14 +176,14 @@ describe('applyRegister', () => {
         id: 'x',
         register: 'narrator',
         model: 'eleven_v3',
-        language: 'ru',
+        language: 'uk',
         audioTag: '[whispers]',
         contextCues: { s01: 'Тихо.' },
         sentenceVoices: { s02: 'elevenlabs:Other' },
       }),
     );
     expect(r.model).toBe('eleven_v3');
-    expect(r.language).toBe('ru');
+    expect(r.language).toBe('uk');
     expect(r.audioTag).toBe('[whispers]');
     expect(r.contextCues).toEqual({ s01: 'Тихо.' });
     expect(r.sentenceVoices).toEqual({ s02: 'elevenlabs:Other' });

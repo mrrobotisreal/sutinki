@@ -43,7 +43,7 @@ export type AudioTrack = z.infer<typeof AudioTrackSchema>;
  * Wintrow'`). `publishedAt` drives newest-first ordering on the news shelf.
  */
 export const StorySourceSchema = z.strictObject({
-  /** Publication / channel / author-as-publisher, e.g. "Медуза", "Сумрак". */
+  /** Publication / channel / author-as-publisher, e.g. "Медуза", "Сутінки". */
   name: z.string().min(1),
   /** Original URL when one exists. */
   url: z.url().optional(),

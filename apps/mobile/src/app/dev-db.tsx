@@ -8,7 +8,7 @@ import { db } from '@/db';
 import { queryKeys, usePacks, useStories, useTokenSearch } from '@/db/hooks';
 import { importPack, type ImportResult } from '@/db/importer';
 import { classifyPack } from '@/features/library/categories';
-import { detectRuDatePath, formatRuDate } from '@/lib/ru-date';
+import { detectUkDatePath, formatUkDate } from '@/lib/uk-date';
 import { syncQueryKeys } from '@/features/sync/hooks';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
@@ -27,9 +27,9 @@ const FIXTURE_PACKS = [
 type FixtureId = (typeof FIXTURE_PACKS)[number]['id'];
 
 const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
-  'a2-news-090': () => require('@sumrak/schema/fixtures/packs/a2-news-090/pack.json'),
-  'a2-podcast-090': () => require('@sumrak/schema/fixtures/packs/a2-podcast-090/pack.json'),
-  'a1-comedy-090': () => require('@sumrak/schema/fixtures/packs/a1-comedy-090/pack.json'),
+  'a2-news-090': () => require('@sutinki/schema/fixtures/packs/a2-news-090/pack.json'),
+  'a2-podcast-090': () => require('@sutinki/schema/fixtures/packs/a2-podcast-090/pack.json'),
+  'a1-comedy-090': () => require('@sutinki/schema/fixtures/packs/a1-comedy-090/pack.json'),
 };
 
 /**
@@ -121,7 +121,7 @@ export default function DevDbScreen() {
           </View>
           {/* T45: which caption-date path this Hermes build takes (recorded in the ticket row). */}
           <Text variant="caption" className="mt-2">
-            formatRuDate path: {detectRuDatePath()} · 2026-09-14 → {formatRuDate('2026-09-14')}
+            formatUkDate path: {detectUkDatePath()} · 2026-09-14 → {formatUkDate('2026-09-14')}
           </Text>
         </View>
       )}

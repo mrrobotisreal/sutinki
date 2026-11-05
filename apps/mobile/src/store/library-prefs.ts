@@ -1,4 +1,4 @@
-import { StableIdSchema } from '@sumrak/schema';
+import { StableIdSchema } from '@sutinki/schema';
 import { create } from 'zustand';
 
 import { repos } from '@/db';
@@ -15,12 +15,12 @@ import { ALL_GENRES } from '@/features/library/categories';
 export interface LibraryPrefs {
   /** Selected category slug (known or forward-compatible unknown). */
   category: string;
-  /** Selected genre slug inside «Истории», or ALL_GENRES ('all'). */
+  /** Selected genre slug inside «Історії», or ALL_GENRES ('all'). */
   genre: string;
 }
 
 interface LibraryPrefsState extends LibraryPrefs {
-  /** Switching category always resets the genre to «Все» (§4.4). */
+  /** Switching category always resets the genre to «Усі» (§4.4). */
   setCategory: (category: string) => void;
   setGenre: (genre: string) => void;
 }

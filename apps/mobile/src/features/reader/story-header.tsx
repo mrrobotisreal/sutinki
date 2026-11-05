@@ -6,6 +6,7 @@ import { Image, Linking, Pressable, View } from 'react-native';
 import { CategoryBadge } from '@/components/category-badge';
 import { LevelChip, type CefrLevel } from '@/components/level-chip';
 import { Text } from '@/components/ui/text';
+import { pluralUk } from '@/lib/uk-plural';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 import { formatSourceLine, type StorySourceProps } from './source-line';
@@ -37,7 +38,7 @@ interface StoryHeaderProps {
  * scroll cost is a one-time raster (T22 perf note in the ticket).
  *
  * M14 (T46, LIBRARY_CATEGORIES §5): top row `LevelChip · CategoryBadge ·
- * packTitleRu`; an italic subtitle under the title; and a source line
+ * packTitleUk`; an italic subtitle under the title; and a source line
  * (`name · date · author`, missing parts omitted) that opens the original
  * URL when one exists. Fiction headers without subtitle/source render the
  * pre-M14 layout plus the badge — nothing else moves.
@@ -95,9 +96,9 @@ export function StoryHeader({
         <View className="mb-3 flex-row items-center gap-2">
           <LevelChip level={level} />
           <CategoryBadge category={category} genre={genre} size="sm" />
-          <Text variant="caption">{packTitleRu}</Text>
+          <Text variant="caption">{packTitleUk}</Text>
         </View>
-        <Text className="font-reading-bold text-2xl leading-10 text-text">{titleRu}</Text>
+        <Text className="font-reading-bold text-2xl leading-10 text-text">{titleUk}</Text>
         {subtitleUk ? (
           <Text variant="muted" className="mt-1 font-reading-italic text-lg leading-7">
             {subtitleUk}
@@ -125,19 +126,10 @@ export function StoryHeader({
           )
         ) : null}
         <Text variant="caption" className={sourceLine ? 'mt-1' : 'mt-4'}>
-          {sentenceCount} {sentencesLabel(sentenceCount)}
+          {sentenceCount} {pluralUk(sentenceCount, ['речення', 'речення', 'речень'])}
           {finished ? ' · прочитано ✓' : ''}
         </Text>
       </View>
     </View>
   );
-}
-
-/** Ukrainian plural agreement for «речення» (nice touch on a study app): 1 речення · 2–4 речення · 5+ речень. */
-function sentencesLabel(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return 'речення';
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'речення';
-  return 'речень';
 }

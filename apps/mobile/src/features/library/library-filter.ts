@@ -9,7 +9,7 @@ import {
   type IoniconName,
 } from '@/features/library/categories';
 import type { PackRow } from '@/db/repositories/content';
-import { formatRuDate } from '@/lib/ru-date';
+import { formatUkDate } from '@/lib/uk-date';
 
 /**
  * Library shelf filtering, ordering and captions (M14, T45 —
@@ -19,7 +19,7 @@ import { formatRuDate } from '@/lib/ru-date';
  * the selected category), `genreRowItems` decides whether the genre sub-row
  * renders, `orderRowsForCategory` gives news its newest-first order, and
  * `storyRowCaption` renders `source.name · date` captions (date helpers
- * live in `lib/ru-date.ts` since T46). Unit-tested
+ * live in `lib/uk-date.ts` since T46). Unit-tested
  * without a DB; the chip row itself is verified on-device (node env).
  */
 
@@ -43,9 +43,9 @@ const isRemoteStories = (pack: FilterablePack): boolean =>
   pack.origin !== 'local' && classifyPack(pack).category === 'stories';
 
 /**
- * Keep the sections whose pack classifies into `category`; inside «Истории»
+ * Keep the sections whose pack classifies into `category`; inside «Історії»
  * additionally match the genre when one is selected (`genre ?? ''` so the
- * genre-less dialogue only ever shows under «Все»). Input order is preserved
+ * genre-less dialogue only ever shows under «Усі»). Input order is preserved
  * — the pack-id ordering `groupByFamily` relies on survives untouched.
  */
 export function filterSectionsByCategory<S extends { pack: FilterablePack }>(
@@ -58,9 +58,9 @@ export function filterSectionsByCategory<S extends { pack: FilterablePack }>(
 }
 
 /**
- * Genre sub-row items (§3): distinct genre values among the REMOTE «Истории»
+ * Genre sub-row items (§3): distinct genre values among the REMOTE «Історії»
  * sections — a genre-less pack counts as a value. `null` when fewer than two
- * values are installed (row hidden). Otherwise «Все» first, known genres in
+ * values are installed (row hidden). Otherwise «Усі» first, known genres in
  * GENRE_ORDER, unknown slugs last (alphabetical, raw slug as label).
  */
 export function genreRowItems(sections: readonly { pack: FilterablePack }[]): ChipItem[] | null {
@@ -75,10 +75,10 @@ export function genreRowItems(sections: readonly { pack: FilterablePack }[]): Ch
     .filter((g) => g !== '' && !(GENRE_ORDER as readonly string[]).includes(g))
     .sort();
   return [
-    { key: ALL_GENRES, label: 'Все' },
+    { key: ALL_GENRES, label: 'Усі' },
     ...[...known, ...unknown].map((g) => {
-      const { ru, icon } = labelForGenre(g);
-      return { key: g, label: ru, icon };
+      const { uk, icon } = labelForGenre(g);
+      return { key: g, label: uk, icon };
     }),
   ];
 }
@@ -106,15 +106,15 @@ export function categoryCounts(packs: readonly FilterablePack[]): Record<string,
 export function categoryChipItems(counts: Record<string, number>, selected?: string): ChipItem[] {
   const items: ChipItem[] = CATEGORY_ORDER.map((key) => ({
     key,
-    label: CATEGORIES[key].ru,
+    label: CATEGORIES[key].uk,
     icon: CATEGORIES[key].icon,
     count: counts[key] ?? 0,
   }));
   const extra = new Set(Object.keys(counts).filter((k) => !(k in CATEGORIES)));
   if (selected && !(selected in CATEGORIES)) extra.add(selected);
   for (const key of [...extra].sort()) {
-    const { ru, icon } = labelForCategory(key);
-    items.push({ key, label: ru, icon, count: counts[key] ?? 0 });
+    const { uk, icon } = labelForCategory(key);
+    items.push({ key, label: uk, icon, count: counts[key] ?? 0 });
   }
   return items;
 }
@@ -147,14 +147,14 @@ export function orderRowsForCategory<R extends OrderableRow>(
   });
 }
 
-// T46: the date helpers moved to `lib/ru-date.ts` (the reader header's
+// T46: the date helpers moved to `lib/uk-date.ts` (the reader header's
 // source line shares them); re-exported so T45 callers/tests are unchanged.
 export {
-  detectRuDatePath,
-  formatRuDate,
-  formatRuDateFallback,
-  type RuDatePath,
-} from '@/lib/ru-date';
+  detectUkDatePath,
+  formatUkDate,
+  formatUkDateFallback,
+  type UkDatePath,
+} from '@/lib/uk-date';
 
 /**
  * Story row caption (§4.3): `source.name · date` for sourced rows (date part
@@ -169,7 +169,7 @@ export function storyRowCaption(story: {
 }): string {
   if (story.sourceName) {
     return story.sourcePublishedAt
-      ? `${story.sourceName} · ${formatRuDate(story.sourcePublishedAt)}`
+      ? `${story.sourceName} · ${formatUkDate(story.sourcePublishedAt)}`
       : story.sourceName;
   }
   return `${story.titleEn} · ${story.sentenceCount} sentences`;

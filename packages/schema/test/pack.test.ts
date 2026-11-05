@@ -214,22 +214,22 @@ describe('PackSchema', () => {
 
     it('accepts a story subtitle as a localized pair and rejects a bare string', () => {
       const pack = makeValidPack() as any;
-      pack.stories[0].subtitle = { ru: 'Эпизод 1', en: 'Episode 1' };
+      pack.stories[0].subtitle = { uk: 'Епізод 1', en: 'Episode 1' };
       const result = PackSchema.safeParse(pack);
       expect(result.success).toBe(true);
       expect(result.success && result.data.stories[0]!.subtitle).toEqual({
-        ru: 'Эпизод 1',
+        uk: 'Епізод 1',
         en: 'Episode 1',
       });
 
       const bare = makeValidPack() as any;
-      bare.stories[0].subtitle = 'Эпизод 1';
+      bare.stories[0].subtitle = 'Епізод 1';
       expectIssue(bare, 'stories[0].subtitle', '');
     });
 
     it('accepts a minimal source { name } and a full source', () => {
       const minimal = makeValidPack() as any;
-      minimal.stories[0].source = { name: 'Сумрак' };
+      minimal.stories[0].source = { name: 'Сутінки' };
       expect(PackSchema.safeParse(minimal).success).toBe(true);
 
       const full = makeValidPack() as any;
@@ -251,18 +251,18 @@ describe('PackSchema', () => {
 
       for (const date of ['2026-9-1', '14.09.2026', '2026-09-14T00:00:00Z']) {
         const bad = makeValidPack() as any;
-        bad.stories[0].source = { name: 'Сумрак', publishedAt: date };
+        bad.stories[0].source = { name: 'Сутінки', publishedAt: date };
         expectIssue(bad, 'stories[0].source.publishedAt', '');
       }
 
       const badUrl = makeValidPack() as any;
-      badUrl.stories[0].source = { name: 'Сумрак', url: 'example.invalid/x' };
+      badUrl.stories[0].source = { name: 'Сутінки', url: 'example.invalid/x' };
       expectIssue(badUrl, 'stories[0].source.url', '');
     });
 
     it('rejects unknown keys inside source (strict object)', () => {
       const pack = makeValidPack() as any;
-      pack.stories[0].source = { name: 'Сумрак', publisher: 'x' };
+      pack.stories[0].source = { name: 'Сутінки', publisher: 'x' };
       expectIssue(pack, 'stories[0].source', 'publisher');
     });
   });

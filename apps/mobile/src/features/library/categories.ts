@@ -17,7 +17,7 @@ import type { PackRow } from '@/db/repositories/content';
 export type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 export interface SlugLabel {
-  ru: string;
+  uk: string;
   en: string;
   icon: IoniconName;
 }
@@ -35,15 +35,15 @@ export const CATEGORY_ORDER: readonly CategorySlug[] = [
 ];
 
 export const CATEGORIES: Record<CategorySlug, SlugLabel> = {
-  stories: { ru: 'Истории', en: 'Stories', icon: 'book-outline' },
-  news: { ru: 'Новости', en: 'News', icon: 'newspaper-outline' },
-  education: { ru: 'Учёба', en: 'Education', icon: 'school-outline' },
-  podcast: { ru: 'Подкасты', en: 'Podcasts', icon: 'mic-outline' },
-  documentary: { ru: 'Документалки', en: 'Documentaries', icon: 'film-outline' },
-  travel: { ru: 'Путешествия', en: 'Travel', icon: 'airplane-outline' },
+  stories: { uk: 'Історії', en: 'Stories', icon: 'book-outline' },
+  news: { uk: 'Новини', en: 'News', icon: 'newspaper-outline' },
+  education: { uk: 'Навчання', en: 'Education', icon: 'school-outline' },
+  podcast: { uk: 'Подкасти', en: 'Podcasts', icon: 'mic-outline' },
+  documentary: { uk: 'Документалки', en: 'Documentaries', icon: 'film-outline' },
+  travel: { uk: 'Подорожі', en: 'Travel', icon: 'airplane-outline' },
 };
 
-/** Genre chip order inside «Истории» (only installed genres are shown, §3). */
+/** Genre chip order inside «Історії» (only installed genres are shown, §3). */
 export const GENRE_ORDER = [
   'horror',
   'mystery',
@@ -62,21 +62,21 @@ export const GENRE_ORDER = [
 export type GenreSlug = (typeof GENRE_ORDER)[number];
 
 export const GENRES: Record<GenreSlug, SlugLabel> = {
-  horror: { ru: 'Страшилки', en: 'Horror', icon: 'skull-outline' },
-  mystery: { ru: 'Детектив', en: 'Mystery', icon: 'search-outline' },
-  scifi: { ru: 'Фантастика', en: 'Sci-fi', icon: 'planet-outline' },
-  fantasy: { ru: 'Фэнтези', en: 'Fantasy', icon: 'sparkles-outline' },
-  action: { ru: 'Боевик', en: 'Action', icon: 'flash-outline' },
-  comedy: { ru: 'Комедия', en: 'Comedy', icon: 'happy-outline' },
-  romance: { ru: 'Романтика', en: 'Romance', icon: 'heart-outline' },
-  drama: { ru: 'Драма', en: 'Drama', icon: 'rainy-outline' },
-  family: { ru: 'Семья', en: 'Family', icon: 'people-outline' },
-  'slice-of-life': { ru: 'Быт', en: 'Slice of life', icon: 'cafe-outline' },
-  absurd: { ru: 'Абсурд', en: 'Absurd', icon: 'shuffle-outline' },
-  'fairy-tale': { ru: 'Сказки', en: 'Fairy tales', icon: 'leaf-outline' },
+  horror: { uk: 'Жахи', en: 'Horror', icon: 'skull-outline' },
+  mystery: { uk: 'Детектив', en: 'Mystery', icon: 'search-outline' },
+  scifi: { uk: 'Фантастика', en: 'Sci-fi', icon: 'planet-outline' },
+  fantasy: { uk: 'Фентезі', en: 'Fantasy', icon: 'sparkles-outline' },
+  action: { uk: 'Бойовик', en: 'Action', icon: 'flash-outline' },
+  comedy: { uk: 'Комедія', en: 'Comedy', icon: 'happy-outline' },
+  romance: { uk: 'Романтика', en: 'Romance', icon: 'heart-outline' },
+  drama: { uk: 'Драма', en: 'Drama', icon: 'rainy-outline' },
+  family: { uk: 'Родина', en: 'Family', icon: 'people-outline' },
+  'slice-of-life': { uk: 'Побут', en: 'Slice of life', icon: 'cafe-outline' },
+  absurd: { uk: 'Абсурд', en: 'Absurd', icon: 'shuffle-outline' },
+  'fairy-tale': { uk: 'Казки', en: 'Fairy tales', icon: 'leaf-outline' },
 };
 
-/** The «Все» genre chip / the persisted "no genre filter" value. */
+/** The «Усі» genre chip / the persisted "no genre filter" value. */
 export const ALL_GENRES = 'all';
 
 /**
@@ -85,12 +85,12 @@ export const ALL_GENRES = 'all';
  * its Russian name («Mr. Wintrow · Диктор») and falls back to the raw style.
  */
 export const REGISTER_LABELS: Record<string, string> = {
-  narrator: 'Рассказчик',
+  narrator: 'Оповідач',
   anchor: 'Диктор',
   lecturer: 'Лектор',
-  host: 'Ведущий',
-  voiceover: 'Закадровый голос',
-  guide: 'Гид',
+  host: 'Ведучий',
+  voiceover: 'Закадровий голос',
+  guide: 'Гід',
 };
 
 export interface Classified {
@@ -109,7 +109,7 @@ export interface Classified {
  * | none; type `dialogue`                  | `stories`   | none                  |
  *
  * `origin: 'local'` packs never go through the chip filter (always the
- * «Импортировано» shelf) — they still classify as `stories/null` so badges
+ * «Імпортовано» shelf) — they still classify as `stories/null` so badges
  * elsewhere have something to show. `origin` is part of the input contract
  * for that reason even though the table itself keys off it only via type.
  */
@@ -155,10 +155,10 @@ export function isKnownGenre(slug: string): slug is GenreSlug {
 
 /** Known → table entry; unknown → the raw slug with a generic shelf icon. */
 export function labelForCategory(slug: string): SlugLabel {
-  return isKnownCategory(slug) ? CATEGORIES[slug] : { ru: slug, en: slug, icon: 'albums-outline' };
+  return isKnownCategory(slug) ? CATEGORIES[slug] : { uk: slug, en: slug, icon: 'albums-outline' };
 }
 
 /** Known → table entry; unknown → the raw slug with a generic tag icon. */
 export function labelForGenre(slug: string): SlugLabel {
-  return isKnownGenre(slug) ? GENRES[slug] : { ru: slug, en: slug, icon: 'pricetag-outline' };
+  return isKnownGenre(slug) ? GENRES[slug] : { uk: slug, en: slug, icon: 'pricetag-outline' };
 }

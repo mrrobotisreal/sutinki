@@ -223,7 +223,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       titleEn: story.title.en,
       level: story.level,
       // T44 (M14): subtitle + source provenance, NULL when absent (fiction).
-      subtitleUk: story.subtitle?.ru ?? null,
+      subtitleUk: story.subtitle?.uk ?? null,
       subtitleEn: story.subtitle?.en ?? null,
       sourceName: story.source?.name ?? null,
       sourceUrl: story.source?.url ?? null,

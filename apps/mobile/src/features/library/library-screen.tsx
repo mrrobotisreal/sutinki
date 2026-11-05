@@ -188,7 +188,7 @@ export function LibraryScreen() {
       .filter((p) => p.origin !== 'local')
       .map(build)
       .filter((section) => section.data.length > 0);
-    // T28: local (imported) packs shelve together under «Импортировано»,
+    // T28: local (imported) packs shelve together under «Імпортовано»,
     // after the remote content (design V2 §4.3) — and under EVERY category
     // (M14 §4.4: an imported paste has no category and must never vanish).
     const local = packs.data
@@ -204,12 +204,12 @@ export function LibraryScreen() {
             }
           : undefined,
       }));
-    if (local[0]) local[0] = { ...local[0], shelfHeader: 'Импортировано' };
+    if (local[0]) local[0] = { ...local[0], shelfHeader: 'Імпортовано' };
     return { remoteAll, local };
   }, [packs.data, stories.data, dialogues.data, importedMeta.data]);
 
   // M14 (T45): chip data — counts over every remote pack; the genre sub-row
-  // only when ≥2 distinct genre values are installed under «Истории».
+  // only when ≥2 distinct genre values are installed under «Історії».
   // Memoized so a chip tap re-renders the header without remounting the list.
   const categoryItems = React.useMemo(
     () => categoryChipItems(categoryCounts(packs.data ?? []), category),
@@ -221,8 +221,8 @@ export function LibraryScreen() {
   );
   // A persisted genre the row no longer offers (its last pack was removed,
   // or the row is hidden) must not keep filtering the shelf to nothing —
-  // found on-device (T45): removing a1-comedy-090 with «Комедия» selected
-  // produced a false «Пока пусто». Fall back to «Все» and heal the store.
+  // found on-device (T45): removing a1-comedy-090 with «Комедія» selected
+  // produced a false «Поки порожньо». Fall back to «Усі» and heal the store.
   const genreStale =
     genre !== ALL_GENRES && !(genreItems?.some((item) => item.key === genre) ?? false);
   const effectiveGenre = genreStale ? ALL_GENRES : genre;
@@ -301,9 +301,9 @@ export function LibraryScreen() {
   }, [remoteAll, category, effectiveGenre, progressByStory, rungChoice]);
 
   // The selected category has nothing installed while packs exist → the
-  // «Пока пусто» block goes into the list header, with only the local
-  // (imported) shelf as sections so pull-to-refresh and «Импортировано»
-  // survive (§4.2). Zero packs total keeps «Библиотека пуста» below.
+  // «Поки порожньо» block goes into the list header, with only the local
+  // (imported) shelf as sections so pull-to-refresh and «Імпортовано»
+  // survive (§4.2). Zero packs total keeps «Бібліотека порожня» below.
   const emptyCategory = remoteAll.length + local.length > 0 && remote.length === 0;
   const sections = React.useMemo<LibrarySection[]>(
     () => (emptyCategory ? local : [...remote, ...local]),
@@ -539,8 +539,8 @@ export function LibraryScreen() {
 
 /**
  * §4.2 — the selected shelf has nothing installed (while other packs exist):
- * category icon + «Пока пусто» + one muted line. Lives inside the list header
- * so the «Импортировано» shelf still renders under it and pull-to-refresh
+ * category icon + «Поки порожньо» + one muted line. Lives inside the list header
+ * so the «Імпортовано» shelf still renders under it and pull-to-refresh
  * keeps working.
  */
 function EmptyCategory({ category }: { category: string }) {
@@ -549,9 +549,9 @@ function EmptyCategory({ category }: { category: string }) {
   return (
     <View className="items-center gap-3 px-10 pb-6 pt-16">
       <Ionicons name={icon} size={40} color={tokens.textMuted} />
-      <Text className="font-reading-bold text-xl">Пока пусто</Text>
+      <Text className="font-reading-bold text-xl">Поки порожньо</Text>
       <Text variant="muted" className="text-center">
-        Материалы для этой полки появятся после синхронизации.
+        Матеріали для цієї полиці з’являться після синхронізації.
       </Text>
     </View>
   );

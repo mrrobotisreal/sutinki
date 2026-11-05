@@ -222,7 +222,7 @@ the engine, cursors and the Settings list all iterate the registry.
 **Cursors.** Each theme's resume point lives in the `settings` table under
 `audio.ambientCursors` as `{ "<theme>": { "bed": "<slug>", "positionMs": N } }`.
 Themes absent from the blob start on bed 1 at 0; a cursor inside the last
-5 s of a bed starts the *next* bed. Clear one theme with Settings →
+5 s of a bed starts the _next_ bed. Clear one theme with Settings →
 Background music → Soundtracks → **Reset** (also restarts a live preview),
 or clear all with `DELETE FROM settings WHERE key = 'audio.ambientCursors'`
 from the dev DB screen / `run-as` sqlite. Listening in Settings (▶ preview)

@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 
 import journal from '../../../drizzle/meta/_journal.json';
 import * as schema from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import { createTestDb } from './helpers';
 
 const migrationsFolder = path.join(
@@ -24,7 +24,7 @@ const migrationsFolder = path.join(
  * split), then the returned handle can be passed to `migrate()` again to
  * apply the remaining entries.
  */
-function createDbUpTo(lastTag: string): { sqlite: Database.Database; db: SumrakDB } {
+function createDbUpTo(lastTag: string): { sqlite: Database.Database; db: SutinkiDB } {
   const sqlite = new Database(':memory:');
   sqlite.pragma('foreign_keys = ON');
   const entries = journal.entries;
@@ -44,15 +44,15 @@ function createDbUpTo(lastTag: string): { sqlite: Database.Database; db: SumrakD
       .run(`test-${entry.tag}`, entry.when);
   }
   const db = drizzle(sqlite, { schema });
-  return { sqlite, db: db as unknown as SumrakDB };
+  return { sqlite, db: db as unknown as SutinkiDB };
 }
 
-async function columnNames(db: SumrakDB, table: string): Promise<string[]> {
+async function columnNames(db: SutinkiDB, table: string): Promise<string[]> {
   const rows = await db.all<{ name: string }>(sql.raw(`PRAGMA table_info(${table})`));
   return rows.map((r) => r.name);
 }
 
-async function indexNames(db: SumrakDB, table: string): Promise<string[]> {
+async function indexNames(db: SutinkiDB, table: string): Promise<string[]> {
   const rows = await db.all<{ name: string }>(sql.raw(`PRAGMA index_list(${table})`));
   return rows.map((r) => r.name);
 }
@@ -133,7 +133,7 @@ describe('migrations from empty DB', () => {
     }
   });
 
-  it('0011_library-categories: fresh DB has the M14 columns and index', async () => {
+  it('0002_library-categories: fresh DB has the M14 columns and index', async () => {
     const db = createTestDb();
     const packCols = await columnNames(db, 'packs');
     const storyCols = await columnNames(db, 'stories');
@@ -143,9 +143,9 @@ describe('migrations from empty DB', () => {
   });
 });
 
-describe('0011_library-categories upgrade from 0010', () => {
+describe('0002_library-categories upgrade from 0001', () => {
   it('adds the eight columns + index; pre-existing rows read NULL', async () => {
-    const { sqlite, db } = createDbUpTo('0010_path-theme-track');
+    const { sqlite, db } = createDbUpTo('0001_fts5-search');
     // The previous release's tables really lack the columns.
     expect(await columnNames(db, 'packs')).not.toContain('category');
     expect(await columnNames(db, 'stories')).not.toContain('source_published_at');
@@ -153,14 +153,14 @@ describe('0011_library-categories upgrade from 0010', () => {
     // A pack + story written by the previous release.
     sqlite
       .prepare(
-        `INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at, origin)
-         VALUES ('a1-old-001', 1, 'stories', 'Старый', 'Old', 'A1', '[]', 0, 'remote')`,
+        `INSERT INTO packs (id, version, type, title_uk, title_en, level, tags, imported_at, origin)
+         VALUES ('a1-old-001', 1, 'stories', 'Старий', 'Old', 'A1', '[]', 0, 'remote')`,
       )
       .run();
     sqlite
       .prepare(
-        `INSERT INTO stories (pack_id, id, order_idx, title_ru, title_en, level)
-         VALUES ('a1-old-001', 'old-s1', 0, 'Часть 1', 'Part 1', 'A1')`,
+        `INSERT INTO stories (pack_id, id, order_idx, title_uk, title_en, level)
+         VALUES ('a1-old-001', 'old-s1', 0, 'Частина 1', 'Part 1', 'A1')`,
       )
       .run();
 

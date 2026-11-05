@@ -333,7 +333,7 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
     expect(track.timestamps.length).toBe(7);
   });
 
-  it('ADR-0016 default: multilingual v2, language_code ru, speaker boost on, previous_text sent, audioTag ignored', async () => {
+  it('ADR-0016 default: multilingual v2, language_code uk, speaker boost on, previous_text sent, audioTag ignored', async () => {
     const work = tempDir();
     const draftFile = join(work, 'test.draft.md');
     writeFileSync(
@@ -357,7 +357,7 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
 
     expect(captured).toHaveLength(1);
     expect(captured[0]!.model_id).toBe('eleven_multilingual_v2');
-    expect(captured[0]!.language_code).toBe('ru');
+    expect(captured[0]!.language_code).toBe('uk');
     expect(captured[0]!.text.startsWith('Ночь.')).toBe(true); // v3 tag not applied on v2
     expect(captured[0]!.previous_text).toBe('Slow and quiet.');
     // The draft's settings only pinned stability; boost defaults on for non-v3.
@@ -612,7 +612,7 @@ EN: Silence.
       draftFile,
       DRAFT.replace(
         '    settings:',
-        "    model: eleven_multilingual_v2\n    language: ru\n    audioTag: '[whispers]'\n    settings:\n      useSpeakerBoost: true",
+        "    model: eleven_multilingual_v2\n    language: de\n    audioTag: '[whispers]'\n    settings:\n      useSpeakerBoost: true",
       ),
     );
     const mp3 = makeSilentMp3(work, 4);
@@ -628,7 +628,7 @@ EN: Silence.
     });
     await runFinalize([draftFile], join(work, 'pack'), client, { defaultSeed: 7 });
     expect(captured[0]!.model_id).toBe('eleven_multilingual_v2'); // draft wins over the CLI default
-    expect(captured[0]!.language_code).toBe('ru');
+    expect(captured[0]!.language_code).toBe('de');
     expect(captured[0]!.text.startsWith('Ночь.')).toBe(true); // non-v3: the tag is dropped
     expect(captured[0]!.previous_text).toBe('Slow and quiet.');
     expect(captured[0]!.voice_settings).toMatchObject({ stability: 0.4, use_speaker_boost: true });
