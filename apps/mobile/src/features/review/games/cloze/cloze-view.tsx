@@ -5,9 +5,11 @@ import { Text } from '@/components/ui/text';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 import { answersMatch } from '@/lib/text';
+import { CASES } from '@/features/word-forms/profile-core';
 
 import type { ClozeOutcome } from '../../mapping';
 import type { ClozeItem } from './session';
+import { endingMatches } from './stem-split';
 
 /** Pause after a correct answer so the coloring registers (T06 rhythm). */
 const FEEDBACK_DELAY_MS = 900;
@@ -26,6 +28,11 @@ interface ClozeViewProps {
 export function ClozeView({ entry, onDone }: ClozeViewProps) {
   const { tokens: theme } = useAppTheme();
   const target = entry.source.tokens[entry.source.targetIndex]!;
+  const ending = entry.variant === 'ending' ? entry.ending : undefined;
+  const caseLabel = ending ? (CASES[ending.language][ending.caseIndex] ?? '') : '';
+  // Ending variant: the blank is only the ending; the stem renders inline in the sentence.
+  const stemShown = ending ? ending.stem : '';
+  const expectedShown = ending ? ending.endings[0]! : target.text;
 
   const [answered, setAnswered] = React.useState<null | { text: string; correct: boolean }>(null);
   const [revealed, setRevealed] = React.useState(false);
@@ -36,6 +43,8 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
   const shownAtRef = React.useRef(0);
   React.useEffect(() => {
     shownAtRef.current = Date.now();
+    if (ending) track('cloze_ending_variant_served', { pos: ending.pos, case: ending.caseSlug });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per mount (the view is keyed per item)
   }, []);
 
   const finish = React.useCallback(
@@ -56,7 +65,9 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
   const answer = React.useCallback(
     (text: string, viaTile: string | null) => {
       if (answered || revealed) return;
-      const correct = answersMatch(target.text, text);
+      const correct = ending
+        ? endingMatches(ending, text, ending.language)
+        : answersMatch(target.text, text);
       Vibration.vibrate(correct ? 8 : 24);
       setAnswered({ text, correct });
       if (viaTile != null) setSelectedTile(viaTile);
@@ -71,7 +82,8 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
     const next = hintsUsed + 1;
     setHintsUsed(next);
     track('cloze_hint_used', { step: next });
-  }, [answered, revealed, hintsUsed]);
+    if (ending && next === 1) track('cloze_ending_hint_used', { case: ending.caseSlug });
+  }, [answered, revealed, hintsUsed, ending]);
 
   const reveal = React.useCallback(() => {
     if (answered || revealed) return;
@@ -81,7 +93,14 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
   }, [answered, revealed]);
 
   // What the blank shows right now.
-  const blankText = answered ? answered.text : revealed ? target.text : '______';
+  const blankPlaceholder = ending ? '_'.repeat(Math.max(2, ending.blankLength)) : '______';
+  const blankText = answered
+    ? ending
+      ? stripStem(answered.text, ending.stem)
+      : answered.text
+    : revealed
+      ? expectedShown
+      : blankPlaceholder;
   const blankColor = answered
     ? answered.correct
       ? theme.success
@@ -95,7 +114,9 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
   return (
     <View className="flex-1 px-4 pt-6">
       <Text variant="caption" className="text-center uppercase tracking-wider">
-        Cloze · {entry.variant === 'tiles' ? 'pick the missing word' : 'type the missing word'}
+        {ending
+          ? 'Допиши закінчення'
+          : `Cloze · ${entry.variant === 'tiles' ? 'pick the missing word' : 'type the missing word'}`}
       </Text>
 
       <View className="mt-4 min-h-36 justify-center rounded-2xl border border-border bg-surface px-5 py-7">
@@ -104,9 +125,10 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
             const prefix = t.spaceBefore ? ' ' : '';
             if (i === entry.source.targetIndex) {
               return (
-                <RNText key={i} style={{ color: blankColor, fontWeight: '700' }}>
+                <RNText key={i}>
                   {prefix}
-                  {blankText}
+                  {stemShown}
+                  <RNText style={{ color: blankColor, fontWeight: '700' }}>{blankText}</RNText>
                 </RNText>
               );
             }
@@ -126,7 +148,10 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
       {/* wrong answer: show what it should have been */}
       {answered && !answered.correct && (
         <Text className="mt-3 text-center">
-          Correct: <Text className="font-ui-medium text-success">{target.text}</Text>
+          {ending ? 'Правильно: ' : 'Correct: '}
+          <Text className="font-ui-medium text-success">
+            {ending ? `${stemShown}${expectedShown}` : target.text}
+          </Text>
         </Text>
       )}
 
@@ -162,19 +187,23 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
             editable={!answered && !revealed}
             autoCapitalize="none"
             autoCorrect={false}
-            placeholder="Type the missing word…"
+            placeholder={ending ? 'Закінчення…' : 'Type the missing word…'}
             placeholderTextColor={theme.textMuted}
             onSubmitEditing={() => typed.trim() && answer(typed, null)}
             className="rounded-xl border border-border bg-surface px-4 py-3.5 font-reading text-xl text-text"
-            accessibilityLabel="Missing word"
+            accessibilityLabel={ending ? 'Закінчення' : 'Missing word'}
           />
 
           {/* hint ladder: first letter → lemma → reveal (each capping the rating, see mapping.ts) */}
           {hintsUsed >= 1 && !answered && !revealed && (
             <Text variant="muted" className="text-center">
-              {hintsUsed === 1
-                ? `Starts with «${target.text.slice(0, 1).toLocaleLowerCase('uk-UA')}…»`
-                : `Dictionary form: «${entry.item.lemma}»`}
+              {ending
+                ? hintsUsed === 1
+                  ? `Підказка: ${caseHint(caseLabel)}${ending.alternation ? ' (чергування)' : ''}`
+                  : `Початкова форма: «${entry.item.lemma}»`
+                : hintsUsed === 1
+                  ? `Starts with «${target.text.slice(0, 1).toLocaleLowerCase('uk-UA')}…»`
+                  : `Dictionary form: «${entry.item.lemma}»`}
             </Text>
           )}
 
@@ -187,7 +216,13 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
                   className="flex-1 items-center rounded-xl border border-border bg-surface-2 py-3 active:bg-border"
                 >
                   <Text className="font-ui-medium">
-                    {hintsUsed === 0 ? 'Hint: first letter' : 'Hint: dictionary form'}
+                    {ending
+                      ? hintsUsed === 0
+                        ? 'Підказка: відмінок'
+                        : 'Підказка: початкова форма'
+                      : hintsUsed === 0
+                        ? 'Hint: first letter'
+                        : 'Hint: dictionary form'}
                   </Text>
                 </Pressable>
               ) : (
@@ -227,4 +262,18 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
       )}
     </View>
   );
+}
+
+/** Typed answers may include the stem; show only the ending part in the blank. */
+function stripStem(typed: string, stem: string): string {
+  const t = typed.trim();
+  return answersMatch(t.slice(0, stem.length), stem) && t.length > stem.length
+    ? t.slice(stem.length)
+    : t;
+}
+
+/** «Gen. — родовий» → «родовий відмінок». */
+function caseHint(label: string): string {
+  const name = label.split('—')[1]?.trim();
+  return name ? `${name} відмінок` : label;
 }

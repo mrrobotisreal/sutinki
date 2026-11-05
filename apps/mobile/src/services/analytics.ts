@@ -145,6 +145,9 @@ export type AnalyticsEvent =
   | 'cloze_session_started'
   | 'cloze_session_empty'
   | 'cloze_hint_used'
+  // UT20 case-ending cloze. Props: slugs only — {pos: noun|adj|pron|name, case: nom|gen|dat|acc|instr|loc|voc}.
+  | 'cloze_ending_variant_served'
+  | 'cloze_ending_hint_used'
   | 'cloze_item_graded'
   | 'cloze_session_finished'
   | 'cloze_session_abandoned'

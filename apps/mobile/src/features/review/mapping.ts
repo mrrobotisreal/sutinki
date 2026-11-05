@@ -47,7 +47,7 @@ export function ratingCountsAsCorrect(rating: Grade): boolean {
 export const CLOZE_TILE_FAST_THRESHOLD_MS = 12_000;
 
 export interface ClozeOutcome {
-  variant: 'tiles' | 'typed';
+  variant: 'tiles' | 'typed' | 'ending';
   correct: boolean;
   /** first-letter / lemma hints taken (typed only). */
   hintsUsed: number;
@@ -58,7 +58,8 @@ export interface ClozeOutcome {
 
 export function clozeOutcomeToRating(outcome: ClozeOutcome): Grade {
   if (!outcome.correct || outcome.revealed) return Rating.Again;
-  if (outcome.variant === 'typed') {
+  if (outcome.variant !== 'tiles') {
+    // typed and ending (UT20) share the rule: any hint caps at Hard
     return outcome.hintsUsed > 0 ? Rating.Hard : Rating.Good;
   }
   return outcome.durationMs <= CLOZE_TILE_FAST_THRESHOLD_MS ? Rating.Good : Rating.Hard;

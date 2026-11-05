@@ -22,8 +22,11 @@ import { buildClozeSession, type ClozeItem } from './session';
 export function ClozeSessionScreen() {
   const { tokens } = useAppTheme();
   const unseenAllowed = useGamePrefs((s) => s.clozeUnseenStoriesAllowed);
+  const endingProbability = useGamePrefs((s) => s.clozeEndingProbability);
   // Captured once at mount — the session is built once; a settings change applies next launch.
-  const [build] = React.useState(() => () => buildClozeSession(repos, { unseenAllowed }));
+  const [build] = React.useState(
+    () => () => buildClozeSession(repos, { unseenAllowed, endingProbability }),
+  );
 
   const session = useGameSession<ClozeItem>({
     mode: 'cloze',

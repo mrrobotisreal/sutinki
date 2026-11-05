@@ -1,6 +1,7 @@
 import type { BankItemRow } from '@/db/repositories/bank';
 import { MIXED_SESSION_DIRECTIONS, type CardRow } from '@/db/repositories/reviews';
 import type { Repositories } from '@/db/repositories';
+import { profileKeyFor } from '@/features/word-forms/profile-core';
 import { foldForAnswer } from '@/lib/text';
 
 import {
@@ -9,11 +10,13 @@ import {
   type ReadIndex,
   type SourcedSentence,
 } from '../sentence-source';
+import { endingVariantFor, type EndingVariantSpec } from './stem-split';
 
 export const CLOZE_SESSION_SIZE = 10;
 export const CLOZE_TILE_COUNT = 4;
 
-export type ClozeVariant = 'tiles' | 'typed';
+/** 'ending' (UT20): only the case ending is blanked; graded exactly like 'typed'. */
+export type ClozeVariant = 'tiles' | 'typed' | 'ending';
 
 export interface ClozeItem {
   card: CardRow;
@@ -22,6 +25,8 @@ export interface ClozeItem {
   variant: ClozeVariant;
   /** tiles variant only — CLOZE_TILE_COUNT display texts, pre-shuffled, lowercased. */
   tiles?: string[];
+  /** ending variant only — stem, accepted endings, case. */
+  ending?: EndingVariantSpec;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -47,13 +52,28 @@ export async function buildClozeItemForCard(
   card: CardRow,
   item: BankItemRow,
   index: ReadIndex,
-  opts: { unseenAllowed?: boolean; wantVariant?: ClozeVariant } = {},
+  opts: {
+    unseenAllowed?: boolean;
+    wantVariant?: ClozeVariant;
+    /** UT20 knob (game-prefs `cloze.endingProbability`, default 1): chance an eligible item takes the ending variant. */
+    endingProbability?: number;
+    random?: () => number;
+  } = {},
 ): Promise<ClozeItem | null> {
-  const { unseenAllowed = false, wantVariant = 'typed' } = opts;
+  const { unseenAllowed = false, wantVariant = 'typed', endingProbability = 1 } = opts;
+  const random = opts.random ?? Math.random;
   if (item.kind !== 'word' || !item.lemma) return null;
   const source = await pickSentenceForLemma(repos, item.lemma, index, { unseenAllowed });
   if (!source) return null;
   const entry: ClozeItem = { card, item, source, variant: 'typed' };
+  if (endingProbability > 0 && (endingProbability >= 1 || random() < endingProbability)) {
+    const ending = await resolveEndingVariant(repos, item, source);
+    if (ending) {
+      entry.variant = 'ending';
+      entry.ending = ending;
+      return entry;
+    }
+  }
   if (wantVariant === 'tiles') {
     const tiles = await buildClozeTiles(repos, entry);
     if (tiles) {
@@ -62,6 +82,28 @@ export async function buildClozeItemForCard(
     }
   }
   return entry;
+}
+
+/**
+ * UT20: the ending variant is a pure decision over the item's current word
+ * profile and the sentence token; any miss (no key, no profile, unreadable
+ * payload, ineligible token, a DB hiccup) is a silent fallback to ordinary cloze.
+ */
+async function resolveEndingVariant(
+  repos: Repositories,
+  item: BankItemRow,
+  source: SourcedSentence,
+): Promise<EndingVariantSpec | null> {
+  try {
+    const key = profileKeyFor(item);
+    if (!key || key.kind !== 'word') return null;
+    const record = await repos.wordForms.getCurrentProfile(key.lemmaNorm, key.kind);
+    if (!record?.profile) return null;
+    const token = source.tokens[source.targetIndex]!;
+    return endingVariantFor({ text: token.text, grammar: token.grammar }, record.profile);
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -77,9 +119,14 @@ export async function buildClozeItemForCard(
  */
 export async function buildClozeSession(
   repos: Repositories,
-  opts: { limit?: number; now?: number; unseenAllowed?: boolean } = {},
+  opts: { limit?: number; now?: number; unseenAllowed?: boolean; endingProbability?: number } = {},
 ): Promise<ClozeItem[]> {
-  const { limit = CLOZE_SESSION_SIZE, now = Date.now(), unseenAllowed = false } = opts;
+  const {
+    limit = CLOZE_SESSION_SIZE,
+    now = Date.now(),
+    unseenAllowed = false,
+    endingProbability = 1,
+  } = opts;
   const index = await buildReadIndex(repos);
 
   // Due first, weakest fill after — both capped generously since many
@@ -109,6 +156,7 @@ export async function buildClozeSession(
     seenItems.add(card.bankItemId);
     const entry = await buildClozeItemForCard(repos, card, item, index, {
       unseenAllowed,
+      endingProbability,
       wantVariant: session.length % 2 === 0 ? 'tiles' : 'typed',
     });
     if (entry) session.push(entry);

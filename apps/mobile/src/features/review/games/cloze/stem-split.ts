@@ -31,7 +31,7 @@ const GRID_SECTIONS: Record<string, EndingPos> = {
   'name-declension': 'name',
 };
 
-/** Case labels, verbatim from the profile catalog (`CASES`); duplicated here to keep this module dependency-light. */
+/** Row index of the vocative in the 7-row Ukrainian case grid. */
 const VOC_ROW = 6;
 
 /** Tolerant comparison key (stress, case, apostrophe, ґ for uk; stress, case, ё for ru). */
@@ -132,6 +132,7 @@ export interface EndingVariantSpec {
   caseIndex: number;
   caseSlug: CaseSlug;
   pos: EndingPos;
+  language: ProfileLanguage;
   /** The ending swallows a consonant/vowel alternation (рука → руці): the hint adds «чергування». */
   alternation: boolean;
 }
@@ -250,7 +251,7 @@ export function endingVariantFor(
       fold(language, plainSurface).charAt(n) || '',
     );
 
-  return { stem, endings, blankLength, caseIndex, caseSlug, pos, alternation };
+  return { stem, endings, blankLength, caseIndex, caseSlug, pos, language, alternation };
 }
 
 /** Typed answer check: the ending (or the whole word) in any accepted ending; no tolerance for wrong letters. */

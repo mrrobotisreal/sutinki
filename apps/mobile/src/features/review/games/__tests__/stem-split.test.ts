@@ -88,7 +88,7 @@ describe('stemSplit', () => {
     expect(stemSplit(['я', 'мене', 'мені', 'мною'])).toBeNull();
     expect(stemSplit(['кафе', 'кафе', 'кафе'])).toBeNull();
   });
-  it('apostrophe word (сім\'я / сім\'ї): variants are one letter', () => {
+  it("apostrophe word (сім'я / сім'ї): variants are one letter", () => {
     const r = stemSplit(["сім'я", 'сімʼї', "сім'ю"]);
     expect(r?.stem).toBe("сім'");
     expect(r?.endings).toEqual(['я', 'ї', 'ю']);
@@ -105,7 +105,7 @@ describe('endingFor', () => {
   it('returns the ending tolerant of stress, case, apostrophe, ґ', () => {
     expect(endingFor('Рука\u0301', 'ру')).toBe('ка');
     expect(endingFor('Руко\u0301ю', 'ру')).toBe('кою');
-    expect(endingFor("Сімʼї", "сім'")).toBe('ї');
+    expect(endingFor('Сімʼї', "сім'")).toBe('ї');
     expect(endingFor('ганку', 'ґан')).toBe('ку');
     expect(endingFor('вода', 'ст')).toBeNull();
   });
@@ -197,7 +197,7 @@ describe('endingVariantFor (hand grids)', () => {
     const pl = endingVariantFor({ text: 'дітьми', grammar: 'pl. instr.' }, dytyna);
     expect(pl).toMatchObject({ stem: 'діт', endings: ['ьми'] });
   });
-  it('apostrophe word: сім\'ї with the authored apostrophe kept in the stem', () => {
+  it("apostrophe word: сім'ї with the authored apostrophe kept in the stem", () => {
     const sim = nounProfile('uk', [
       ["сім'я", "сім'ї"],
       ["сім'ї", "сім'ям"],
@@ -224,7 +224,10 @@ describe('endingVariantFor (hand grids)', () => {
     ]);
     const v = endingVariantFor({ text: 'окне', grammar: undefined }, okno, 'ru');
     expect(v).toMatchObject({ stem: 'ок', endings: ['не'], caseSlug: 'loc', caseIndex: 5 });
-    expect(endingVariantFor({ text: 'окон' }, okno, 'ru')).toMatchObject({ stem: 'ок', endings: ['он'] });
+    expect(endingVariantFor({ text: 'окон' }, okno, 'ru')).toMatchObject({
+      stem: 'ок',
+      endings: ['он'],
+    });
     expect(stemSplit(['ребёнок', 'дети'], 'ru')).toBeNull();
     // ё/е tolerance
     expect(endingFor('моё', 'мо', 'ru')).toBe('ё'); // intentional: Russian input
