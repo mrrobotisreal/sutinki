@@ -57,7 +57,7 @@ import {
   type MetaResolution,
   type PlayedToken,
 } from './meta-intents';
-import { fetchExplainLine, fetchHowToSayLine, speakGloss, speakRu, stopPrompter } from './prompter';
+import { fetchExplainLine, fetchHowToSayLine, speakGloss, speakUk, stopPrompter } from './prompter';
 import { pruneRecordings } from './recordings/prune';
 import { stashAttemptWav, transcodeQueue } from './recordings/transcode-queue';
 import { scheduleBundle } from './recordings/bundle-service';
@@ -462,7 +462,7 @@ export function useScenarioRun(
           await speakGloss(effect.ru, effect.en);
           return;
         case 'SPEAK_RU':
-          await speakRu(effect.text);
+          await speakUk(effect.text);
           return;
         case 'ARM_SILENCE':
           disarmSilence();

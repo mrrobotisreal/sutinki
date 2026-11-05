@@ -545,3 +545,16 @@ describe('parseHelpLine', () => {
     expect(parseHelpLine('x'.repeat(200))).toBeNull();
   });
 });
+
+describe('суфлер prompts (UT14)', () => {
+  it('ask for Ukrainian only and forbid Russian letters', async () => {
+    const { buildScenarioExplainMessages, buildScenarioHowToSayMessages } =
+      await import('@/features/ai/prompts/scenario-help');
+    const how = buildScenarioHowToSayMessages('stomach');
+    expect(how[0]!.content).toContain('Ukrainian Cyrillic only');
+    expect(how[0]!.content).not.toMatch(/Russian speaking|natural spoken Russian/);
+    expect(how[1]!.content).toContain('Ukrainian');
+    const ex = buildScenarioExplainMessages('живіт');
+    expect(ex[0]!.content).toContain('Ukrainian speaking role-play');
+  });
+});

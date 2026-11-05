@@ -25,7 +25,7 @@ import {
  * JS every frame); 25 Hz is the track's own resolution.
  *
  * Missing track ⇒ the muppet fallback (2/0/3/1 at 90 ms) while `speaking`;
- * `speaking: false` (idle, or a суфлёр line — the host is not talking)
+ * `speaking: false` (idle, or a суфлер line — the host is not talking)
  * holds the mouth closed.
  */
 
@@ -56,7 +56,7 @@ export function mouthLineFor(
 export function useMouthTrack(opts: {
   player: AudioPlayer | null;
   line: MouthLine | null;
-  /** The host is speaking THIS line right now (false for idle and суфлёр lines). */
+  /** The host is speaking THIS line right now (false for idle and суфлер lines). */
   speaking: boolean;
   /** Playback rate the line plays at (1.0 or 0.8) — used only to extrapolate a stale position read. */
   rate: number;

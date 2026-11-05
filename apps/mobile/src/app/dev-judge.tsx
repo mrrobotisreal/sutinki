@@ -42,7 +42,7 @@ import {
   fetchExplainLine,
   fetchHowToSayLine,
   speakGloss,
-  speakRu,
+  speakUk,
   stopPrompter,
 } from '@/features/scenario/prompter';
 import { useAppTheme } from '@/theme/use-app-theme';
@@ -260,7 +260,7 @@ export default function DevJudgeScreen() {
           ) {
             void speakGloss(resolution.ru, resolution.en);
           } else if (resolution.intent === 'howtosay' && resolution.source === 'online') {
-            void speakRu(resolution.ru);
+            void speakUk(resolution.ru);
           }
           return;
         }
@@ -431,7 +431,7 @@ export default function DevJudgeScreen() {
         durationMs: line?.audio?.durationMs ?? null,
       });
     } else if (line?.sentence?.uk) {
-      void speakRu(line.sentence.uk);
+      void speakUk(line.sentence.uk);
       log({ op: 'play', sentenceId: sid, rendered: false });
     }
   }, [detail, last, log]);

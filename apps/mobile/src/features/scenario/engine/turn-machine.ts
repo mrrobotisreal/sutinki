@@ -165,7 +165,7 @@ export type TurnEffect =
   /** Detect a meta-intent, else judge — the executor dispatches META or JUDGED. */
   | { type: 'DECIDE'; transcript: string; turnId: string; wavPath: string | null }
   | { type: 'RESCUE'; judge: JudgeResult; transcript: string; turnId: string }
-  /** Суфлёр lines (dynamic, never pre-rendered). */
+  /** Суфлер lines (dynamic, never pre-rendered). */
   | { type: 'SPEAK_GLOSS'; ru: string; en: string }
   | { type: 'SPEAK_RU'; text: string }
   | { type: 'ARM_SILENCE' }
