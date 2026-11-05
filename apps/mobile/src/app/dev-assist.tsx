@@ -311,6 +311,14 @@ export default function DevAssistScreen() {
     });
   }, [guard, log, wavPath]);
 
+  /** Language-param proof: the pinned model on the current clip with language 'uk'. */
+  const whisperUk = React.useCallback(() => {
+    guard('whisper-uk', async () => {
+      if (!isAssistInstalled(ASSIST_MODEL)) throw new Error('assist model not installed');
+      await runCandidate(ASSIST_MODEL, wavPath, 'uk');
+    });
+  }, [guard, runCandidate, wavPath]);
+
   const prune = React.useCallback(() => {
     guard('prune', async () => {
       pruneUnusedModelFiles();
@@ -389,6 +397,7 @@ export default function DevAssistScreen() {
         {button(`Fetch ${ASSIST_MODEL.size} via resolver (no gate)`, fetchViaResolver)}
         {button('Prune fp32 twins', prune)}
         {button('Service: transcribeEnglish', serviceEnglish)}
+        {button('Whisper uk on clip', whisperUk)}
       </View>
 
       <Text variant="caption" className="mb-2 mt-6 uppercase tracking-wider">
