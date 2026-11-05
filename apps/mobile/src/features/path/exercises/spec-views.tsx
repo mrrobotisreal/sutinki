@@ -170,7 +170,9 @@ export function SpecClozeView({ spec, onDone }: SpecViewProps<'cloze'>) {
                 typed.trim() ? 'bg-accent active:opacity-80' : 'bg-surface-2 opacity-50'
               }`}
             >
-              <Text className={`font-ui-medium ${typed.trim() ? 'text-on-accent' : ''}`}>Check</Text>
+              <Text className={`font-ui-medium ${typed.trim() ? 'text-on-accent' : ''}`}>
+                Check
+              </Text>
             </Pressable>
           )}
         </View>

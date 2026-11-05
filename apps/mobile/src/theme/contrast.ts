@@ -13,7 +13,13 @@ export function hexToRgb(hex: string): Rgb {
 }
 
 export function rgbToHex([r, g, b]: Rgb): string {
-  return '#' + [r, g, b].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('').toUpperCase();
+  return (
+    '#' +
+    [r, g, b]
+      .map((v) => Math.round(v).toString(16).padStart(2, '0'))
+      .join('')
+      .toUpperCase()
+  );
 }
 
 export function luminance([r, g, b]: Rgb): number {
@@ -53,14 +59,24 @@ export interface Pair {
 }
 
 const SURFACES = ['bg', 'surface', 'surface-2'] as const;
-const TEXTS = ['text', 'text-muted', 'accent', 'accent-2', 'success', 'danger', 'track-warm'] as const;
+const TEXTS = [
+  'text',
+  'text-muted',
+  'accent',
+  'accent-2',
+  'success',
+  'danger',
+  'track-warm',
+] as const;
 const LEVELS = ['level-a1', 'level-a2', 'level-b1', 'level-b2', 'level-c1'] as const;
 
 /** Gated pairs: [fg token, bg token, min ratio]. */
 export function gatedPairs(): Pair[] {
   const pairs: Pair[] = [];
-  for (const t of TEXTS) for (const s of SURFACES) pairs.push({ fg: t, bg: s, min: 4.5, label: `${t} on ${s}` });
-  for (const a of ['accent', 'accent-2']) pairs.push({ fg: 'on-accent', bg: a, min: 4.5, label: `on-accent on ${a}` });
+  for (const t of TEXTS)
+    for (const s of SURFACES) pairs.push({ fg: t, bg: s, min: 4.5, label: `${t} on ${s}` });
+  for (const a of ['accent', 'accent-2'])
+    pairs.push({ fg: 'on-accent', bg: a, min: 4.5, label: `on-accent on ${a}` });
   return pairs;
 }
 

@@ -179,7 +179,9 @@ export default function DevTtsScreen() {
                 : 'rounded-full border border-border bg-surface px-4 py-2 active:bg-surface-2'
             }
           >
-            <Text className={rate === r ? 'font-ui-medium text-on-accent' : 'font-ui-medium'}>{r}×</Text>
+            <Text className={rate === r ? 'font-ui-medium text-on-accent' : 'font-ui-medium'}>
+              {r}×
+            </Text>
           </Pressable>
         ))}
       </View>
