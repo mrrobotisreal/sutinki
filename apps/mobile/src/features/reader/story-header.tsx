@@ -113,7 +113,7 @@ export function StoryHeader({
               onPress={openSource}
               hitSlop={6}
               accessibilityRole="link"
-              accessibilityLabel={`Источник: ${sourceLine}`}
+              accessibilityLabel={`Джерело: ${sourceLine}`}
               className="mt-3 flex-row items-center gap-1 self-start active:opacity-70"
             >
               <Text variant="caption">{sourceLine}</Text>
