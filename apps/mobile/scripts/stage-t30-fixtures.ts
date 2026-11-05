@@ -1,18 +1,18 @@
 /**
  * T30 on-device fixture staging (the T10/T17 host-side pattern): open a
- * PULLED device sumrak.db with better-sqlite3, bring it to the latest
+ * PULLED device sutinki.db with better-sqlite3, bring it to the latest
  * migrations, and run the app's OWN importer over the T30 path fixtures —
  * content tables only, user data untouched. Sync never removes packs that
  * are missing from the manifest, so staged fixtures survive a real sync;
  * remove them any time from the packs management screen.
  *
  * Usage (from apps/mobile, app force-stopped first):
- *   adb shell am force-stop io.winapps.sumrak
- *   adb exec-out run-as io.winapps.sumrak cat files/SQLite/sumrak.db > /tmp/sumrak.db
- *   npx tsx scripts/stage-t30-fixtures.ts /tmp/sumrak.db
- *   cat /tmp/sumrak.db | adb shell run-as io.winapps.sumrak sh -c 'cat > files/SQLite/sumrak.db'
+ *   adb shell am force-stop io.winapps.sutinki
+ *   adb exec-out run-as io.winapps.sutinki cat files/SQLite/sutinki.db > /tmp/sutinki.db
+ *   npx tsx scripts/stage-t30-fixtures.ts /tmp/sutinki.db
+ *   cat /tmp/sutinki.db | adb shell run-as io.winapps.sutinki sh -c 'cat > files/SQLite/sutinki.db'
  *
- * (If files/SQLite also holds sumrak.db-wal / -shm, delete them on-device
+ * (If files/SQLite also holds sutinki.db-wal / -shm, delete them on-device
  * after pushing — the pulled snapshot is the checkpointed truth.)
  */
 import Database from 'better-sqlite3';
