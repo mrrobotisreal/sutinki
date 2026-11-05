@@ -1,3 +1,4 @@
+import { pluralUk } from '@/lib/uk-plural';
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { Modal, Pressable, Switch, View } from 'react-native';
@@ -109,38 +110,40 @@ export function GenerateSheet({
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Close" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
 
       <View className="rounded-t-2xl border-t border-border bg-surface px-5 pb-10 pt-4">
         <View className="mb-3 flex-row items-center justify-between">
           <Text className="flex-1 pr-3 font-ui-medium text-lg" numberOfLines={2}>
             {title}
           </Text>
-          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Close generate sheet">
+          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрити вікно створення">
             <Ionicons name="close" size={22} color={tokens.textMuted} />
           </Pressable>
         </View>
 
         <RunProfileControls profile={profile} table={table} onChange={setProfile} />
 
-        <Text variant="caption" className="mt-3" accessibilityLabel="Estimate">
+        <Text variant="caption" className="mt-3" accessibilityLabel="Оцінка">
           {formatEstimate(estimate, multiplier)}
-          {purpose === 'batch' && estimate ? ` × ${multiplier} words` : ''}
+          {purpose === 'batch' && estimate
+            ? ` × ${multiplier} ${pluralUk(multiplier, ['слово', 'слова', 'слів'])}`
+            : ''}
         </Text>
         {note ? (
-          <Text variant="caption" className="mt-1" accessibilityLabel="Batch note">
+          <Text variant="caption" className="mt-1" accessibilityLabel="Примітка до пакета">
             {note}
           </Text>
         ) : null}
 
         <View className="mt-3 flex-row items-center justify-between">
-          <Text className="text-sm">Save as my default</Text>
+          <Text className="text-sm">Зберегти як типове</Text>
           <Switch
             value={saveAsDefault}
             onValueChange={setSaveAsDefault}
             trackColor={{ false: tokens.surface2, true: tokens.accent }}
             thumbColor={tokens.text}
-            accessibilityLabel="Save as my default"
+            accessibilityLabel="Зберегти як типове"
           />
         </View>
 
@@ -154,7 +157,7 @@ export function GenerateSheet({
           }`}
         >
           <Text className={`font-ui-medium ${online ? 'text-text' : 'text-text-muted'}`}>
-            {online ? 'Generate' : 'Offline — connect to generate'}
+            {online ? 'Створити' : 'Офлайн — підключіться, щоб створити'}
           </Text>
         </Pressable>
       </View>

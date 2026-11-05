@@ -1,0 +1,48 @@
+{
+  "input": {
+    "language": "uk",
+    "kind": "word",
+    "headword": "ходити",
+    "surface": "ходив",
+    "translation": "to walk, to go (habitually / on foot)",
+    "grammar": "past, masc.",
+    "pos": "verb",
+    "level": "A1",
+    "contexts": [
+      "Хтось ходить нагорі, але будинок порожній."
+    ]
+  },
+  "model": "anthropic/claude-sonnet-5",
+  "choices": [
+    {
+      "message": {
+        "content": "{\"v\": 1, \"language\": \"uk\", \"kind\": \"word\", \"pos\": \"verb\", \"headword\": {\"ru\": \"ходи́ти\", \"plain\": \"ходити\"}, \"overview\": {\"gloss\": \"to walk, to go (habitually / on foot, multidirectional)\", \"facts\": [{\"label\": \"Aspect\", \"value\": \"imperfective\"}, {\"label\": \"Aspect partner (unidirectional)\", \"value\": \"йти (impf.) / піти (pf.)\"}, {\"label\": \"Motion verb type\", \"value\": \"multidirectional (habitual, repeated, or back-and-forth motion)\"}, {\"label\": \"Conjugation class\", \"value\": \"II (-иш), д→дж alternation in 1st p. sg.\"}, {\"label\": \"Stress pattern\", \"value\": \"mobile: ending in 1 sg. (ходжу́), stem elsewhere (хо́диш)\"}, {\"label\": \"Transitivity\", \"value\": \"intransitive\"}, {\"label\": \"Frequency\", \"value\": \"very common, A1 core verb\"}], \"notes\": [\"Describes walking/going on foot as a habit, repeated action, or motion without a fixed single direction, unlike йти which marks one concrete trip.\", \"In the sentence «Хтось ходить нагорі» the verb describes repeated/ongoing footsteps rather than a single trip — typical multidirectional use.\"]}, \"sections\": [{\"id\": \"verb-nonpast\", \"title\": {\"en\": \"Present & future\", \"ru\": \"Теперішній і майбутній час\"}, \"layout\": \"grid\", \"grid\": {\"rowLabels\": [\"я\", \"ти\", \"він / вона / воно\", \"ми\", \"ви\", \"вони\"], \"colLabels\": [\"Present\", \"Future\"], \"cells\": [[{\"ru\": \"ходжу́\", \"plain\": \"ходжу\", \"note\": \"д→дж alternation\"}, {\"ru\": \"бу́ду ходи́ти\", \"plain\": \"буду ходити\"}], [{\"ru\": \"хо́диш\", \"plain\": \"ходиш\"}, {\"ru\": \"бу́деш ходи́ти\", \"plain\": \"будеш ходити\"}], [{\"ru\": \"хо́дить\", \"plain\": \"ходить\"}, {\"ru\": \"бу́де ходи́ти\", \"plain\": \"буде ходити\"}], [{\"ru\": \"хо́димо\", \"plain\": \"ходимо\"}, {\"ru\": \"бу́демо ходи́ти\", \"plain\": \"будемо ходити\"}], [{\"ru\": \"хо́дите\", \"plain\": \"ходите\"}, {\"ru\": \"бу́дете ходи́ти\", \"plain\": \"будете ходити\"}], [{\"ru\": \"хо́дять\", \"plain\": \"ходять\"}, {\"ru\": \"бу́дуть ходи́ти\", \"plain\": \"будуть ходити\"}]]}}, {\"id\": \"verb-past\", \"title\": {\"en\": \"Past & conditional\", \"ru\": \"Минулий і умовний час\"}, \"layout\": \"grid\", \"grid\": {\"rowLabels\": [\"masc. (він)\", \"fem. (вона)\", \"neut. (воно)\", \"pl. (вони)\"], \"colLabels\": [\"Past\", \"Conditional (б / би)\"], \"cells\": [[{\"ru\": \"ходи́в\", \"plain\": \"ходив\"}, {\"ru\": \"ходи́в би\", \"plain\": \"ходив би\"}], [{\"ru\": \"ходи́ла\", \"plain\": \"ходила\"}, {\"ru\": \"ходи́ла б\", \"plain\": \"ходила б\"}], [{\"ru\": \"ходи́ло\", \"plain\": \"ходило\"}, {\"ru\": \"ходи́ло б\", \"plain\": \"ходило б\"}], [{\"ru\": \"ходи́ли\", \"plain\": \"ходили\"}, {\"ru\": \"ходи́ли б\", \"plain\": \"ходили б\"}]]}, \"note\": \"The target form «ходив» (past, masc.) is the standard -в ending, no irregularity.\"}, {\"id\": \"verb-imperative\", \"title\": {\"en\": \"Imperative\", \"ru\": \"Наказовий спосіб\"}, \"layout\": \"grid\", \"grid\": {\"rowLabels\": [\"ти\", \"ви\"], \"colLabels\": [\"Imperative\"], \"cells\": [[{\"ru\": \"ходи́\", \"plain\": \"ходи\"}], [{\"ru\": \"ході́ть\", \"plain\": \"ходіть\"}]]}, \"note\": \"Inclusive 'ми' form: «ході́мо» (let's go/walk). As an imperfective verb, ходити is the natural choice for negative imperatives: «не ходи́ туди» (don't go there).\"}, {\"id\": \"verb-participles\", \"title\": {\"en\": \"Participles\", \"ru\": \"Дієприкметники\"}, \"layout\": \"grid\", \"grid\": {\"rowLabels\": [\"Active present\", \"Active past\", \"Passive (-ний / -тий)\"], \"colLabels\": [\"Form\"], \"cells\": [[{\"ru\": \"ходячи́й\", \"plain\": \"ходячий\", \"gloss\": \"one who walks, walking (adj.)\", \"note\": \"bookish/rare, often replaced by a relative clause «той, хто ходить»\"}], [null], [null]]}, \"note\": \"No active past participle in standard use; no passive participle since ходити is intransitive.\"}, {\"id\": \"verb-gerunds\", \"title\": {\"en\": \"Verbal adverbs\", \"ru\": \"Дієприслівники\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"ходячи́\", \"plain\": \"ходячи\", \"gloss\": \"while walking / going around\", \"example\": {\"ru\": \"Він щось бурмотів, ходячи по кімнаті.\", \"en\": \"He was muttering something while pacing around the room.\"}}], \"note\": \"Past gerund (-вши) is not typical for this imperfective verb.\"}, {\"id\": \"verb-family\", \"title\": {\"en\": \"Aspect pair & word family\", \"ru\": \"Вид і родина слова\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"йти́\", \"plain\": \"йти\", \"gloss\": \"to go/walk (one direction, concrete trip)\", \"tags\": [\"partner\", \"uni\"]}, {\"ru\": \"піти́\", \"plain\": \"піти\", \"gloss\": \"to set off, leave (on foot, completed)\", \"tags\": [\"pf\"]}, {\"ru\": \"прихо́дити\", \"plain\": \"приходити\", \"gloss\": \"to come, arrive (repeatedly/habitually)\", \"tags\": [\"impf\", \"prefix:при-\"]}, {\"ru\": \"прийти́\", \"plain\": \"прийти\", \"gloss\": \"to arrive, come (once, completed)\", \"tags\": [\"pf\", \"prefix:при-\"]}, {\"ru\": \"вихо́дити\", \"plain\": \"виходити\", \"gloss\": \"to go out, exit (repeatedly)\", \"tags\": [\"impf\", \"prefix:ви-\"]}, {\"ru\": \"ви́йти\", \"plain\": \"вийти\", \"gloss\": \"to exit, come out (once)\", \"tags\": [\"pf\", \"prefix:ви-\"]}, {\"ru\": \"захо́дити\", \"plain\": \"заходити\", \"gloss\": \"to drop by, pop in (repeatedly)\", \"tags\": [\"impf\", \"prefix:за-\"]}, {\"ru\": \"зайти́\", \"plain\": \"зайти\", \"gloss\": \"to drop in, pop by (once)\", \"tags\": [\"pf\", \"prefix:за-\"]}, {\"ru\": \"перехо́дити\", \"plain\": \"переходити\", \"gloss\": \"to cross, go across (repeatedly)\", \"tags\": [\"impf\", \"prefix:пере-\"]}, {\"ru\": \"перейти́\", \"plain\": \"перейти\", \"gloss\": \"to cross over (once, completed)\", \"tags\": [\"pf\", \"prefix:пере-\"]}, {\"ru\": \"хода́\", \"plain\": \"хода\", \"gloss\": \"gait, way of walking\", \"tags\": [\"noun\"]}, {\"ru\": \"хід\", \"plain\": \"хід\", \"gloss\": \"move, motion, course (of events)\", \"tags\": [\"noun\"]}, {\"ru\": \"ходови́й\", \"plain\": \"ходовий\", \"gloss\": \"popular, in demand / walking-related\", \"tags\": [\"adj\"]}]}, {\"id\": \"verb-government\", \"title\": {\"en\": \"Government & collocations\", \"ru\": \"Керування і сполучуваність\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"ходи́ти пі́шки\", \"plain\": \"ходити пішки\", \"gloss\": \"to walk, go on foot\", \"example\": {\"ru\": \"Я щодня ходжу пішки на роботу.\", \"en\": \"I walk to work on foot every day.\"}}, {\"ru\": \"ходи́ти до шко́ли\", \"plain\": \"ходити до школи\", \"gloss\": \"to go to school — до + genitive\", \"example\": {\"ru\": \"Діти ходять до школи з дев'яти років.\", \"en\": \"Children go to school from the age of nine.\"}}, {\"ru\": \"ходи́ти в кіно́ / на конце́рт\", \"plain\": \"ходити в кіно / на концерт\", \"gloss\": \"to go to the movies/a concert — в/на + accusative\", \"example\": {\"ru\": \"Ми часто ходимо в кіно по п'ятницях.\", \"en\": \"We often go to the movies on Fridays.\"}}, {\"ru\": \"ходи́ти по магази́нах\", \"plain\": \"ходити по магазинах\", \"gloss\": \"to go shopping around — по + locative\", \"example\": {\"ru\": \"Вона любить ходити по магазинах у вихідні.\", \"en\": \"She likes going shopping around on weekends.\"}}]}]}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 4971,
+    "completion_tokens": 5995,
+    "total_tokens": 10966,
+    "cost": 0.069892,
+    "is_byok": false,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.069892,
+      "upstream_inference_prompt_cost": 0.009942,
+      "upstream_inference_completions_cost": 0.05995
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2486,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    }
+  },
+  "_patched": "Live capture (see UT13b log); individual forms hand-corrected after reading: ходячи́; dropped dubious row «ходитися»"
+}

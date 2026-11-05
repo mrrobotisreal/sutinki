@@ -20,7 +20,7 @@ import { SectionCard } from './section-table';
 import { VersionsSheet } from './versions-sheet';
 
 /** §5.4: needs-enrichment words have no profile key. */
-export const NEEDS_LEMMA_MESSAGE = 'Add a lemma first (Edit or Enrich)';
+export const NEEDS_LEMMA_MESSAGE = 'Спершу додайте лему («Редагувати» або «Збагатити»)';
 
 type GenState =
   | { phase: 'idle' }
@@ -102,7 +102,7 @@ export function FormsTab({
         <Ionicons name="help-circle-outline" size={24} color={theme.textMuted} />
         <Text className="text-center font-ui-medium">{NEEDS_LEMMA_MESSAGE}</Text>
         <Text variant="caption" className="text-center">
-          Word forms are keyed by the lemma, so the word needs one before it can be profiled.
+          Форми слова прив’язані до леми, тож слову потрібна лема, щоб створити профіль.
         </Text>
       </View>
     );
@@ -117,8 +117,8 @@ export function FormsTab({
   }
 
   const sheetTitle = hasProfile
-    ? `Regenerate forms for «${headword}»`
-    : `Generate forms for «${headword}»`;
+    ? `Створити форми знову: «${headword}»`
+    : `Створити форми: «${headword}»`;
   const sheet = (
     <GenerateSheet
       open={sheetOpen}
@@ -157,7 +157,7 @@ export function FormsTab({
             accessibilityRole="button"
             className="rounded-xl bg-accent px-5 py-2.5 active:opacity-80"
           >
-            <Text className="font-ui-medium text-sm">Retry</Text>
+            <Text className="font-ui-medium text-sm">Повторити</Text>
           </Pressable>
           <Pressable
             onPress={() => setGen({ phase: 'idle' })}
@@ -165,7 +165,7 @@ export function FormsTab({
             className="rounded-xl border border-border px-5 py-2.5 active:bg-surface-2"
           >
             <Text className="font-ui-medium text-sm text-text-muted">
-              {hasProfile ? 'Keep current' : 'Dismiss'}
+              {hasProfile ? 'Залишити поточний' : 'Закрити'}
             </Text>
           </Pressable>
         </View>
@@ -179,16 +179,16 @@ export function FormsTab({
       <>
         <View className="mt-6 items-center gap-2 rounded-xl border border-border bg-surface px-6 py-10">
           <Ionicons name="sparkles-outline" size={26} color={theme.accent} />
-          <Text className="font-ui-medium text-lg">No forms yet</Text>
+          <Text className="font-ui-medium text-lg">Форм ще немає</Text>
           <Text variant="caption" className="text-center">
-            Generate the full grammatical profile of this word — conjugations, declensions,
-            participles, its word family — once, then it&apos;s yours offline.
+            Створіть повний граматичний профіль слова — дієвідмінювання, відмінювання,
+            дієприкметники, словникову родину — один раз, і далі він працює офлайн.
           </Text>
           <Pressable
             onPress={() => setSheetOpen(true)}
             disabled={!online}
             accessibilityRole="button"
-            accessibilityLabel="Generate forms"
+            accessibilityLabel="Створити форми"
             accessibilityState={{ disabled: !online }}
             className={`mt-3 flex-row items-center gap-2 rounded-xl px-5 py-3 ${
               online ? 'bg-accent active:opacity-80' : 'bg-surface-2'
@@ -200,7 +200,7 @@ export function FormsTab({
               color={online ? theme.text : theme.textMuted}
             />
             <Text className={`font-ui-medium ${online ? 'text-text' : 'text-text-muted'}`}>
-              {online ? 'Generate forms' : 'Offline — connect to generate'}
+              {online ? 'Створити форми' : 'Офлайн — підключіться, щоб створити'}
             </Text>
           </Pressable>
         </View>
@@ -281,7 +281,7 @@ function ProfileView({
           <Pressable
             onPress={onVersions}
             accessibilityRole="button"
-            accessibilityLabel={`Versions, ${versionCount}`}
+            accessibilityLabel={`Версії, ${versionCount}`}
             className="flex-row items-center gap-1.5 rounded-full border border-border px-3 py-1.5 active:bg-surface-2"
           >
             <Ionicons name="layers-outline" size={14} color={theme.textMuted} />
@@ -294,7 +294,7 @@ function ProfileView({
           onPress={onRegenerate}
           disabled={!online}
           accessibilityRole="button"
-          accessibilityLabel={online ? 'Regenerate forms' : 'Regenerate forms, offline'}
+          accessibilityLabel={online ? 'Створити форми знову' : 'Створити форми знову, офлайн'}
           accessibilityState={{ disabled: !online }}
           className={`flex-row items-center gap-1.5 rounded-full border px-3 py-1.5 ${
             online ? 'border-accent/40 active:bg-surface-2' : 'border-border opacity-50'
@@ -309,7 +309,7 @@ function ProfileView({
             variant="caption"
             className={`font-ui-medium ${online ? 'text-accent' : 'text-text-muted'}`}
           >
-            {online ? 'Regenerate' : 'Regenerate · offline'}
+            {online ? 'Створити знову' : 'Створити знову · офлайн'}
           </Text>
         </Pressable>
       </View>

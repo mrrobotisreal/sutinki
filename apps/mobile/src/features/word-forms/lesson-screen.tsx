@@ -64,7 +64,7 @@ export function LessonScreen({ id }: { id: string }) {
   if (lesson.isPending) {
     return (
       <View className="flex-1 items-center justify-center bg-bg">
-        <Stack.Screen options={{ title: 'Lesson' }} />
+        <Stack.Screen options={{ title: 'Урок' }} />
         <ActivityIndicator color={theme.accent} />
       </View>
     );
@@ -72,9 +72,9 @@ export function LessonScreen({ id }: { id: string }) {
   if (lesson.isError || !row) {
     return (
       <>
-        <Stack.Screen options={{ title: 'Lesson' }} />
+        <Stack.Screen options={{ title: 'Урок' }} />
         <QueryErrorScreen
-          message={lesson.isError ? undefined : 'This lesson no longer exists.'}
+          message={lesson.isError ? undefined : 'Цього уроку більше немає.'}
           onRetry={() => void lesson.refetch()}
         />
       </>
@@ -87,15 +87,15 @@ export function LessonScreen({ id }: { id: string }) {
   // that still carries this section, and connectivity.
   const canLearnAgain = !!item && !!current.data && !!section && online && !busy;
   const learnAgainReason = !online
-    ? 'Offline — connect to learn'
+    ? 'Офлайн — підключіться, щоб вчитися'
     : !item
-      ? 'Word not in bank'
+      ? 'Слова немає в банку'
       : current.isPending
         ? undefined
         : !current.data
-          ? 'No current profile'
+          ? 'Немає поточного профілю'
           : !section
-            ? 'Section not in the current profile'
+            ? 'Розділу немає в поточному профілі'
             : undefined;
 
   return (
@@ -110,13 +110,13 @@ export function LessonScreen({ id }: { id: string }) {
         <RNText className="font-reading text-3xl leading-10 text-text" accessibilityRole="header">
           {row.headword}
         </RNText>
-        <Text className="mt-0.5 font-ui-medium text-lg">{title.en}</Text>
+        <Text className="mt-0.5 font-ui-medium text-lg">{title.ru}</Text>
         <Text variant="caption" className="text-xs">
           {title.ru}
         </Text>
 
         {/* receipt line (§7.3) */}
-        <Text variant="caption" className="mt-3 text-xs" accessibilityLabel="Receipt">
+        <Text variant="caption" className="mt-3 text-xs" accessibilityLabel="Квитанція">
           {formatLessonReceipt(row)}
         </Text>
 
@@ -135,16 +135,16 @@ export function LessonScreen({ id }: { id: string }) {
             <Pressable
               onPress={() => item && section && runLearn(item, current.data!, section, learn.run)}
               accessibilityRole="button"
-              accessibilityLabel="Retry lesson"
+              accessibilityLabel="Повторити урок"
               className="rounded-lg bg-accent px-3 py-1.5 active:opacity-80"
             >
-              <Text className="font-ui-medium text-xs">Retry</Text>
+              <Text className="font-ui-medium text-xs">Повторити</Text>
             </Pressable>
             <Pressable
               onPress={dismiss}
               hitSlop={6}
               accessibilityRole="button"
-              accessibilityLabel="Dismiss lesson error"
+              accessibilityLabel="Закрити помилку уроку"
             >
               <Ionicons name="close" size={16} color={theme.textMuted} />
             </Pressable>
@@ -156,7 +156,7 @@ export function LessonScreen({ id }: { id: string }) {
             disabled={!canLearnAgain}
             accessibilityRole="button"
             accessibilityLabel={
-              learnAgainReason ? `Learn again, ${learnAgainReason.toLowerCase()}` : 'Learn again'
+              learnAgainReason ? `Вчити знову, ${learnAgainReason.toLowerCase()}` : 'Вчити знову'
             }
             accessibilityState={{ disabled: !canLearnAgain, busy }}
             className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-xl py-2.5 ${
@@ -177,8 +177,8 @@ export function LessonScreen({ id }: { id: string }) {
               numberOfLines={1}
             >
               {busy
-                ? `Asking ${PROVIDER_LABELS[learn.run.provider]}…`
-                : (learnAgainReason ?? 'Learn again')}
+                ? `Запит до ${PROVIDER_LABELS[learn.run.provider]}…`
+                : (learnAgainReason ?? 'Вчити знову')}
             </Text>
           </Pressable>
           <Pressable
@@ -191,7 +191,7 @@ export function LessonScreen({ id }: { id: string }) {
             }
             disabled={!item}
             accessibilityRole="button"
-            accessibilityLabel={item ? 'Open word' : 'Open word, word not in bank'}
+            accessibilityLabel={item ? 'Відкрити слово' : 'Відкрити слово, слова немає в банку'}
             accessibilityState={{ disabled: !item }}
             className={`flex-1 flex-row items-center justify-center gap-1.5 rounded-xl border py-2.5 ${
               item ? 'border-border bg-surface-2 active:bg-border' : 'border-border opacity-50'
@@ -202,7 +202,7 @@ export function LessonScreen({ id }: { id: string }) {
               className={`font-ui-medium text-sm ${item ? 'text-text' : 'text-text-muted'}`}
               numberOfLines={1}
             >
-              {item ? 'Open word' : 'Word not in bank'}
+              {item ? 'Відкрити слово' : 'Слова немає в банку'}
             </Text>
           </Pressable>
         </View>
@@ -211,7 +211,7 @@ export function LessonScreen({ id }: { id: string }) {
       <GenerateSheet
         open={sheetOpen}
         purpose="lesson"
-        title={`Learn: ${title.en}`}
+        title={`Вчити: ${title.ru}`}
         onClose={() => setSheetOpen(false)}
         onGenerate={(run) => {
           setSheetOpen(false);

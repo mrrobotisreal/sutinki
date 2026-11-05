@@ -1,3 +1,4 @@
+import { pluralUk } from '@/lib/uk-plural';
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, View } from 'react-native';
@@ -19,11 +20,13 @@ import {
 } from './batch-service';
 import { useWordFormsBatch } from './use-word-forms-batch';
 
+const WORDS_FORMS = ['слово', 'слова', 'слів'] as const;
+
 const PAUSE_COPY: Record<BatchPauseReason, string> = {
-  offline: 'Paused — offline, continues when you reconnect',
-  'no-key': 'Paused — no OpenRouter key (Settings → AI)',
-  'http-auth': 'Paused — the API key was rejected (Settings → AI)',
-  transport: 'Paused — network trouble, continues on the next try',
+  offline: 'Пауза — немає мережі, продовжиться після підключення',
+  'no-key': 'Пауза — немає ключа OpenRouter (Налаштування → ШІ)',
+  'http-auth': 'Пауза — ключ API відхилено (Налаштування → ШІ)',
+  transport: 'Пауза — проблеми з мережею, продовжиться за наступної спроби',
 };
 
 /**
@@ -63,9 +66,9 @@ export function WordFormsBatchRow() {
     <GenerateSheet
       open={sheetOpen}
       purpose="batch"
-      title={`Generate forms for ${n} ${n === 1 ? 'word' : 'words'}`}
+      title={`Створити форми: ${n} ${pluralUk(n, WORDS_FORMS)}`}
       count={n}
-      note={skipped > 0 ? `${skipped} skipped — no lemma yet` : undefined}
+      note={skipped > 0 ? `${skipped} пропущено — ще немає леми` : undefined}
       onClose={() => setSheetOpen(false)}
       onGenerate={onGenerate}
     />
@@ -76,20 +79,20 @@ export function WordFormsBatchRow() {
     const step = Math.min(progress.count, progress.done + progress.failed + 1);
     const line =
       progress.phase === 'running'
-        ? `Generating forms · ${step}/${progress.count}${
+        ? `Створення форм · ${step}/${progress.count}${
             progress.currentHeadword ? ` · «${progress.currentHeadword}»…` : '…'
           }`
-        : `Generating forms · ${progress.done + progress.failed}/${progress.count}`;
+        : `Створення форм · ${progress.done + progress.failed}/${progress.count}`;
     const sub =
       progress.phase === 'paused' && progress.pauseReason
         ? PAUSE_COPY[progress.pauseReason]
         : progress.failed > 0
-          ? `${progress.failed} failed so far`
-          : 'One word at a time — safe to leave the app';
+          ? `Невдало досі: ${progress.failed}`
+          : 'Слово за словом — можна вийти із застосунку';
     return (
       <View
         className="mx-4 mb-2 flex-row items-center gap-3 rounded-xl border border-accent/40 bg-surface px-4 py-3"
-        accessibilityLabel="Word forms batch"
+        accessibilityLabel="Пакет форм слів"
       >
         {progress.phase === 'running' ? (
           <ActivityIndicator color={theme.accent} />
@@ -97,7 +100,7 @@ export function WordFormsBatchRow() {
           <Pressable
             onPress={() => void pumpWordFormsBatch()}
             hitSlop={8}
-            accessibilityLabel="Resume batch"
+            accessibilityLabel="Продовжити пакет"
           >
             <Ionicons name="pause-circle-outline" size={20} color={theme.textMuted} />
           </Pressable>
@@ -106,7 +109,7 @@ export function WordFormsBatchRow() {
           <Text
             className="font-ui-medium text-sm"
             numberOfLines={1}
-            accessibilityLabel="Batch progress"
+            accessibilityLabel="Перебіг пакета"
           >
             {line}
           </Text>
@@ -117,10 +120,10 @@ export function WordFormsBatchRow() {
         <Pressable
           onPress={() => void cancelWordFormsBatch()}
           accessibilityRole="button"
-          accessibilityLabel="Cancel batch"
+          accessibilityLabel="Скасувати пакет"
           className="rounded-lg border border-border px-3 py-1.5 active:bg-surface-2"
         >
-          <Text className="text-sm text-text-muted">Cancel</Text>
+          <Text className="text-sm text-text-muted">Скасувати</Text>
         </Pressable>
       </View>
     );
@@ -131,29 +134,29 @@ export function WordFormsBatchRow() {
     return (
       <View
         className="mx-4 mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
-        accessibilityLabel="Word forms batch"
+        accessibilityLabel="Пакет форм слів"
       >
         <Ionicons name="alert-circle-outline" size={18} color={theme.danger} />
         <View className="flex-1">
-          <Text className="font-ui-medium text-sm" accessibilityLabel="Batch result">
-            {progress.failed} failed · {progress.done} done
+          <Text className="font-ui-medium text-sm" accessibilityLabel="Результат пакета">
+            {progress.failed} невдало · {progress.done} готово
           </Text>
           <Text variant="caption" numberOfLines={1}>
-            Retry re-runs only the failed words
+            Повтор запустить лише невдалі слова
           </Text>
         </View>
         <Pressable
           onPress={() => void retryWordFormsBatch()}
           accessibilityRole="button"
-          accessibilityLabel="Retry failed"
+          accessibilityLabel="Повторити невдалі"
           className="rounded-lg bg-accent px-3 py-1.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-sm">Retry</Text>
+          <Text className="font-ui-medium text-sm">Повторити</Text>
         </Pressable>
         <Pressable
           onPress={() => void dismissWordFormsBatch()}
           hitSlop={8}
-          accessibilityLabel="Dismiss batch result"
+          accessibilityLabel="Закрити результат пакета"
         >
           <Ionicons name="close" size={18} color={theme.textMuted} />
         </Pressable>
@@ -169,18 +172,18 @@ export function WordFormsBatchRow() {
         onPress={() => setSheetOpen(true)}
         disabled={busy}
         accessibilityRole="button"
-        accessibilityLabel="Generate all forms"
+        accessibilityLabel="Створити всі форми"
         className="mx-4 mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
       >
         <Ionicons name="grid-outline" size={16} color={theme.accent} />
         <View className="flex-1">
           <Text className="font-ui-medium text-sm">
-            {n} {n === 1 ? 'word' : 'words'} without forms · Generate all
+            {n} {pluralUk(n, WORDS_FORMS)} без форм · Створити всі
           </Text>
           <Text variant="caption" numberOfLines={1}>
             {skipped > 0
-              ? `${skipped} skipped — no lemma yet (Edit or Enrich first)`
-              : 'Conjugations, declensions, word family — one run each, yours offline'}
+              ? `${skipped} пропущено — ще немає леми (спершу «Редагувати» або «Збагатити»)`
+              : 'Дієвідмінювання, відмінювання, словникова родина — один запуск на слово, далі офлайн'}
           </Text>
         </View>
         {busy ? (

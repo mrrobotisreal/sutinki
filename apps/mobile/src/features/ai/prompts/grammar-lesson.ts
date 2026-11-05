@@ -25,7 +25,16 @@ Structure (use these headings):
 ## Watch out                                            — 2–4 typical learner mistakes for this section + one memory hook.
 ## Check yourself                                       — 3 short questions; answers after a "---" line.
 
-Rules: 350–700 words; Cyrillic NFC with ё preserved; stress marks (U+0301) on every {LANGUAGE_NAME} word of two or more syllables in the table and the examples; no preamble, no closing pleasantries; do not restate the whole profile — stay inside the section. Register notes where relevant (colloquial / bookish / vulgar).`;
+Rules: 350–700 words; Cyrillic NFC with {SPELLING_NOTE}; stress marks (U+0301) on every {LANGUAGE_NAME} word of two or more syllables in the table and the examples; no preamble, no closing pleasantries; do not restate the whole profile — stay inside the section. Register notes where relevant (colloquial / bookish / vulgar).{EXTRA_RULES}`;
+
+const LESSON_SLOTS: Record<ProfileLanguage, { spelling: string; extra: string }> = {
+  ru: { spelling: 'ё preserved', extra: '' },
+  uk: {
+    spelling: 'ґ, ї, є, і and the apostrophe preserved',
+    extra:
+      ' Teach standard literary Ukrainian only (Український правопис 2019): no Russian or surzhyk forms; when a Russian speaker would likely transfer a wrong pattern (ы/и, -ться, Russian case endings, no vocative), say so in "Watch out". Mark stress only where you are sure and keep it identical to the stored table (one mark per word; never two); never write "по-руськи" (say "по-російськи"); do not invent Russian-vs-Ukrainian pronunciation claims. Use the case names nominative, genitive, dative, accusative, instrumental, locative, vocative.',
+  },
+};
 
 /** The rendered system prompt for one word × section (exported for the prompt test). */
 export function buildGrammarLessonSystem(
@@ -34,7 +43,10 @@ export function buildGrammarLessonSystem(
   headword: string,
 ): string {
   const name: string = LANGUAGE_NAMES[language];
-  return SYSTEM_TEMPLATE.replaceAll('{LANGUAGE_NAME}', name)
+  const slots = LESSON_SLOTS[language];
+  return SYSTEM_TEMPLATE.replaceAll('{SPELLING_NOTE}', slots.spelling)
+    .replaceAll('{EXTRA_RULES}', slots.extra)
+    .replaceAll('{LANGUAGE_NAME}', name)
     .replaceAll('{SECTION_TITLE_EN}', sectionTitleEn)
     .replaceAll('{HEADWORD}', headword);
 }
@@ -47,7 +59,7 @@ export interface LessonEncounter {
 
 export interface GrammarLessonInput {
   language: ProfileLanguage;
-  /** The profile's plain headword (ё preserved, no stress marks). */
+  /** The profile's plain headword (spelling preserved, no stress marks). */
   headword: string;
   /** The profile's `pos` slug and overview gloss. */
   pos: string;

@@ -4,7 +4,7 @@
  * follow-up ticket can develop against them). The UT that finishes the feature deletes
  * the key. Hidden code must still compile, typecheck and keep its tests green.
  */
-export const UK_PENDING = { wordProfiles: true, scenarios: true } satisfies Record<string, boolean>;
+export const UK_PENDING = { scenarios: true } satisfies Record<string, boolean>;
 
 export function ukPending(key: keyof typeof UK_PENDING): boolean {
   return UK_PENDING[key] && !(typeof __DEV__ !== 'undefined' && __DEV__);

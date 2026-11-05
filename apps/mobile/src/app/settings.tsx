@@ -188,7 +188,7 @@ export default function SettingsScreen() {
       <BackupSettingsSection />
 
       <AiSettingsSection />
-      {!ukPending('wordProfiles') && <GrammarPresetSection />}
+      <GrammarPresetSection />
 
       <Text variant="caption" className="mb-2 mt-8 uppercase tracking-wider">
         Diagnostics

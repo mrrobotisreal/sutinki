@@ -1,28 +1,28 @@
 {
   "input": {
-    "language": "ru",
+    "language": "uk",
     "kind": "phrase",
-    "headword": "волосы встали дыбом",
-    "translation": "one's hair stood on end",
-    "level": "B1",
+    "headword": "добрий день",
+    "translation": "good day (hello)",
+    "level": "A1",
     "contexts": [
-      "Когда я услышал шаги наверху, у меня волосы встали дыбом."
+      "Добрий день, чим можу допомогти?"
     ]
   },
   "model": "anthropic/claude-sonnet-5",
   "choices": [
     {
       "message": {
-        "content": "{\n  \"v\": 1,\n  \"language\": \"ru\",\n  \"kind\": \"phrase\",\n  \"pos\": \"phrase\",\n  \"headword\": { \"ru\": \"во́лосы вста́ли ды́бом\", \"plain\": \"волосы встали дыбом\" },\n  \"overview\": {\n    \"gloss\": \"one's hair stood on end (from fear/shock)\",\n    \"facts\": [\n      { \"label\": \"Register\", \"value\": \"neutral to colloquial, very common in speech\" },\n      { \"label\": \"Structure\", \"value\": \"у + genitive (person) + волосы (subject) + встали дыбом (predicate)\" },\n      { \"label\": \"Literal meaning\", \"value\": \"hair rose up like a mane/crest\" }\n    ],\n    \"notes\": [\n      \"Almost always used with «у меня / у него / у неё» etc. to show whose hair it is: «у меня волосы встали дыбом».\",\n      \"«Дыбом» is an old adverbial form meaning 'rearing up, standing erect'; it survives mainly in this idiom and a few others (e.g. «шерсть встала дыбом» about animals).\",\n      \"Describes a strong reaction of fear, horror or shock, not literal hair movement.\"\n    ]\n  },\n  \"sections\": [\n    {\n      \"id\": \"phrase-structure\",\n      \"title\": { \"en\": \"Word by word\", \"ru\": \"Разбор по словам\" },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"во́лосы\",\n          \"plain\": \"волосы\",\n          \"gloss\": \"nom. pl. of «во́лос» — hair(s)\",\n          \"note\": \"Subject of the sentence; plural form used collectively for 'hair on the head'.\"\n        },\n        {\n          \"ru\": \"вста́ли\",\n          \"plain\": \"встали\",\n          \"gloss\": \"past pl. of «встать» (pf.) — stood up, rose\",\n          \"note\": \"Perfective past, agrees with plural subject «волосы».\"\n        },\n        {\n          \"ru\": \"ды́бом\",\n          \"plain\": \"дыбом\",\n          \"gloss\": \"adverb — erect, rearing up, on end\",\n          \"note\": \"Archaic instrumental-type adverb, now used almost only in this and similar fixed expressions.\"\n        }\n      ]\n    },\n    {\n      \"id\": \"phrase-usage\",\n      \"title\": { \"en\": \"Usage & register\", \"ru\": \"Употребление и стиль\" },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"у меня́ во́лосы вста́ли ды́бом\",\n          \"plain\": \"у меня волосы встали дыбом\",\n          \"gloss\": \"my hair stood on end\",\n          \"note\": \"Most common personal form, used in speech and writing to describe sudden fear or shock.\",\n          \"example\": {\n            \"ru\": \"Когда я услышал шаги наверху, у меня волосы встали дыбом.\",\n            \"en\": \"When I heard footsteps upstairs, my hair stood on end.\"\n          }\n        },\n        {\n          \"ru\": \"от э́того расска́за у всех во́лосы вста́ли ды́бом\",\n          \"plain\": \"от этого рассказа у всех волосы встали дыбом\",\n          \"gloss\": \"everyone's hair stood on end from that story\",\n          \"note\": \"Used for group reactions to something horrifying, often in narration or news style.\",\n          \"example\": {\n            \"ru\": \"От его рассказа о войне у всех волосы встали дыбом.\",\n            \"en\": \"Everyone's hair stood on end from his story about the war.\"\n          }\n        }\n      ]\n    },\n    {\n      \"id\": \"phrase-variants\",\n      \"title\": { \"en\": \"Variants & synonyms\", \"ru\": \"Варианты и синонимы\" },\n      \"layout\": \"list\",\n      \"rows\": [\n        {\n          \"ru\": \"волосы вста́ют ды́бом\",\n          \"plain\": \"волосы встают дыбом\",\n          \"gloss\": \"imperfective present — one's hair stands/rises on end\",\n          \"note\": \"Used for repeated or ongoing reactions, e.g. describing a habitual fear.\"\n        },\n        {\n          \"ru\": \"мура́шки по коже\",\n          \"plain\": \"мурашки по коже\",\n          \"gloss\": \"goosebumps (lit. 'little ants on the skin')\",\n          \"note\": \"Near-synonym describing chills of fear or excitement, often used interchangeably.\"\n        },\n        {\n          \"ru\": \"кровь в жи́лах засты́ла\",\n          \"plain\": \"кровь в жилах застыла\",\n          \"gloss\": \"one's blood froze (in the veins)\",\n          \"note\": \"More dramatic/literary synonym for extreme fear or shock.\"\n        }\n      ]\n    }\n  ]\n}"
+        "content": "{\"v\": 1, \"language\": \"uk\", \"kind\": \"phrase\", \"pos\": \"phrase\", \"headword\": {\"ru\": \"до́брий день\", \"plain\": \"добрий день\"}, \"overview\": {\"gloss\": \"good day — polite greeting / hello\", \"facts\": [{\"label\": \"Register\", \"value\": \"neutral-polite, used all day\"}, {\"label\": \"Frequency\", \"value\": \"very common, standard greeting\"}, {\"label\": \"Structure\", \"value\": \"adjective + noun, fixed phrase\"}], \"notes\": [\"Used as a general greeting any time of day, more formal than «привіт».\", \"Often used by service staff, strangers, in business or official contexts.\", \"Can be shortened colloquially to «добридень» as one word.\"]}, \"sections\": [{\"id\": \"phrase-structure\", \"title\": {\"en\": \"Word by word\", \"ru\": \"Розбір за словами\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"до́брий\", \"plain\": \"добрий\", \"gloss\": \"good (masc. nom. sg. adjective)\", \"note\": \"modifies «день», agrees in gender/case/number\"}, {\"ru\": \"день\", \"plain\": \"день\", \"gloss\": \"day (masc. nom. sg. noun)\", \"note\": \"used here in greeting formula, not literal 'day'\"}]}, {\"id\": \"phrase-usage\", \"title\": {\"en\": \"Usage & register\", \"ru\": \"Вживання і стиль\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"До́брий день, чим мо́жу допомогти́?\", \"plain\": \"Добрий день, чим можу допомогти?\", \"gloss\": \"Good day, how may I help you?\", \"note\": \"typical in shops, offices, customer service\", \"example\": {\"ru\": \"До́брий день, чим мо́жу допомогти́?\", \"en\": \"Good day, how can I help you?\"}}, {\"ru\": \"До́брий день! Заходьте, будь ла́ска.\", \"plain\": \"Добрий день! Заходьте, будь ласка.\", \"gloss\": \"Good day! Please come in.\", \"note\": \"polite greeting when welcoming someone\", \"example\": {\"ru\": \"До́брий день! Заходьте, будь ла́ска.\", \"en\": \"Good day! Please come in.\"}}, {\"ru\": \"До́брий день усім прису́тнім.\", \"plain\": \"Добрий день усім присутнім.\", \"gloss\": \"Good day to everyone present.\", \"note\": \"formal opening, e.g. meetings, speeches\", \"example\": {\"ru\": \"До́брий день усім прису́тнім, почнімо нараду.\", \"en\": \"Good day everyone, let's start the meeting.\"}}]}, {\"id\": \"phrase-variants\", \"title\": {\"en\": \"Variants & synonyms\", \"ru\": \"Варіанти і синоніми\"}, \"layout\": \"list\", \"rows\": [{\"ru\": \"добри́день\", \"plain\": \"добридень\", \"gloss\": \"good day (informal fused variant)\", \"tags\": [\"colloquial\"]}, {\"ru\": \"до́брого дня\", \"plain\": \"доброго дня\", \"gloss\": \"good day (genitive, used as parting wish)\", \"note\": \"used when leaving, e.g. «Бувайте, доброго дня!»\"}, {\"ru\": \"приві́т\", \"plain\": \"привіт\", \"gloss\": \"hi / hello\", \"tags\": [\"colloquial\"], \"note\": \"more casual, used among friends/peers\"}, {\"ru\": \"до́брий ра́нок\", \"plain\": \"добрий ранок\", \"gloss\": \"good morning\", \"note\": \"used specifically in the morning\"}, {\"ru\": \"до́брий ве́чір\", \"plain\": \"добрий вечір\", \"gloss\": \"good evening\", \"note\": \"used specifically in the evening\"}]}]}"
       },
       "finish_reason": "stop"
     }
   ],
   "usage": {
-    "prompt_tokens": 3733,
-    "completion_tokens": 1738,
-    "total_tokens": 5471,
-    "cost": 0.024846,
+    "prompt_tokens": 4921,
+    "completion_tokens": 1153,
+    "total_tokens": 6074,
+    "cost": 0.021372,
     "is_byok": false,
     "prompt_tokens_details": {
       "cached_tokens": 0,
@@ -31,14 +31,15 @@
       "video_tokens": 0
     },
     "cost_details": {
-      "upstream_inference_cost": 0.024846,
-      "upstream_inference_prompt_cost": 0.007466,
-      "upstream_inference_completions_cost": 0.01738
+      "upstream_inference_cost": 0.021372,
+      "upstream_inference_prompt_cost": 0.009842,
+      "upstream_inference_completions_cost": 0.01153
     },
     "completion_tokens_details": {
-      "reasoning_tokens": 198,
+      "reasoning_tokens": 0,
       "image_tokens": 0,
       "audio_tokens": 0
     }
-  }
+  },
+  "_patched": "Live capture (see UT13b log); individual forms hand-corrected after reading: «почнімо нараду» (model wrote nonsense «наради»)"
 }

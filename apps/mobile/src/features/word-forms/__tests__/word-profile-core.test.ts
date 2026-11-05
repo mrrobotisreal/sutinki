@@ -62,6 +62,8 @@ describe('captured word-profile fixtures parse through the production path', () 
     ['word-profile-noun.json', 'noun'],
     ['word-profile-adj.json', 'adj'],
     ['word-profile-phrase.json', 'phrase'],
+    ['word-profile-verb-motion.json', 'verb'],
+    ['word-profile-noun-fem.json', 'noun'],
   ] as const) {
     it(`${name} → extractJsonObject → Zod → validateProfile is ok (pos ${pos})`, () => {
       const fx = fixture<CapturedProfile>(name);

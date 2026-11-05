@@ -40,7 +40,7 @@ type TestState =
 /**
  * Settings → AI → «Grammar & word forms» (WORD_FORMS §4.5, T51): the run
  * profile preset for M16's word profiles + lessons. Provider / Quality /
- * Effort persist immediately; the «Advanced: model ids» disclosure edits
+ * Effort persist immediately; the «Додатково: ідентифікатори моделей» disclosure edits
  * the eight-slug table (validated on blur with `ModelSchema` — invalid →
  * red caption, not saved); Test runs the resolved profile end-to-end
  * through `runChat('grammar-key-test', …)`, which is also how a wrong slug
@@ -113,11 +113,11 @@ export function GrammarPresetSection() {
   return (
     <View className="mt-3 overflow-hidden rounded-xl border border-border bg-surface px-4 py-3.5">
       <Text variant="caption" className="mb-1 uppercase tracking-wider">
-        Grammar & word forms
+        Граматика й форми слів
       </Text>
       <Text variant="caption" className="mb-3">
-        Which model generates word profiles and grammar lessons (M16). Journal feedback, enrichment
-        and explanations keep the model above.
+        Яка модель створює профілі слів і граматичні уроки. Відгуки до щоденника, збагачення та
+        пояснення використовують модель вище.
       </Text>
 
       <RunProfileControls profile={preset} table={table} onChange={changePreset} />
@@ -134,14 +134,14 @@ export function GrammarPresetSection() {
           color={tokens.textMuted}
         />
         <Text variant="caption" className="uppercase tracking-wider">
-          Advanced: model ids
+          Додатково: ідентифікатори моделей
         </Text>
       </Pressable>
       {advancedOpen && (
         <View className="gap-3">
           <Text variant="caption">
-            OpenRouter slugs, one per notch. This table is the only place they live — edit when a
-            slug drifts, then Test.
+            Ідентифікатори OpenRouter — по одному на рівень. Це єдине місце, де вони зберігаються;
+            змініть, якщо ідентифікатор застарів, а потім натисніть «Перевірити».
           </Text>
           {PROVIDER_ORDER.map((provider) => (
             <View key={provider} className="gap-2">
@@ -167,7 +167,7 @@ export function GrammarPresetSection() {
           onPress={test}
           disabled={testState.phase === 'running'}
           accessibilityRole="button"
-          accessibilityLabel="Test grammar preset"
+          accessibilityLabel="Перевірити граматичний пресет"
           className="flex-1 flex-row items-center justify-center gap-2 rounded-xl border border-border px-4 py-2.5 active:bg-surface-2"
         >
           {testState.phase === 'running' ? (
@@ -192,14 +192,14 @@ export function GrammarPresetSection() {
             />
           )}
           <Text className="font-ui-medium text-sm">
-            {testState.phase === 'ok' ? 'Works ✓' : 'Test'}
+            {testState.phase === 'ok' ? 'Працює ✓' : 'Перевірити'}
           </Text>
         </Pressable>
       </View>
       {testState.phase === 'ok' && (
         <Text variant="caption" className="mt-2">
-          Served by {testState.model}
-          {testState.effortApplied ? '' : ' · effort n/a (provider rejected it)'}
+          Відповіла модель {testState.model}
+          {testState.effortApplied ? '' : ' · зусилля н/д (провайдер відхилив)'}
         </Text>
       )}
       {testState.phase === 'failed' && (
@@ -303,7 +303,7 @@ function SlugInput({
         className={`rounded-xl border bg-surface-2 px-3 py-2 font-ui text-sm text-text ${
           invalid ? 'border-danger' : 'border-border'
         }`}
-        accessibilityLabel={`Model id for ${label}`}
+        accessibilityLabel={`Ідентифікатор моделі: ${label}`}
       />
       {invalid && (
         <Text variant="caption" className="mt-1 text-danger">

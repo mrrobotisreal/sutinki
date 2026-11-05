@@ -46,7 +46,7 @@ export function LessonsListSheet({
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Close" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
 
       <View
         className="rounded-t-2xl border-t border-border bg-surface px-5 pb-10 pt-4"
@@ -54,12 +54,12 @@ export function LessonsListSheet({
       >
         <View className="mb-3 flex-row items-center justify-between">
           <View className="flex-1 pr-3">
-            <Text className="font-ui-medium text-lg">Lessons · {rows.length}</Text>
+            <Text className="font-ui-medium text-lg">Уроки · {rows.length}</Text>
             <Text variant="caption" numberOfLines={1}>
               {title}
             </Text>
           </View>
-          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Close lessons sheet">
+          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрити перелік уроків">
             <Ionicons name="close" size={22} color={theme.textMuted} />
           </Pressable>
         </View>
@@ -76,7 +76,7 @@ export function LessonsListSheet({
                   key={row.id}
                   onPress={() => openLesson(row.id)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Lesson ${rows.length - i}`}
+                  accessibilityLabel={`Урок ${rows.length - i}`}
                   className={`flex-row items-center gap-3 px-4 py-3 active:bg-surface-2 ${
                     i > 0 ? 'border-t border-border' : ''
                   }`}
