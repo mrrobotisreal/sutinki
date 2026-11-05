@@ -57,7 +57,7 @@ import {
   type MetaResolution,
   type PlayedToken,
 } from './meta-intents';
-import { fetchExplainLine, fetchHowToSayLine, speakGloss, speakRu, stopPrompter } from './prompter';
+import { fetchExplainLine, fetchHowToSayLine, speakGloss, speakUk, stopPrompter } from './prompter';
 import { pruneRecordings } from './recordings/prune';
 import { stashAttemptWav, transcodeQueue } from './recordings/transcode-queue';
 import { scheduleBundle } from './recordings/bundle-service';
@@ -331,12 +331,14 @@ export function useScenarioRun(
             glossary,
             explainSentenceId: (id) => clips[id]?.explain ?? null,
             played: playedRef.current,
+            language: d.scenario.language,
             online: fetchExplainLine,
           });
         } else if (detection.intent === 'howtosay') {
           resolution = await resolveHowToSay(detection, {
             glossary,
             howToSaySentenceId: (id) => clips[id]?.howToSay ?? null,
+            language: d.scenario.language,
             whisper:
               wavPath && isAssistInstalled()
                 ? async () => (await transcribeEnglish(wavPath)).text
@@ -360,7 +362,7 @@ export function useScenarioRun(
         return;
       }
       // The reducer's own TRACK effect reports scenario_judge (one event per verdict).
-      const result = judgeAnswer(transcript, turn.expect);
+      const result = judgeAnswer(transcript, turn.expect, { language: d.scenario.language });
       dispatchRef.current({ type: 'JUDGED', result });
     },
     [],
@@ -460,7 +462,7 @@ export function useScenarioRun(
           await speakGloss(effect.ru, effect.en);
           return;
         case 'SPEAK_RU':
-          await speakRu(effect.text);
+          await speakUk(effect.text);
           return;
         case 'ARM_SILENCE':
           disarmSilence();

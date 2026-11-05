@@ -1,0 +1,1642 @@
+{
+  "id": "a1-scenario-fixture-uk",
+  "version": 1,
+  "type": "scenario",
+  "title": {
+    "uk": "Перевірка зв’язку",
+    "en": "Sound Check"
+  },
+  "level": "A1",
+  "tags": [
+    "scenario",
+    "fixture",
+    "radio",
+    "uk"
+  ],
+  "stories": [],
+  "scenarios": [
+    {
+      "id": "radio-uk-a1",
+      "familyId": "radio",
+      "title": {
+        "uk": "Перевірка зв’язку",
+        "en": "Sound Check"
+      },
+      "level": "A1",
+      "language": "uk",
+      "brief": {
+        "uk": "Коротка перевірка зв’язку перед ефіром.",
+        "en": "A short sound check before going on air."
+      },
+      "cast": [
+        {
+          "id": "host",
+          "name": {
+            "uk": "Ведучий",
+            "en": "Host"
+          },
+          "voice": "elevenlabs:id:qNTtUpSV4C9bUAD8aUAV",
+          "style": "radio-host",
+          "role": "host",
+          "portrait": {
+            "mouthStyle": "default",
+            "placeholder": {
+              "kind": "man",
+              "hue": 25
+            }
+          }
+        },
+        {
+          "id": "player",
+          "name": {
+            "uk": "Ти",
+            "en": "You"
+          },
+          "voice": "elevenlabs:id:QjEdRoRdZC2i3ncmFpNy",
+          "style": "neutral",
+          "role": "player"
+        }
+      ],
+      "scene": {
+        "accent": "#c26a3a",
+        "bed": "studio",
+        "layout": "center"
+      },
+      "startTurnId": "radio-uk-a1-t01",
+      "turns": [
+        {
+          "id": "radio-uk-a1-t01",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t01-a",
+                "uk": "Перевірка зв'язку.",
+                "en": "Sound check.",
+                "tokens": [
+                  {
+                    "text": "Перевірка",
+                    "lemma": "перевірка",
+                    "translation": "check",
+                    "pos": "noun",
+                    "grammar": "f.sg. nom.",
+                    "level": "A2"
+                  },
+                  {
+                    "text": "зв'язку",
+                    "lemma": "зв'язок",
+                    "translation": "of the connection",
+                    "pos": "noun",
+                    "grammar": "m.sg. gen.",
+                    "level": "B1",
+                    "note": "перевірка зв'язку = \"sound check\""
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t01-a.opus",
+                "durationMs": 1687,
+                "mouth": "0000002333313312332223333331000222100000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t01-b",
+                "uk": "Раз, два, три.",
+                "en": "One, two, three.",
+                "tokens": [
+                  {
+                    "text": "Раз",
+                    "lemma": "раз",
+                    "translation": "one",
+                    "pos": "num",
+                    "grammar": "counting form",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ",",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "два",
+                    "lemma": "два",
+                    "translation": "two",
+                    "pos": "num",
+                    "grammar": "nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ",",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "три",
+                    "lemma": "три",
+                    "translation": "three",
+                    "pos": "num",
+                    "grammar": "nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t01-b.opus",
+                "durationMs": 1250,
+                "mouth": "00000334443223444430233320000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t01",
+                "uk": "Ти мене чуєш?",
+                "en": "Can you hear me?",
+                "tokens": [
+                  {
+                    "text": "Ти",
+                    "lemma": "ти",
+                    "translation": "you",
+                    "pos": "pron",
+                    "grammar": "informal nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "мене",
+                    "lemma": "я",
+                    "translation": "me",
+                    "pos": "pron",
+                    "grammar": "acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "чуєш",
+                    "lemma": "чути",
+                    "translation": "hear",
+                    "pos": "verb",
+                    "grammar": "2sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "?",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t01.opus",
+                "durationMs": 1470,
+                "mouth": "0000000233344444322344443322110000000"
+              }
+            }
+          ],
+          "next": "radio-uk-a1-t02"
+        },
+        {
+          "id": "radio-uk-a1-t02",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t02-a",
+                "uk": "Чудово.",
+                "en": "Great.",
+                "tokens": [
+                  {
+                    "text": "Чудово",
+                    "lemma": "чудово",
+                    "translation": "great",
+                    "pos": "adv",
+                    "grammar": "predicative",
+                    "level": "A2"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t02-a.opus",
+                "durationMs": 1138,
+                "mouth": "00000133333333333333321000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t02",
+                "uk": "Як тебе звати?",
+                "en": "What's your name?",
+                "tokens": [
+                  {
+                    "text": "Як",
+                    "lemma": "як",
+                    "translation": "how",
+                    "pos": "adv",
+                    "grammar": "interrogative",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "тебе",
+                    "lemma": "ти",
+                    "translation": "you",
+                    "pos": "pron",
+                    "grammar": "acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "звати",
+                    "lemma": "звати",
+                    "translation": "to call",
+                    "pos": "verb",
+                    "grammar": "inf.",
+                    "level": "A1",
+                    "note": "як тебе звати = \"what is your name\""
+                  },
+                  {
+                    "text": "?",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t02.opus",
+                "durationMs": 1426,
+                "mouth": "000022344003333332233332012100000000"
+              }
+            }
+          ],
+          "expect": {
+            "slots": [
+              {
+                "kind": "free",
+                "id": "name",
+                "required": true,
+                "minTokens": 1
+              }
+            ],
+            "accept": [
+              "Мене звати Мітч.",
+              "Я Мітч.",
+              "Мітч."
+            ],
+            "reject": [
+              {
+                "forms": [
+                  "добре",
+                  "дякую"
+                ],
+                "react": {
+                  "sentence": {
+                    "id": "radio-uk-a1-t02-react",
+                    "uk": "Ні, ім'я.",
+                    "en": "No, your name.",
+                    "tokens": [
+                      {
+                        "text": "Ні",
+                        "lemma": "ні",
+                        "translation": "no",
+                        "pos": "part",
+                        "level": "A1"
+                      },
+                      {
+                        "text": ",",
+                        "isPunct": true
+                      },
+                      {
+                        "text": "ім'я",
+                        "lemma": "ім'я",
+                        "translation": "name",
+                        "pos": "noun",
+                        "grammar": "n.sg. nom.",
+                        "level": "A1"
+                      },
+                      {
+                        "text": ".",
+                        "isPunct": true
+                      }
+                    ]
+                  },
+                  "audio": {
+                    "file": "audio/radio-uk-a1/radio-uk-a1-t02-react.opus",
+                    "durationMs": 1202,
+                    "mouth": "0000133333212333333321000000000"
+                  }
+                }
+              }
+            ]
+          },
+          "retry": {
+            "confused": {
+              "sentence": {
+                "id": "radio-uk-a1-t02-conf",
+                "uk": "Не чую.",
+                "en": "Can't hear you.",
+                "tokens": [
+                  {
+                    "text": "Не",
+                    "lemma": "не",
+                    "translation": "not",
+                    "pos": "part",
+                    "grammar": "negation",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "чую",
+                    "lemma": "чути",
+                    "translation": "hear",
+                    "pos": "verb",
+                    "grammar": "1sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t02-conf.opus",
+                "durationMs": 994,
+                "mouth": "0000133322233332221000000"
+              }
+            },
+            "hint": {
+              "sentence": {
+                "id": "radio-uk-a1-t02-hint",
+                "uk": "Скажи: «Мене звати…».",
+                "en": "Say: \"My name is…\".",
+                "tokens": [
+                  {
+                    "text": "Скажи",
+                    "lemma": "сказати",
+                    "translation": "say",
+                    "pos": "verb",
+                    "grammar": "imper. 2sg. (pf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ":",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "«",
+                    "isPunct": true,
+                    "spaceBefore": true
+                  },
+                  {
+                    "text": "Мене",
+                    "spaceBefore": false,
+                    "lemma": "я",
+                    "translation": "me",
+                    "pos": "pron",
+                    "grammar": "acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "звати",
+                    "lemma": "звати",
+                    "translation": "to call",
+                    "pos": "verb",
+                    "grammar": "inf.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "…",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "»",
+                    "isPunct": true
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t02-hint.opus",
+                "durationMs": 3746,
+                "mouth": "0000333333000012310233223334300233333333333442122123321344300333332113321333333310022210000000"
+              }
+            },
+            "second": {
+              "sentence": {
+                "id": "radio-uk-a1-t02-sec",
+                "uk": "Наприклад: «Мене звати Мітч».",
+                "en": "For example: \"My name is Mitch.\"",
+                "tokens": [
+                  {
+                    "text": "Наприклад",
+                    "lemma": "наприклад",
+                    "translation": "for example",
+                    "pos": "adv",
+                    "level": "A2"
+                  },
+                  {
+                    "text": ":",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "«",
+                    "isPunct": true,
+                    "spaceBefore": true
+                  },
+                  {
+                    "text": "Мене",
+                    "spaceBefore": false,
+                    "lemma": "я",
+                    "translation": "me",
+                    "pos": "pron",
+                    "grammar": "acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "звати",
+                    "lemma": "звати",
+                    "translation": "to call",
+                    "pos": "verb",
+                    "grammar": "inf.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "Мітч",
+                    "lemma": "Мітч",
+                    "translation": "Mitch",
+                    "pos": "noun",
+                    "grammar": "name",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "»",
+                    "isPunct": true
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t02-sec.opus",
+                "durationMs": 3788,
+                "mouth": "00000033123321333201223300223312333320133333333333443033333112223102331233333330002222100000000"
+              }
+            },
+            "lifeline": {
+              "uk": "«Мене звати …».",
+              "en": "\"Мене звати …\" (My name is …)."
+            }
+          },
+          "next": "radio-uk-a1-t03"
+        },
+        {
+          "id": "radio-uk-a1-t03",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t03",
+                "uk": "Ти любиш каву?",
+                "en": "Do you like coffee?",
+                "tokens": [
+                  {
+                    "text": "Ти",
+                    "lemma": "ти",
+                    "translation": "you",
+                    "pos": "pron",
+                    "grammar": "informal nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "любиш",
+                    "lemma": "любити",
+                    "translation": "like",
+                    "pos": "verb",
+                    "grammar": "2sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "каву",
+                    "lemma": "кава",
+                    "translation": "coffee",
+                    "pos": "noun",
+                    "grammar": "f.sg. acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "?",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t03.opus",
+                "durationMs": 1410,
+                "mouth": "000002333333333220133333222210000000"
+              }
+            }
+          ],
+          "expect": {
+            "slots": [
+              {
+                "kind": "forms",
+                "id": "love",
+                "required": true,
+                "options": [
+                  {
+                    "key": "yes",
+                    "lemma": "так",
+                    "forms": [
+                      "так",
+                      "люблю",
+                      "обожнюю"
+                    ]
+                  },
+                  {
+                    "key": "no",
+                    "lemma": "ні",
+                    "forms": [
+                      "ні",
+                      "не люблю",
+                      "не дуже"
+                    ]
+                  }
+                ],
+                "acceptsNumber": false
+              }
+            ],
+            "accept": [
+              "Так, люблю.",
+              "Ні, не люблю.",
+              "Не дуже."
+            ],
+            "branchOn": "love"
+          },
+          "retry": {
+            "confused": {
+              "sentence": {
+                "id": "radio-uk-a1-t03-conf",
+                "uk": "Каву. Любиш чи ні?",
+                "en": "Coffee. Do you like it or not?",
+                "tokens": [
+                  {
+                    "text": "Каву",
+                    "lemma": "кава",
+                    "translation": "coffee",
+                    "pos": "noun",
+                    "grammar": "f.sg. acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "Любиш",
+                    "lemma": "любити",
+                    "translation": "like",
+                    "pos": "verb",
+                    "grammar": "2sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "чи",
+                    "lemma": "чи",
+                    "translation": "or",
+                    "pos": "conj",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "ні",
+                    "lemma": "ні",
+                    "translation": "no",
+                    "pos": "part",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "?",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t03-conf.opus",
+                "durationMs": 1586,
+                "mouth": "0000233332100133333332102233333331000000"
+              }
+            },
+            "hint": {
+              "sentence": {
+                "id": "radio-uk-a1-t03-hint",
+                "uk": "Скажи «так» або «ні».",
+                "en": "Say \"yes\" or \"no\".",
+                "tokens": [
+                  {
+                    "text": "Скажи",
+                    "lemma": "сказати",
+                    "translation": "say",
+                    "pos": "verb",
+                    "grammar": "imper. 2sg. (pf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "«",
+                    "isPunct": true,
+                    "spaceBefore": true
+                  },
+                  {
+                    "text": "так",
+                    "spaceBefore": false,
+                    "lemma": "так",
+                    "translation": "yes",
+                    "pos": "part",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "»",
+                    "isPunct": true
+                  },
+                  {
+                    "text": "або",
+                    "lemma": "або",
+                    "translation": "or",
+                    "pos": "conj",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "«",
+                    "isPunct": true,
+                    "spaceBefore": true
+                  },
+                  {
+                    "text": "ні",
+                    "spaceBefore": false,
+                    "lemma": "ні",
+                    "translation": "no",
+                    "pos": "part",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "»",
+                    "isPunct": true
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t03-hint.opus",
+                "durationMs": 4514,
+                "mouth": "00002332333330033213333320022033333311332233343003333333323300233322333332001333333331133321223330000122200000000"
+              }
+            },
+            "lifeline": {
+              "uk": "«Так, люблю» / «Ні, не люблю».",
+              "en": "\"Так, люблю\" (Yes, I like it) / \"Ні, не люблю\" (No, I don't)."
+            }
+          },
+          "next": {
+            "on": {
+              "yes": "radio-uk-a1-t04y",
+              "no": "radio-uk-a1-t04n"
+            },
+            "default": "radio-uk-a1-t04d"
+          }
+        },
+        {
+          "id": "radio-uk-a1-t04y",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04y-a",
+                "uk": "Добре.",
+                "en": "Good.",
+                "tokens": [
+                  {
+                    "text": "Добре",
+                    "lemma": "добре",
+                    "translation": "good",
+                    "pos": "adv",
+                    "grammar": "predicative",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04y-a.opus",
+                "durationMs": 978,
+                "mouth": "0000033333333333320000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04y-b",
+                "uk": "Я теж люблю каву.",
+                "en": "I like coffee too.",
+                "tokens": [
+                  {
+                    "text": "Я",
+                    "lemma": "я",
+                    "translation": "I",
+                    "pos": "pron",
+                    "grammar": "nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "теж",
+                    "lemma": "теж",
+                    "translation": "too",
+                    "pos": "adv",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "люблю",
+                    "lemma": "любити",
+                    "translation": "like",
+                    "pos": "verb",
+                    "grammar": "1sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "каву",
+                    "lemma": "кава",
+                    "translation": "coffee",
+                    "pos": "noun",
+                    "grammar": "f.sg. acc.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04y-b.opus",
+                "durationMs": 1522,
+                "mouth": "000002233213333333333332133322211000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04y",
+                "uk": "До ефіру!",
+                "en": "See you on air!",
+                "tokens": [
+                  {
+                    "text": "До",
+                    "lemma": "до",
+                    "translation": "until",
+                    "pos": "prep",
+                    "grammar": "+gen.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "ефіру",
+                    "lemma": "ефір",
+                    "translation": "air (broadcast)",
+                    "pos": "noun",
+                    "grammar": "m.sg. gen.",
+                    "level": "A2"
+                  },
+                  {
+                    "text": "!",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04y.opus",
+                "durationMs": 1170,
+                "mouth": "000002333331003333322100000000"
+              }
+            }
+          ],
+          "endingId": "end-ok"
+        },
+        {
+          "id": "radio-uk-a1-t04n",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04n-a",
+                "uk": "Розумію.",
+                "en": "I understand.",
+                "tokens": [
+                  {
+                    "text": "Розумію",
+                    "lemma": "розуміти",
+                    "translation": "understand",
+                    "pos": "verb",
+                    "grammar": "1sg. pres. (impf.)",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04n-a.opus",
+                "durationMs": 1074,
+                "mouth": "000002233333332222210000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04n-b",
+                "uk": "Тоді чай.",
+                "en": "Then tea.",
+                "tokens": [
+                  {
+                    "text": "Тоді",
+                    "lemma": "тоді",
+                    "translation": "then",
+                    "pos": "adv",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "чай",
+                    "lemma": "чай",
+                    "translation": "tea",
+                    "pos": "noun",
+                    "grammar": "m.sg. nom.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04n-b.opus",
+                "durationMs": 1042,
+                "mouth": "000003323331233332100000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04n",
+                "uk": "До ефіру!",
+                "en": "See you on air!",
+                "tokens": [
+                  {
+                    "text": "До",
+                    "lemma": "до",
+                    "translation": "until",
+                    "pos": "prep",
+                    "grammar": "+gen.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "ефіру",
+                    "lemma": "ефір",
+                    "translation": "air (broadcast)",
+                    "pos": "noun",
+                    "grammar": "m.sg. gen.",
+                    "level": "A2"
+                  },
+                  {
+                    "text": "!",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04n.opus",
+                "durationMs": 1154,
+                "mouth": "00000123333311333332221000000"
+              }
+            }
+          ],
+          "endingId": "end-ok"
+        },
+        {
+          "id": "radio-uk-a1-t04d",
+          "speakerId": "host",
+          "say": [
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04d-a",
+                "uk": "Ясно.",
+                "en": "I see.",
+                "tokens": [
+                  {
+                    "text": "Ясно",
+                    "lemma": "ясно",
+                    "translation": "clear",
+                    "pos": "adv",
+                    "grammar": "predicative",
+                    "level": "A1"
+                  },
+                  {
+                    "text": ".",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04d-a.opus",
+                "durationMs": 962,
+                "mouth": "0000123344310133210000000"
+              }
+            },
+            {
+              "sentence": {
+                "id": "radio-uk-a1-t04d",
+                "uk": "До ефіру!",
+                "en": "See you on air!",
+                "tokens": [
+                  {
+                    "text": "До",
+                    "lemma": "до",
+                    "translation": "until",
+                    "pos": "prep",
+                    "grammar": "+gen.",
+                    "level": "A1"
+                  },
+                  {
+                    "text": "ефіру",
+                    "lemma": "ефір",
+                    "translation": "air (broadcast)",
+                    "pos": "noun",
+                    "grammar": "m.sg. gen.",
+                    "level": "A2"
+                  },
+                  {
+                    "text": "!",
+                    "isPunct": true
+                  }
+                ]
+              },
+              "audio": {
+                "file": "audio/radio-uk-a1/radio-uk-a1-t04d.opus",
+                "durationMs": 1122,
+                "mouth": "00001323344310133332210000000"
+              }
+            }
+          ],
+          "endingId": "end-ok"
+        }
+      ],
+      "endings": [
+        {
+          "id": "end-ok",
+          "title": {
+            "uk": "Зв’язок є",
+            "en": "Connected"
+          },
+          "recap": {
+            "uk": "Перевірку пройдено.",
+            "en": "Sound check passed."
+          },
+          "tone": "good"
+        }
+      ],
+      "glossary": [
+        {
+          "id": "radio-uk-a1-gl-check",
+          "uk": "перевірка",
+          "en": "check",
+          "forms": [
+            "перевірка",
+            "перевірк*"
+          ],
+          "translit": [
+            "чек",
+            "чік",
+            "чик",
+            "кек",
+            "кік",
+            "кик"
+          ],
+          "explain": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-check-ex",
+              "uk": "Перевірка — це check.",
+              "en": "«перевірка» means check.",
+              "tokens": [
+                {
+                  "text": "Перевірка",
+                  "lemma": "перевірка",
+                  "translation": "check",
+                  "pos": "noun",
+                  "grammar": "f.sg. nom.",
+                  "level": "A2"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "це",
+                  "lemma": "це",
+                  "translation": "this is",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "check",
+                  "lemma": "check",
+                  "translation": "check",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-check-ex.opus",
+              "durationMs": 1547,
+              "mouth": "000023344333330232002332112333100000000"
+            }
+          },
+          "howToSay": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-check-how",
+              "uk": "Check — українською «перевірка».",
+              "en": "Check is «перевірка» in Ukrainian.",
+              "tokens": [
+                {
+                  "text": "Check",
+                  "lemma": "check",
+                  "translation": "check",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "українською",
+                  "lemma": "українською",
+                  "translation": "in Ukrainian",
+                  "pos": "adv",
+                  "level": "A1"
+                },
+                {
+                  "text": "«",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "перевірка",
+                  "spaceBefore": false,
+                  "lemma": "перевірка",
+                  "translation": "check",
+                  "pos": "noun",
+                  "grammar": "f.sg. nom.",
+                  "level": "A2"
+                },
+                {
+                  "text": "»",
+                  "isPunct": true
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-check-how.opus",
+              "durationMs": 3442,
+              "mouth": "000012333000231133333321033333102331233333102320333333321333320233212333320022210000000"
+            }
+          }
+        },
+        {
+          "id": "radio-uk-a1-gl-connection",
+          "uk": "зв'язок",
+          "en": "connection",
+          "forms": [
+            "зв'язок",
+            "зв'язку",
+            "зв'яз*"
+          ],
+          "translit": [
+            "конекшн",
+            "конекшен",
+            "конікшн",
+            "конікшен",
+            "коникшн",
+            "коникшен",
+            "канекшн",
+            "канекшен",
+            "канікшн",
+            "канікшен",
+            "каникшн",
+            "каникшен"
+          ],
+          "explain": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-connection-ex",
+              "uk": "Зв'язок — це connection.",
+              "en": "«зв'язок» means connection.",
+              "tokens": [
+                {
+                  "text": "Зв'язок",
+                  "lemma": "зв'язок",
+                  "translation": "connection",
+                  "pos": "noun",
+                  "grammar": "m.sg. nom.",
+                  "level": "B1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "це",
+                  "lemma": "це",
+                  "translation": "this is",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "connection",
+                  "lemma": "connection",
+                  "translation": "connection",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-connection-ex.opus",
+              "durationMs": 1842,
+              "mouth": "00001333333344333311002331333444222233320000000"
+            }
+          },
+          "howToSay": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-connection-how",
+              "uk": "Connection — українською «зв'язок».",
+              "en": "Connection is «зв'язок» in Ukrainian.",
+              "tokens": [
+                {
+                  "text": "Connection",
+                  "lemma": "connection",
+                  "translation": "connection",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "українською",
+                  "lemma": "українською",
+                  "translation": "in Ukrainian",
+                  "pos": "adv",
+                  "level": "A1"
+                },
+                {
+                  "text": "«",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "зв'язок",
+                  "spaceBefore": false,
+                  "lemma": "зв'язок",
+                  "translation": "connection",
+                  "pos": "noun",
+                  "grammar": "m.sg. nom.",
+                  "level": "B1"
+                },
+                {
+                  "text": "»",
+                  "isPunct": true
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-connection-how.opus",
+              "durationMs": 4019,
+              "mouth": "00002333331113332022023333333211333323311033312333330133222233322332233012331123333333000022100000000"
+            }
+          }
+        },
+        {
+          "id": "radio-uk-a1-gl-coffee",
+          "uk": "кава",
+          "en": "coffee",
+          "forms": [
+            "кава",
+            "каву",
+            "кав*"
+          ],
+          "translit": [
+            "кофі",
+            "кофи",
+            "кафі",
+            "кафи"
+          ],
+          "explain": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-coffee-ex",
+              "uk": "Кава — це coffee.",
+              "en": "«кава» means coffee.",
+              "tokens": [
+                {
+                  "text": "Кава",
+                  "lemma": "кава",
+                  "translation": "coffee",
+                  "pos": "noun",
+                  "grammar": "f.sg. nom.",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "це",
+                  "lemma": "це",
+                  "translation": "this is",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "coffee",
+                  "lemma": "coffee",
+                  "translation": "coffee",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-coffee-ex.opus",
+              "durationMs": 1394,
+              "mouth": "00014434441134313444210233300000000"
+            }
+          },
+          "howToSay": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-coffee-how",
+              "uk": "Coffee — українською «кава».",
+              "en": "Coffee is «кава» in Ukrainian.",
+              "tokens": [
+                {
+                  "text": "Coffee",
+                  "lemma": "coffee",
+                  "translation": "coffee",
+                  "pos": "noun",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "українською",
+                  "lemma": "українською",
+                  "translation": "in Ukrainian",
+                  "pos": "adv",
+                  "level": "A1"
+                },
+                {
+                  "text": "«",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "кава",
+                  "spaceBefore": false,
+                  "lemma": "кава",
+                  "translation": "coffee",
+                  "pos": "noun",
+                  "grammar": "f.sg. nom.",
+                  "level": "A1"
+                },
+                {
+                  "text": "»",
+                  "isPunct": true
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-coffee-how.opus",
+              "durationMs": 3634,
+              "mouth": "0000333003331232233333331023333333330023301333333002311342443332012331133333320002220000000"
+            }
+          }
+        },
+        {
+          "id": "radio-uk-a1-gl-to-hear",
+          "uk": "чути",
+          "en": "to hear",
+          "forms": [
+            "чути",
+            "чуєш",
+            "чу*"
+          ],
+          "translit": [
+            "хір",
+            "то хір",
+            "то гір",
+            "то гер",
+            "то гир",
+            "то хер",
+            "то хир",
+            "та гір",
+            "та гер",
+            "та гир",
+            "та хір",
+            "та хер",
+            "та хир"
+          ],
+          "explain": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-to-hear-ex",
+              "uk": "Чути — це to hear.",
+              "en": "«чути» means to hear.",
+              "tokens": [
+                {
+                  "text": "Чути",
+                  "lemma": "чути",
+                  "translation": "to hear",
+                  "pos": "verb",
+                  "grammar": "inf.",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "це",
+                  "lemma": "це",
+                  "translation": "this is",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "to",
+                  "lemma": "to",
+                  "translation": "to",
+                  "pos": "part",
+                  "level": "A1"
+                },
+                {
+                  "text": "hear",
+                  "lemma": "hear",
+                  "translation": "hear",
+                  "pos": "verb",
+                  "level": "A1"
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-to-hear-ex.opus",
+              "durationMs": 1474,
+              "mouth": "0000133213333003331033333333210000000"
+            }
+          },
+          "howToSay": {
+            "sentence": {
+              "id": "radio-uk-a1-gl-to-hear-how",
+              "uk": "To hear — українською «чути».",
+              "en": "To hear is «чути» in Ukrainian.",
+              "tokens": [
+                {
+                  "text": "To",
+                  "lemma": "to",
+                  "translation": "to",
+                  "pos": "part",
+                  "level": "A1"
+                },
+                {
+                  "text": "hear",
+                  "lemma": "hear",
+                  "translation": "hear",
+                  "pos": "verb",
+                  "level": "A1"
+                },
+                {
+                  "text": "—",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "українською",
+                  "lemma": "українською",
+                  "translation": "in Ukrainian",
+                  "pos": "adv",
+                  "level": "A1"
+                },
+                {
+                  "text": "«",
+                  "isPunct": true,
+                  "spaceBefore": true
+                },
+                {
+                  "text": "чути",
+                  "spaceBefore": false,
+                  "lemma": "чути",
+                  "translation": "to hear",
+                  "pos": "verb",
+                  "grammar": "inf.",
+                  "level": "A1"
+                },
+                {
+                  "text": "»",
+                  "isPunct": true
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-gl-to-hear-how.opus",
+              "durationMs": 3865,
+              "mouth": "0000033333330221133333333210233332331013321333332002333111331233233013332133333330001222210000000"
+            }
+          }
+        }
+      ],
+      "nudges": [
+        {
+          "kind": "silence",
+          "speakerId": "host",
+          "line": {
+            "sentence": {
+              "id": "radio-uk-a1-nudge-silence",
+              "uk": "Ти тут?",
+              "en": "Are you there?",
+              "tokens": [
+                {
+                  "text": "Ти",
+                  "lemma": "ти",
+                  "translation": "you",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "тут",
+                  "lemma": "тут",
+                  "translation": "here",
+                  "pos": "adv",
+                  "level": "A1"
+                },
+                {
+                  "text": "?",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-nudge-silence.opus",
+              "durationMs": 754,
+              "mouth": "0000342133300000000"
+            }
+          }
+        },
+        {
+          "kind": "which-word",
+          "speakerId": "host",
+          "line": {
+            "sentence": {
+              "id": "radio-uk-a1-nudge-which-word",
+              "uk": "Яке слово?",
+              "en": "Which word?",
+              "tokens": [
+                {
+                  "text": "Яке",
+                  "lemma": "який",
+                  "translation": "which",
+                  "pos": "pron",
+                  "level": "A1"
+                },
+                {
+                  "text": "слово",
+                  "lemma": "слово",
+                  "translation": "word",
+                  "pos": "noun",
+                  "grammar": "n.sg. nom.",
+                  "level": "A1"
+                },
+                {
+                  "text": "?",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-nudge-which-word.opus",
+              "durationMs": 1250,
+              "mouth": "00001333331331113333222210000000"
+            }
+          }
+        },
+        {
+          "kind": "dont-know",
+          "speakerId": "host",
+          "line": {
+            "sentence": {
+              "id": "radio-uk-a1-nudge-dont-know",
+              "uk": "Не знаю цього слова.",
+              "en": "I don't know that word.",
+              "tokens": [
+                {
+                  "text": "Не",
+                  "lemma": "не",
+                  "translation": "not",
+                  "pos": "part",
+                  "level": "A1"
+                },
+                {
+                  "text": "знаю",
+                  "lemma": "знати",
+                  "translation": "know",
+                  "pos": "verb",
+                  "grammar": "1sg. pres. (impf.)",
+                  "level": "A1"
+                },
+                {
+                  "text": "цього",
+                  "lemma": "цей",
+                  "translation": "this",
+                  "pos": "pron",
+                  "grammar": "gen.",
+                  "level": "A1"
+                },
+                {
+                  "text": "слова",
+                  "lemma": "слово",
+                  "translation": "word",
+                  "pos": "noun",
+                  "grammar": "n.sg. gen.",
+                  "level": "A1"
+                },
+                {
+                  "text": ".",
+                  "isPunct": true
+                }
+              ]
+            },
+            "audio": {
+              "file": "audio/radio-uk-a1/radio-uk-a1-nudge-dont-know.opus",
+              "durationMs": 1538,
+              "mouth": "000023333333330023332002222221110000000"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

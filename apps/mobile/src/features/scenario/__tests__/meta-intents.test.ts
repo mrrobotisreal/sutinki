@@ -109,9 +109,10 @@ describe('detectMetaIntent — triggers ± noise', () => {
     expect(detectMetaIntent('что значит')).toMatchObject({ intent: 'explain', query: '' });
   });
 
-  it('uk has an empty table and detects nothing', () => {
-    expect(META_TRIGGERS.uk).toEqual([]);
-    expect(detectMetaIntent('повтори', 'uk')).toBeNull();
+  it('uk is filled (UT14) and the ru table does not fire on Ukrainian triggers', () => {
+    expect(META_TRIGGERS.uk.length).toBe(30); // 22 Ukrainian + 8 NeMo ru-spelling aliases
+    expect(detectMetaIntent('повтори', 'uk')?.intent).toBe('repeat');
+    expect(detectMetaIntent('повільніше', 'ru')).toBeNull();
   });
 
   it('empty transcript ⇒ null', () => {
@@ -542,5 +543,18 @@ describe('parseHelpLine', () => {
     expect(parseHelpLine('Unknown\n')).toBeNull();
     expect(parseHelpLine('')).toBeNull();
     expect(parseHelpLine('x'.repeat(200))).toBeNull();
+  });
+});
+
+describe('суфлер prompts (UT14)', () => {
+  it('ask for Ukrainian only and forbid Russian letters', async () => {
+    const { buildScenarioExplainMessages, buildScenarioHowToSayMessages } =
+      await import('@/features/ai/prompts/scenario-help');
+    const how = buildScenarioHowToSayMessages('stomach');
+    expect(how[0]!.content).toContain('Ukrainian Cyrillic only');
+    expect(how[0]!.content).not.toMatch(/Russian speaking|natural spoken Russian/);
+    expect(how[1]!.content).toContain('Ukrainian');
+    const ex = buildScenarioExplainMessages('живіт');
+    expect(ex[0]!.content).toContain('Ukrainian speaking role-play');
   });
 });

@@ -3,7 +3,6 @@ import { useFocusEffect, useRouter, type Href } from 'expo-router';
 import * as React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
-import { ukPending } from '@/config/flags';
 import { Text } from '@/components/ui/text';
 import { useDueCardCount, useMixedDueCount, useProductionDueCount } from '@/db/hooks';
 import { track } from '@/services/analytics';
@@ -76,14 +75,12 @@ export function GamesMenuScreen() {
         subtitle="Speak your side of a branching scene"
         route="/dialogues"
       />
-      {!ukPending('scenarios') && (
-        <GameRow
-          icon="radio-outline"
-          title="Сценарії"
-          subtitle="Speak your way through a situation — no text, just you and the host"
-          route="/scenarios"
-        />
-      )}
+      <GameRow
+        icon="radio-outline"
+        title="Сценарії"
+        subtitle="Speak your way through a situation — no text, just you and the host"
+        route="/scenarios"
+      />
       <GameRow
         icon="mic-outline"
         title="Вимова"

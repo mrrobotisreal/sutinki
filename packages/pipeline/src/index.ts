@@ -169,9 +169,13 @@ export {
 } from './scenario-draft.ts';
 export {
   TRANSLIT_MAX_CANDIDATES,
+  RUSSIAN_ONLY_LETTERS,
   TRANSLIT_RULES,
+  TRANSLIT_RULES_UK,
   mergeTranslit,
+  translitFor,
   transliterate,
+  type TranslitLanguage,
   type TranslitRule,
 } from './translit.ts';
 export {

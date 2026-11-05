@@ -2,7 +2,7 @@
   "expo": {
     "name": "\u0421\u0443\u0442\u0456\u043d\u043a\u0438",
     "slug": "sutinki",
-    "version": "1.5.2",
+    "version": "1.6.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sutinki",
@@ -23,7 +23,7 @@
           "data": [{ "mimeType": "text/plain" }]
         }
       ],
-      "versionCode": 14
+      "versionCode": 15
     },
     "plugins": [
       "expo-router",

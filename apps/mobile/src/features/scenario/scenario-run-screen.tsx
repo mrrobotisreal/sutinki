@@ -93,7 +93,7 @@ export function ScenarioRunScreen() {
     [line, stampsQ.data],
   );
   // The host speaks every pre-rendered line and the speech-service fallback of a
-  // host line; a суфлёр line (SPEAK_GLOSS / SPEAK_RU) never sets `playback`.
+  // host line; a суфлер line (SPEAK_GLOSS / SPEAK_RU) never sets `playback`.
   const speaking = playing != null && state.phase.kind !== 'ending';
   const shape = useMouthTrack({
     player: run.player,

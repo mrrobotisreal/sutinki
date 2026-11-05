@@ -42,7 +42,7 @@ import {
   fetchExplainLine,
   fetchHowToSayLine,
   speakGloss,
-  speakRu,
+  speakUk,
   stopPrompter,
 } from '@/features/scenario/prompter';
 import { useAppTheme } from '@/theme/use-app-theme';
@@ -214,12 +214,14 @@ export default function DevJudgeScreen() {
               glossary,
               explainSentenceId: (id) => clips[id]?.explain ?? null,
               played: playedRef.current,
+              language: detail.scenario.language,
               online: fetchExplainLine,
             });
           } else if (detection.intent === 'howtosay') {
             resolution = await resolveHowToSay(detection, {
               glossary,
               howToSaySentenceId: (id) => clips[id]?.howToSay ?? null,
+              language: detail.scenario.language,
               whisper:
                 wavPath && isAssistInstalled()
                   ? async () => {
@@ -258,12 +260,12 @@ export default function DevJudgeScreen() {
           ) {
             void speakGloss(resolution.ru, resolution.en);
           } else if (resolution.intent === 'howtosay' && resolution.source === 'online') {
-            void speakRu(resolution.ru);
+            void speakUk(resolution.ru);
           }
           return;
         }
         const t0 = Date.now();
-        const judge = judgeAnswer(transcript, turn.expect);
+        const judge = judgeAnswer(transcript, turn.expect, { language: detail.scenario.language });
         const judgeMs = Date.now() - t0;
         const [online, key] = await Promise.all([isOnline(), hasApiKey()]);
         const gate = shouldRescue({ judge, online, rescueOnline: true, hasKey: key });
@@ -429,7 +431,7 @@ export default function DevJudgeScreen() {
         durationMs: line?.audio?.durationMs ?? null,
       });
     } else if (line?.sentence?.uk) {
-      void speakRu(line.sentence.uk);
+      void speakUk(line.sentence.uk);
       log({ op: 'play', sentenceId: sid, rendered: false });
     }
   }, [detail, last, log]);

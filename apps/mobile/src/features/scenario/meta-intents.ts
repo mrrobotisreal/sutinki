@@ -1,7 +1,7 @@
 import { normalizeScenarioText } from '@/db/normalize';
 import { scoreAttempt, scoringTokens, wordsMatch } from '@/features/pronunciation/scoring';
 
-import { isStopword, LEADING_FILLERS_RU, stemMatches } from './judge/slots';
+import { isStopword, leadingFillersFor, stemMatches } from './judge/slots';
 
 /**
  * Meta-intents (T60, SPEAKING_SCENARIOS §6): the global spoken commands
@@ -12,8 +12,8 @@ import { isStopword, LEADING_FILLERS_RU, stemMatches } from './judge/slots';
  * remainder is the query. Pure — no React, no DB; the resolvers that need
  * the glossary / Whisper / online take injected lookups.
  *
- * Language-parameterized from day one: `ru` is filled, `uk` is empty (the
- * Сутінки UT tickets fill it) — an empty table detects nothing.
+ * Language-parameterized from day one: `ru` (Sumrak) and `uk` (UT14) are
+ * both filled; the `uk` table detects only Ukrainian triggers.
  *
  * Recorded T60 decisions:
  * - **One-token triggers («что?», «а?») must be the WHOLE transcript** —
@@ -73,7 +73,45 @@ export const META_TRIGGERS: Record<ScenarioLanguage, readonly MetaTrigger[]> = {
     { intent: 'dont-understand', phrase: 'я не понял', takesQuery: false },
     { intent: 'dont-understand', phrase: 'я не поняла', takesQuery: false },
   ],
-  uk: [],
+  uk: [
+    // UT14 (ticket decision 3). Longer/more specific phrases first within an
+    // intent so «я не розумію слово» beats «я не розумію».
+    { intent: 'explain', phrase: 'я не розумію слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не розумію слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не зрозумів слово', takesQuery: true },
+    { intent: 'explain', phrase: 'не зрозуміла слово', takesQuery: true },
+    { intent: 'explain', phrase: 'що означає', takesQuery: true },
+    { intent: 'explain', phrase: 'що значить', takesQuery: true },
+    { intent: 'explain', phrase: 'що таке', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як буде українською', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як це сказати', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як по-українськи', takesQuery: true },
+    { intent: 'howtosay', phrase: 'як сказати', takesQuery: true },
+    { intent: 'repeat', phrase: 'повторіть', takesQuery: false },
+    { intent: 'repeat', phrase: 'повтори', takesQuery: false },
+    { intent: 'repeat', phrase: 'ще раз', takesQuery: false },
+    { intent: 'repeat', phrase: 'що', whole: true, takesQuery: false },
+    { intent: 'repeat', phrase: 'а', whole: true, takesQuery: false },
+    { intent: 'slower', phrase: 'повільніше', takesQuery: false },
+    { intent: 'slower', phrase: 'не так швидко', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не розумію', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'не розумію', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не зрозумів', takesQuery: false },
+    { intent: 'dont-understand', phrase: 'я не зрозуміла', takesQuery: false },
+    // NeMo's model is ru+uk with no language hint: on real Ukrainian speech it
+    // often writes the trigger with Russian spellings (calibration, UT14:
+    // «Что значит», «Что означает», «Что такая», «Повторить», «Не так швыдко»).
+    // These are recognition aliases of the SAME Ukrainian commands, never shown
+    // or authored as content.
+    { intent: 'explain', phrase: 'что означает', takesQuery: true },
+    { intent: 'explain', phrase: 'что значит', takesQuery: true },
+    { intent: 'explain', phrase: 'что такое', takesQuery: true },
+    { intent: 'howtosay', phrase: 'как сказать', takesQuery: true },
+    { intent: 'repeat', phrase: 'повторить', takesQuery: false },
+    { intent: 'repeat', phrase: 'что', whole: true, takesQuery: false },
+    { intent: 'slower', phrase: 'не так быстро', takesQuery: false },
+    { intent: 'slower', phrase: 'медленнее', takesQuery: false },
+  ],
 };
 
 export interface MetaDetection {
@@ -105,7 +143,8 @@ export function detectMetaIntent(
   if (all.length === 0) return null;
   // Skip leading fillers, but keep at least one token.
   let start = 0;
-  while (start < all.length - 1 && LEADING_FILLERS_RU.has(all[start]!)) start++;
+  const fillers = leadingFillersFor(language);
+  while (start < all.length - 1 && fillers.has(all[start]!)) start++;
   const tokens = all.slice(start);
 
   let best: MetaDetection | null = null;
@@ -136,7 +175,7 @@ export function detectMetaIntent(
     // The first trigger word must be heard at the head (avoids «…значит» tails matching)
     // and every content word of the trigger must be heard (stopwords may slip).
     if (!words[0]?.matched) continue;
-    if (words.some((w) => !w.matched && !isStopword(w.target))) continue;
+    if (words.some((w) => !w.matched && !isStopword(w.target, language))) continue;
     const queryTokens = trigger.takesQuery ? tokens.slice(windowLen) : [];
     const cand: MetaDetection = {
       intent: trigger.intent,
@@ -186,6 +225,7 @@ export type MetaSource = 'glossary' | 'whisper' | 'online' | 'none';
 export function findGlossaryByRu(
   queryTokens: readonly string[],
   glossary: readonly GlossaryLookupEntry[],
+  language: ScenarioLanguage = 'ru',
 ): GlossaryLookupEntry | null {
   let best: { entry: GlossaryLookupEntry; at: number } | null = null;
   for (let at = 0; at < queryTokens.length; at++) {
@@ -195,7 +235,7 @@ export function findGlossaryByRu(
         wordsMatch(normalizeScenarioText(entry.ru), q) ||
         entry.forms.some((f) => {
           const n = normalizeScenarioText(f);
-          return n.endsWith('*') ? stemMatches(n.slice(0, -1), q) : wordsMatch(n, q);
+          return n.endsWith('*') ? stemMatches(n.slice(0, -1), q, language) : wordsMatch(n, q);
         });
       if (hit && (!best || at < best.at)) best = { entry, at };
     }
@@ -256,6 +296,9 @@ function charDistanceLocal(a: string, b: string): number {
   return prev[n]!;
 }
 
+const FOLD_RU: Record<string, string> = { ы: 'и', э: 'е', ё: 'е', ъ: 'ʼ' };
+const FOLD_RU_RE = /[ыэёъ]/g;
+
 /** Minimum similarity for a translit garble to count as a hit (tolerant, but not a coin flip). */
 export const TRANSLIT_MIN_SIMILARITY = 70;
 
@@ -269,19 +312,35 @@ export const TRANSLIT_MIN_SIMILARITY = 70;
 export function findGlossaryByTranslit(
   queryTokens: readonly string[],
   glossary: readonly GlossaryLookupEntry[],
+  language: ScenarioLanguage = 'ru',
 ): TranslitHit | null {
   if (queryTokens.length === 0) return null;
-  const joined = queryTokens.map(normalizeScenarioText).join(' ');
+  // uk: NeMo writes English through its Russian side too (э/ы/ё) — compare on
+  // the Ukrainian letters (UT14 calibration), both sides folded.
+  const fold = (t: string) =>
+    language === 'uk'
+      ? normalizeScenarioText(t).replace(FOLD_RU_RE, (c) => FOLD_RU[c]!)
+      : normalizeScenarioText(t);
+  // uk: the multilingual model often writes the English word itself, in Latin
+  // («appointment», «station») — compare that to the entry's `en` directly.
+  if (language === 'uk') {
+    const latin = queryTokens.map((t) => t.toLowerCase()).filter((t) => /^[a-z][a-z'-]*$/.test(t));
+    if (latin.length > 0) {
+      const en = findGlossaryByEnglish(latin, glossary);
+      if (en) return { entry: en, score: 100, candidate: en.en };
+    }
+  }
+  const joined = queryTokens.map(fold).join(' ');
   const windows = new Set<string>([joined]);
   for (let i = 1; i < queryTokens.length; i++)
-    windows.add(queryTokens.slice(i).map(normalizeScenarioText).join(' '));
-  for (let i = 0; i < queryTokens.length; i++) windows.add(normalizeScenarioText(queryTokens[i]!));
+    windows.add(queryTokens.slice(i).map(fold).join(' '));
+  for (let i = 0; i < queryTokens.length; i++) windows.add(fold(queryTokens[i]!));
   const compact = [...windows].map((w) => w.replace(/[\s-]/g, ''));
 
   let best: TranslitHit | null = null;
   for (const entry of glossary) {
     for (const raw of entry.translit) {
-      const cand = normalizeScenarioText(raw).replace(/[\s-]/g, '');
+      const cand = fold(raw).replace(/[\s-]/g, '');
       if (cand.length === 0) continue;
       for (const w of compact) {
         if (w.length === 0) continue;
@@ -395,6 +454,8 @@ export interface ExplainResolverDeps {
   /** id → the `explain` clip's sentence id. */
   explainSentenceId: (entryId: string) => string | null;
   played: readonly PlayedToken[];
+  /** The scenario language (`uk` ⇒ Ukrainian stem alternations in glossary lookup). Default `ru`. */
+  language?: ScenarioLanguage;
   /** Online one-liner («„X“ — это Y»), null when offline / no key / failed. */
   online?: (query: string) => Promise<string | null>;
 }
@@ -404,7 +465,7 @@ export async function resolveExplain(
   deps: ExplainResolverDeps,
 ): Promise<Extract<MetaResolution, { intent: 'explain' }>> {
   if (detection.queryTokens.length === 0) return { intent: 'explain', source: 'none' };
-  const entry = findGlossaryByRu(detection.queryTokens, deps.glossary);
+  const entry = findGlossaryByRu(detection.queryTokens, deps.glossary, deps.language ?? 'ru');
   if (entry) {
     const sentenceId = deps.explainSentenceId(entry.id);
     if (sentenceId) {
@@ -438,6 +499,8 @@ export async function resolveExplain(
 export interface HowToSayResolverDeps {
   glossary: readonly GlossaryLookupEntry[];
   howToSaySentenceId: (entryId: string) => string | null;
+  /** The scenario language (`uk` ⇒ Ukrainian translit comparison). Default `ru`. */
+  language?: ScenarioLanguage;
   /** Whisper re-decode of the same WAV as English, null when the assist model is absent / failed. */
   whisper?: () => Promise<string | null>;
   /** Online translation spoken by the суфлёр, null when offline / no key / failed. */
@@ -448,7 +511,7 @@ export async function resolveHowToSay(
   detection: MetaDetection,
   deps: HowToSayResolverDeps,
 ): Promise<Extract<MetaResolution, { intent: 'howtosay' }>> {
-  const hit = findGlossaryByTranslit(detection.queryTokens, deps.glossary);
+  const hit = findGlossaryByTranslit(detection.queryTokens, deps.glossary, deps.language ?? 'ru');
   if (hit) {
     const sentenceId = deps.howToSaySentenceId(hit.entry.id);
     if (sentenceId) {

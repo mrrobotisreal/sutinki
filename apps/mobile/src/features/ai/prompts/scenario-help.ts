@@ -1,15 +1,15 @@
 import type { ChatMessage } from '../client';
 
 /**
- * The two суфлёр one-liners (T60, SPEAKING_SCENARIOS §6): when neither the
+ * The two суфлер one-liners (T60, SPEAKING_SCENARIOS §6): when neither the
  * glossary nor the played host lines (nor Whisper) answered a meta-intent
  * and the device is online, a fast model supplies ONE short line that the
  * prompter SPEAKS — the text is never shown. Plain text, no JSON.
  */
 
-const EXPLAIN_SYSTEM = `You are the off-stage prompter in a Russian speaking role-play for an A1–A2 English-speaking learner. The learner asked what a Russian word or short phrase means (it comes from automatic speech recognition and may be misspelled — infer the intended word). Reply with ONE short English gloss of at most eight words: the meaning only, no Russian, no quotes, no explanation, no prose. If it is unintelligible, reply exactly: unknown`;
+const EXPLAIN_SYSTEM = `You are the off-stage prompter (суфлер) in a Ukrainian speaking role-play for an A1–A2 English-speaking learner. The learner asked what a Ukrainian word or short phrase means (it comes from automatic speech recognition and may be misspelled or spelled with Russian letters — infer the intended Ukrainian word). Reply with ONE short English gloss of at most eight words: the meaning only, no Ukrainian, no Russian, no quotes, no explanation, no prose. If it is unintelligible, reply exactly: unknown`;
 
-const HOWTOSAY_SYSTEM = `You are the off-stage prompter in a Russian speaking role-play for an A1–A2 English-speaking learner. The learner asked how to say an English word or short phrase in Russian. The input may be the English itself or a Cyrillic garble of it from Russian speech recognition — infer the intended English. Reply with ONE natural spoken Russian rendering for a beginner, at most six words, Cyrillic only, no translation, no quotes, no explanation. If it is unintelligible, reply exactly: unknown`;
+const HOWTOSAY_SYSTEM = `You are the off-stage prompter (суфлер) in a Ukrainian speaking role-play for an A1–A2 English-speaking learner. The learner asked how to say an English word or short phrase in Ukrainian. The input may be the English itself or a Cyrillic garble of it from Ukrainian speech recognition — infer the intended English. Reply with ONE natural spoken Ukrainian rendering for a beginner, at most six words, Ukrainian Cyrillic only (never Russian: no ы, э, ё, ъ; use і, ї, є, ґ where Ukrainian requires them), no translation, no quotes, no explanation. If it is unintelligible, reply exactly: unknown`;
 
 export function buildScenarioExplainMessages(query: string): ChatMessage[] {
   return [
@@ -21,7 +21,7 @@ export function buildScenarioExplainMessages(query: string): ChatMessage[] {
 export function buildScenarioHowToSayMessages(query: string): ChatMessage[] {
   return [
     { role: 'system', content: HOWTOSAY_SYSTEM },
-    { role: 'user', content: `Translate to natural spoken Russian for a beginner: ${query}` },
+    { role: 'user', content: `Translate to natural spoken Ukrainian for a beginner: ${query}` },
   ];
 }
 

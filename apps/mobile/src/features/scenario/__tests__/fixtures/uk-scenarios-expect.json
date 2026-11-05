@@ -1,0 +1,1922 @@
+{
+  "bank": [
+    {
+      "id": "bank-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "purpose",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "withdraw",
+                "lemma": "зняти",
+                "forms": ["зня*", "знім*", "готівк*"]
+              },
+              {
+                "key": "exchange",
+                "lemma": "обміняти",
+                "forms": ["обмін*", "валют*"]
+              },
+              {
+                "key": "card",
+                "lemma": "картка",
+                "forms": ["картк*", "загуби*", "заблок*", "втрат*"]
+              },
+              {
+                "key": "account",
+                "lemma": "рахунок",
+                "forms": ["рахун*", "відкри*"]
+              },
+              {
+                "key": "pay",
+                "lemma": "заплатити",
+                "forms": ["заплат*", "оплат*", "переказ*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Я хочу зняти гроші.",
+          "Мені треба обміняти долари.",
+          "Я загубив картку.",
+          "Я загубила картку."
+        ],
+        "reject": [
+          {
+            "forms": ["добре", "дякую", "нормально"]
+          }
+        ],
+        "branchOn": "purpose"
+      }
+    },
+    {
+      "id": "bank-a1-t03w",
+      "expect": {
+        "slots": [
+          {
+            "id": "amount",
+            "required": true,
+            "kind": "number"
+          },
+          {
+            "id": "currency",
+            "required": false,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "eur",
+                "lemma": "євро",
+                "forms": ["євро"]
+              },
+              {
+                "key": "usd",
+                "lemma": "долар",
+                "forms": ["долар*"]
+              },
+              {
+                "key": "uah",
+                "lemma": "гривня",
+                "forms": ["гривн*", "гривен*", "грн"]
+              },
+              {
+                "key": "pln",
+                "lemma": "злотий",
+                "forms": ["злот*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Двісті євро.", "Я хочу зняти сто доларів.", "П'ятсот гривень.", "Двісті."],
+        "reject": []
+      }
+    },
+    {
+      "id": "bank-a1-t03e",
+      "expect": {
+        "slots": [
+          {
+            "id": "from",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "usd",
+                "lemma": "долар",
+                "forms": ["долар*"]
+              },
+              {
+                "key": "eur",
+                "lemma": "євро",
+                "forms": ["євро"]
+              },
+              {
+                "key": "uah",
+                "lemma": "гривня",
+                "forms": ["гривн*", "гривен*", "грн"]
+              },
+              {
+                "key": "pln",
+                "lemma": "злотий",
+                "forms": ["злот*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "amount",
+            "required": true,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Сто доларів.", "Двісті євро.", "Триста доларів.", "Сто євро."],
+        "reject": []
+      }
+    },
+    {
+      "id": "bank-a1-t05",
+      "expect": {
+        "slots": [
+          {
+            "id": "client",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "є"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "немає", "нема", "не клієнт", "не маю"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, у мене є рахунок.", "Ні, у мене немає рахунку.", "Так."],
+        "reject": [],
+        "branchOn": "client"
+      }
+    },
+    {
+      "id": "bank-a1-t06y",
+      "expect": {
+        "slots": [
+          {
+            "id": "phone",
+            "required": true,
+            "kind": "number"
+          }
+        ],
+        "accept": [
+          "Нуль шість шість, один два три, чотири п'ять.",
+          "Мій номер: нуль вісім дев'ять, два два три.",
+          "Нуль шість шість один два три чотири п'ять шість сім."
+        ],
+        "reject": []
+      }
+    },
+    {
+      "id": "bank-a1-t07",
+      "expect": {
+        "slots": [
+          {
+            "id": "receipt",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "не потрібна", "не потрібен", "не потрібно", "не треба"]
+              },
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "звичайно", "будь ласка", "чек"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, будь ласка.", "Ні, не треба.", "Ні, не потрібна.", "Ні, дякую."],
+        "reject": []
+      }
+    },
+    {
+      "id": "bank-a1-t09",
+      "expect": {
+        "slots": [
+          {
+            "id": "ok",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "усе правильно", "точно"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "неправильно", "не вистачає", "мало", "не правильно"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, усе правильно, дякую.", "Ні, мало.", "Так, усе точно."],
+        "reject": [],
+        "branchOn": "ok"
+      }
+    },
+    {
+      "id": "bank-a1-t03c",
+      "expect": {
+        "slots": [
+          {
+            "id": "when",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "today",
+                "lemma": "сьогодні",
+                "forms": ["сьогодні", "вранці", "зранку"]
+              },
+              {
+                "key": "yesterday",
+                "lemma": "вчора",
+                "forms": ["вчора", "учора"]
+              },
+              {
+                "key": "ago",
+                "lemma": "тому",
+                "forms": ["тиж*", "тому", "дні", "днів", "дн*", "годин*", "позавчора"]
+              },
+              {
+                "key": "unknown",
+                "lemma": "не знаю",
+                "forms": ["не знаю", "не пам'ятаю"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Учора.", "Сьогодні вранці.", "Не знаю.", "Вчора."],
+        "reject": []
+      }
+    },
+    {
+      "id": "bank-a1-t05c",
+      "expect": {
+        "slots": [
+          {
+            "id": "newcard",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "не хочу", "не треба", "не потрібна", "потім"]
+              },
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "хочу", "звичайно"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, хочу.", "Так, будь ласка.", "Ні, не треба."],
+        "reject": [],
+        "branchOn": "newcard"
+      }
+    },
+    {
+      "id": "bank-a1-t07c",
+      "expect": {
+        "slots": [
+          {
+            "id": "contact",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "call",
+                "lemma": "зателефонувати",
+                "forms": ["зателефону*", "дзвон*", "подзвон*"]
+              },
+              {
+                "key": "message",
+                "lemma": "написати",
+                "forms": ["напис*", "напиш*", "написа*", "повідомлен*", "смс", "пошт*", "імейл*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Зателефонуйте, будь ласка.",
+          "Напишіть повідомлення.",
+          "Краще зателефонуйте.",
+          "Подзвоніть, будь ласка."
+        ],
+        "reject": []
+      }
+    }
+  ],
+  "doctor": [
+    {
+      "id": "doc-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "where",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "head",
+                "lemma": "голова",
+                "forms": ["голов*"]
+              },
+              {
+                "key": "stomach",
+                "lemma": "живіт",
+                "forms": ["живіт", "живот*"]
+              },
+              {
+                "key": "throat",
+                "lemma": "горло",
+                "forms": ["горл*"]
+              },
+              {
+                "key": "tooth",
+                "lemma": "зуб",
+                "forms": ["зуб*"]
+              },
+              {
+                "key": "back",
+                "lemma": "спина",
+                "forms": ["спин*"]
+              },
+              {
+                "key": "leg",
+                "lemma": "нога",
+                "forms": ["ног*", "колін*"]
+              },
+              {
+                "key": "hand",
+                "lemma": "рука",
+                "forms": ["рук*", "палець", "пальц*"]
+              },
+              {
+                "key": "ear",
+                "lemma": "вухо",
+                "forms": ["вух*", "вуш*"]
+              },
+              {
+                "key": "chest",
+                "lemma": "груди",
+                "forms": ["груд*", "серц*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "У мене болить голова.",
+          "Болить живіт.",
+          "У мене болить горло.",
+          "Болить спина."
+        ],
+        "reject": [
+          {
+            "forms": ["дякую", "добре", "нормально", "чудово"]
+          }
+        ],
+        "branchOn": "where"
+      }
+    },
+    {
+      "id": "doc-a1-t03h",
+      "expect": {
+        "slots": [
+          {
+            "id": "since",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "today",
+                "lemma": "сьогодні",
+                "forms": ["сьогодні", "ранк*", "зранку", "вранці", "годин*", "з ранку"]
+              },
+              {
+                "key": "days",
+                "lemma": "день",
+                "forms": ["дн*", "день", "дні", "дня", "тиж*", "вчора"]
+              },
+              {
+                "key": "long",
+                "lemma": "давно",
+                "forms": ["давно", "довго", "місяць", "місяц*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "n",
+            "required": false,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Два дні.", "З ранку.", "Давно.", "Три дні."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t03s",
+      "expect": {
+        "slots": [
+          {
+            "id": "food",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "nothing",
+                "lemma": "нічого",
+                "forms": ["нічого", "не їв", "не їла"]
+              },
+              {
+                "key": "meat",
+                "lemma": "м'ясо",
+                "forms": ["м'яс*", "курк*", "ковбас*", "шашлик*"]
+              },
+              {
+                "key": "fish",
+                "lemma": "риба",
+                "forms": ["риб*", "суші"]
+              },
+              {
+                "key": "pizza",
+                "lemma": "піца",
+                "forms": ["піц*"]
+              },
+              {
+                "key": "fastfood",
+                "lemma": "фастфуд",
+                "forms": ["бургер*", "макдон*", "фастфуд", "картоп*"]
+              },
+              {
+                "key": "salad",
+                "lemma": "салат",
+                "forms": ["салат*", "овоч*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Я їв піцу.", "Я їла піцу.", "Вчора я їв суші.", "Нічого."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t03t",
+      "expect": {
+        "slots": [
+          {
+            "id": "fever",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "є", "висок*"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "немає", "нема", "не знаю", "не мірял*", "не міряв*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "n",
+            "required": false,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Так, тридцять вісім.", "Ні, температури немає.", "Не знаю.", "Так, є."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t03",
+      "expect": {
+        "slots": [
+          {
+            "id": "since",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "today",
+                "lemma": "сьогодні",
+                "forms": ["сьогодні", "ранк*", "зранку", "вранці", "годин*", "з ранку"]
+              },
+              {
+                "key": "days",
+                "lemma": "день",
+                "forms": ["дн*", "день", "дні", "дня", "тиж*", "вчора"]
+              },
+              {
+                "key": "long",
+                "lemma": "давно",
+                "forms": ["давно", "довго", "місяць", "місяц*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "n",
+            "required": false,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Два дні.", "З ранку.", "Давно.", "Три дні."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t04",
+      "expect": {
+        "slots": [
+          {
+            "id": "intensity",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "strong",
+                "lemma": "сильно",
+                "forms": ["сильно", "дуже"]
+              },
+              {
+                "key": "mild",
+                "lemma": "трохи",
+                "forms": ["не дуже", "не сильно", "трохи", "слабо"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Дуже сильно.", "Не дуже, трохи.", "Не сильно.", "Сильно."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t05",
+      "expect": {
+        "slots": [
+          {
+            "id": "meds",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "приймаю", "ібупрофен*", "парацетамол*", "аспірин*"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "нічого", "не приймаю", "не п'ю"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, ібупрофен.", "Ні, нічого не приймаю.", "Так, парацетамол.", "Ні."],
+        "reject": [],
+        "branchOn": "meds"
+      }
+    },
+    {
+      "id": "doc-a1-t06y",
+      "expect": {
+        "slots": [
+          {
+            "id": "name",
+            "required": true,
+            "kind": "free",
+            "minTokens": 1
+          }
+        ],
+        "accept": [
+          "Ібупрофен.",
+          "Парацетамол, зранку і ввечері.",
+          "Аспірин.",
+          "Таблетки від голови."
+        ],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t07",
+      "expect": {
+        "slots": [
+          {
+            "id": "allergy",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "є", "алергія на", "пеніцилін*"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "немає", "нема", "алергії немає", "не знаю"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Ні, алергії немає.", "Так, на пеніцилін.", "Не знаю.", "Ні."],
+        "reject": []
+      }
+    },
+    {
+      "id": "doc-a1-t09",
+      "expect": {
+        "slots": [
+          {
+            "id": "reply",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "ok",
+                "lemma": "зрозуміло",
+                "forms": [
+                  "так",
+                  "усе зрозуміло",
+                  "дякую",
+                  "немає запитань",
+                  "запитань немає",
+                  "питань немає",
+                  "ясно"
+                ]
+              },
+              {
+                "key": "question",
+                "lemma": "запитання",
+                "forms": [
+                  "не зрозуміло",
+                  "запитання",
+                  "питання",
+                  "а можна",
+                  "а коли",
+                  "скільки",
+                  "а як"
+                ]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Так, усе зрозуміло, дякую.",
+          "Ні, не зрозуміло. Скільки днів?",
+          "Є запитання: а коли?"
+        ],
+        "reject": [],
+        "branchOn": "reply"
+      }
+    }
+  ],
+  "gas": [
+    {
+      "id": "gas-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "fuel",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "f95",
+                "lemma": "дев'яносто п'ятий",
+                "forms": ["дев'яносто п'ят*", "дев'яносто п'ять", "95", "п'ятий"]
+              },
+              {
+                "key": "f92",
+                "lemma": "дев'яносто другий",
+                "forms": ["дев'яносто два", "дев'яносто друг*", "92"]
+              },
+              {
+                "key": "diesel",
+                "lemma": "дизель",
+                "forms": ["дизел*", "дизі*"]
+              },
+              {
+                "key": "gas",
+                "lemma": "газ",
+                "forms": ["газ*", "автогаз*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "amount",
+            "required": false,
+            "kind": "number"
+          },
+          {
+            "id": "full",
+            "required": false,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "full",
+                "lemma": "повний",
+                "forms": ["повн*", "до повного"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Дев'яносто п'ятий, повний бак.",
+          "Дизель, тридцять літрів.",
+          "Дев'яносто другий, двадцять літрів."
+        ],
+        "reject": [
+          {
+            "forms": ["дякую", "добре", "привіт"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "gas-a1-t03",
+      "expect": {
+        "slots": [
+          {
+            "id": "pump",
+            "required": true,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Третя.", "Номер три.", "П'ята."],
+        "reject": []
+      }
+    },
+    {
+      "id": "gas-a1-t04",
+      "expect": {
+        "slots": [
+          {
+            "id": "pay",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "card",
+                "lemma": "картка",
+                "forms": ["картк*", "карт*"]
+              },
+              {
+                "key": "cash",
+                "lemma": "готівка",
+                "forms": ["готівк*", "кеш*", "грошима"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Карткою.", "Готівкою, будь ласка.", "Карткою, будь ласка."],
+        "reject": []
+      }
+    },
+    {
+      "id": "gas-a1-t05",
+      "expect": {
+        "slots": [
+          {
+            "id": "more",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "кав*", "вод*", "чай*", "шоколад*", "булк*", "снек*"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "дякую", "нічого", "все", "це все"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, каву, будь ласка.", "Ні, дякую.", "Воду, будь ласка."],
+        "reject": [],
+        "branchOn": "more"
+      }
+    },
+    {
+      "id": "gas-a1-t06y",
+      "expect": {
+        "slots": [
+          {
+            "id": "milk",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "with",
+                "lemma": "з молоком",
+                "forms": ["з молоком", "молок*", "з", "так"]
+              },
+              {
+                "key": "without",
+                "lemma": "без",
+                "forms": ["без", "чорн*", "без молока", "ні"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["З молоком.", "Без, чорна.", "Без молока, будь ласка."],
+        "reject": []
+      }
+    },
+    {
+      "id": "gas-a1-t07",
+      "expect": {
+        "slots": [
+          {
+            "id": "dest",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "center",
+                "lemma": "центр",
+                "forms": ["центр*", "місто", "міст*"]
+              },
+              {
+                "key": "station",
+                "lemma": "вокзал",
+                "forms": ["вокзал*", "автостанці*"]
+              },
+              {
+                "key": "hotel",
+                "lemma": "готель",
+                "forms": ["готел*", "база"]
+              },
+              {
+                "key": "home",
+                "lemma": "додому",
+                "forms": ["додому", "дім*", "дом*"]
+              },
+              {
+                "key": "place",
+                "lemma": "Яремче",
+                "forms": ["яремч*", "косів*", "косов*", "буковел*"]
+              },
+              {
+                "key": "to",
+                "lemma": "до",
+                "forms": ["до", "в", "у", "на"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Я їду в центр.", "Мені треба на вокзал.", "Я їду в Яремче."],
+        "reject": []
+      }
+    },
+    {
+      "id": "gas-a1-t09",
+      "expect": {
+        "slots": [
+          {
+            "id": "dir",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "left",
+                "lemma": "ліворуч",
+                "forms": ["ліворуч", "наліво", "ліво*", "лів*"]
+              },
+              {
+                "key": "straight",
+                "lemma": "прямо",
+                "forms": ["прямо"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "landmark",
+            "required": false,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "bridge",
+                "lemma": "міст",
+                "forms": ["мост*", "міст*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Прямо, потім ліворуч біля мосту.", "Ліворуч біля мосту.", "Прямо і ліворуч."],
+        "reject": [
+          {
+            "forms": ["праворуч", "направо", "правор*"]
+          }
+        ]
+      }
+    }
+  ],
+  "nightshift": [
+    {
+      "id": "night-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "alone",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "сам*", "одн*", "один", "тільки я"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "не сам*", "не одн*", "є", "колег*", "охорон*", "ще"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, я сам.", "Так, я сама.", "Ні, тут ще охоронець.", "Так, тільки я."],
+        "reject": [],
+        "branchOn": "alone"
+      }
+    },
+    {
+      "id": "night-a1-t04",
+      "expect": {
+        "slots": [
+          {
+            "id": "have",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "є", "ось", "звичайно", "там", "у холодильнику"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "нема", "немає", "закінчилась", "закінчилася", "тільки з газом"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, є, у холодильнику.", "Ні, тільки з газом.", "Так, ось."],
+        "reject": [],
+        "branchOn": "have"
+      }
+    },
+    {
+      "id": "night-a1-t06",
+      "expect": {
+        "slots": [
+          {
+            "id": "price",
+            "required": true,
+            "kind": "number"
+          },
+          {
+            "id": "currency",
+            "required": false,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "uah",
+                "lemma": "гривня",
+                "forms": ["гривн*", "гривень", "грн", "грив*"]
+              },
+              {
+                "key": "kop",
+                "lemma": "копійка",
+                "forms": ["копій*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Двадцять гривень.", "Тридцять п'ять гривень.", "П'ятдесят гривень."],
+        "reject": []
+      }
+    },
+    {
+      "id": "night-a1-t07",
+      "expect": {
+        "slots": [
+          {
+            "id": "close",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "never",
+                "lemma": "цілодобово",
+                "forms": [
+                  "цілодобов*",
+                  "не зачиня*",
+                  "не закрива*",
+                  "завжди",
+                  "двадцять чотири",
+                  "ніколи",
+                  "всю ніч"
+                ]
+              },
+              {
+                "key": "time",
+                "lemma": "ранок",
+                "forms": ["ранку", "вранці", "до шостої", "до сьомої", "шост*", "сьом*"]
+              }
+            ],
+            "acceptsNumber": true
+          }
+        ],
+        "accept": ["Ми працюємо цілодобово.", "До шостої ранку.", "Увесь час, усю ніч."],
+        "reject": [],
+        "branchOn": "close"
+      }
+    },
+    {
+      "id": "night-a1-t09",
+      "expect": {
+        "slots": [
+          {
+            "id": "duration",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "first",
+                "lemma": "перша",
+                "forms": ["перш*", "першу", "сьогодні перш*"]
+              },
+              {
+                "key": "long",
+                "lemma": "давно",
+                "forms": ["давно", "рік*", "року", "роки", "років", "місяц*", "тижн*"]
+              },
+              {
+                "key": "short",
+                "lemma": "недавно",
+                "forms": ["недавно", "вчора", "вчор*"]
+              }
+            ],
+            "acceptsNumber": true
+          }
+        ],
+        "accept": ["Три місяці.", "Це моя перша ніч.", "Давно, два роки."],
+        "reject": [],
+        "branchOn": "duration"
+      }
+    },
+    {
+      "id": "night-a1-t11",
+      "expect": {
+        "slots": [
+          {
+            "id": "came",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": [
+                  "так",
+                  "була",
+                  "був*",
+                  "приходил*",
+                  "жінк*",
+                  "бачив*",
+                  "бачил*",
+                  "годину тому"
+                ]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": [
+                  "ні",
+                  "нікого",
+                  "ніхто",
+                  "не бачив*",
+                  "не бачил*",
+                  "не було",
+                  "не приходив*",
+                  "не приходил*"
+                ]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Ні, ніхто не приходив.",
+          "Так, була жінка, годину тому.",
+          "Ні, я нікого не бачив."
+        ],
+        "reject": [],
+        "branchOn": "came"
+      }
+    },
+    {
+      "id": "night-a1-t13",
+      "expect": {
+        "slots": [
+          {
+            "id": "ok",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "зрозумі*", "добре", "гаразд", "звичайно"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "що", "чому", "не зрозумі*", "навіщо"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, зрозумів.", "Добре.", "Ні. Чому?"],
+        "reject": [],
+        "branchOn": "ok"
+      }
+    }
+  ],
+  "podcast": [
+    {
+      "id": "pod-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "name",
+            "required": true,
+            "kind": "free",
+            "minTokens": 1
+          }
+        ],
+        "accept": ["Мене звати Мітч.", "Я Мітч.", "Мітч.", "Мене звати Мітч, дуже приємно."],
+        "reject": [
+          {
+            "forms": ["добре", "нормально", "дякую", "чудово"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "pod-a1-t03",
+      "expect": {
+        "slots": [
+          {
+            "id": "origin",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "usa",
+                "lemma": "Америка",
+                "forms": ["америк*", "сша", "штат*"]
+              },
+              {
+                "key": "colorado",
+                "lemma": "Колорадо",
+                "forms": ["колорадо"]
+              },
+              {
+                "key": "elsewhere",
+                "lemma": "інше",
+                "forms": ["іншої", "іншого", "іншій", "іншу"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Я з Америки.", "З Колорадо.", "Я зі США.", "Я з Колорадо."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pod-a1-t04",
+      "expect": {
+        "slots": [
+          {
+            "id": "place",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "austria",
+                "lemma": "Австрія",
+                "forms": ["австр*", "зальцбур*"]
+              },
+              {
+                "key": "usa",
+                "lemma": "Америка",
+                "forms": ["америк*", "америц*", "колорадо", "сша"]
+              },
+              {
+                "key": "elsewhere",
+                "lemma": "місто",
+                "forms": ["місті", "містом", "містечк*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Я живу в Австрії.",
+          "У Зальцбурзі.",
+          "Зараз я живу в Колорадо.",
+          "Я живу в Америці."
+        ],
+        "reject": []
+      }
+    },
+    {
+      "id": "pod-a1-t05",
+      "expect": {
+        "slots": [
+          {
+            "id": "job",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "programmer",
+                "lemma": "програміст",
+                "forms": ["програміст*", "розробни*"]
+              },
+              {
+                "key": "engineer",
+                "lemma": "інженер",
+                "forms": ["інженер*"]
+              },
+              {
+                "key": "student",
+                "lemma": "студент",
+                "forms": ["студент*", "вчуся"]
+              },
+              {
+                "key": "teacher",
+                "lemma": "вчитель",
+                "forms": ["вчител*", "викладач*"]
+              },
+              {
+                "key": "doctor",
+                "lemma": "лікар",
+                "forms": ["лікар*"]
+              },
+              {
+                "key": "driver",
+                "lemma": "водій",
+                "forms": ["водій", "водія", "водієм"]
+              },
+              {
+                "key": "working",
+                "lemma": "працювати",
+                "forms": ["працюю на"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Я програміст.", "Я інженер.", "Я студент.", "Я вчитель."],
+        "reject": [
+          {
+            "forms": ["добре", "нормально", "дякую"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "pod-a1-t06",
+      "expect": {
+        "slots": [
+          {
+            "id": "hobby",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "read",
+                "lemma": "читати",
+                "forms": ["чита*", "книг*", "книж*"]
+              },
+              {
+                "key": "films",
+                "lemma": "фільм",
+                "forms": ["фільм*", "кіно", "диви*"]
+              },
+              {
+                "key": "music",
+                "lemma": "музика",
+                "forms": ["музик*", "слуха*"]
+              },
+              {
+                "key": "games",
+                "lemma": "гра",
+                "forms": ["ігр*", "ігор", "грат*", "граю"]
+              },
+              {
+                "key": "sport",
+                "lemma": "спорт",
+                "forms": ["спорт*", "біга*", "гуля*"]
+              },
+              {
+                "key": "cook",
+                "lemma": "готувати",
+                "forms": ["готу*"]
+              },
+              {
+                "key": "travel",
+                "lemma": "подорожувати",
+                "forms": ["подорож*", "їзд*"]
+              },
+              {
+                "key": "computers",
+                "lemma": "комп'ютер",
+                "forms": ["комп'ютер*", "компютер*", "збира*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Я люблю читати.",
+          "Люблю дивитися фільми.",
+          "Я люблю слухати музику.",
+          "Я люблю готувати."
+        ],
+        "reject": [],
+        "branchOn": "hobby"
+      }
+    },
+    {
+      "id": "pod-a1-t07r",
+      "expect": {
+        "slots": [
+          {
+            "id": "yesno",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "звичайно", "обожн*", "дуже люблю"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "не люблю", "не дуже"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, дуже люблю.", "Ні, не люблю.", "Звичайно, обожнюю.", "Так."],
+        "reject": [],
+        "branchOn": "yesno"
+      }
+    },
+    {
+      "id": "pod-a1-t07f",
+      "expect": {
+        "slots": [
+          {
+            "id": "genre",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "horror",
+                "lemma": "страшний",
+                "forms": ["страшн*", "жах*", "хорор*"]
+              },
+              {
+                "key": "comedy",
+                "lemma": "смішний",
+                "forms": ["смішн*", "комеді*"]
+              },
+              {
+                "key": "both",
+                "lemma": "обидва",
+                "forms": ["обидв*", "обоє", "усі", "всі", "різні"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Страшні.", "Я люблю жахи.", "Смішні, комедії.", "Обидва."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pod-a1-t08",
+      "expect": {
+        "slots": [
+          {
+            "id": "duration",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "long",
+                "lemma": "давно",
+                "forms": ["давно", "довго", "рок*", "років", "рік"]
+              },
+              {
+                "key": "short",
+                "lemma": "недавно",
+                "forms": ["недавно", "місяць", "місяц*", "тижн*", "тижд*", "тиждень"]
+              }
+            ],
+            "acceptsNumber": true
+          }
+        ],
+        "accept": ["Давно, п'ять років.", "П'ять років.", "Недавно, два місяці.", "Два місяці."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pod-a1-t09",
+      "expect": {
+        "slots": [
+          {
+            "id": "reason",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "family",
+                "lemma": "сім'я",
+                "forms": ["сім'*", "дружин*", "наречен*", "дівчин*", "друг*", "друз*", "родин*"]
+              },
+              {
+                "key": "work",
+                "lemma": "робота",
+                "forms": ["робот*"]
+              },
+              {
+                "key": "travel",
+                "lemma": "подорожі",
+                "forms": ["подорож*", "їзд*", "поїхати"]
+              },
+              {
+                "key": "like",
+                "lemma": "подобатися",
+                "forms": ["подоба*", "цікав*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Моя наречена з України.",
+          "Тому що моя дівчина з України.",
+          "Мені подобається українська мова.",
+          "Тому що це цікаво."
+        ],
+        "reject": []
+      }
+    }
+  ],
+  "police": [
+    {
+      "id": "pol-a1-t02",
+      "expect": {
+        "slots": [
+          {
+            "id": "incident",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "stolen",
+                "lemma": "вкрасти",
+                "forms": ["вкрал*", "вкра*", "злодій*", "крадіж*"]
+              },
+              {
+                "key": "lost",
+                "lemma": "загубити",
+                "forms": ["загуб*", "втрат*", "зник*", "пропа*"]
+              },
+              {
+                "key": "attacked",
+                "lemma": "напасти",
+                "forms": ["напа*", "вдари*", "бив*", "бійк*"]
+              },
+              {
+                "key": "saw",
+                "lemma": "бачити",
+                "forms": ["бачив*", "бачил*", "дивн*", "чолові*"]
+              },
+              {
+                "key": "accident",
+                "lemma": "аварія",
+                "forms": ["авар*", "машин*", "збив*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "У мене вкрали сумку.",
+          "Я загубив паспорт.",
+          "Я загубила паспорт.",
+          "На мене напали."
+        ],
+        "reject": [
+          {
+            "forms": ["дякую", "добре", "нормально"]
+          }
+        ],
+        "branchOn": "incident"
+      }
+    },
+    {
+      "id": "pol-a1-t03s",
+      "expect": {
+        "slots": [
+          {
+            "id": "item",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "bag",
+                "lemma": "сумка",
+                "forms": ["сумк*", "рюкзак*"]
+              },
+              {
+                "key": "phone",
+                "lemma": "телефон",
+                "forms": ["телефон*"]
+              },
+              {
+                "key": "wallet",
+                "lemma": "гаманець",
+                "forms": ["гаман*", "гроші", "грошей", "гроші*"]
+              },
+              {
+                "key": "passport",
+                "lemma": "паспорт",
+                "forms": ["паспорт*", "документ*"]
+              },
+              {
+                "key": "bike",
+                "lemma": "велосипед",
+                "forms": ["велосипед*"]
+              },
+              {
+                "key": "car",
+                "lemma": "машина",
+                "forms": ["машин*", "авто*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Сумку.", "Телефон і гаманець.", "Паспорт і гроші."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t03l",
+      "expect": {
+        "slots": [
+          {
+            "id": "item",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "bag",
+                "lemma": "сумка",
+                "forms": ["сумк*", "рюкзак*"]
+              },
+              {
+                "key": "phone",
+                "lemma": "телефон",
+                "forms": ["телефон*"]
+              },
+              {
+                "key": "wallet",
+                "lemma": "гаманець",
+                "forms": ["гаман*", "гроші", "грошей", "гроші*"]
+              },
+              {
+                "key": "passport",
+                "lemma": "паспорт",
+                "forms": ["паспорт*", "документ*"]
+              },
+              {
+                "key": "bike",
+                "lemma": "велосипед",
+                "forms": ["велосипед*"]
+              },
+              {
+                "key": "car",
+                "lemma": "машина",
+                "forms": ["машин*", "авто*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Сумку.", "Телефон і гаманець.", "Паспорт і гроші."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t03o",
+      "expect": {
+        "slots": [
+          {
+            "id": "story",
+            "required": true,
+            "kind": "free",
+            "minTokens": 3
+          }
+        ],
+        "accept": [
+          "Чоловік вдарив мене і втік.",
+          "Машина збила велосипед і поїхала.",
+          "Хтось бив мене на вулиці."
+        ],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t04",
+      "expect": {
+        "slots": [
+          {
+            "id": "when",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "today",
+                "lemma": "сьогодні",
+                "forms": ["сьогодні", "вранці", "вдень", "ввечері", "щойно"]
+              },
+              {
+                "key": "yesterday",
+                "lemma": "учора",
+                "forms": ["учора", "вчора", "вночі"]
+              },
+              {
+                "key": "ago",
+                "lemma": "тому",
+                "forms": ["годин*", "тому", "хвилин*", "тижн*"]
+              }
+            ],
+            "acceptsNumber": false
+          },
+          {
+            "id": "n",
+            "required": false,
+            "kind": "number"
+          }
+        ],
+        "accept": ["Сьогодні вранці.", "Годину тому.", "Учора ввечері."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t05",
+      "expect": {
+        "slots": [
+          {
+            "id": "where",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "street",
+                "lemma": "вулиця",
+                "forms": ["вулиц*", "на вулиці", "біля", "поруч"]
+              },
+              {
+                "key": "transit",
+                "lemma": "метро",
+                "forms": ["метро", "автобус*", "трамва*", "вокзал*", "потяг*", "поїзд*"]
+              },
+              {
+                "key": "shop",
+                "lemma": "магазин",
+                "forms": ["магазин*", "ринок", "ринк*", "кафе", "ресторан*"]
+              },
+              {
+                "key": "park",
+                "lemma": "парк",
+                "forms": ["парк*"]
+              },
+              {
+                "key": "home",
+                "lemma": "дім",
+                "forms": ["дім", "дом*", "квартир*"]
+              },
+              {
+                "key": "hotel",
+                "lemma": "готель",
+                "forms": ["готел*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["У метро.", "На вулиці, біля вокзалу.", "У кафе."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t06",
+      "expect": {
+        "slots": [
+          {
+            "id": "desc",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "saw",
+                "lemma": "бачити",
+                "forms": [
+                  "бачив*",
+                  "бачил*",
+                  "так",
+                  "чолові*",
+                  "жінк*",
+                  "хлоп*",
+                  "високи*",
+                  "низьк*",
+                  "чорн*",
+                  "куртк*",
+                  "шапк*",
+                  "борід*"
+                ]
+              },
+              {
+                "key": "notsaw",
+                "lemma": "ні",
+                "forms": ["ні", "не бачив*", "не бачил*", "нікого", "не помітив*", "не помітил*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": [
+          "Так, високий чоловік у чорній куртці.",
+          "Ні, я нікого не бачив.",
+          "Так, хлопець у шапці."
+        ],
+        "reject": [],
+        "branchOn": "desc"
+      }
+    },
+    {
+      "id": "pol-a1-t07s",
+      "expect": {
+        "slots": [
+          {
+            "id": "age",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "young",
+                "lemma": "молодий",
+                "forms": ["молод*", "хлопець", "студент*"]
+              },
+              {
+                "key": "old",
+                "lemma": "старий",
+                "forms": ["стар*", "літн*"]
+              },
+              {
+                "key": "middle",
+                "lemma": "середній",
+                "forms": ["середн*"]
+              }
+            ],
+            "acceptsNumber": true
+          }
+        ],
+        "accept": ["Років тридцять.", "Молодий, років двадцять.", "Не знаю, приблизно сорок."],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t08",
+      "expect": {
+        "slots": [
+          {
+            "id": "name",
+            "required": true,
+            "kind": "free",
+            "minTokens": 1
+          },
+          {
+            "id": "phone",
+            "required": false,
+            "kind": "number"
+          }
+        ],
+        "accept": [
+          "Мітч, нуль шість шість, один два три.",
+          "Мене звати Мітч. Номер: нуль шість шість, один два три, чотири п'ять.",
+          "Мітч Вінтроу."
+        ],
+        "reject": []
+      }
+    },
+    {
+      "id": "pol-a1-t10",
+      "expect": {
+        "slots": [
+          {
+            "id": "ok",
+            "required": true,
+            "kind": "forms",
+            "options": [
+              {
+                "key": "yes",
+                "lemma": "так",
+                "forms": ["так", "зрозуміло", "дякую", "добре", "ясно"]
+              },
+              {
+                "key": "no",
+                "lemma": "ні",
+                "forms": ["ні", "не зрозуміло", "що", "не зрозумів*", "не зрозуміл*"]
+              }
+            ],
+            "acceptsNumber": false
+          }
+        ],
+        "accept": ["Так, зрозуміло, дякую.", "Ні, не зрозуміло.", "Так."],
+        "reject": [],
+        "branchOn": "ok"
+      }
+    }
+  ]
+}
