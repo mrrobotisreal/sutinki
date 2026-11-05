@@ -9,16 +9,15 @@ import m0004 from './0004_word-profiles.sql';
 import m0005 from './0005_scenarios.sql';
 import m0006 from './0006_exams.sql';
 
-  export default {
-    journal,
-    migrations: {
-      m0000,
-m0001,
-m0002,
-m0003,
-m0004,
-m0005,
-m0006
-    }
-  }
-  
+export default {
+  journal,
+  migrations: {
+    m0000,
+    m0001,
+    m0002,
+    m0003,
+    m0004,
+    m0005,
+    m0006,
+  },
+};

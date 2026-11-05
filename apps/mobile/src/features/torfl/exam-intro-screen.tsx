@@ -106,7 +106,7 @@ export function ExamIntroScreen({
               {MODE_LABELS[data.mode]} · ТРКИ-{data.level}
             </Text>
           </View>
-          <Text className="font-reading-bold text-2xl leading-9">{data.title.ru}</Text>
+          <Text className="font-reading-bold text-2xl leading-9">{data.title.uk}</Text>
           <Text variant="muted" className="font-reading-italic">
             {data.title.en}
           </Text>

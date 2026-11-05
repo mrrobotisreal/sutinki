@@ -24,7 +24,7 @@ import {
 const PACK = examPackJson as unknown as {
   id: string;
   exams: unknown[];
-  stories: { id: string; title: { ru: string; en: string }; sentences: unknown[] }[];
+  stories: { id: string; title: { uk: string; en: string }; sentences: unknown[] }[];
 };
 const EXAMS: Exam[] = PACK.exams.map((e) => ExamSchema.parse(e));
 const mock = EXAMS.find((e) => e.mode === 'mock')!;
@@ -34,7 +34,7 @@ const summary = (exam: Exam, packId = PACK.id): ExamSummaryLike => ({
   packId,
   examId: exam.id,
   mode: exam.mode,
-  titleUk: exam.title.ru,
+  titleUk: exam.title.uk,
   titleEn: exam.title.en,
   exam,
 });
@@ -228,7 +228,7 @@ describe('«Тексты» grouping', () => {
     packId: PACK.id,
     id: s.id,
     orderIdx: i,
-    titleUk: s.title.ru,
+    titleUk: s.title.uk,
     titleEn: s.title.en,
     sentenceCount: s.sentences.length,
   }));

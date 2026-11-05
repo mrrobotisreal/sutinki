@@ -3,7 +3,7 @@ pack:
   id: a1-exam-fixture
   version: 1
   type: exam
-  title: { ru: "ТРКИ: тестовый пакет", en: "TORFL: fixture pack" }
+  title: { uk: "ТРКИ: тестовый пакет", en: "TORFL: fixture pack" }
   level: A1
   tags: ["torfl", "torfl:fixture"]
   category: torfl
@@ -12,12 +12,12 @@ exam:
   format: torfl
   level: A1
   mode: drill
-  title: { ru: 'Сломано', en: 'Broken' }
+  title: { uk: 'Сломано', en: 'Broken' }
   subtests:
     - id: s1
       kind: lexgram
-      title: { ru: 'Тест', en: 'Test' }
-      instructions: { ru: 'Тест.', en: 'Test.' }
+      title: { uk: 'Тест', en: 'Test' }
+      instructions: { uk: 'Тест.', en: 'Test.' }
       durationMin: 10
       dictionary: false
       navigation: free
@@ -25,7 +25,7 @@ exam:
       maxPoints: 1
       parts:
         - id: p1
-          instructions: { ru: 'Тест.', en: 'Test.' }
+          instructions: { uk: 'Тест.', en: 'Test.' }
           items:
             - { id: lg01, kind: choice, topic: case-prep, stem: 'Я живу … Москве.', options: ['в', 'на'], answer: 2 }
 ---

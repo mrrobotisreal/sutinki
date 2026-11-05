@@ -132,7 +132,7 @@ export const SpeakingMonologueItemSchema = z.strictObject({
   /** «О себе» / «Мой дом» */
   topicTitle: LocalizedTextSchema,
   questions: z
-    .array(z.strictObject({ ru: z.string().min(1), cues: z.array(z.string().min(1)).min(1) }))
+    .array(z.strictObject({ uk: z.string().min(1), cues: z.array(z.string().min(1)).min(1) }))
     .min(4)
     .max(12),
   minSentences: z.number().int().default(10),
@@ -276,7 +276,7 @@ export function examStoryRefs(exam: Exam): ExamStoryRef[] {
   return out;
 }
 
-/** Walk every string under `value` (skipping `{ru, en}` LocalizedText pairs, which check themselves). */
+/** Walk every string under `value` (skipping `{uk, en}` LocalizedText pairs, which check themselves). */
 function walkStrings(
   value: unknown,
   path: (string | number)[],
@@ -288,7 +288,7 @@ function walkStrings(
     value.forEach((v, i) => walkStrings(v, [...path, i], visit));
   } else if (value !== null && typeof value === 'object') {
     const keys = Object.keys(value);
-    if (keys.length === 2 && keys.includes('ru') && keys.includes('en')) return;
+    if (keys.length === 2 && keys.includes('uk') && keys.includes('en')) return;
     for (const [k, v] of Object.entries(value)) walkStrings(v, [...path, k], visit);
   }
 }

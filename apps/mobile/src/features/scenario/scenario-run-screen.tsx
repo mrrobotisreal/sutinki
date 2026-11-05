@@ -258,7 +258,7 @@ export function ScenarioRunScreen() {
       <EndingCard
         ending={ending}
         level={detail.scenario.level}
-        titleRu={detail.scenario.titleRu}
+        titleRu={detail.scenario.titleUk}
         stats={run.finish.stats}
         newEnding={run.finish.newEnding}
         xp={run.finish.xp}

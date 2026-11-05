@@ -67,7 +67,7 @@ const PACK_META = `pack:
   id: a1-exam-mini
   version: 1
   type: exam
-  title: { ru: 'Мини', en: 'Mini' }
+  title: { uk: 'Мини', en: 'Mini' }
   level: A1
   tags: ['torfl']
   category: torfl
@@ -82,12 +82,12 @@ ${pack}exam:
   format: torfl
   level: A1
   mode: drill
-  title: { ru: 'Мини', en: 'Mini' }
+  title: { uk: 'Мини', en: 'Mini' }
   subtests:
     - id: lexgram
       kind: lexgram
-      title: { ru: 'Лексика', en: 'Lexis' }
-      instructions: { ru: 'Выберите.', en: 'Choose.' }
+      title: { uk: 'Лексика', en: 'Lexis' }
+      instructions: { uk: 'Выберите.', en: 'Choose.' }
       durationMin: 5
       dictionary: false
       navigation: free
@@ -95,7 +95,7 @@ ${pack}exam:
       maxPoints: 1
       parts:
         - id: p1
-          instructions: { ru: 'Задание 1.', en: 'Item 1.' }
+          instructions: { uk: 'Задание 1.', en: 'Item 1.' }
           items:
 ${items}---
 Author notes are ignored.
@@ -129,8 +129,8 @@ describe('exam drafts — sniffing + parsing', () => {
 
   it('reports YAML syntax errors with a line, and rejects unknown frontmatter keys', () => {
     const bad = miniDrill().replace(
-      "title: { ru: 'Мини', en: 'Mini' }\n  subtests",
-      "title: { ru: 'Мини'\n  subtests",
+      "title: { uk: 'Мини', en: 'Mini' }\n  subtests",
+      "title: { uk: 'Мини'\n  subtests",
     );
     expect(issuesOf(() => parseExamDraft('x.exam.md', bad))[0]!.message).toContain(
       'not valid YAML',

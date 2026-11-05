@@ -3,7 +3,7 @@
   "version": 1,
   "type": "stories",
   "title": {
-    "ru": "ТРКИ: тестовые слова",
+    "uk": "ТРКИ: тестовые слова",
     "en": "TORFL: lexicon fixture"
   },
   "level": "A1",
@@ -17,11 +17,11 @@
     {
       "id": "lx-fx-semya",
       "title": {
-        "ru": "Семья",
+        "uk": "Семья",
         "en": "Family"
       },
       "subtitle": {
-        "ru": "Тема 2",
+        "uk": "Тема 2",
         "en": "Topic 2"
       },
       "source": {
@@ -31,7 +31,7 @@
       "sentences": [
         {
           "id": "tfxlx-s01",
-          "ru": "Сегодня я иду на ужин к семье Алины.",
+          "uk": "Сегодня я иду на ужин к семье Алины.",
           "en": "Today I'm going to dinner at Alina's family's home.",
           "tokens": [
             {
@@ -110,7 +110,7 @@
         },
         {
           "id": "tfxlx-s02",
-          "ru": "Дверь открывает её мама, Ирина Петровна.",
+          "uk": "Дверь открывает её мама, Ирина Петровна.",
           "en": "Her mother, Irina Petrovna, opens the door.",
           "tokens": [
             {
@@ -175,7 +175,7 @@
         },
         {
           "id": "tfxlx-s03",
-          "ru": "— Добрый вечер, Митч! Проходите, пожалуйста.",
+          "uk": "— Добрый вечер, Митч! Проходите, пожалуйста.",
           "en": "\"Good evening, Mitch! Come in, please.\"",
           "tokens": [
             {
@@ -245,7 +245,7 @@
         },
         {
           "id": "tfxlx-s04",
-          "ru": "У Алины большая семья.",
+          "uk": "У Алины большая семья.",
           "en": "Alina has a big family.",
           "tokens": [
             {
@@ -291,7 +291,7 @@
         },
         {
           "id": "tfxlx-s05",
-          "ru": "Её отец — инженер, а мать — учитель.",
+          "uk": "Её отец — инженер, а мать — учитель.",
           "en": "Her father is an engineer, and her mother is a teacher.",
           "tokens": [
             {
@@ -366,7 +366,7 @@
         },
         {
           "id": "tfxlx-s06",
-          "ru": "Её родители живут здесь тридцать лет.",
+          "uk": "Её родители живут здесь тридцать лет.",
           "en": "Her parents have lived here for thirty years.",
           "tokens": [
             {

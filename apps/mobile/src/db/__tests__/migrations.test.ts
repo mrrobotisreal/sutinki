@@ -172,10 +172,10 @@ describe('migrations from empty DB', () => {
     await expectScenarioTables(db);
   });
 
-  it('0015_exams: fresh DB has the exams content table + three user tables with their indexes', async () => {
+  it('0006_exams: fresh DB has the exams content table + three user tables with their indexes', async () => {
     const db = createTestDb();
     await expectExamTables(db);
-    expect(journal.entries.at(-1)).toMatchObject({ idx: 15, tag: '0015_exams' });
+    expect(journal.entries.at(-1)).toMatchObject({ idx: 6, tag: '0006_exams' });
   });
 });
 

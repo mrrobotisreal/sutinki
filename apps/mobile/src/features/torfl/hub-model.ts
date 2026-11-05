@@ -382,7 +382,7 @@ export function introSubtestRows(exam: Exam): IntroSubtestRow[] {
     return {
       id: st.id,
       kind: st.kind,
-      titleUk: st.title.ru,
+      titleUk: st.title.uk,
       durationMin: st.durationMin,
       itemCount: items.length,
       points: objective ? items.reduce((n, i) => n + itemPoints(st, i), 0) : null,
@@ -421,8 +421,8 @@ export function mockRules(exam: Exam): string[] {
       `Аудирование: каждый текст звучит ${plays === 2 ? 'два раза' : `${plays} ${ruPlural(plays, ['раз', 'раза', 'раз'])}`}, без паузы и перемотки.`,
     );
   }
-  const withDict = exam.subtests.filter((st) => st.dictionary).map((st) => st.title.ru);
-  const without = exam.subtests.filter((st) => !st.dictionary).map((st) => st.title.ru);
+  const withDict = exam.subtests.filter((st) => st.dictionary).map((st) => st.title.uk);
+  const without = exam.subtests.filter((st) => !st.dictionary).map((st) => st.title.uk);
   if (withDict.length > 0) rules.push(`Словарь (поиск слова) можно: ${withDict.join(', ')}.`);
   if (without.length > 0) rules.push(`Без словаря: ${without.join(', ')}.`);
   const monologue = exam.subtests.some(

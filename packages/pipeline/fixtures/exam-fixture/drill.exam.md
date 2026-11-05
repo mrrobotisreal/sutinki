@@ -4,13 +4,13 @@ exam:
   format: torfl
   level: A1
   mode: drill
-  title: { ru: 'Падежи: предложный', en: 'Cases: prepositional' }
+  title: { uk: 'Падежи: предложный', en: 'Cases: prepositional' }
   blurb: 'Where? в / на + prepositional — six fixture items.'
   subtests:
     - id: lexgram
       kind: lexgram
-      title: { ru: 'Лексика. Грамматика', en: 'Vocabulary. Grammar' }
-      instructions: { ru: 'Выберите один вариант ответа.', en: 'Choose one answer.' }
+      title: { uk: 'Лексика. Грамматика', en: 'Vocabulary. Grammar' }
+      instructions: { uk: 'Выберите один вариант ответа.', en: 'Choose one answer.' }
       durationMin: 10
       dictionary: false
       navigation: free
@@ -18,7 +18,7 @@ exam:
       maxPoints: 6
       parts:
         - id: p1
-          instructions: { ru: 'Задания 1–6.', en: 'Items 1–6.' }
+          instructions: { uk: 'Задания 1–6.', en: 'Items 1–6.' }
           items:
             - id: dr01
               kind: choice

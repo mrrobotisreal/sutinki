@@ -283,7 +283,7 @@ export function makeValidScenarioPack(): Record<string, unknown> {
   });
 }
 
-const L = (ru: string, en = ru): Record<string, unknown> => ({ ru, en });
+const L = (ru: string, en = ru): Record<string, unknown> => ({ uk: ru, en });
 
 /** A minimal speaking expectation (one forms slot + one paraphrase). */
 export function makeExpect(): Record<string, unknown> {
@@ -317,10 +317,10 @@ export function makeValidExamPack(): Record<string, unknown> {
     group: 'g1',
     topicTitle: L(title),
     questions: [
-      { ru: 'Как вас зовут?', cues: ['зовут'] },
-      { ru: 'Откуда вы?', cues: ['из'] },
-      { ru: 'Где вы живёте?', cues: ['живу'] },
-      { ru: 'Кем вы работаете?', cues: ['работаю'] },
+      { uk: 'Как вас зовут?', cues: ['зовут'] },
+      { uk: 'Откуда вы?', cues: ['из'] },
+      { uk: 'Где вы живёте?', cues: ['живу'] },
+      { uk: 'Кем вы работаете?', cues: ['работаю'] },
     ],
   });
   return structuredClone({

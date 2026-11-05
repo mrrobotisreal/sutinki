@@ -29,7 +29,7 @@ export function renderMatrixMap(exam: Exam): string {
     0,
   );
   out.push(
-    `Matrix map — «${exam.title.ru}» (${exam.id}, ${exam.format} ${exam.level} ${exam.mode})`,
+    `Matrix map — «${exam.title.uk}» (${exam.id}, ${exam.format} ${exam.level} ${exam.mode})`,
     `  ${exam.subtests.length} subtest${exam.subtests.length === 1 ? '' : 's'} · ${itemCount} item${itemCount === 1 ? '' : 's'}`,
   );
   for (const subtest of exam.subtests) {
@@ -63,7 +63,7 @@ export function renderMatrixMap(exam: Exam): string {
       : `rubric % of ${fmt(subtest.maxPoints)}`;
     out.push(
       '',
-      `  ${subtest.id} — ${subtest.kind} «${subtest.title.ru}» · ${extras.join(' · ')} · ${sum}`,
+      `  ${subtest.id} — ${subtest.kind} «${subtest.title.uk}» · ${extras.join(' · ')} · ${sum}`,
       ...body,
     );
   }

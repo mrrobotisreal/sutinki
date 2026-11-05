@@ -3,7 +3,7 @@ pack:
   id: a1-exam-fixture
   version: 1
   type: exam
-  title: { ru: "ТРКИ: тестовый пакет", en: "TORFL: fixture pack" }
+  title: { uk: "ТРКИ: тестовый пакет", en: "TORFL: fixture pack" }
   level: A1
   tags: ["torfl", "torfl:fixture"]
   category: torfl
@@ -12,19 +12,19 @@ exam:
   format: torfl
   level: A1
   mode: drill
-  title: { ru: 'Сломано', en: 'Broken' }
+  title: { uk: 'Сломано', en: 'Broken' }
   subtests:
     - id: s1
       kind: reading
-      title: { ru: 'Тест', en: 'Test' }
-      instructions: { ru: 'Тест.', en: 'Test.' }
+      title: { uk: 'Тест', en: 'Test' }
+      instructions: { uk: 'Тест.', en: 'Test.' }
       durationMin: 10
       dictionary: false
       navigation: free
       maxPoints: 4
       parts:
         - id: p1
-          instructions: { ru: 'Тест.', en: 'Test.' }
+          instructions: { uk: 'Тест.', en: 'Test.' }
           items:
             - { id: rd01, kind: choice, topic: read-detail, stem: 'Анна живёт в …', options: ['Москве', 'Сочи'], answer: 0, points: 4 }
             - id: sp01

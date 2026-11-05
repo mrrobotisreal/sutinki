@@ -138,7 +138,7 @@ describe('exam pack import (T68)', () => {
     // v2 drops the drill and retitles the mock.
     const v2 = bumped(2, (p) => {
       p.exams = p.exams!.filter((e) => e.id === 'a1-mock-fx');
-      p.exams[0]!.title = { ru: 'Вариант ФХ-2', en: 'Fixture mock 2' };
+      p.exams[0]!.title = { uk: 'Вариант ФХ-2', en: 'Fixture mock 2' };
     });
     const res = await importPack(db, v2);
     expect(res.action).toBe('updated');

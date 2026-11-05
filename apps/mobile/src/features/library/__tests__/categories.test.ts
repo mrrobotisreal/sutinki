@@ -199,7 +199,7 @@ describe('sets & order', () => {
       'torfl',
     ]);
     expect(new Set(CATEGORY_ORDER)).toEqual(new Set(Object.keys(CATEGORIES)));
-    expect(CATEGORIES.torfl).toEqual({ ru: 'ТРКИ', en: 'TORFL', icon: 'ribbon-outline' });
+    expect(CATEGORIES.torfl).toEqual({ uk: 'ТРКИ', en: 'TORFL', icon: 'ribbon-outline' });
   });
 
   it('GENRE_ORDER is exactly the table keys, horror first', () => {
