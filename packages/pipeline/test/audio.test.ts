@@ -333,7 +333,7 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
     expect(track.timestamps.length).toBe(7);
   });
 
-  it('ADR-0016 default: multilingual v2, language_code uk, speaker boost on, previous_text sent, audioTag ignored', async () => {
+  it('opt-in v2 per run (--model eleven_multilingual_v2): language_code uk, speaker boost on, previous_text sent, audioTag ignored', async () => {
     const work = tempDir();
     const draftFile = join(work, 'test.draft.md');
     writeFileSync(
@@ -353,7 +353,10 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
     });
 
     const outDir = join(work, 'pack');
-    const summary = await runFinalize([draftFile], outDir, client, { defaultSeed: 7 });
+    const summary = await runFinalize([draftFile], outDir, client, {
+      defaultSeed: 7,
+      modelId: 'eleven_multilingual_v2',
+    });
 
     expect(captured).toHaveLength(1);
     expect(captured[0]!.model_id).toBe('eleven_multilingual_v2');
@@ -363,6 +366,33 @@ describe('runFinalize (fake provider, real ffmpeg)', () => {
     // The draft's settings only pinned stability; boost defaults on for non-v3.
     expect(captured[0]!.voice_settings).toEqual({ stability: 0.4, use_speaker_boost: true });
     expect(summary.reports[0]!.stampResult.coverage).toBe(1);
+  });
+
+  it('Sutinki default (UP03): eleven_v4 — audioTag prefixes the text, no language_code, no previous_text, no boost default', async () => {
+    const work = tempDir();
+    const draftFile = join(work, 'test.draft.md');
+    writeFileSync(
+      draftFile,
+      DRAFT.replace('    settings:', "    audioTag: '[whispers]'\n    settings:"),
+    );
+    const mp3 = makeSilentMp3(work, 4);
+    const captured: {
+      text: string;
+      previous_text?: string;
+      model_id: string;
+      language_code?: string;
+      voice_settings?: Record<string, unknown>;
+    }[] = [];
+    const client = new ElevenLabsClient('test-key', {
+      fetchImpl: fakeElevenLabsFetch(mp3, captured),
+    });
+    await runFinalize([draftFile], join(work, 'pack'), client, { defaultSeed: 7 });
+    expect(captured).toHaveLength(1);
+    expect(captured[0]!.model_id).toBe('eleven_v4');
+    expect(captured[0]!.text.startsWith('[whispers] ')).toBe(true);
+    expect(captured[0]!.language_code).toBeUndefined();
+    expect(captured[0]!.previous_text).toBeUndefined();
+    expect(captured[0]!.voice_settings).toEqual({ stability: 0.4 });
   });
 
   it('opt-in v3 per direction: audioTag prefixes the text, no language_code, no previous_text, no boost default', async () => {

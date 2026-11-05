@@ -28,7 +28,7 @@ env -u NODE_OPTIONS pnpm pipeline annotate s1.draft.md s2.draft.md s3.draft.md -
 # validate an existing pack.json independently
 env -u NODE_OPTIONS pnpm pipeline validate path/to/pack.json
 
-# narration (needs ELEVENLABS_API_KEY in the env or a gitignored .env at the
+# narration (needs ELEVENLABS_API_KEY_2 in the env or a gitignored .env at the
 # repo root — the pipeline never prints the value). First audition:
 env -u NODE_OPTIONS pnpm pipeline audio s1.draft.md s2.draft.md -o packs/my-pack --audition 3
 # …listen to packs/my-pack/audition/*.mp3, pick a seed per track, finalize:
@@ -44,11 +44,11 @@ env -u NODE_OPTIONS pnpm pipeline publish packs/my-pack --content ../sutinki-con
 
 `annotate` prints `✓ <pack> v<n> → <file>` plus story/sentence/token counts on success. It may also print `warning: file:line: …` lines afterwards — those are non-fatal (today: a `UK:` line that mixes apostrophe code points, see the apostrophe rule). Errors are `file:line: message`, all of them at once; fix them all, re-run.
 
-**Voice ids must resolve to a voice on the ElevenLabs account** — the resolver matches the alias before " - tagline" in the account's voice list. Copy the id from a recently published draft rather than inventing one; a wrong id fails at the first render call (annotate only shape-checks it). The default voice is **`elevenlabs:Mr. Wintrow`** (id `HQ4Xi3gPf8Q6bJUlao6z`) — a direction that names a `register:` and no `voice:` renders with it. Character voices are cast per family in its `SERIES.md` / `docs/design/VOICE_CAST.md`. (Sutinki's render policy — `eleven_v4`, `ELEVENLABS_API_KEY_2` — lands with UP03; until then the pipeline's default is the inherited `eleven_multilingual_v2` path described here.)
+**Voices are named by id: `voice: elevenlabs:id:<voice_id>`** (UP03, ADR-0012) — the 20-character ElevenLabs voice id, validated `^[A-Za-z0-9]{20}$`, **no `/v1/voices` lookup** (it renders on the `ELEVENLABS_API_KEY_2` account regardless of that account's voice list). The legacy `elevenlabs:<name>` form still resolves a name through the account's voice list (alias before " - tagline"), and a bare 20-character id after `elevenlabs:` passes through. The default voice is **Mr. Wintrow**, `elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z` — a direction that names a `register:` and no `voice:` renders with it. The cast ids (ADR-0012) are in `docs/design/VOICE_CAST.md`. Credentials: **`ELEVENLABS_API_KEY_2`** (env or a gitignored `.env`); the plain `ELEVENLABS_API_KEY` is only a fallback that logs a warning.
 
-### Narration audio — the default path (Multilingual v2 · Mr. Wintrow · registers)
+### Narration audio — the default path (Eleven v4 · Mr. Wintrow · registers)
 
-`pipeline audio` renders every story track with **`eleven_multilingual_v2` · `language_code: uk` · `elevenlabs:Mr. Wintrow` · `mp3_44100_192` · speaker boost on** unless a direction says otherwise (ADR-0016, 2026-09-20 — the CT011e re-voice made default). Multilingual v2 accepts `previous_text` (our `stylePrompt`) and continuous voice settings but has **no audio-tag channel**; expressiveness comes from the register preset, the `stylePrompt`, `settings`, and `contextCues` (next section).
+`pipeline audio` renders every story track with **`eleven_v4` · `elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z` · `mp3_44100_192`** unless a direction says otherwise (Sutinki UP03; overrides Sumrak's ADR-0016 Multilingual v2 default). v4 is a tagged model: inline `[audio tags]` steer delivery (rules: «Eleven v3 / v4 tags» below), and the request carries **no `previous_text`, no `language_code`, no speaker boost**. Every voice block that is rendered should pin `model: eleven_v4` explicitly. The register presets' `settings` and `stylePrompt` apply to **untagged models only** (e.g. a direction that pins `model: eleven_multilingual_v2`, which accepts `previous_text`, `language_code: uk`, continuous voice settings and speaker boost but has no tag channel); with v4 they are unused.
 
 A **register** is a preset that fills a direction's defaults — `voice`, `style` (the register slug, which the app shows as a Ukrainian label), `settings` and `stylePrompt`. Name it in the `voice:` block and omit everything the preset already covers:
 
@@ -81,7 +81,7 @@ A track whose character alignment can't be trusted ships with zero word stamps (
 
 ### Steering on v2: stylePrompt, contextCues, sentenceVoices, sentenceAudio
 
-**`stylePrompt`** is fed to ElevenLabs as `previous_text` — write it in Ukrainian, in the piece's register, as if it were the narrator's preceding lines (a register preset supplies one; author your own to replace it). **`settings`** maps to provider voice settings (`stability`, `similarityBoost`, `style`, `speed`, `useSpeakerBoost` — boost defaults on for non-v3 renders). A direction may pin its own **`model:`** (wins over the CLI `--model`) and **`language:`** (sent as `language_code`; defaults to `uk` on non-v3 models).
+**`stylePrompt`** is fed to ElevenLabs as `previous_text` — write it in Ukrainian, in the piece's register, as if it were the narrator's preceding lines (a register preset supplies one; author your own to replace it). **`settings`** maps to provider voice settings (`stability`, `similarityBoost`, `style`, `speed`, `useSpeakerBoost` — boost defaults on for untagged (v2) renders). A direction may pin its own **`model:`** (wins over the CLI `--model`) and **`language:`** (sent as `language_code`; defaults to `uk` on untagged models; never sent to v3 / v4).
 
 **Context cues (No End House re-voice, 2026-09-19):** v2 has no audio tags, so per-sentence mood is steered with **`contextCues: { <sentence-id>: '<context text>' }`** — a short Ukrainian stage direction («Я шепочу з жахом:», or a news anchor's «А тепер — до погоди.») rendered immediately BEFORE the sentence and then **cut out of the audio** using the provider's character timestamps, with every later word stamp shifted back by the cut (a `{}` in the text stands for the sentence, so `'Він благає: {} — схлипує він.'` renders an attribution after the line and cuts that too). Context characters bill like any other; the listener never hears them; nothing reaches `pack.json`; an unknown id is an error. Works on any model.
 
@@ -89,9 +89,29 @@ A track whose character alignment can't be trusted ships with zero word stamps (
 
 **Pre-rendered clips:** `sentenceAudio: { <sentence-id>: <path relative to the draft> }` splices a pre-rendered clip in as that sentence's audio with no provider request (a character line from a voice this account no longer has, cut out of an earlier track); a sibling `<clip>.stamps.json` (`WordStamp[]` relative to the clip start) carries its word stamps, otherwise the run ships unstamped while the rest of the track stays stamped. Clips are level-matched and spliced exactly like `sentenceVoices`.
 
-### Legacy: Eleven v3 tags (audioTag / audioCues) — opt-in
+### Eleven v3 / v4 tags (audioTag / audioCues)
 
-`eleven_v3` is no longer the default. Opt in **per direction** with `model: eleven_v3` in the `voice:` block (wins over the CLI flag) or **per run** with `--model eleven_v3`; a CT that wants it says why in its ticket. On v3, `previous_text` is rejected (so `stylePrompt` is ignored there) and `language_code` is not sent; steering is the tag channel: `audioTag: '[whispers]'` — one or more `[bracketed]` v3 tags — is prepended once to the whole track, and **per-sentence cues (CT011 Tier 2)** `audioCues: { <sentence-id>: '[tags]' }` insert tags right before that sentence (after its paragraph break) for mid-track mood shifts — e.g. `audioCues: { nea1p9-s105: '[calm] [ominous]' }`. Both are **v3-only** (on non-v3 models they are silently not applied — the plain text renders; not an error), **render-time only** (tag characters shift the token spans so word stamps stay exact and are never stamped themselves), and **never reach `pack.json`**. A cue keyed to a sentence id that is not in the story is an error regardless of model. Tag characters count toward the provider's per-request character cap. Every family voiced before 2026-09-19 was rendered this way; those records in the CT tickets and `SERIES.md` §5 tables stand as history (ADR-0016).
+**`eleven_v4` is the Sutinki narration default** (UP03, ADR-0012): every rendered voice block pins `model: eleven_v4` explicitly (UT12's kit enforces it) and carries plenty of v4 tags. `eleven_v3` stays opt-in per direction (`model:` wins over the CLI flag) or per run (`--model eleven_v3`); `--model eleven_multilingual_v2` selects the untagged path. The pipeline's gate is `isTaggedModel` (`eleven_v3*` and `eleven_v4`; **`eleven_v4_turbo` is refused** — it is the realtime model). On a tagged model, `previous_text` is not sent (v3 rejects it; v4 accepts it but the tag is the steering channel — `stylePrompt` is ignored there), `language_code` is not sent, and speaker boost is not defaulted on; steering is the tag channel: `audioTag: '[whispers]'` — one or more `[bracketed]` v3 tags — is prepended once to the whole track, and **per-sentence cues (CT011 Tier 2)** `audioCues: { <sentence-id>: '[tags]' }` insert tags right before that sentence (after its paragraph break) for mid-track mood shifts — e.g. `audioCues: { nea1p9-s105: '[calm] [ominous]' }`. Both are **tagged-model-only** (on untagged models they are silently not applied — the plain text renders; not an error), **render-time only** (tag characters shift the token spans so word stamps stay exact and are never stamped themselves), and **never reach `pack.json`**. A cue keyed to a sentence id that is not in the story is an error regardless of model. Tag characters count toward the provider's per-request character cap. Every family voiced before 2026-09-19 was rendered this way; those records in the CT tickets and `SERIES.md` §5 tables stand as history (ADR-0016).
+
+#### Eleven v4 — what the account probe proved (T64, 2026-09-28)
+
+Ten `with-timestamps` requests on `eleven_v4` with one of Mitch's designed voices («Lietenant Gromov»); MP3s, `metrics.json`, `pause-floors.json`, Whisper transcripts and the `verdict.json` live in `Stories/_build/_v4-probe/`. Every scenario host renders on v4 from CT025 on (Mitch's rule); narration stays on Multilingual v2 (ADR-0016).
+
+| Question                                        | Verdict                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (a) `eleven_v4` on the with-timestamps endpoint | **Accepted**; character alignment returned and it echoes the input text exactly (tag included) — word stamps work as on v3.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| (b) `seed`                                      | **Take-deterministic, not sample-deterministic** (same as v3): two renders at one seed = identical duration, identical alignment, identical byte length, different bytes. Pinned seeds reproduce the take for the audition → finalize handshake.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| (c) `language_code`                             | **Accepted** (v3 rejects it). The pipeline does not send it on v4.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| (d) `previous_text`                             | **Accepted** (v3 rejects it). Not sent on v4 — the tag is the channel.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| (e) Short emotion tag (7 words)                 | **Applied**: alignment span 0.08 s, transcript = the Russian line only.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| (f) Long tag (18 words)                         | **Do not.** v4 did not read the tag aloud — it rendered the line **twice** (the tag span swallowed a whole first rendition, 14 s instead of 5). Keep tags ≤ ~8 words; more detail = 2–3 short comma-separated ideas, never a sentence.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| (g) In-tag sound effect (`[a door slams]`)      | **Rendered**, inside the tag's own alignment span (0–0.72 s, the loudest part of the file); speech starts after it; stamps stay exact because tag characters are never stamped. Put the effect tag **first**, then the emotion tag.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| (h) Filters / noises / spaces / distances       | **Not on the API — neither as tags nor as a request field.** `[old radio]` and `[tunnel, far]` were inert (no band-limiting, no reverb, same pause floors); `[small room, near]` made the model voice a stray «Так» inside the tag; `[café noise]` was inconclusive at best. The OpenAPI body for the endpoint has no effects field (`text, model_id, language_code, voice_settings, seed, previous_text, next_text, previous/next_request_ids, pronunciation_dictionary_locators, apply_text_normalization, apply_language_text_normalization, use_pvc_as_ivc`); the only effects fields in the whole spec are Agents-side (`conversation_config.background_sound`, `audio_effects.background_noise_id`), and the Agents docs call the voice filter dashboard-only. The UI's controls are post-processing on ElevenLabs' side. |
+| (i) `voice_settings`                            | All five fields **accepted** (200); `style`, `speed` and `use_speaker_boost` are **inert** on v4 (the take was byte-length-identical to the baseline — speed 0.95 would have lengthened it). v4 exposes stability + similarity only; send those when a line needs them, never the other three.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+
+**v4 tag rules (from the probe + Mitch's UI notes):** ≤ ~8 words per tag · comma-separated ideas, not sentences · vocal sounds (`[sighs]`, `[laughs]`, `[clears throat]`) and in-tag sound effects work — effect tag first, emotion tag second · never write production-control words (room / distance / filter / noise) into a tag · Whisper-scan every audition and every final (`leak-scan.py`) exactly as on v3.
+
+**v4 production controls — the cheat-sheet (vocabulary + when).** The vocabulary Mitch saw in the UI: **filters** Old Radio · Robot · Cheap Microphone · Phone · Low Quality Phone · Bright Phone; **noises** (ambience) Call Center · Café · City · Keyboard; **spaces** (room) Small Room · Big Room · Hall · Tunnel · Street · Valley · Forest; **distances** Near · Medium · Far. Guidance for a production design: a space + a distance only when the scene has a room (a duty room, a shop counter); a noise only when the script's scene has that ambience; a filter only for a phone / radio / robot line; never stack more than one filter. **Because the API renders none of them, a design is authored as a per-line `production` note in the driver's `tags.json` (`{ "tag": "[…]", "production": "small room, near" }`, or an `_production` map) and written to `<host>-v4/production.sidecar.json` — it is never sent to ElevenLabs. Applying it is a local post-processing step (ffmpeg: band-pass for phone / old radio, `aecho` / convolution for a space, an ambience bed mixed under the line) — a decision for Mitch, recorded as OPEN in T64; until then the sidecar documents the intent and the tags + in-tag effects carry the scene.**
 
 **Inline notation in source docs:** a story doc may carry its cue script
 inline — an italic _Leading tag_ line per part (→ `audioTag`), `{Ім'я}` at the
@@ -578,7 +598,7 @@ No `SPEAKER:` in choices — choices always speak as `player`. A node with `CHOI
 
 `pipeline audio` renders dialogues **per node**: every NPC line becomes its own small Opus file in that node's character voice, written to `audio/<dialogue-id>/<sentence-id>.opus` with its own word stamps (the ≥95 % aligner gate and monotonicity rules apply per node; an untrusted alignment ships that node with no stamps → sentence-level highlight).
 
-- **Character steering**: give a character an optional `audioTag: '[warm]'` in the frontmatter (one or more `[bracketed]` Eleven v3 tags, same mechanics as a story track's `audioTag`) — it conditions delivery without being spoken. `style` stays a human label. Dialogue renders on the same default model as stories (Multilingual v2, `language_code uk` — ADR-0016), where tags are not applied; pass `--model eleven_v3` for a run that needs them.
+- **Character steering**: give a character an optional `audioTag: '[warm]'` in the frontmatter (one or more `[bracketed]` Eleven v3 / v4 tags, same mechanics as a story track's `audioTag`) — it conditions delivery without being spoken. `style` stays a human label. Dialogue renders on the same default model as stories (Eleven v4 — the Sutinki default, UP03; on an untagged model such as Multilingual v2 `language_code uk` is sent and tags are not applied).
 - **Audition & seeds group per (dialogue, character)** — not per node. `--audition N` renders N takes of ONE representative line per character (their longest), e.g. `dinner-mini--mama--take1--seed…mp3`; pick a take per character and finalize with `--seed dinner-mini/mama=<seed>`. Pinned seeds reproduce the same take (identical duration + word timing) across runs; the raw PCM is not bit-identical (v3 seeds are take-deterministic, not sample-deterministic).
 - **`--player-audio`** additionally renders **coach audio** — every choice, plus any scripted `SPEAKER: player` line — in the reserved `player` character's voice ("hear how to say it"). Omit the flag and no coach files are rendered.
 - **Cost gate**: every `audio` run first prints node/choice/request/character counts and asks to proceed; pass `--yes` for scripted runs. An unconfirmed run makes zero ElevenLabs calls.
@@ -590,6 +610,7 @@ No `SPEAKER:` in choices — choices always speak as `player`. A node with `CHOI
 - `packages/pipeline/fixtures/the-photograph.draft.md` — the canonical full-length story example: a Ukrainian sample pack in draft form; `annotate` reproduces that pack exactly.
 - `packages/pipeline/fixtures/m14/` — the M14 category fixtures: `news-090-1/2.draft.md` (`category: news`, `register: anchor`, `subtitle` + `source` on each story → `a2-news-090`), `podcast-090.draft.md` (`podcast` / `host` → `a2-podcast-090`), `comedy-090.draft.md` (`stories` + `genre: comedy` / `narrator` → `a1-comedy-090`); `annotate` reproduces their `packages/schema/fixtures/packs/<id>/pack.json` byte-for-byte.
 - `packages/pipeline/fixtures/the-dinner.dialogue.md` — the canonical dialogue example: the T25 fixture pack (Ukrainian) (11 nodes, 2 choice points, 3 endings, a legal loop) in draft form; `annotate` reproduces `packages/schema/fixtures/packs/a2-dialogue-001` exactly.
+- `packages/pipeline/fixtures/radio-check.scenario.md` — the canonical scenario example: the T56 fixture pack «Проверка связи» (6 turns, a free slot with a reject reaction, a forms slot branching on `good`/`bad`/`default`, 15 glossary entries, 3 nudges, a placeholder host) in draft form; `annotate` reproduces `packages/schema/fixtures/packs/a1-scenario-fixture` exactly, and its coverage report flags exactly «отлично» and «эфир».
 - `packages/pipeline/fixtures/broken/` — deliberately broken drafts showing the big failure classes (missing lemma, misaligned table, dead branch, trap cycle, dangling references) and their error messages.
 - `packages/schema/src/pack.ts` + `packages/schema/src/dialogue.ts` — the Zod schemas every emitted pack must satisfy (the pipeline runs them for you).
 
@@ -624,3 +645,258 @@ The news, education, podcast, documentary and travel shelves are fed by the same
 **News drafts in practice (CT019, the first `category: news` pack):** a news article arrives as an editorially final `ARTICLE.md` whose body carries `[…]` lines of free Ukrainian stage direction («Диктор оголошує новий сюжет:») immediately before a paragraph or a `###` heading; a scratch converter (`Stories/_build/a2-news-001/cues-from-doc.py --cue-kind context`, modes `--strip` / `--rekey` / `--apply` / `--table`, ported from Sumrak's when a news family first needs it) strips them into `stripped/item-NN.txt` (the pack text, byte for byte — headings become plain sentence blocks with no terminal period) and re-keys each to the FIRST sentence of its paragraph as a `contextCues` entry, so the `voice:` block carries only `id` / `register: anchor` / `deliveryNotes` / `contextCues`. Any scratch script with a `[а-я]` word regex must be widened to the Ukrainian charset `[а-щьюяєіїґ'ʼ’]` or words with і/ї/є/ґ and apostrophes vanish from its counts. The reusable contract is `sutinki-content/series/news/SERIES.md` once a news family exists.
 
 **Anthology packs grow by appending** (the SAR-stories rule, `sutinki-content/series/sar-stories/SERIES.md` §2; `LIBRARY_CATEGORIES.md` §6): one open-ended pack per shelf and rung — `a2-news-001`, `a2-edu-001`, `a2-podcast-001`, `a2-doc-001`, `a2-travel-001` (the level prefix follows the rung; a second rung is a new pack id). New items are new drafts appended **after** the existing ones at a `pack.version` bump; old items are never reordered, re-ided or re-rendered; one build dir per pack forever so every earlier opus is carried.
+
+## Scenario drafts (`*.scenario.md` — M17, T56)
+
+A **scenario draft** is one markdown file containing **one blind speaking scenario** («Сценарии», design `docs/design/SPEAKING_SCENARIOS.md` §2 at the workspace root): a host talks to the learner, the learner answers **out loud with no text on screen**, and an offline judge scores the answer against an authored **expectation**. One scenario = one draft file (`type: scenario` pack); the pipeline recognizes it by the `scenario:` frontmatter section, never by filename. Story, dialogue and scenario drafts may share a pack.
+
+Everything from story and dialogue drafts carries over unchanged: the sentence block (RU/EN/GRAMMAR + 7-column token table), the alignment rule, the lemma conventions, NFC, ё. **Every line the cast can speak is a fully annotated sentence** — host lines, the confused/hint/second retry lines, reject reactions, glossary clips and nudges — because T57 renders each of them as its own audio file and the debrief makes them tap-word explorable.
+
+### Frontmatter
+
+Five top-level keys, **all five required**: `pack:`, `scenario:`, `characters:` (≥ 2: the host + `player`), `scene:` and `endings:` (≥ 1). Inside `scene:` every field is optional, but the block itself must exist — the minimal legal form is `scene: { layout: center }` (or an empty `scene: {}`).
+
+```yaml
+---
+pack:
+  id: a1-scn-radio-001
+  version: 1
+  type: scenario # the pack type for scenario packs
+  title: { ru: 'Проверка связи', en: 'Sound Check' }
+  level: A1
+  tags: ['scenario', 'radio']
+scenario:
+  id: radio-a1 # unique within the pack; prefixes every generated sentence id
+  familyId: radio # the situation shared by the A1/A2/… rungs
+  title: { ru: 'Проверка связи', en: 'Sound Check' }
+  level: A1
+  language: ru # OPTIONAL, ru | uk (default ru)
+  brief:
+    { ru: 'Короткая проверка связи перед эфиром.', en: 'A short sound check before going on air.' }
+  startTurnId: radio-a1-t01 # OPTIONAL — defaults to the first turn block
+characters:
+  - id: host # exactly ONE character has role: host — the one drawn on screen
+    name: { ru: 'Ведущий', en: 'Host' }
+    voice: elevenlabs:Daniel # a library voice on the account — never Mr. Wintrow (ADR-0019 decision 6)
+    style: radio-host
+    role: host # host | npc | player
+    portrait: # OPTIONAL art; see below
+      placeholder: { kind: man, hue: 25 } # man | woman | youth | elder — the app draws a stand-in
+    cues: # OPTIONAL, render-time only (T57): steering for the retry variants
+      confused: 'Извини, я не совсем понял. Ты можешь повторить?'
+      hint: 'Warmer and slower — the host is helping, not testing.'
+  - id: player # RESERVED: the learner, role: player, required; never speaks a scripted line
+    name: { ru: 'Вы', en: 'You' }
+    voice: elevenlabs:River # the coach voice for accept[0] model answers (T57 --player-audio)
+    style: neutral
+    role: player
+scene: # REQUIRED block; every field inside it is optional
+  bed: studio # OPTIONAL room-tone slug (the app owns the known set)
+  layout: center # center | left | desk (default center)
+  accent: '#c26a3a' # OPTIONAL hex
+  # backdrop: scene/backdrop.png   OPTIONAL PNG, 1080×1920
+endings:
+  - id: end-ok # referenced by turns' ENDING: lines
+    title: { ru: 'Связь есть', en: 'Connected' }
+    recap: { ru: 'Проверка пройдена.', en: 'Sound check passed.' }
+    tone: good # good | bad | strange
+---
+```
+
+**Portraits.** A character either has `placeholder` (no PNGs needed — this is how every fixture and every pre-art rung ships) or real layers: `body: scene/<id>/body.png` (mouth closed, eyes open), optional `eyelids: scene/<id>/eyelids.png`, and a required `mouthAnchor: { x, y, w, h, rotate? }` in **fractions of the body image** where the SVG mouth is drawn, plus `mouthStyle: default | wide | small | beard`. `body` + `mouthAnchor` are required unless `placeholder` is set. `cues` never reach `pack.json`; they are read from the draft by `pipeline audio` (T57).
+
+### Turn blocks
+
+The body is a sequence of **turn blocks** — one per node of the graph. A turn is 1–3 spoken lines; a **monologue turn** just talks and moves on; a **prompting turn** ends in a question, carries `EXPECT:` + `RETRY:`, and waits for the learner:
+
+```markdown
+## radio-a1-t02
+
+SPEAKER: host
+
+SAY:
+
+RU: Отлично.
+EN: Great.
+
+| text    | lemma   | translation | pos | grammar     | level | note |
+| ------- | ------- | ----------- | --- | ----------- | ----- | ---- |
+| Отлично | отлично | great       | adv | predicative | A2    |      |
+| .       |         |             |     |             |       |      |
+
+SAY:
+
+RU: Как вас зовут?
+EN: What's your name?
+
+| text  | lemma | translation | pos  | grammar                                 | level | note |
+| ----- | ----- | ----------- | ---- | --------------------------------------- | ----- | ---- |
+| Как   | как   | how         | adv  | interrogative                           | A1    |      |
+| вас   | вы    | you         | pron | acc.                                    | A1    |      |
+| зовут | звать | (they) call | verb | 3pl. pres. (impf., indefinite-personal) | A1    |      |
+| ?     |       |             |      |                                         |       |      |
+
+EXPECT:
+slot name required free minTokens=1
+accept: Меня зовут Митч. | Я Митч.
+reject: хорошо, спасибо -> REACT:
+
+RU: Нет, имя.
+EN: No, your name.
+
+| text | lemma | translation | pos  | grammar    | level | note |
+| ---- | ----- | ----------- | ---- | ---------- | ----- | ---- |
+| Нет  | нет   | no          | part |            | A1    |      |
+| ,    |       |             |      |            |       |      |
+| имя  | имя   | name        | noun | n.sg. nom. | A1    |      |
+| .    |       |             |      |            |       |      |
+
+RETRY:
+CONFUSED:
+
+RU: Не расслышал.
+EN: Didn't catch that.
+
+| text      | lemma      | translation            | pos  | grammar          | level | note |
+| --------- | ---------- | ---------------------- | ---- | ---------------- | ----- | ---- |
+| Не        | не         | not                    | part | negation         | A1    |      |
+| расслышал | расслышать | caught (heard clearly) | verb | m.sg. past (pf.) | B1    |      |
+| .         |            |                        |      |                  |       |      |
+
+HINT:
+
+RU: Скажите: «Меня зовут…».
+EN: Say: "My name is…".
+
+| … full token table … |
+
+SECOND:
+
+RU: Например: «Меня зовут Митч».
+EN: For example: "My name is Mitch."
+
+| … full token table … |
+
+LIFELINE: «Меня зовут …». | "Меня зовут …" (My name is …).
+
+NEXT: radio-a1-t03
+```
+
+Line by line:
+
+- `## <turn-id>` — starts a turn. Kebab-case, unique; convention `<scenario>-t<NN>` with a letter suffix for branch targets (`radio-a1-t04g`, `-t04b`, `-t04d`). **The turn id is the sentence id of its LAST `SAY:` line**; earlier lines are `<turn-id>-a`, `<turn-id>-b`. All of these share the pack-wide sentence-id namespace.
+- `SPEAKER: <characterId>` — a `characters:` id; **never `player`**.
+- `SAY:` — opens one sentence block (RU/EN/GRAMMAR + token table). Repeat 1–3 times. When the turn has `EXPECT:`, the last `SAY:` is **the prompt**: it is what replays after every retry line.
+- `EXPECT:` — makes this a prompting turn. Its indented sub-lines (indentation is cosmetic; the keywords are what count):
+  - `slot <id> <required|optional> forms: key=lemma: form, form* | key=lemma: … | number` — a **forms slot**: each option is a branch **key**, the dictionary **lemma** (for FSRS grading), and the accepted **surface forms**; a trailing `*` on a form is a stem glob («голов*»). The parser splits `key=` … at the **first `:`**, so a lemma may contain spaces (`f95=девяносто пятый: девяносто пятый, 95`). A bare `| number` at the end means a numeral also satisfies the slot, with branch key `number`.
+  - `slot <id> <required|optional> free [minTokens=N] [cues="зовут, я …"]` — a **free slot**: anything with ≥ N content tokens (stopwords never count); `cues` = phrases at least one of which must appear.
+  - `slot <id> <required|optional> number` — a **numeral slot** (1–100 words or digits); its only branch key is `number`.
+  - `accept: <paraphrase> | <paraphrase>` — whole-utterance paraphrases; **the first one is the model answer** (debrief + coach audio). Required.
+  - `branchOn: <slot-id>` — which slot's matched key drives `NEXT: on …`. Required when the turn branches; must name a forms or number slot (never a free one).
+  - `reject: <form>, <form> [-> REACT:]` — a group of **confusables**: forms that mean the answer was the wrong speech act («спасибо» when a name was asked). With `-> REACT:` a sentence block follows: the targeted line played instead of the generic confused line. Up to 4 groups.
+- `RETRY:` — required iff `EXPECT:` is present, and inside it **`CONFUSED:`, `HINT:` and `LIFELINE:` are all required**; only `SECOND:` is optional. `CONFUSED:` (miss #1) and `HINT:` (miss #2+) each open a sentence block; `SECOND:` (miss #3+) usually speaks the model answer; `LIFELINE: <ru> | <en>` is the text shown on tap after the second miss (both halves required; escape a literal `|` as `\|`). Their sentence ids are `<turn-id>-conf`, `-hint`, `-sec`; a reaction is `<turn-id>-react` (`-react-2`, … for further groups).
+- Then **exactly one** of:
+  - `NEXT: <turn-id>` — linear;
+  - `NEXT: on good=<turn-id> bad=<turn-id> default=<turn-id>` — **branch by slot key**: ≤ 4 keys, each an option key of the `branchOn` slot (or `number`), plus the mandatory `default` taken when no key matched (or the turn was skipped). Several keys (and `default`) may point at the same turn — a branch point does not need distinct downstream turns;
+  - `ENDING: <ending-id>`.
+
+### Glossary
+
+After the turns, a `## glossary` section holds the «Что значит X?» / «Как сказать X?» material — one `###` block per entry:
+
+```markdown
+## glossary
+
+### связь | connection | forms: связь, связи, связ* | translit: конекшн, канекшен
+
+EXPLAIN:
+
+RU: Связь — это connection.
+EN: «Связь» means connection.
+
+| text       | lemma      | translation | pos     | grammar                      | level | note |
+| ---------- | ---------- | ----------- | ------- | ---------------------------- | ----- | ---- |
+| Связь      | связь      | connection  | noun    | f.sg. nom.                   | B1    |      |
+| —          |            |             |         |                              |       |      |
+| это        | это        | is          | pron    | demonstrative (gloss marker) | A1    |      |
+| connection | connection | connection  | foreign | English                      |       |      |
+| .          |            |             |         |                              |       |      |
+
+HOWTOSAY:
+
+RU: Connection — по-русски «связь».
+EN: Connection is «связь» in Russian.
+
+| … full token table … |
+```
+
+- Heading: `### <ru headword> | <english> | forms: <form>, <form*> [| translit: <cyrillic>, …] [| id: <slug>]`. `forms` are the surface forms/globs the learner might say when asking «что значит …». `translit` (optional) are **hand-written extras** — how the Russian ASR hears the English word; the pipeline **generates** candidates from the English automatically (`translit.ts`) and merges yours first. `id:` overrides the entry slug, which otherwise comes from the English (`to hear` → `to-hear`).
+- Entry id = `<scenario>-gl-<slug>`; the clips are `<entry-id>-ex` (EXPLAIN) and `<entry-id>-how` (HOWTOSAY). Both blocks are required, both spoken by the host.
+- The English words inside the clips are ordinary word tokens: `pos: foreign`, lemma = the word, no level, `grammar: English`. Russian «по-русски» is an adverb.
+
+### Nudges
+
+A `## nudges` section with **exactly three** blocks — the host's service lines the engine needs at any turn:
+
+```markdown
+## nudges
+
+### silence
+
+RU: Вы там?
+EN: Are you there?
+
+| … token table … |
+
+### which-word
+
+…
+
+### dont-know
+
+…
+```
+
+`### silence` (25 s of nothing), `### which-word` («что значит …» found nothing), `### dont-know` («как сказать …» found nothing). An optional `SPEAKER:` line names another cast member; the default is the host. Sentence ids: `<scenario>-nudge-<kind>`.
+
+### Graph rules (the pipeline enforces all of these)
+
+- Exactly one `role: host`; the reserved `player` with `role: player`; every `SPEAKER:` resolves and is never `player`.
+- `EXPECT:` ⇔ `RETRY:`; exactly one of `NEXT:` / `ENDING:`.
+- `NEXT: on …` needs `branchOn:`; every key must be an option key of that slot (`number` for numeral slots and `| number` forms slots); ≤ 4 keys; `default` is mandatory.
+- `startTurnId`, every `NEXT:` target (linear, `on`, `default`) and every `ENDING:` must resolve; every turn reachable; every ending referenced; **no dead traps** (cycles are allowed when they keep an exit — the same `analyzeDialogueGraph` as dialogues, through the `scenarioGraphInput` adapter).
+- Slot forms: NFC, no punctuation, a glob is one trailing `*`; option keys unique per slot; slot ids unique per turn; glossary ids and headwords unique.
+- Bounds: ≤ 40 turns, 1–3 `SAY:` per turn, 1–6 slots per expectation, ≤ 180 glossary entries (120 → 180 in T64, 2026-09-28).
+- Audio is all-or-nothing per scenario (T57 renders every line kind at once).
+
+### The branch map and the coverage report
+
+`annotate` and `validate` print a **branch map** for every scenario — the turn tree with the prompt's RU preview, an **expect column** (`[name: free≥1 ✗1]` = one free slot, one reject group; `[mood: good|bad|ok ⇢mood]` = a forms slot with its branch keys, branching on it; `[monologue]`), the `on` edges labelled `mood: good → radio-a1-t04g` and the `default` edge, `⇒ ending` markers, path stats and warnings.
+
+They also print the **glossary coverage report**: every **content lemma the cast says** (turn lines, retry lines, reactions, nudges — glossary clips themselves are not scanned) that no glossary entry covers, with counts and the sentences it occurs in. Content = tokens whose `pos` is `noun`, `verb`, `adj` or `adv`, minus the judge's stopword list (§5.1 `STOP_RU`: «как», «так», «там», «тут», «очень», «спасибо», «пожалуйста», …); `num`, `name` and all function POS never count. A lemma is covered when it equals an entry's headword or one of its `forms` (exact or glob prefix — `forms: зовут, звать` covers the lemma «звать»). **The CT rule is: cover every content lemma the host says**, plus the family's «likely how-to-say» English list from the scripts file — the report is your checklist; it is informational, never a failure.
+
+### Scenario gotchas
+
+1. **The last `SAY:` is the prompt.** Put the question last; the confused/hint lines are followed by that line automatically, so they must never re-ask it themselves.
+2. **Ids are one namespace.** `<turn>-a/-b`, `-conf/-hint/-sec`, `-react`, `<scn>-gl-<slug>-ex/-how`, `<scn>-nudge-<kind>` all collide with story and dialogue sentence ids; prefix turn ids with the scenario slug.
+3. **`key=lemma: forms`** — the lemma comes before the first colon; forms after it; the whole option ends at the next `|`. A `|` inside a form is not possible (forms are punctuation-free anyway).
+4. **`default` is not optional** on a branching `NEXT:` — it is where a skipped turn goes.
+5. **Free slots cannot branch.** Branch on a forms or number slot; keep the free slot for names and open answers.
+6. **Reject groups are for wrong speech acts**, never for wrong facts (a «спасибо» when a name was asked; not a wrong name).
+7. **Confused lines never contain the answer; the hint contains a `Скажите: «…»` pattern; `SECOND:` IS the model answer** (rung rules, scripts file Appendix C).
+8. **Every content lemma the host says goes in the glossary** — read the coverage report after every annotate run; the two the fixture leaves out («отлично», «эфир») are there on purpose so the report always has something to show.
+9. **`cues:` on a character are render-time only.** They never appear in `pack.json`; T57's `pipeline audio` reads them from the draft.
+10. Indentation under `EXPECT:` / `RETRY:` is cosmetic; a sentence block after `REACT:`/`CONFUSED:`/… starts at column 0 like every other block.
+
+### Scenario audio (T57)
+
+`pipeline audio` renders a scenario **per line** on Multilingual v2 — every `SAY:`, `CONFUSED:`/`HINT:`/`SECOND:`, `REACT:`, glossary `EXPLAIN:`/`HOWTOSAY:` and nudge becomes its own Opus file in the speaking character's library voice at `audio/<scenario-id>/<sentence-id>.opus`, with word stamps (the ≥95 % aligner gate + monotonicity per line; an untrusted alignment ships that line with no stamps) and a **mouth track** written into the line's `audio.mouth`. The per-line core (`line-audio.ts`) is the one dialogues use; scenarios add the variant steering and the mouth track.
+
+- **Variants and steering.** v2 has no audio tags, so the retry registers are steered by `previous_text` + settings deltas, per SPEAKING_SCENARIOS §3: a `CONFUSED:` line is rendered with the character's `cues.confused` as `previous_text` and **stability −0.1 / style +0.1**; a `HINT:` line with `cues.hint` and **speed 0.95**; every other line (`SAY:`, `SECOND:`, `REACT:`, glossary clips, nudges, coach) renders with the base settings (stability 0.5 · similarity 0.75 · style 0 · speaker boost) and no `previous_text`. When a character has no `cues:` the defaults apply (confused = «Извини, я не совсем понял. Ты можешь повторить?», hint = «Ничего, не спеши. Я помогу — давай ещё раз, медленно.»). The cue text is _conditioning_, never rendered, so it can be Russian or an English stage direction. **What v2 steering actually buys is small**: on the fixture the same text at the same seed came out ~0.2 s longer and ~0.5–1 dB softer as `confused`/`hint` than as plain `say` (`Stories/_build/a1-scenario-fixture/audition/ab/`) — a slower, softer take, not a different emotion. Write the confused/hint _text_ to carry the register; the steering only nudges delivery.
+- **Audition & seeds group per (scenario, character)** — `--audition N` renders N takes of the character's **longest line** _and_, when the character has confused lines, N takes of their **longest confused line** (the steering is what the audition decides), e.g. `radio-a1--host--confused--take1--seed…mp3`. Pin with `--seed radio-a1/host=<seed>`; the whole cast of that scenario then renders with that seed.
+- **`--player-audio`** additionally renders **coach audio**: `accept[0]` of every `EXPECT:` (the debrief's model answer) in the reserved `player` character's voice — an Ivan/River-class library voice, **never `Mr. Wintrow`** (ADR-0019 decision 6). Coach lines are free text (no annotated sentence), so they ship as `audio/<scenario-id>/<turn-id>-coach.opus` on `turns[].expect.coachAudio` with a duration and a mouth track but **no word stamps**. Omit the flag and no coach files exist; a later filtered run carries existing ones over.
+- **`--scenarios <id,id>`** filters like `--dialogues`; `pack.json` merges across runs (lines and coach files already on disk are carried over), so a mixed pack's stories, dialogues and scenarios can be rendered in separate batches.
+- **Mouth track** (`mouth-track.ts`, pure): the Opus is decoded to PCM, RMS per 40 ms → dBFS → viseme by the ladder `< −42` → 0 · `< −32` → 1 · `< −24` → 2 · `< −17` → 3 · else 4, with ±2 dB hysteresis so lips don't flicker; when the line's stamps are trusted every window outside a word stamp is forced to `0` (breaths and room tone never move the mouth); the **round rule** encodes windows inside a word whose _first vowel_ is о/у/ю/ё as `4` — the app draws `4` round for such words and wide otherwise (§8.2; stress is ignored on purpose). Track length is fixed from `durationMs` (`ceil(ms / 40)`), never from the sample count.
+- **`--mouth-only`** recomputes every mouth track of an already-rendered `<pack-dir>/pack.json` from the Opus files on disk and rewrites `pack.json` — drafts optional, **zero ElevenLabs calls** — for tuning the ladder; it is idempotent on an unchanged ladder (the fixture reproduces byte-identical).
+- **Cost gate**: every run prints `N scenario line(s), M scenario coach render(s) — R ElevenLabs request(s), ~C characters` and asks to proceed; `--yes` for scripted runs; an unconfirmed run makes zero calls. **Cost expectations** (fixture «Проверка связи», 54 lines + 2 coach, 1,115 chars): the 2-take audition = 6 requests / 150 chars in 12 s; the full finalize = 56 requests / 1,115 chars in 89 s → 90 s of audio, 444 KB of Opus. A real A1 rung (~120 lines, ~3,000 chars) is therefore ≈ 3 min and ≈ 3 k characters of the plan.
+- **`scene/` ships wholesale.** `publish` copies `pack.json`, every line/coach `audio/…opus`, and **every file under `<pack-dir>/scene/`** (any depth, dotfiles skipped) — the PNG layers the portraits/backdrop reference. The size line reports `scene/` separately («of which scene/ 4.68 MB (Wi-Fi-gated PNG layers)»): the app's sync gate treats `scene/` + `.png` like large audio (T58). The CT session copies Mitch's art in from `Stories/scenarios/<family>/art/sized/` — `backdrop.png` → `scene/backdrop.png`, `body.png` → `scene/<host-id>/body.png`, `eyelids2.png` → `scene/<host-id>/eyelids.png` (≈ 4.7 MB per family) — and sets the portrait's `body`/`eyelids`/`mouthAnchor`; **`mouthAnchor` fractions are measured with T61's anchor picker** (dev screen) once it lands; until then keep `placeholder`.

@@ -50,7 +50,7 @@ describe('REGISTERS table', () => {
       documentary: 'voiceover',
       travel: 'guide',
     });
-    expect(DEFAULT_VOICE).toBe('elevenlabs:Mr. Wintrow');
+    expect(DEFAULT_VOICE).toBe('elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z');
   });
 });
 

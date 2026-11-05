@@ -54,6 +54,9 @@ export type AnalyticsEvent =
   | 'sync_pack_failed'
   | 'audio_deferred_wifi'
   | 'audio_backfilled'
+  // T58 scenario scene layers ride the same Wi-Fi gate (SPEAKING_SCENARIOS §3).
+  | 'scene_deferred_wifi'
+  | 'scene_backfilled'
   | 'sync_config_saved'
   | 'sync_pat_saved'
   | 'sync_pat_cleared'
@@ -369,7 +372,77 @@ export type AnalyticsEvent =
   | 'profile_batch_started'
   | 'profile_batch_progress'
   | 'profile_batch_finished'
-  | 'profile_batch_cancelled';
+  | 'profile_batch_cancelled'
+  // M17 «Сценарии» — T58 data layer (SPEAKING_SCENARIOS §4.5: slugs/numbers only).
+  | 'scenario_pack_imported'
+  // M17 «Сценарии» — T59 native additions (§4.5 T59): opus_encode_done {ms,
+  // inBytes, outBytes, durationMs} · opus_encode_failed {code} · whisper_loaded
+  // {modelId, loadMs} · whisper_transcribed {decodeMs, audioMs, words, language}
+  // · assist_model_install_started/finished/failed {modelId, bytes|ms, source}
+  // · assist_model_deleted {modelId, bytes} · dev_assist_bench {…} (dev bench).
+  | 'opus_encode_done'
+  | 'opus_encode_failed'
+  | 'whisper_loaded'
+  | 'whisper_transcribed'
+  | 'assist_model_install_started'
+  | 'assist_model_install_finished'
+  | 'assist_model_install_failed'
+  | 'assist_model_deleted'
+  | 'dev_assist_bench'
+  // M17 «Сценарии» — T60 judge/engine (§4.5 T60; slugs/numbers/booleans only — never a
+  // transcript). scenario_endpoint {reason:'silence'|'cap'|'manual'|'hold'|'no-speech', speechMs}
+  // · scenario_judge {outcome, slotsHit, slotsRequired, score, margin, ms} · scenario_rescue
+  // {verdict:'accept'|'reject'|'error', ms, model, code?} · scenario_meta {intent, source, hit}.
+  | 'scenario_endpoint'
+  | 'scenario_judge'
+  | 'scenario_rescue'
+  | 'scenario_meta'
+  // Run-lifecycle events of §4.5 T62 that the T60 reducer/executor already fire (declared here
+  // by T60; T62 adds scenario_opened / scenario_ending_found / scenario_subtitles_toggled):
+  // scenario_run_started {scenarioId, level, resumed} · scenario_run_finished {scenarioId,
+  // endingId, turns, cleanTurns, misses} · scenario_run_abandoned {scenarioId} ·
+  // scenario_run_resumed {scenarioId} · scenario_turn_advanced {turnId, misses, assisted,
+  // branchKey} · scenario_lifeline_revealed {turnId} · scenario_turn_skipped {turnId} ·
+  // scenario_line_replayed {slower} · scenario_nudge_played {kind}.
+  | 'scenario_run_started'
+  | 'scenario_run_finished'
+  | 'scenario_run_abandoned'
+  | 'scenario_run_resumed'
+  | 'scenario_turn_advanced'
+  | 'scenario_lifeline_revealed'
+  | 'scenario_turn_skipped'
+  | 'scenario_line_replayed'
+  | 'scenario_nudge_played'
+  // M17 «Сценарии» — T62 screens (§4.5 T62): scenario_opened {familyId, level, from} ·
+  // scenario_ending_found {endingId, tone, newEnding} · scenario_subtitles_toggled {enabled} ·
+  // scenario_pref_changed {key, value} · scenario_hub_opened {families, gate} ·
+  // scenario_gate_shown {gate} · scenario_assist_banner {action}.
+  | 'scenario_opened'
+  | 'scenario_ending_found'
+  | 'scenario_subtitles_toggled'
+  | 'scenario_pref_changed'
+  | 'scenario_hub_opened'
+  | 'scenario_gate_shown'
+  | 'scenario_assist_banner'
+  | 'scenario_runs_list_opened'
+  // M17 «Сценарии» — T63 recordings / debrief / media bundles (§4.5 T63):
+  // scenario_debrief_opened {turns, misses, mediaLocal, bundle} · scenario_attempt_played {ext} ·
+  // scenario_practice_added {count} · recordings_pruned {runs, bytes, orphans, reason,
+  // protectedCount} · media_bundle_uploaded {bytes, target, files, dup?} · media_bundle_failed
+  // {bytes, target, code, transient} · media_bundle_downloaded {bytes, target, files} ·
+  // media_bundle_wav_warning {files} · scenario_run_pinned {pinned} · scenario_transcript_shared
+  // {turns} · scenario_debrief_download_failed {code}.
+  | 'scenario_debrief_opened'
+  | 'scenario_attempt_played'
+  | 'scenario_practice_added'
+  | 'recordings_pruned'
+  | 'media_bundle_uploaded'
+  | 'media_bundle_failed'
+  | 'media_bundle_downloaded'
+  | 'media_bundle_wav_warning'
+  | 'scenario_run_pinned'
+  | 'scenario_transcript_shared'
+  | 'scenario_debrief_download_failed';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 

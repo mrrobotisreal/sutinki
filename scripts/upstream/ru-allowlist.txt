@@ -13,3 +13,42 @@ apps/mobile/src/features/ai/__tests__/word-profile-prompt.test.ts # UT13 — pin
 apps/mobile/scripts/capture-ai-fixtures.ts # UT13 — Russian AI fixture capture script (dev only, needs a key); removed when UT13 merges
 apps/mobile/src/features/word-forms/lessons-tab.tsx # UT13 — renders profile `ru` section titles; removed when UT13 merges
 apps/mobile/src/features/word-forms/overview-strip.tsx # UT13 — renders profile headword `ru`; removed when UT13 merges
+apps/mobile/src/features/scenario/judge/slots.ts # UT14 — Russian stopword/numeral/stem tables; removed when UT14 merges
+apps/mobile/src/features/scenario/meta-intents.ts # UT14 — `ru` meta-intent table (uk table empty by design); removed when UT14 merges
+apps/mobile/src/features/scenario/commands.ts # UT14 — command sheet keeps the `ru` field of the Russian engine; removed when UT14 merges
+apps/mobile/src/features/scenario/scene/visemes.ts # UT14 — Russian vowel table; removed when UT14 merges
+apps/mobile/src/features/scenario/scene/use-mouth-track.ts # UT14 — viseme input; removed when UT14 merges
+apps/mobile/src/features/scenario/engine/turn-machine.ts # UT14 — SPEAK_GLOSS `ru` effect field; removed when UT14 merges
+apps/mobile/src/features/scenario/prompter.ts # UT14 — суфлёр speaks Russian; removed when UT14 merges
+apps/mobile/src/features/scenario/grade-spoken-turn.ts # UT14 — ё/е-tolerant lemma comments; removed when UT14 merges
+apps/mobile/src/features/scenario/__tests__/* # UT14 — Russian engine fixtures/tests; removed when UT14 merges
+apps/mobile/src/features/scenario/**/__tests__/* # UT14 — Russian engine fixtures/tests; removed when UT14 merges
+apps/mobile/src/features/scenario/debrief/runs-list-screen.tsx # UT14 — title view-model `ru` key; removed when UT14 merges
+apps/mobile/src/features/scenario/debrief/debrief-core.ts # UT14 — transcript meta-intent view model; removed when UT14 merges
+apps/mobile/src/features/scenario/intro-card.tsx # UT14 — command `ru` field; removed when UT14 merges
+apps/mobile/src/features/scenario/stage/* # UT14 — lifeline/state-line copy hooks into Russian engine; removed when UT14 merges
+apps/mobile/src/features/scenario/scene/mouth.tsx # UT14 — viseme comment; removed when UT14 merges
+apps/mobile/src/app/dev-judge.tsx # UT14 — Russian judge lab (dev only); removed when UT14 merges
+apps/mobile/src/features/ai/prompts/scenario-*.ts # UT14 — rescue/help prompts; removed when UT14 merges
+apps/mobile/src/features/ai/runner.ts # UT14 — comment naming суфлёр; removed when UT14 merges
+apps/mobile/src/db/normalize.ts # UT14 — normalizeScenarioText ё→е fold for the Russian scenario engine; removed when UT14 merges
+apps/mobile/src/db/__tests__/scenarios*.test.ts # UT14 — Russian engine fixture assertions; removed when UT14 merges
+apps/mobile/src/db/__tests__/migrations.test.ts # UT14 — Russian scenario fixture rows; removed when UT14 merges
+apps/mobile/src/db/__tests__/*.test.ts # UT14 — Russian scenario fixture rows; removed when UT14 merges
+apps/mobile/src/features/motivation/__tests__/scenario-achievements.test.ts # UT14 — pins achievement copy; removed when UT14 merges
+apps/mobile/src/features/journal/__tests__/prompt-rotation.test.ts # UT14 — Russian fixture sentence; removed when UT14 merges
+apps/mobile/src/features/backup/__tests__/export-restore.test.ts # UT14 — Russian scenario backup fixture; removed when UT14 merges
+apps/mobile/src/features/motivation/achievements.ts # UT14 — scenario achievement comment; removed when UT14 merges
+packages/pipeline/src/translit.ts # UT14 — EN→Cyrillic rules for the Russian zipformer; removed when UT14 merges
+packages/pipeline/src/mouth-track.ts # UT14 — rounded-vowel table; removed when UT14 merges
+packages/pipeline/src/coverage.ts # UT14 — Russian stopword table of the glossary coverage report; removed when UT14 merges
+packages/pipeline/src/scenario-*.ts # UT14 — Russian default cue lines / comments; removed when UT14 merges
+packages/pipeline/test/* # UT14 — Russian scenario engine fixtures/tests; removed when UT14 merges
+packages/pipeline/fixtures/* # UT14 — Russian engine fixtures (language: ru); removed when UT14 merges
+packages/schema/fixtures/packs/a1-scenario-fixture/* # UT14 — Russian engine fixture; removed when UT14 merges
+packages/schema/src/scenario.ts # UT14 — ё comments/examples in the scenario schema docs; removed when UT14 merges
+packages/schema/test/* # UT14 — Russian scenario test helpers; removed when UT14 merges
+apps/mobile/src/features/scenario/*.tsx # UT14 — suflyor/ё comments in screens; removed when UT14 merges
+apps/mobile/src/features/scenario/use-scenario-run.ts # UT14 — Russian-engine view-model keys (`ru`, questionRu); removed when UT14 merges
+apps/mobile/src/db/repositories/scenarios.ts # UT14 — ScenarioGlossaryHit.ru / packTitleRu view-model keys; removed when UT14 merges
+apps/mobile/src/db/schema/content.ts # UT14 — scenario_glossary comment (ё preserved); removed when UT14 merges

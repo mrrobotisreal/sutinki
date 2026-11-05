@@ -11,24 +11,67 @@ import type { CharAlignment } from './stamps.ts';
 
 const DEFAULT_BASE_URL = 'https://api.elevenlabs.io';
 /**
- * Multilingual v2 — the narration default since ADR-0016 (2026-09-20): the
- * model Mitch's professional clone `Mr. Wintrow` was proven on (CT011e). It
- * accepts `previous_text` (our `stylePrompt`), `language_code`, continuous
- * voice settings, seed and character timestamps; it has NO audio-tag
- * channel — steering is `stylePrompt` + `contextCues` + settings. `eleven_v3`
- * (tags, no previous_text) stays available per direction (`model:`) or per
- * run (`--model eleven_v3`) as the legacy / character-voice path.
+ * Eleven v4 — the Sutinki narration default (ADR-0012, overrides Sumrak's
+ * ADR-0016 Multilingual v2). Tagged model: steering is inline `[audio tags]`;
+ * no `previous_text`, no `language_code`, no default speaker boost (see
+ * {@link isTaggedModel}). Multilingual v2 stays available per direction
+ * (`model:`) or per run (`--model eleven_multilingual_v2`).
  */
-export const DEFAULT_MODEL_ID = 'eleven_multilingual_v2';
+export const DEFAULT_MODEL_ID = 'eleven_v4';
 /**
- * Sent as `language_code` on every non-v3 request whose direction pins no
- * `language` (v3 rejects the field, so it stays off there).
+ * Sent as `language_code` on every untagged-model request whose direction pins
+ * no `language` (tagged models v3 / v4 never get the field).
  */
 export const DEFAULT_LANGUAGE_CODE = 'uk';
 
-/** v3-family models differ in accepted params (no previous_text, no language_code; audio tags instead). */
-export function isV3Model(modelId: string): boolean {
-  return modelId.startsWith('eleven_v3');
+/**
+ * Tagged-model gate (T64): the models whose steering channel is inline
+ * `[audio tags]` in the text — every `eleven_v3*` variant and `eleven_v4`.
+ * They share one request shape (no `previous_text`, no `language_code`, no
+ * default speaker boost — probe-verified for v4 on 2026-09-28, see
+ * AUTHORING.md «Eleven v3 / v4 tags»). `eleven_v4_turbo` is the realtime
+ * sibling and is refused outright — never a rendering model here.
+ */
+export function isTaggedModel(modelId: string): boolean {
+  if (modelId === 'eleven_v4_turbo') {
+    throw new Error('eleven_v4_turbo is the realtime model — not for rendering; use eleven_v4');
+  }
+  return modelId.startsWith('eleven_v3') || modelId === 'eleven_v4';
+}
+
+/** A provider-prefixed draft voice, parsed. `id` voices need no `/v1/voices` lookup. */
+export interface ParsedProviderVoice {
+  provider: 'elevenlabs';
+  kind: 'id' | 'name';
+  value: string;
+}
+
+const VOICE_ID_RE = /^[A-Za-z0-9]{20}$/;
+
+/**
+ * The one parser for draft voices (Sutinki UP03, Decision 3):
+ * `elevenlabs:id:<20 alnum>` (first-class, no name resolution),
+ * `elevenlabs:<name>` (legacy, resolved through `/v1/voices`; a bare
+ * 20-char alphanumeric name passes through as an id). `label` names the
+ * draft entity in error messages.
+ */
+export function parseProviderVoice(voice: string, label: string): ParsedProviderVoice {
+  const m = /^([a-z0-9-]+):(.*)$/s.exec(voice);
+  if (!m || m[1] !== 'elevenlabs' || m[2] === '') {
+    throw new Error(`${label}: unsupported voice "${voice}" — use "elevenlabs:id:<voice_id>"`);
+  }
+  const rest = m[2]!;
+  if (rest.startsWith('id:')) {
+    const id = rest.slice(3);
+    if (!VOICE_ID_RE.test(id)) {
+      throw new Error(
+        `${label}: invalid voice id in "${voice}" — expected "elevenlabs:id:" + 20 letters/digits`,
+      );
+    }
+    return { provider: 'elevenlabs', kind: 'id', value: id };
+  }
+  if (VOICE_ID_RE.test(rest)) return { provider: 'elevenlabs', kind: 'id', value: rest };
+  return { provider: 'elevenlabs', kind: 'name', value: rest };
 }
 /**
  * Highest-quality MP3 the with-timestamps endpoint serves on the Creator tier
@@ -163,6 +206,11 @@ export class ElevenLabsClient {
    * 20-character voice id passes through untouched. Ambiguous aliases fail
    * loudly rather than picking one.
    */
+  async resolveProviderVoice(voice: string, label: string): Promise<string> {
+    const parsed = parseProviderVoice(voice, label);
+    return parsed.kind === 'id' ? parsed.value : this.resolveVoiceId(parsed.value);
+  }
+
   async resolveVoiceId(name: string): Promise<string> {
     if (/^[A-Za-z0-9]{20,}$/.test(name)) return name; // already an id
     const voices = await this.listVoices();
@@ -190,15 +238,16 @@ export class ElevenLabsClient {
   }
 
   /**
-   * Render text to speech with character-level timestamps. Non-v3 requests
-   * default `language_code` to {@link DEFAULT_LANGUAGE_CODE} and speaker
-   * boost to on (ADR-0016) when the caller pins neither; v3 gets neither
-   * field unless the caller asks (it rejects `language_code`).
+   * Render text to speech with character-level timestamps. Untagged (v2)
+   * requests default `language_code` to {@link DEFAULT_LANGUAGE_CODE} and
+   * speaker boost to on (ADR-0016) when the caller pins neither; tagged
+   * models (v3 / v4) get neither field unless the caller asks (v3 rejects
+   * `language_code`; v4 accepts and ignores it — probe (c)).
    */
   async renderWithTimestamps(req: RenderRequest): Promise<RenderResult> {
     const path = `/v1/text-to-speech/${encodeURIComponent(req.voiceId)}/with-timestamps?output_format=${OUTPUT_FORMAT}`;
     const modelId = req.modelId ?? DEFAULT_MODEL_ID;
-    const v3 = isV3Model(modelId);
+    const v3 = isTaggedModel(modelId);
     const settings =
       !v3 && req.voiceSettings?.useSpeakerBoost === undefined
         ? { ...req.voiceSettings, useSpeakerBoost: true }

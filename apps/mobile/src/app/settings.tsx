@@ -14,8 +14,11 @@ import { BackupSettingsSection } from '@/features/backup/backup-settings-section
 import { GoalSettingsSection } from '@/features/motivation/goal-settings-section';
 import { NotificationsSettingsSection } from '@/features/motivation/notifications-settings-section';
 import { AsrSettingsSection } from '@/features/pronunciation/asr-settings-section';
+import { AssistSettingsSection } from '@/features/pronunciation/assist-settings-section';
+import { RecordingsSettingsSection } from '@/features/scenario/recordings/recordings-settings-section';
 import { PathSettingsSection } from '@/features/path/path-settings-section';
 import { DailySettingsSection } from '@/features/review/daily/daily-settings-section';
+import { ScenarioSettingsSection } from '@/features/scenario/scenario-settings-section';
 import { SyncSettingsSection } from '@/features/sync/sync-settings-section';
 import { VoicesSettingsSection } from '@/features/tts/voices-settings-section';
 import { track } from '@/services/analytics';
@@ -163,6 +166,8 @@ export default function SettingsScreen() {
         </View>
       </View>
 
+      {!ukPending('scenarios') && <ScenarioSettingsSection />}
+
       <AmbientSettingsSection />
 
       <GoalSettingsSection />
@@ -175,6 +180,8 @@ export default function SettingsScreen() {
 
       <VoicesSettingsSection />
       <AsrSettingsSection />
+      {!ukPending('scenarios') && <AssistSettingsSection />}
+      {!ukPending('scenarios') && <RecordingsSettingsSection />}
 
       <SyncSettingsSection />
 
@@ -223,6 +230,35 @@ export default function SettingsScreen() {
                 <View className="gap-0.5">
                   <Text className="font-ui-medium">Read any text</Text>
                   <Text variant="caption">Speak arbitrary Ukrainian, voice QA + latency (T11)</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
+              </Pressable>
+            </Link>
+            <Link href="/dev-assist" asChild>
+              <Pressable className="flex-row items-center justify-between border-t border-border px-4 py-3.5 active:bg-surface-2">
+                <View className="gap-0.5">
+                  <Text className="font-ui-medium">Assist bench</Text>
+                  <Text variant="caption">Whisper candidates × clips, Opus transcode (T59)</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
+              </Pressable>
+            </Link>
+            <Link href="/dev-judge" asChild>
+              <Pressable className="flex-row items-center justify-between border-t border-border px-4 py-3.5 active:bg-surface-2">
+                <View className="gap-0.5">
+                  <Text className="font-ui-medium">Judge lab</Text>
+                  <Text variant="caption">
+                    Scenario judge, meta-intents, endpointing, rescue (T60)
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
+              </Pressable>
+            </Link>
+            <Link href="/dev-scene" asChild>
+              <Pressable className="flex-row items-center justify-between border-t border-border px-4 py-3.5 active:bg-surface-2">
+                <View className="gap-0.5">
+                  <Text className="font-ui-medium">Scene gallery</Text>
+                  <Text variant="caption">Talking cast, mouth sync, beds, anchor picker (T61)</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
               </Pressable>

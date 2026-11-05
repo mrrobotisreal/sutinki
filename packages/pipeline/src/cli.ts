@@ -1,13 +1,21 @@
 import { formatIssue, DraftError } from './errors.ts';
 import { runAnnotate } from './annotate.ts';
-import { renderBranchMap } from './branch-map.ts';
-import { planAudioRun, runAudition, runFinalize, type AudioRunPlan } from './audio.ts';
+import { renderBranchMap, renderScenarioBranchMap } from './branch-map.ts';
+import { glossaryCoverage, renderCoverageReport } from './coverage.ts';
+import {
+  planAudioRun,
+  runAudition,
+  runFinalize,
+  runMouthOnly,
+  type AudioRunPlan,
+} from './audio.ts';
 import type { StampResult } from './stamps.ts';
 import { DEFAULT_MODEL_ID, ElevenLabsClient } from './elevenlabs.ts';
-import { resolveEnvVar } from './env.ts';
+import { resolveElevenKey } from './env.ts';
 import { runModelsMirror } from './models.ts';
 import { runPublish } from './publish.ts';
 import { runValidate } from './validate.ts';
+import type { Pack } from '@sutinki/schema';
 
 /**
  * CLI entrypoint. annotate/validate are offline (T08); audio is explicitly
@@ -20,8 +28,12 @@ const USAGE = `Sutinki authoring pipeline
 Usage:
   pipeline annotate [draft.md ...] [--extras <extras.md>] [-o <pack.json>]
       Turn draft file(s) into a schema-valid pack.json.
-      One draft = one story; multi-story packs pass several drafts (identical
+      One draft = one story (or one dialogue / one scenario, told apart by
+      the frontmatter); multi-story packs pass several drafts (identical
       "pack" frontmatter) in reading order. Default output: ./pack.json
+      Dialogues and scenarios also print their branch map; scenarios print
+      the glossary coverage report (content lemmas the cast says that are
+      not glossary headwords)
       --extras <file>       pack extras (T17): lesson (frontmatter meta +
                             markdown body), journal prompts, authored
                             exercises. Required sections for course-unit /
@@ -33,7 +45,7 @@ Usage:
       Validate existing pack.json file(s) against the schema.
 
   pipeline audio <draft.md> [more-drafts.md ...] -o <pack-dir> [options]
-      Render narration via ElevenLabs (needs ELEVENLABS_API_KEY in the env or
+      Render narration via ElevenLabs (needs ELEVENLABS_API_KEY_2 in the env or
       a gitignored .env at the repo root; the value is never printed).
       Every run first prints a pre-render summary (tracks, dialogue nodes,
       request + character counts) and asks for confirmation — pass --yes to
@@ -49,27 +61,36 @@ Usage:
       --stories <id,id>     only these story ids
       --tracks <id,id>      only these track ids
       --dialogues <id,id>   only these dialogue ids (T26)
+      --scenarios <id,id>   only these scenario ids (T57)
       --player-audio        also render coach audio (the "player" character's
                             voice) for every choice + scripted player line
+                            (dialogues) and for accept[0] of every
+                            expectation (scenarios, → expect.coachAudio)
+      --mouth-only          no rendering: recompute the mouth track of every
+                            already-rendered scenario line in <pack-dir>/
+                            pack.json from the Opus on disk (T57 tuning);
+                            drafts are optional, zero provider calls
       --model <id>          ElevenLabs model (default ${DEFAULT_MODEL_ID};
-                            eleven_v3 opt-in — a draft's per-direction
-                            "model:" always wins over this flag)
+                            eleven_multilingual_v2 / eleven_v3 opt-in — a
+                            draft's per-direction "model:" always wins)
       --extras <file>       pack extras file (course-unit packs) — merged into
                             the written pack.json, same as annotate
       --yes                 confirm the pre-render summary without prompting
       Without --audition, renders final takes: Opus into <pack-dir>/audio/
-      (dialogues: audio/<dialogue-id>/<sentence-id>.opus per node/choice),
+      (dialogues: audio/<dialogue-id>/<sentence-id>.opus per node/choice;
+      scenarios: audio/<scenario-id>/<sentence-id>.opus per line with a
+      per-variant v2 steering + a mouth track, coach files <turn-id>-coach),
       word stamps mapped + checked, pack.json written (merges with a previous
-      run, so tracks/nodes can be finalized in batches).
+      run, so tracks/nodes/lines can be finalized in batches).
 
   pipeline publish <pack-dir> --content <sutinki-content-dir> [--push] [-m msg]
       Copy the pack into the content repo, recompute hashes, update
       manifest.json, and commit. Pushes only with --push.
 
   pipeline models mirror --content <sutinki-content-dir> [--push] [-m msg]
-      Mirror the app's pinned speech-model archives (4 Piper TTS voices + the
-      ASR model, ~330 MB) from the k2-fsa release assets into the content
-      repo's models/{tts,asr}/, verifying each download against the pinned
+      Mirror the app's pinned speech-model archives (2 Piper uk_UA voices into
+      models/tts/; the Whisper assist model as a GitHub Release asset under
+      the 'models' tag) from the k2-fsa release assets, verifying each download against the pinned
       sha256 BEFORE writing into the repo, then emit models-manifest.json and
       commit. Idempotent: verified-present files are skipped, and model files
       are never deleted or overwritten. Pushes only with --push.
@@ -115,6 +136,9 @@ function annotateCommand(args: string[]): void {
       summary.dialogues > 0
         ? `${summary.dialogues} dialogue${summary.dialogues === 1 ? '' : 's'}`
         : null,
+      summary.scenarios > 0
+        ? `${summary.scenarios} scenario${summary.scenarios === 1 ? '' : 's'}`
+        : null,
       summary.pack.lesson ? 'lesson' : null,
       summary.pack.prompts ? `${summary.pack.prompts.length} prompts` : null,
       summary.pack.exercises ? `${summary.pack.exercises.length} exercises` : null,
@@ -129,11 +153,20 @@ function annotateCommand(args: string[]): void {
     for (const dialogue of summary.pack.dialogues ?? []) {
       console.log(`\n${renderBranchMap(dialogue)}`);
     }
+    printScenarioReports(summary.pack);
   } catch (e) {
     if (e instanceof DraftError) {
       fail(e.issues.map(formatIssue).join('\n'), 1);
     }
     throw e;
+  }
+}
+
+/** T56: branch map + glossary coverage report for every scenario of a pack. */
+function printScenarioReports(pack: Pack): void {
+  for (const scenario of pack.scenarios ?? []) {
+    console.log(`\n${renderScenarioBranchMap(scenario)}`);
+    console.log(`\n${renderCoverageReport(glossaryCoverage(scenario))}`);
   }
 }
 
@@ -149,6 +182,7 @@ function validateCommand(args: string[]): void {
       for (const dialogue of result.pack.dialogues ?? []) {
         console.log(`\n${renderBranchMap(dialogue)}`);
       }
+      printScenarioReports(result.pack);
     } else {
       failed = true;
       console.error(`✗ ${file}: invalid pack`);
@@ -166,14 +200,19 @@ function describeStamps(r: StampResult): string {
 }
 
 function makeClient(): ElevenLabsClient {
-  const apiKey = resolveEnvVar('ELEVENLABS_API_KEY');
-  if (apiKey === undefined) {
+  const key = resolveElevenKey();
+  if (key === undefined) {
     fail(
-      'ELEVENLABS_API_KEY is not set — export it or put it in a gitignored .env at the repo root (the pipeline never prints its value)',
+      'ELEVENLABS_API_KEY_2 is not set — export it or put it in a gitignored .env at the repo root (the pipeline never prints its value)',
       2,
     );
   }
-  return new ElevenLabsClient(apiKey);
+  if (key.name !== 'ELEVENLABS_API_KEY_2') {
+    console.warn(
+      'using ELEVENLABS_API_KEY (not _2) — Sutinki renders belong on ELEVENLABS_API_KEY_2',
+    );
+  }
+  return new ElevenLabsClient(key.value);
 }
 
 /**
@@ -186,6 +225,8 @@ async function confirmAudioRun(plan: AudioRunPlan, yes: boolean): Promise<void> 
     plan.storyTracks > 0 ? `${plan.storyTracks} story track(s)` : null,
     plan.dialogueNodes > 0 ? `${plan.dialogueNodes} dialogue node(s)` : null,
     plan.dialogueChoices > 0 ? `${plan.dialogueChoices} choice coach render(s)` : null,
+    plan.scenarioLines > 0 ? `${plan.scenarioLines} scenario line(s)` : null,
+    plan.scenarioCoach > 0 ? `${plan.scenarioCoach} scenario coach render(s)` : null,
   ].filter((p): p is string => p !== null);
   console.log(
     `Pre-render summary: ${parts.join(', ') || 'nothing'} — ` +
@@ -221,7 +262,9 @@ async function audioCommand(args: string[]): Promise<void> {
   let stories: string[] | undefined;
   let tracks: string[] | undefined;
   let dialogues: string[] | undefined;
+  let scenarios: string[] | undefined;
   let playerAudio = false;
+  let mouthOnly = false;
   let yes = false;
   let extras: string | undefined;
   const seeds: Record<string, number> = {};
@@ -253,17 +296,39 @@ async function audioCommand(args: string[]): Promise<void> {
     } else if (arg === '--stories') stories = next().split(',').filter(Boolean);
     else if (arg === '--tracks') tracks = next().split(',').filter(Boolean);
     else if (arg === '--dialogues') dialogues = next().split(',').filter(Boolean);
+    else if (arg === '--scenarios') scenarios = next().split(',').filter(Boolean);
     else if (arg === '--player-audio') playerAudio = true;
+    else if (arg === '--mouth-only') mouthOnly = true;
     else if (arg === '--yes' || arg === '-y') yes = true;
     else if (arg === '--model') model = next();
     else if (arg === '--extras') extras = next();
     else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
     else drafts.push(arg);
   }
-  if (drafts.length === 0) fail(`audio needs at least one draft file\n\n${USAGE}`, 2);
   if (out === undefined) fail(`audio needs -o <pack-dir>\n\n${USAGE}`, 2);
+  if (mouthOnly) {
+    // No drafts, no client, no cost gate: the pack on disk is the input.
+    try {
+      const summary = runMouthOnly(out, { scenarios });
+      const changed = summary.reports.filter((r) => r.changed).length;
+      console.log(
+        `✓ ${summary.pack.id} v${summary.pack.version} → ${summary.outFile} — ` +
+          `${summary.reports.length} mouth track(s) recomputed, ${changed} changed`,
+      );
+      for (const r of summary.reports) {
+        console.log(
+          `  ${r.scenarioId}/${r.sentenceId ?? r.file.split('/').pop()}: ` +
+            `${(r.durationMs / 1000).toFixed(2)}s → ${r.mouthLength} steps${r.changed ? ' (changed)' : ''}`,
+        );
+      }
+    } catch (e) {
+      fail(e instanceof Error ? e.message : String(e), 1);
+    }
+    return;
+  }
+  if (drafts.length === 0) fail(`audio needs at least one draft file\n\n${USAGE}`, 2);
 
-  const filters = { stories, tracks, dialogues, playerAudio };
+  const filters = { stories, tracks, dialogues, scenarios, playerAudio };
   try {
     // Cost gate BEFORE the client exists — an unconfirmed run fires nothing.
     const plan = planAudioRun(drafts, {
@@ -288,7 +353,7 @@ async function audioCommand(args: string[]): Promise<void> {
         modelId: model,
         extrasPath: extras,
       });
-      const total = result.story.length + result.dialogue.length;
+      const total = result.story.length + result.dialogue.length + result.scenario.length;
       console.log(`Rendered ${total} audition take(s) into ${out}/audition/:`);
       for (const t of result.story) {
         console.log(`  ${t.trackId} take ${t.take} (seed ${t.seed}) → ${t.file}`);
@@ -300,9 +365,16 @@ async function audioCommand(args: string[]): Promise<void> {
         );
         console.log(`      alignment: ${describeStamps(t.stampResult)}`);
       }
+      for (const t of result.scenario) {
+        console.log(
+          `  ${t.scenarioId}/${t.characterId} ${t.variant} take ${t.take} (${t.label}, seed ${t.seed}) → ${t.file}`,
+        );
+        console.log(`      alignment: ${describeStamps(t.stampResult)}`);
+      }
       console.log(
         '\nListen, pick a take per track/character, then finalize with ' +
-          '--seed <track-id>=<seed> / --seed <dialogueId>/<characterId>=<seed>.',
+          '--seed <track-id>=<seed> / --seed <dialogueId>/<characterId>=<seed> / ' +
+          '--seed <scenarioId>/<characterId>=<seed>.',
       );
     } else {
       const summary = await runFinalize(drafts, out, client, {
@@ -326,6 +398,14 @@ async function audioCommand(args: string[]): Promise<void> {
         console.log(
           `  ${r.dialogueId}/${r.label} (${r.characterId}: ${r.voice}, seed ${r.seed}): ` +
             `${(r.durationMs / 1000).toFixed(1)}s, ${kb} KiB opus`,
+        );
+        console.log(`      stamps: ${describeStamps(r.stampResult)}`);
+      }
+      for (const r of summary.scenarioReports) {
+        const kb = (r.opusBytes / 1024).toFixed(0);
+        console.log(
+          `  ${r.scenarioId}/${r.label} ${r.variant} (${r.characterId}: ${r.voice}, seed ${r.seed}): ` +
+            `${(r.durationMs / 1000).toFixed(1)}s, ${kb} KiB opus, mouth ${r.mouthLength} steps`,
         );
         console.log(`      stamps: ${describeStamps(r.stampResult)}`);
       }
@@ -365,8 +445,14 @@ function publishCommand(args: string[]): void {
       return;
     }
     const mb = (summary.totalBytes / (1024 * 1024)).toFixed(2);
+    // scene/ PNG layers are the bulk of a scenario pack (≈ 4–5 MB per family)
+    // and the reason the app's sync gate is Wi-Fi-only for them (T58).
+    const scene =
+      summary.sceneBytes > 0
+        ? `, of which scene/ ${(summary.sceneBytes / (1024 * 1024)).toFixed(2)} MB (Wi-Fi-gated PNG layers)`
+        : '';
     console.log(
-      `✓ published ${summary.packId} v${summary.version} (${summary.files.length} files, ${mb} MB) — commit ${summary.committed}${summary.pushed ? ', pushed' : ' (not pushed; use --push)'}`,
+      `✓ published ${summary.packId} v${summary.version} (${summary.files.length} files, ${mb} MB${scene}) — commit ${summary.committed}${summary.pushed ? ', pushed' : ' (not pushed; use --push)'}`,
     );
     for (const f of summary.files) console.log(`  ${f.path} (${f.bytes} bytes) ${f.sha256}`);
   } catch (e) {

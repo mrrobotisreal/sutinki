@@ -59,3 +59,13 @@ export function toFtsQuery(raw: string): string | null {
   if (terms.length === 0) return null;
   return terms.map((t, i) => (i === terms.length - 1 ? `"${t}"*` : `"${t}"`)).join(' ');
 }
+
+/**
+ * Scenario-engine fold (UP03): `normalizeUk` plus ё→е. The M17 judge, meta
+ * intents and glossary lookup are still the Russian engine (UT14 ports them);
+ * their tables are ё/е-folded. ё never occurs in Ukrainian, so the superset is
+ * harmless for the Ukrainian engine UT14 will land.
+ */
+export function normalizeScenarioText(text: string): string {
+  return normalizeUk(text).replaceAll('ё', 'е');
+}

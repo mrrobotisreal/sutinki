@@ -212,7 +212,7 @@ describe('dialogue finalize (fake provider, real ffmpeg)', () => {
     }
   }, 60_000);
 
-  it('omits coach audio entirely without playerAudio; default requests are v2 + language_code uk', async () => {
+  it('omits coach audio entirely without playerAudio; default requests are eleven_v4 with tags and no language_code', async () => {
     const work = tempDir();
     const mp3 = makeSilentMp3(work, 4);
     const captured: { text: string; model_id?: string; language_code?: string }[] = [];
@@ -228,9 +228,8 @@ describe('dialogue finalize (fake provider, real ffmpeg)', () => {
     // ADR-0016: dialogue audio inherits the same default constant as stories.
     expect(captured.length).toBe(11);
     for (const req of captured) {
-      expect(req.model_id).toBe('eleven_multilingual_v2');
-      expect(req.language_code).toBe('uk');
-      expect(req.text.startsWith('[')).toBe(false); // tags are not applied on v2
+      expect(req.model_id).toBe('eleven_v4');
+      expect(req.language_code).toBeUndefined(); // tagged models never get the field
     }
   }, 60_000);
 });
