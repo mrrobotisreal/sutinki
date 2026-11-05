@@ -4,7 +4,7 @@
   "packs": [
     {
       "id": "a1-creepypasta-001",
-      "version": 1,
+      "version": 2,
       "type": "stories",
       "level": "A1",
       "title": {
@@ -19,13 +19,13 @@
         },
         {
           "path": "pack.json",
-          "sha256": "2640d926487dde474696c994ad198f4a2b8a4fecfbe593733044f19558c9c085"
+          "sha256": "7e7c03e4f96cdb174faa9c62344f25a985e5d8eb908ab8bf709987b122a785a5"
         }
       ]
     },
     {
       "id": "a1-creepypasta-002",
-      "version": 1,
+      "version": 2,
       "type": "stories",
       "level": "A1",
       "title": {
@@ -36,13 +36,13 @@
       "files": [
         {
           "path": "pack.json",
-          "sha256": "d4b5037a96b61ae0bbef1a2b41fb6fe692c43f594b20765f66fba3f4a8a58bc7"
+          "sha256": "6dc287e102493a8fe485550f08b238f3e11a99da6b173ba4552bf8a6898f6aac"
         }
       ]
     },
     {
       "id": "a1-prompts-001",
-      "version": 1,
+      "version": 2,
       "type": "prompts",
       "level": "A1",
       "title": {
@@ -53,7 +53,7 @@
       "files": [
         {
           "path": "pack.json",
-          "sha256": "385724c1198963e631b816c2a3b779dcbe93f43b6ec18629eb99e68dd498bbc8"
+          "sha256": "fce949b17fbc5935d63799ae35f6a8351fb25416042d3e6af942a2517c20340a"
         }
       ]
     }

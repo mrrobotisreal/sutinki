@@ -21,10 +21,10 @@ const hallwayPack = hallwayJson as unknown as Pack;
 const greenhousePack = greenhouseJson as unknown as Pack;
 const familyPack = familyJson as unknown as Pack;
 
-/** v2 of pack 1: last sentence dropped, first translation reworded — real content churn. */
+/** The next version of pack 1: last sentence dropped, first translation reworded — real content churn. */
 function pack1v2(): Pack {
   const clone: Pack = JSON.parse(JSON.stringify(pack1));
-  clone.version = 2;
+  clone.version = pack1.version + 1;
   const story = clone.stories[0]!;
   story.sentences = story.sentences.slice(0, -1);
   story.sentences[0]!.en = 'I live alone in an old apartment. (v2)';
@@ -128,7 +128,7 @@ describe('pack importer', () => {
     await importPack(db, pack1v2(), { source: 'bundled' });
     const result = await importPack(db, pack1, { source: 'bundled' });
     expect(result.action).toBe('skipped-older');
-    expect(result.version).toBe(2);
+    expect(result.version).toBe(pack1.version + 1);
   });
 
   it('removal deletes all content rows (cascade) but leaves user data intact', async () => {
@@ -171,7 +171,7 @@ describe('pack importer', () => {
     await importPack(db, pack1, { source: 'bundled' });
     await importPack(db, pack1v2(), { source: 'bundled' });
     const installed = await syncStateRepo.getInstalled('a1-creepypasta-001');
-    expect(installed).toMatchObject({ version: 2, source: 'bundled' });
+    expect(installed).toMatchObject({ version: pack1.version + 1, source: 'bundled' });
   });
 
   it('T30: maps theme/track into pack columns; packs without them stay NULL', async () => {

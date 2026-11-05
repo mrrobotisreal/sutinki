@@ -1,7 +1,7 @@
 ---
 pack:
   id: a1-creepypasta-002
-  version: 1
+  version: 2
   type: stories
   title: { uk: "Фотографія", en: "The Photograph" }
   level: A1

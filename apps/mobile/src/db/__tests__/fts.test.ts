@@ -111,7 +111,7 @@ describe('FTS5 search', () => {
     await importPack(db, pack1);
     const content = createContentRepo(db);
     const before = (await content.searchTokens('стіна')).length;
-    await importPack(db, { ...pack1, version: 2 } as Pack);
+    await importPack(db, { ...pack1, version: pack1.version + 1 } as Pack);
     const after = (await content.searchTokens('стіна')).length;
     expect(after).toBe(before);
   });
