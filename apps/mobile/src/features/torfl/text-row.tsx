@@ -37,13 +37,13 @@ export function TextRow({ text, from }: { text: TextEntry; from: 'texts' | 'revi
     <Pressable
       onPress={open}
       accessibilityRole="button"
-      accessibilityLabel={`Открыть текст: ${text.titleRu}`}
+      accessibilityLabel={`Открыть текст: ${text.titleUk}`}
       testID={`torfl-text-${text.storyId}`}
       className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
     >
       <View className="flex-1 gap-0.5">
         <Text className="font-reading text-base" numberOfLines={1}>
-          {text.titleRu}
+          {text.titleUk}
         </Text>
         <Text variant="caption" numberOfLines={1}>
           {text.sentenceCount} {ruPlural(text.sentenceCount, SENTENCES)}

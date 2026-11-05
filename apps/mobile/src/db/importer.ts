@@ -452,7 +452,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       format: exam.format,
       level: exam.level,
       mode: exam.mode,
-      titleRu: exam.title.ru,
+      titleUk: exam.title.ru,
       titleEn: exam.title.en,
       json: JSON.stringify(exam),
     });

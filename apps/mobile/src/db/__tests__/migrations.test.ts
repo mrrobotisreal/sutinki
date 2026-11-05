@@ -180,7 +180,7 @@ describe('migrations from empty DB', () => {
 });
 
 /** T68 shape assertions shared by the fresh + upgrade cases (TORFL_EXAM_PREP §4.1/§4.2). */
-async function expectExamTables(db: SumrakDB) {
+async function expectExamTables(db: SutinkiDB) {
   expect(await columnNames(db, 'exams')).toEqual([
     'pack_id',
     'exam_id',
@@ -188,7 +188,7 @@ async function expectExamTables(db: SumrakDB) {
     'format',
     'level',
     'mode',
-    'title_ru',
+    'title_uk',
     'title_en',
     'json',
   ]);

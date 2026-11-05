@@ -24,7 +24,7 @@ export function ExamRow({ item, onPress }: { item: ExamListItem; onPress: () => 
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`${MODE_LABELS[item.mode]}: ${item.titleRu}. ${bestLabel(item.best)}`}
+      accessibilityLabel={`${MODE_LABELS[item.mode]}: ${item.titleUk}. ${bestLabel(item.best)}`}
       testID={`exam-row-${item.examId}`}
       className="mb-2 gap-2 rounded-xl border border-border bg-surface px-4 py-3.5 active:bg-surface-2"
     >
@@ -40,7 +40,7 @@ export function ExamRow({ item, onPress }: { item: ExamListItem; onPress: () => 
         <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
       </View>
       <Text className="font-reading text-base" numberOfLines={2}>
-        {item.titleRu}
+        {item.titleUk}
       </Text>
       <View className="flex-row flex-wrap items-center gap-1.5">
         {item.subtestKinds.map((kind, i) => (

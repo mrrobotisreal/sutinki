@@ -4,7 +4,7 @@ import {
   type Exam,
   type ExamRefField,
   type ExamSubtestKind,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 
 import { diffDayKeys, isDayKey } from '@/lib/dates';
 
@@ -90,7 +90,7 @@ export interface ExamListItem {
   packId: string;
   examId: string;
   mode: ExamMode;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   /** Subtest kinds in exam order (the row's chips). */
   subtestKinds: ExamSubtestKind[];
@@ -106,7 +106,7 @@ export interface ExamSummaryLike {
   packId: string;
   examId: string;
   mode: ExamMode;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   exam: Exam | null;
 }
@@ -165,7 +165,7 @@ export function buildExamListItems(
       packId: s.packId,
       examId: s.examId,
       mode: s.mode,
-      titleRu: s.titleRu,
+      titleUk: s.titleUk,
       titleEn: s.titleEn,
       subtestKinds: s.exam.subtests.map((st) => st.kind),
       itemCount: s.exam.subtests.reduce(
@@ -278,7 +278,7 @@ export interface TextStoryLike {
   packId: string;
   id: string;
   orderIdx: number;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   sentenceCount: number;
 }
@@ -286,7 +286,7 @@ export interface TextStoryLike {
 export interface TextEntry {
   packId: string;
   storyId: string;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   sentenceCount: number;
   hasAudio: boolean;
@@ -345,7 +345,7 @@ export function groupTexts(
     entries.push({
       packId: st.packId,
       storyId: st.id,
-      titleRu: st.titleRu,
+      titleUk: st.titleUk,
       titleEn: st.titleEn,
       sentenceCount: st.sentenceCount,
       hasAudio: audioStoryKeys.has(key),
@@ -364,7 +364,7 @@ export function groupTexts(
 export interface IntroSubtestRow {
   id: string;
   kind: ExamSubtestKind;
-  titleRu: string;
+  titleUk: string;
   durationMin: number;
   itemCount: number;
   /** Objective subtests: Σ item points; writing/speaking: null (rubric %). */
@@ -382,7 +382,7 @@ export function introSubtestRows(exam: Exam): IntroSubtestRow[] {
     return {
       id: st.id,
       kind: st.kind,
-      titleRu: st.title.ru,
+      titleUk: st.title.ru,
       durationMin: st.durationMin,
       itemCount: items.length,
       points: objective ? items.reduce((n, i) => n + itemPoints(st, i), 0) : null,

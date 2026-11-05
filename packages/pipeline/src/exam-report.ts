@@ -6,7 +6,7 @@ import {
   type Exam,
   type Pack,
   type StoryRef,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import { EXAM_TOPIC_KIND } from './exam-topics.ts';
 
 /**

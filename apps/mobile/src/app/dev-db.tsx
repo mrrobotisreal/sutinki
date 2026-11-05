@@ -28,7 +28,7 @@ import {
 } from '@/features/ai/run-profile';
 import { classifyPack } from '@/features/library/categories';
 import { initialAttemptState, subtestItemCount } from '@/features/torfl/model';
-import { itemPoints } from '@sumrak/schema';
+import { itemPoints } from '@sutinki/schema';
 import { generateProfile } from '@/features/word-forms/profile-service';
 import { detectUkDatePath, formatUkDate } from '@/lib/uk-date';
 import { syncQueryKeys } from '@/features/sync/hooks';
@@ -770,7 +770,7 @@ export default function DevDbScreen() {
               className="rounded-xl border border-border bg-surface p-3"
             >
               <Text className="font-ui-medium">
-                {e.titleRu} · {e.titleEn}
+                {e.titleUk} · {e.titleEn}
               </Text>
               <Text variant="caption" selectable>
                 {formatExam(e)}

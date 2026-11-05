@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Exam } from '@sumrak/schema';
+import type { Exam } from '@sutinki/schema';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -140,7 +140,7 @@ export function ExamIntroScreen({
               >
                 <Ionicons name={SUBTEST_LABELS[r.kind].icon} size={18} color={tokens.textMuted} />
                 <View className="flex-1 gap-0.5">
-                  <Text className="font-ui-medium">{r.titleRu}</Text>
+                  <Text className="font-ui-medium">{r.titleUk}</Text>
                   <Text variant="caption">
                     {r.itemCount} {ruPlural(r.itemCount, ITEMS)} ·{' '}
                     {r.points === null ? 'оценка по критериям' : `${r.points} б.`}
@@ -186,7 +186,7 @@ export function ExamIntroScreen({
                   key={r.id}
                   selected={scope.scope === 'subtest' && scope.subtestId === r.id}
                   onPress={() => setScope({ scope: 'subtest', subtestId: r.id })}
-                  title={`Один субтест: ${r.titleRu}`}
+                  title={`Один субтест: ${r.titleUk}`}
                   caption={formatMinutes(r.durationMin)}
                 />
               ))}

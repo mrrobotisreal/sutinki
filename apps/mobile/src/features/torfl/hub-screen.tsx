@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import * as React from 'react';
@@ -83,7 +83,7 @@ export function TorflHubScreen({
   const tiles = React.useMemo(() => buildTopicTiles(exams.data ?? []), [exams.data]);
   const titleOf = React.useMemo(() => {
     const map = new Map<string, string>();
-    for (const e of exams.data ?? []) map.set(`${e.packId}/${e.examId}`, e.titleRu);
+    for (const e of exams.data ?? []) map.set(`${e.packId}/${e.examId}`, e.titleUk);
     return map;
   }, [exams.data]);
 

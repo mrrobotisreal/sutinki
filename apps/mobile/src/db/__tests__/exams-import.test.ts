@@ -1,5 +1,5 @@
-import { ExamSchema, type Pack } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Pack } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { asc, eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 
@@ -95,7 +95,7 @@ describe('exam pack import (T68)', () => {
       ['a1-drill-fx', 0, 'drill', 'torfl', 'A1'],
       ['a1-mock-fx', 1, 'mock', 'torfl', 'A1'],
     ]);
-    expect(rows[1]!.titleRu).toBe('Вариант ФХ');
+    expect(rows[1]!.titleUk).toBe('Вариант ФХ');
     expect(rows[0]!.titleEn).toBe('Cases: prepositional');
     for (const [i, row] of rows.entries()) {
       const parsed = ExamSchema.parse(JSON.parse(row.json));
@@ -144,7 +144,7 @@ describe('exam pack import (T68)', () => {
     expect(res.action).toBe('updated');
     expect(res.counts.exams).toBe(1);
     const rows = await db.select().from(exams);
-    expect(rows.map((r) => [r.examId, r.titleRu])).toEqual([['a1-mock-fx', 'Вариант ФХ-2']]);
+    expect(rows.map((r) => [r.examId, r.titleUk])).toEqual([['a1-mock-fx', 'Вариант ФХ-2']]);
     expect(await userCounts(db)).toEqual(before);
     expect((await db.select().from(syncState))[0]).toMatchObject({ packId: PACK.id, version: 2 });
   });

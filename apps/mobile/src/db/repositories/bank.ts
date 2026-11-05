@@ -492,7 +492,7 @@ export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
       const firstByLemma = new Map<string, (typeof rows)[number] & { lemma: string }>();
       for (const row of rows) {
         if (!row.lemma) continue;
-        const key = normalizeRu(row.lemma);
+        const key = normalizeUk(row.lemma);
         if (!firstByLemma.has(key)) firstByLemma.set(key, { ...row, lemma: row.lemma });
       }
       const lemmaNorms = [...firstByLemma.keys()];

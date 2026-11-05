@@ -1,4 +1,4 @@
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 
 /**
  * The TORFL §3.4 topic slugs, per subtest kind — DATA FOR THE VALIDATE REPORT

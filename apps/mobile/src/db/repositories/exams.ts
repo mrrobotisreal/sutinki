@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, gte, inArray, lte, sql, type SQL } from 'drizzle-orm';
-import { ExamSchema, type Exam, type ExamSubtestKind } from '@sumrak/schema';
+import { ExamSchema, type Exam, type ExamSubtestKind } from '@sutinki/schema';
 import { createEmptyCard, Rating, type Card as FsrsCard, type Grade } from 'ts-fsrs';
 import type { z } from 'zod';
 
@@ -27,7 +27,7 @@ import { track } from '@/services/analytics';
 
 import { newId } from '../ids';
 import { examAttempts, examItemCards, examResponses, exams } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import { reviewScheduler } from './reviews';
 
 /**
@@ -62,7 +62,7 @@ export interface ExamSummary {
   format: string;
   level: ExamRow['level'];
   mode: ExamMode;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   exam: Exam | null;
 }
@@ -226,7 +226,7 @@ function fromFsrsJson(card: ExamFsrsCard): FsrsCard {
   };
 }
 
-export function createExamsRepo(db: SumrakDB) {
+export function createExamsRepo(db: SutinkiDB) {
   const parseWarned = new Set<string>();
   /** Parsed-exam memo keyed by `packId/examId`, invalidated when the stored JSON changes (pack update). */
   const examCache = new Map<string, { json: string; exam: Exam | null }>();
@@ -258,7 +258,7 @@ export function createExamsRepo(db: SumrakDB) {
       format: row.format,
       level: row.level,
       mode: row.mode,
-      titleRu: row.titleRu,
+      titleUk: row.titleUk,
       titleEn: row.titleEn,
       exam: parseExamRow(row),
     };

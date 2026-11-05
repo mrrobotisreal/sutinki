@@ -1,5 +1,5 @@
-import { ExamSchema, type Exam } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Exam } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -34,7 +34,7 @@ const summary = (exam: Exam, packId = PACK.id): ExamSummaryLike => ({
   packId,
   examId: exam.id,
   mode: exam.mode,
-  titleRu: exam.title.ru,
+  titleUk: exam.title.ru,
   titleEn: exam.title.en,
   exam,
 });
@@ -228,7 +228,7 @@ describe('«Тексты» grouping', () => {
     packId: PACK.id,
     id: s.id,
     orderIdx: i,
-    titleRu: s.title.ru,
+    titleUk: s.title.ru,
     titleEn: s.title.en,
     sentenceCount: s.sentences.length,
   }));
