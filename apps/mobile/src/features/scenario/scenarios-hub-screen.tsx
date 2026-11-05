@@ -166,8 +166,8 @@ export function ScenariosHubScreen() {
 
       <Text variant="caption" className="mt-3 px-1 text-center">
         Someone talks to you — you answer out loud, in Ukrainian, with no text. Ask «повтори»,
-        «повільніше», «що означає…» or «як сказати…» any time. Subtitles and the mic gesture live
-        in Settings → Scenarios.
+        «повільніше», «що означає…» or «як сказати…» any time. Subtitles and the mic gesture live in
+        Settings → Scenarios.
       </Text>
     </ScrollView>
   );
