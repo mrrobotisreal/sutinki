@@ -132,6 +132,18 @@ export default function RootLayout() {
                 />
                 <Stack.Screen name="games" options={{ title: 'Games' }} />
                 <Stack.Screen name="dialogues" options={{ title: 'Діалоги' }} />
+                <Stack.Screen name="scenarios/index" options={{ title: 'Сценарії' }} />
+                <Stack.Screen name="scenarios/runs" options={{ title: 'Проходження' }} />
+                <Stack.Screen name="scenario/debrief/[runId]" options={{ title: 'Розбір' }} />
+                <Stack.Screen
+                  name="scenario/[packId]/[scenarioId]"
+                  options={{
+                    headerShown: false,
+                    animation: 'fade',
+                    gestureEnabled: false,
+                    orientation: 'portrait',
+                  }}
+                />
                 <Stack.Screen
                   name="dialogue/[packId]/[dialogueId]"
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
@@ -178,6 +190,9 @@ export default function RootLayout() {
                 <Stack.Screen name="achievements" options={{ title: 'Achievements' }} />
                 <Stack.Screen name="dev-db" options={{ title: 'DB Debug' }} />
                 <Stack.Screen name="dev-tts" options={{ title: 'Read any text' }} />
+                <Stack.Screen name="dev-assist" options={{ title: 'Assist bench' }} />
+                <Stack.Screen name="dev-judge" options={{ title: 'Judge lab' }} />
+                <Stack.Screen name="dev-scene" options={{ title: 'Scene gallery' }} />
               </Stack>
               <AmbientAudioHost ready={introDone} />
               <AutoSync />

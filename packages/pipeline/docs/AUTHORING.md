@@ -590,6 +590,7 @@ No `SPEAKER:` in choices — choices always speak as `player`. A node with `CHOI
 - `packages/pipeline/fixtures/the-photograph.draft.md` — the canonical full-length story example: a Ukrainian sample pack in draft form; `annotate` reproduces that pack exactly.
 - `packages/pipeline/fixtures/m14/` — the M14 category fixtures: `news-090-1/2.draft.md` (`category: news`, `register: anchor`, `subtitle` + `source` on each story → `a2-news-090`), `podcast-090.draft.md` (`podcast` / `host` → `a2-podcast-090`), `comedy-090.draft.md` (`stories` + `genre: comedy` / `narrator` → `a1-comedy-090`); `annotate` reproduces their `packages/schema/fixtures/packs/<id>/pack.json` byte-for-byte.
 - `packages/pipeline/fixtures/the-dinner.dialogue.md` — the canonical dialogue example: the T25 fixture pack (Ukrainian) (11 nodes, 2 choice points, 3 endings, a legal loop) in draft form; `annotate` reproduces `packages/schema/fixtures/packs/a2-dialogue-001` exactly.
+- `packages/pipeline/fixtures/radio-check.scenario.md` — the canonical scenario example: the T56 fixture pack «Проверка связи» (6 turns, a free slot with a reject reaction, a forms slot branching on `good`/`bad`/`default`, 15 glossary entries, 3 nudges, a placeholder host) in draft form; `annotate` reproduces `packages/schema/fixtures/packs/a1-scenario-fixture` exactly, and its coverage report flags exactly «отлично» and «эфир».
 - `packages/pipeline/fixtures/broken/` — deliberately broken drafts showing the big failure classes (missing lemma, misaligned table, dead branch, trap cycle, dangling references) and their error messages.
 - `packages/schema/src/pack.ts` + `packages/schema/src/dialogue.ts` — the Zod schemas every emitted pack must satisfy (the pipeline runs them for you).
 
@@ -624,3 +625,258 @@ The news, education, podcast, documentary and travel shelves are fed by the same
 **News drafts in practice (CT019, the first `category: news` pack):** a news article arrives as an editorially final `ARTICLE.md` whose body carries `[…]` lines of free Ukrainian stage direction («Диктор оголошує новий сюжет:») immediately before a paragraph or a `###` heading; a scratch converter (`Stories/_build/a2-news-001/cues-from-doc.py --cue-kind context`, modes `--strip` / `--rekey` / `--apply` / `--table`, ported from Sumrak's when a news family first needs it) strips them into `stripped/item-NN.txt` (the pack text, byte for byte — headings become plain sentence blocks with no terminal period) and re-keys each to the FIRST sentence of its paragraph as a `contextCues` entry, so the `voice:` block carries only `id` / `register: anchor` / `deliveryNotes` / `contextCues`. Any scratch script with a `[а-я]` word regex must be widened to the Ukrainian charset `[а-щьюяєіїґ'ʼ’]` or words with і/ї/є/ґ and apostrophes vanish from its counts. The reusable contract is `sutinki-content/series/news/SERIES.md` once a news family exists.
 
 **Anthology packs grow by appending** (the SAR-stories rule, `sutinki-content/series/sar-stories/SERIES.md` §2; `LIBRARY_CATEGORIES.md` §6): one open-ended pack per shelf and rung — `a2-news-001`, `a2-edu-001`, `a2-podcast-001`, `a2-doc-001`, `a2-travel-001` (the level prefix follows the rung; a second rung is a new pack id). New items are new drafts appended **after** the existing ones at a `pack.version` bump; old items are never reordered, re-ided or re-rendered; one build dir per pack forever so every earlier opus is carried.
+
+## Scenario drafts (`*.scenario.md` — M17, T56)
+
+A **scenario draft** is one markdown file containing **one blind speaking scenario** («Сценарии», design `docs/design/SPEAKING_SCENARIOS.md` §2 at the workspace root): a host talks to the learner, the learner answers **out loud with no text on screen**, and an offline judge scores the answer against an authored **expectation**. One scenario = one draft file (`type: scenario` pack); the pipeline recognizes it by the `scenario:` frontmatter section, never by filename. Story, dialogue and scenario drafts may share a pack.
+
+Everything from story and dialogue drafts carries over unchanged: the sentence block (RU/EN/GRAMMAR + 7-column token table), the alignment rule, the lemma conventions, NFC, ё. **Every line the cast can speak is a fully annotated sentence** — host lines, the confused/hint/second retry lines, reject reactions, glossary clips and nudges — because T57 renders each of them as its own audio file and the debrief makes them tap-word explorable.
+
+### Frontmatter
+
+Five top-level keys, **all five required**: `pack:`, `scenario:`, `characters:` (≥ 2: the host + `player`), `scene:` and `endings:` (≥ 1). Inside `scene:` every field is optional, but the block itself must exist — the minimal legal form is `scene: { layout: center }` (or an empty `scene: {}`).
+
+```yaml
+---
+pack:
+  id: a1-scn-radio-001
+  version: 1
+  type: scenario # the pack type for scenario packs
+  title: { ru: 'Проверка связи', en: 'Sound Check' }
+  level: A1
+  tags: ['scenario', 'radio']
+scenario:
+  id: radio-a1 # unique within the pack; prefixes every generated sentence id
+  familyId: radio # the situation shared by the A1/A2/… rungs
+  title: { ru: 'Проверка связи', en: 'Sound Check' }
+  level: A1
+  language: ru # OPTIONAL, ru | uk (default ru)
+  brief:
+    { ru: 'Короткая проверка связи перед эфиром.', en: 'A short sound check before going on air.' }
+  startTurnId: radio-a1-t01 # OPTIONAL — defaults to the first turn block
+characters:
+  - id: host # exactly ONE character has role: host — the one drawn on screen
+    name: { ru: 'Ведущий', en: 'Host' }
+    voice: elevenlabs:Daniel # a library voice on the account — never Mr. Wintrow (ADR-0019 decision 6)
+    style: radio-host
+    role: host # host | npc | player
+    portrait: # OPTIONAL art; see below
+      placeholder: { kind: man, hue: 25 } # man | woman | youth | elder — the app draws a stand-in
+    cues: # OPTIONAL, render-time only (T57): steering for the retry variants
+      confused: 'Извини, я не совсем понял. Ты можешь повторить?'
+      hint: 'Warmer and slower — the host is helping, not testing.'
+  - id: player # RESERVED: the learner, role: player, required; never speaks a scripted line
+    name: { ru: 'Вы', en: 'You' }
+    voice: elevenlabs:River # the coach voice for accept[0] model answers (T57 --player-audio)
+    style: neutral
+    role: player
+scene: # REQUIRED block; every field inside it is optional
+  bed: studio # OPTIONAL room-tone slug (the app owns the known set)
+  layout: center # center | left | desk (default center)
+  accent: '#c26a3a' # OPTIONAL hex
+  # backdrop: scene/backdrop.png   OPTIONAL PNG, 1080×1920
+endings:
+  - id: end-ok # referenced by turns' ENDING: lines
+    title: { ru: 'Связь есть', en: 'Connected' }
+    recap: { ru: 'Проверка пройдена.', en: 'Sound check passed.' }
+    tone: good # good | bad | strange
+---
+```
+
+**Portraits.** A character either has `placeholder` (no PNGs needed — this is how every fixture and every pre-art rung ships) or real layers: `body: scene/<id>/body.png` (mouth closed, eyes open), optional `eyelids: scene/<id>/eyelids.png`, and a required `mouthAnchor: { x, y, w, h, rotate? }` in **fractions of the body image** where the SVG mouth is drawn, plus `mouthStyle: default | wide | small | beard`. `body` + `mouthAnchor` are required unless `placeholder` is set. `cues` never reach `pack.json`; they are read from the draft by `pipeline audio` (T57).
+
+### Turn blocks
+
+The body is a sequence of **turn blocks** — one per node of the graph. A turn is 1–3 spoken lines; a **monologue turn** just talks and moves on; a **prompting turn** ends in a question, carries `EXPECT:` + `RETRY:`, and waits for the learner:
+
+```markdown
+## radio-a1-t02
+
+SPEAKER: host
+
+SAY:
+
+RU: Отлично.
+EN: Great.
+
+| text    | lemma   | translation | pos | grammar     | level | note |
+| ------- | ------- | ----------- | --- | ----------- | ----- | ---- |
+| Отлично | отлично | great       | adv | predicative | A2    |      |
+| .       |         |             |     |             |       |      |
+
+SAY:
+
+RU: Как вас зовут?
+EN: What's your name?
+
+| text  | lemma | translation | pos  | grammar                                 | level | note |
+| ----- | ----- | ----------- | ---- | --------------------------------------- | ----- | ---- |
+| Как   | как   | how         | adv  | interrogative                           | A1    |      |
+| вас   | вы    | you         | pron | acc.                                    | A1    |      |
+| зовут | звать | (they) call | verb | 3pl. pres. (impf., indefinite-personal) | A1    |      |
+| ?     |       |             |      |                                         |       |      |
+
+EXPECT:
+slot name required free minTokens=1
+accept: Меня зовут Митч. | Я Митч.
+reject: хорошо, спасибо -> REACT:
+
+RU: Нет, имя.
+EN: No, your name.
+
+| text | lemma | translation | pos  | grammar    | level | note |
+| ---- | ----- | ----------- | ---- | ---------- | ----- | ---- |
+| Нет  | нет   | no          | part |            | A1    |      |
+| ,    |       |             |      |            |       |      |
+| имя  | имя   | name        | noun | n.sg. nom. | A1    |      |
+| .    |       |             |      |            |       |      |
+
+RETRY:
+CONFUSED:
+
+RU: Не расслышал.
+EN: Didn't catch that.
+
+| text      | lemma      | translation            | pos  | grammar          | level | note |
+| --------- | ---------- | ---------------------- | ---- | ---------------- | ----- | ---- |
+| Не        | не         | not                    | part | negation         | A1    |      |
+| расслышал | расслышать | caught (heard clearly) | verb | m.sg. past (pf.) | B1    |      |
+| .         |            |                        |      |                  |       |      |
+
+HINT:
+
+RU: Скажите: «Меня зовут…».
+EN: Say: "My name is…".
+
+| … full token table … |
+
+SECOND:
+
+RU: Например: «Меня зовут Митч».
+EN: For example: "My name is Mitch."
+
+| … full token table … |
+
+LIFELINE: «Меня зовут …». | "Меня зовут …" (My name is …).
+
+NEXT: radio-a1-t03
+```
+
+Line by line:
+
+- `## <turn-id>` — starts a turn. Kebab-case, unique; convention `<scenario>-t<NN>` with a letter suffix for branch targets (`radio-a1-t04g`, `-t04b`, `-t04d`). **The turn id is the sentence id of its LAST `SAY:` line**; earlier lines are `<turn-id>-a`, `<turn-id>-b`. All of these share the pack-wide sentence-id namespace.
+- `SPEAKER: <characterId>` — a `characters:` id; **never `player`**.
+- `SAY:` — opens one sentence block (RU/EN/GRAMMAR + token table). Repeat 1–3 times. When the turn has `EXPECT:`, the last `SAY:` is **the prompt**: it is what replays after every retry line.
+- `EXPECT:` — makes this a prompting turn. Its indented sub-lines (indentation is cosmetic; the keywords are what count):
+  - `slot <id> <required|optional> forms: key=lemma: form, form* | key=lemma: … | number` — a **forms slot**: each option is a branch **key**, the dictionary **lemma** (for FSRS grading), and the accepted **surface forms**; a trailing `*` on a form is a stem glob («голов*»). The parser splits `key=` … at the **first `:`**, so a lemma may contain spaces (`f95=девяносто пятый: девяносто пятый, 95`). A bare `| number` at the end means a numeral also satisfies the slot, with branch key `number`.
+  - `slot <id> <required|optional> free [minTokens=N] [cues="зовут, я …"]` — a **free slot**: anything with ≥ N content tokens (stopwords never count); `cues` = phrases at least one of which must appear.
+  - `slot <id> <required|optional> number` — a **numeral slot** (1–100 words or digits); its only branch key is `number`.
+  - `accept: <paraphrase> | <paraphrase>` — whole-utterance paraphrases; **the first one is the model answer** (debrief + coach audio). Required.
+  - `branchOn: <slot-id>` — which slot's matched key drives `NEXT: on …`. Required when the turn branches; must name a forms or number slot (never a free one).
+  - `reject: <form>, <form> [-> REACT:]` — a group of **confusables**: forms that mean the answer was the wrong speech act («спасибо» when a name was asked). With `-> REACT:` a sentence block follows: the targeted line played instead of the generic confused line. Up to 4 groups.
+- `RETRY:` — required iff `EXPECT:` is present, and inside it **`CONFUSED:`, `HINT:` and `LIFELINE:` are all required**; only `SECOND:` is optional. `CONFUSED:` (miss #1) and `HINT:` (miss #2+) each open a sentence block; `SECOND:` (miss #3+) usually speaks the model answer; `LIFELINE: <ru> | <en>` is the text shown on tap after the second miss (both halves required; escape a literal `|` as `\|`). Their sentence ids are `<turn-id>-conf`, `-hint`, `-sec`; a reaction is `<turn-id>-react` (`-react-2`, … for further groups).
+- Then **exactly one** of:
+  - `NEXT: <turn-id>` — linear;
+  - `NEXT: on good=<turn-id> bad=<turn-id> default=<turn-id>` — **branch by slot key**: ≤ 4 keys, each an option key of the `branchOn` slot (or `number`), plus the mandatory `default` taken when no key matched (or the turn was skipped). Several keys (and `default`) may point at the same turn — a branch point does not need distinct downstream turns;
+  - `ENDING: <ending-id>`.
+
+### Glossary
+
+After the turns, a `## glossary` section holds the «Что значит X?» / «Как сказать X?» material — one `###` block per entry:
+
+```markdown
+## glossary
+
+### связь | connection | forms: связь, связи, связ* | translit: конекшн, канекшен
+
+EXPLAIN:
+
+RU: Связь — это connection.
+EN: «Связь» means connection.
+
+| text       | lemma      | translation | pos     | grammar                      | level | note |
+| ---------- | ---------- | ----------- | ------- | ---------------------------- | ----- | ---- |
+| Связь      | связь      | connection  | noun    | f.sg. nom.                   | B1    |      |
+| —          |            |             |         |                              |       |      |
+| это        | это        | is          | pron    | demonstrative (gloss marker) | A1    |      |
+| connection | connection | connection  | foreign | English                      |       |      |
+| .          |            |             |         |                              |       |      |
+
+HOWTOSAY:
+
+RU: Connection — по-русски «связь».
+EN: Connection is «связь» in Russian.
+
+| … full token table … |
+```
+
+- Heading: `### <ru headword> | <english> | forms: <form>, <form*> [| translit: <cyrillic>, …] [| id: <slug>]`. `forms` are the surface forms/globs the learner might say when asking «что значит …». `translit` (optional) are **hand-written extras** — how the Russian ASR hears the English word; the pipeline **generates** candidates from the English automatically (`translit.ts`) and merges yours first. `id:` overrides the entry slug, which otherwise comes from the English (`to hear` → `to-hear`).
+- Entry id = `<scenario>-gl-<slug>`; the clips are `<entry-id>-ex` (EXPLAIN) and `<entry-id>-how` (HOWTOSAY). Both blocks are required, both spoken by the host.
+- The English words inside the clips are ordinary word tokens: `pos: foreign`, lemma = the word, no level, `grammar: English`. Russian «по-русски» is an adverb.
+
+### Nudges
+
+A `## nudges` section with **exactly three** blocks — the host's service lines the engine needs at any turn:
+
+```markdown
+## nudges
+
+### silence
+
+RU: Вы там?
+EN: Are you there?
+
+| … token table … |
+
+### which-word
+
+…
+
+### dont-know
+
+…
+```
+
+`### silence` (25 s of nothing), `### which-word` («что значит …» found nothing), `### dont-know` («как сказать …» found nothing). An optional `SPEAKER:` line names another cast member; the default is the host. Sentence ids: `<scenario>-nudge-<kind>`.
+
+### Graph rules (the pipeline enforces all of these)
+
+- Exactly one `role: host`; the reserved `player` with `role: player`; every `SPEAKER:` resolves and is never `player`.
+- `EXPECT:` ⇔ `RETRY:`; exactly one of `NEXT:` / `ENDING:`.
+- `NEXT: on …` needs `branchOn:`; every key must be an option key of that slot (`number` for numeral slots and `| number` forms slots); ≤ 4 keys; `default` is mandatory.
+- `startTurnId`, every `NEXT:` target (linear, `on`, `default`) and every `ENDING:` must resolve; every turn reachable; every ending referenced; **no dead traps** (cycles are allowed when they keep an exit — the same `analyzeDialogueGraph` as dialogues, through the `scenarioGraphInput` adapter).
+- Slot forms: NFC, no punctuation, a glob is one trailing `*`; option keys unique per slot; slot ids unique per turn; glossary ids and headwords unique.
+- Bounds: ≤ 40 turns, 1–3 `SAY:` per turn, 1–6 slots per expectation, ≤ 120 glossary entries.
+- Audio is all-or-nothing per scenario (T57 renders every line kind at once).
+
+### The branch map and the coverage report
+
+`annotate` and `validate` print a **branch map** for every scenario — the turn tree with the prompt's RU preview, an **expect column** (`[name: free≥1 ✗1]` = one free slot, one reject group; `[mood: good|bad|ok ⇢mood]` = a forms slot with its branch keys, branching on it; `[monologue]`), the `on` edges labelled `mood: good → radio-a1-t04g` and the `default` edge, `⇒ ending` markers, path stats and warnings.
+
+They also print the **glossary coverage report**: every **content lemma the cast says** (turn lines, retry lines, reactions, nudges — glossary clips themselves are not scanned) that no glossary entry covers, with counts and the sentences it occurs in. Content = tokens whose `pos` is `noun`, `verb`, `adj` or `adv`, minus the judge's stopword list (§5.1 `STOP_RU`: «как», «так», «там», «тут», «очень», «спасибо», «пожалуйста», …); `num`, `name` and all function POS never count. A lemma is covered when it equals an entry's headword or one of its `forms` (exact or glob prefix — `forms: зовут, звать` covers the lemma «звать»). **The CT rule is: cover every content lemma the host says**, plus the family's «likely how-to-say» English list from the scripts file — the report is your checklist; it is informational, never a failure.
+
+### Scenario gotchas
+
+1. **The last `SAY:` is the prompt.** Put the question last; the confused/hint lines are followed by that line automatically, so they must never re-ask it themselves.
+2. **Ids are one namespace.** `<turn>-a/-b`, `-conf/-hint/-sec`, `-react`, `<scn>-gl-<slug>-ex/-how`, `<scn>-nudge-<kind>` all collide with story and dialogue sentence ids; prefix turn ids with the scenario slug.
+3. **`key=lemma: forms`** — the lemma comes before the first colon; forms after it; the whole option ends at the next `|`. A `|` inside a form is not possible (forms are punctuation-free anyway).
+4. **`default` is not optional** on a branching `NEXT:` — it is where a skipped turn goes.
+5. **Free slots cannot branch.** Branch on a forms or number slot; keep the free slot for names and open answers.
+6. **Reject groups are for wrong speech acts**, never for wrong facts (a «спасибо» when a name was asked; not a wrong name).
+7. **Confused lines never contain the answer; the hint contains a `Скажите: «…»` pattern; `SECOND:` IS the model answer** (rung rules, scripts file Appendix C).
+8. **Every content lemma the host says goes in the glossary** — read the coverage report after every annotate run; the two the fixture leaves out («отлично», «эфир») are there on purpose so the report always has something to show.
+9. **`cues:` on a character are render-time only.** They never appear in `pack.json`; T57's `pipeline audio` reads them from the draft.
+10. Indentation under `EXPECT:` / `RETRY:` is cosmetic; a sentence block after `REACT:`/`CONFUSED:`/… starts at column 0 like every other block.
+
+### Scenario audio (T57)
+
+`pipeline audio` renders a scenario **per line** on Multilingual v2 — every `SAY:`, `CONFUSED:`/`HINT:`/`SECOND:`, `REACT:`, glossary `EXPLAIN:`/`HOWTOSAY:` and nudge becomes its own Opus file in the speaking character's library voice at `audio/<scenario-id>/<sentence-id>.opus`, with word stamps (the ≥95 % aligner gate + monotonicity per line; an untrusted alignment ships that line with no stamps) and a **mouth track** written into the line's `audio.mouth`. The per-line core (`line-audio.ts`) is the one dialogues use; scenarios add the variant steering and the mouth track.
+
+- **Variants and steering.** v2 has no audio tags, so the retry registers are steered by `previous_text` + settings deltas, per SPEAKING_SCENARIOS §3: a `CONFUSED:` line is rendered with the character's `cues.confused` as `previous_text` and **stability −0.1 / style +0.1**; a `HINT:` line with `cues.hint` and **speed 0.95**; every other line (`SAY:`, `SECOND:`, `REACT:`, glossary clips, nudges, coach) renders with the base settings (stability 0.5 · similarity 0.75 · style 0 · speaker boost) and no `previous_text`. When a character has no `cues:` the defaults apply (confused = «Извини, я не совсем понял. Ты можешь повторить?», hint = «Ничего, не спеши. Я помогу — давай ещё раз, медленно.»). The cue text is _conditioning_, never rendered, so it can be Russian or an English stage direction. **What v2 steering actually buys is small**: on the fixture the same text at the same seed came out ~0.2 s longer and ~0.5–1 dB softer as `confused`/`hint` than as plain `say` (`Stories/_build/a1-scenario-fixture/audition/ab/`) — a slower, softer take, not a different emotion. Write the confused/hint _text_ to carry the register; the steering only nudges delivery.
+- **Audition & seeds group per (scenario, character)** — `--audition N` renders N takes of the character's **longest line** _and_, when the character has confused lines, N takes of their **longest confused line** (the steering is what the audition decides), e.g. `radio-a1--host--confused--take1--seed…mp3`. Pin with `--seed radio-a1/host=<seed>`; the whole cast of that scenario then renders with that seed.
+- **`--player-audio`** additionally renders **coach audio**: `accept[0]` of every `EXPECT:` (the debrief's model answer) in the reserved `player` character's voice — an Ivan/River-class library voice, **never `Mr. Wintrow`** (ADR-0019 decision 6). Coach lines are free text (no annotated sentence), so they ship as `audio/<scenario-id>/<turn-id>-coach.opus` on `turns[].expect.coachAudio` with a duration and a mouth track but **no word stamps**. Omit the flag and no coach files exist; a later filtered run carries existing ones over.
+- **`--scenarios <id,id>`** filters like `--dialogues`; `pack.json` merges across runs (lines and coach files already on disk are carried over), so a mixed pack's stories, dialogues and scenarios can be rendered in separate batches.
+- **Mouth track** (`mouth-track.ts`, pure): the Opus is decoded to PCM, RMS per 40 ms → dBFS → viseme by the ladder `< −42` → 0 · `< −32` → 1 · `< −24` → 2 · `< −17` → 3 · else 4, with ±2 dB hysteresis so lips don't flicker; when the line's stamps are trusted every window outside a word stamp is forced to `0` (breaths and room tone never move the mouth); the **round rule** encodes windows inside a word whose _first vowel_ is о/у/ю/ё as `4` — the app draws `4` round for such words and wide otherwise (§8.2; stress is ignored on purpose). Track length is fixed from `durationMs` (`ceil(ms / 40)`), never from the sample count.
+- **`--mouth-only`** recomputes every mouth track of an already-rendered `<pack-dir>/pack.json` from the Opus files on disk and rewrites `pack.json` — drafts optional, **zero ElevenLabs calls** — for tuning the ladder; it is idempotent on an unchanged ladder (the fixture reproduces byte-identical).
+- **Cost gate**: every run prints `N scenario line(s), M scenario coach render(s) — R ElevenLabs request(s), ~C characters` and asks to proceed; `--yes` for scripted runs; an unconfirmed run makes zero calls. **Cost expectations** (fixture «Проверка связи», 54 lines + 2 coach, 1,115 chars): the 2-take audition = 6 requests / 150 chars in 12 s; the full finalize = 56 requests / 1,115 chars in 89 s → 90 s of audio, 444 KB of Opus. A real A1 rung (~120 lines, ~3,000 chars) is therefore ≈ 3 min and ≈ 3 k characters of the plan.
+- **`scene/` ships wholesale.** `publish` copies `pack.json`, every line/coach `audio/…opus`, and **every file under `<pack-dir>/scene/`** (any depth, dotfiles skipped) — the PNG layers the portraits/backdrop reference. The size line reports `scene/` separately («of which scene/ 4.68 MB (Wi-Fi-gated PNG layers)»): the app's sync gate treats `scene/` + `.png` like large audio (T58). The CT session copies Mitch's art in from `Stories/scenarios/<family>/art/sized/` — `backdrop.png` → `scene/backdrop.png`, `body.png` → `scene/<host-id>/body.png`, `eyelids2.png` → `scene/<host-id>/eyelids.png` (≈ 4.7 MB per family) — and sets the portrait's `body`/`eyelids`/`mouthAnchor`; **`mouthAnchor` fractions are measured with T61's anchor picker** (dev screen) once it lands; until then keep `placeholder`.

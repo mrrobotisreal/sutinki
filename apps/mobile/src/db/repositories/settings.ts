@@ -159,6 +159,30 @@ export const SETTING_KEYS = {
   notificationPrefs: 'notifications.prefs',
   /** boolean (T19): the one-time "enable reminders" Today card was dismissed. */
   notificationPromptDismissed: 'notifications.promptDismissed',
+  /**
+   * «Сценарии» run prefs (M17, SPEAKING_SCENARIOS §4.4; key declared in T58,
+   * Zod accessor owned by T62 `store/scenario-prefs.ts`): { v: 1, subtitles:
+   * false, holdToTalk: false, rescueOnline: true, endpointSensitivity:
+   * 'normal' | 'patient' | 'quick', bedVolume: 0.6 } — a malformed value
+   * heals field-by-field to the defaults.
+   */
+  scenarioPrefs: 'scenario.prefs',
+  /** boolean (T62, §9.1): the one-time hub banner offering the Whisper assist model was dismissed. */
+  scenarioAssistBannerDismissed: 'scenario.assistBannerDismissed',
+  /**
+   * Recording retention (M17 §4.4; declared in T58, owned by T63): { v: 1,
+   * pruneDays: 30, capBytes: 300_000_000, lastPruneAt } — the local prune
+   * policy for attempt recordings (unpinned runs first, §10.1).
+   */
+  scenarioRecordings: 'scenario.recordings',
+  /** boolean (T63, §12): the one-time debrief line «Set up backup to keep recordings» was shown. */
+  scenarioBackupHintShown: 'scenario.backupHintShown',
+  /**
+   * Whisper assist-model state mirror (M17 §4.4; declared in T58, owned by
+   * T59): { v: 1, installed: boolean, id } — a quick gate for «как сказать»
+   * fallbacks that mirrors the on-disk model state, never the truth itself.
+   */
+  scenarioAssistModel: 'scenario.assistModel',
 } as const;
 
 /** Key-value settings, JSON-encoded values. */
