@@ -55,7 +55,7 @@ describe('content.searchSentences (global search)', () => {
     await importPack(db, pack1);
     const content = createContentRepo(db);
 
-    const hits = await content.searchSentences('стена');
+    const hits = await content.searchSentences('стіна');
     expect(hits.length).toBeGreaterThan(0);
     // One row per sentence, never per token.
     const ids = hits.map((h) => h.sentenceId);
@@ -204,7 +204,7 @@ describe('bank mastery filter + counts', () => {
     const shaky = await mk('один');
     const young = await mk('два');
     const mature = await mk('три');
-    const collected = await mk('четыре');
+    const collected = await mk('чотири');
     const weakestLink = await mk('пять');
     const nonCoreOnly = await mk('шесть');
 

@@ -297,7 +297,7 @@ These are the conventions the existing Ukrainian drafts follow; copy their cells
 
 ## Gotchas
 
-1. **The apostrophe is sacred** — see [the apostrophe rule](#the-apostrophe-rule). Write U+0027, never rewrite it, one code point per sentence, token text identical to the sentence. (Russian's ё rule has no Ukrainian analogue; Ukrainian has no ё.)
+1. **The apostrophe is sacred** — see [the apostrophe rule](#the-apostrophe-rule). Write U+0027, never rewrite it, one code point per sentence, token text identical to the sentence. (Russian's «dot-over-е» letter rule has no Ukrainian analogue.)
 2. **і / ї / и / є / ґ are distinct letters.** «і» (U+0456) is not Latin «i» (U+0069) — a Latin letter inside a Ukrainian word is a silent tokenization landmine (the app's matcher will never find it). Type on a Ukrainian layout; «ґ» («ґанок», «ґудзик») is written where the orthography has it — the app folds ґ→г only when _matching_.
 3. **Punctuation is its own row.** «Стук у стіні.» is four tokens: `Стук`, `у`, `стіні`, `.` — forgetting the final period row is the most common alignment error.
 4. **Capitalization in `text`, lowercase in `lemma`.** Surface «У» keeps its capital; its lemma is «у». (Proper names keep their capital in the lemma too.)

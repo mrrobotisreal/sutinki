@@ -71,13 +71,13 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '    voice: elevenlabs:Mariia',
     '    style: warm',
     '  - id: player',
-    '    name: { uk: "Ты", en: "You" }',
+    '    name: { uk: "Ти", en: "You" }',
     '    voice: elevenlabs:Ivan',
     '    style: neutral',
     'endings:',
     '  - id: e-x',
-    '    title: { uk: "Конец", en: "End" }',
-    '    recap: { uk: "Всё.", en: "Done." }',
+    '    title: { uk: "Кінець", en: "End" }',
+    '    recap: { uk: "Усе.", en: "Done." }',
     '    tone: good',
     '---',
     '',
@@ -85,12 +85,12 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     'SPEAKER: mama',
     '',
-    'UK: Привет.',
+    'UK: Привіт.',
     'EN: Hello.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
     '| --- | --- | --- | --- | --- | --- | --- |',
-    '| Привет | привет | hello | interj |  | A1 |  |',
+    '| Привіт | привіт | hello | interj |  | A1 |  |',
     '| . |  |  |  |  |  |  |',
     '',
     'NEXT: t-n2',
@@ -99,13 +99,13 @@ const minimalDialogueDraft = (mutate: (lines: string[]) => void = () => {}) => {
     '',
     'SPEAKER: mama',
     '',
-    'UK: Ты дома?',
+    'UK: Ти вдома?',
     'EN: Are you home?',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
     '| --- | --- | --- | --- | --- | --- | --- |',
-    '| Ты | ты | you | pron | nom. | A1 |  |',
-    '| дома | дома | at home | adv |  | A1 |  |',
+    '| Ти | ти | you | pron | nom. | A1 |  |',
+    '| вдома | вдома | at home | adv |  | A1 |  |',
     '| ? |  |  |  |  |  |  |',
     '',
     'CHOICES:',
@@ -168,13 +168,13 @@ const minimalStoryDraft = (sentenceId = 'story-s01') =>
     '',
     `## ${sentenceId}`,
     '',
-    'UK: Всё хорошо.',
+    'UK: Усе добре.',
     'EN: Everything is fine.',
     '',
     '| text | lemma | translation | pos | grammar | level | note |',
     '| --- | --- | --- | --- | --- | --- | --- |',
-    '| Всё | весь | everything | pron | n.sg. nom. | A1 |  |',
-    '| хорошо | хорошо | fine | adv |  | A1 |  |',
+    '| Усе | увесь | everything | pron | n.sg. nom. | A1 |  |',
+    '| добре | добре | fine | adv |  | A1 |  |',
     '| . |  |  |  |  |  |  |',
     '',
   ].join('\n');
@@ -193,12 +193,12 @@ describe('reference dialogue draft round-trip', () => {
     expect(pack).toEqual(sample);
   });
 
-  it('preserves ё exactly through parse → normalize → emit', () => {
+  it('preserves Ukrainian letters exactly through parse → normalize → emit', () => {
     const pack = annotate(referenceDraft);
     const emitted = JSON.stringify(pack);
-    expect(emitted).toContain('ещё'); // node text + choice text
-    expect(emitted).toContain('Хочешь ещё борща?');
-    expect(emitted).not.toContain('еще');
+    expect(emitted).toContain('ще'); // node text + choice text
+    expect(emitted).toContain('Хочеш ще борщу?');
+    expect(emitted).toContain('Їж, їж!'); // ї survives
   });
 
   it('node and choice sentence ids equal their node/choice ids', () => {
@@ -291,7 +291,7 @@ describe('dialogue draft grammar errors', () => {
 
   it('ALT outside a choice block is rejected', () => {
     const draft = minimalDialogueDraft((lines) => {
-      lines.splice(lines.indexOf('NEXT: t-n2'), 0, 'ALT: Привет.');
+      lines.splice(lines.indexOf('NEXT: t-n2'), 0, 'ALT: Привіт.');
     });
     const issues = issuesOf(() => annotate(draft));
     expect(issues[0]!.message).toContain('ALT: is only allowed inside');
@@ -424,7 +424,7 @@ describe('CLI + validate + publish on the audio-less fixture pack', () => {
       const out = join(dir, 'pack.json');
       const result = cli(['annotate', fixture('the-dinner.dialogue.md'), '-o', out]);
       expect(result.out).toContain('1 dialogue — schema-valid');
-      expect(result.out).toContain('Branch map — «Ужин у мамы»');
+      expect(result.out).toContain('Branch map — «Вечеря в мами»');
       expect(result.out).toContain('3 endings (3 reachable)');
       expect(runValidate(out).ok).toBe(true);
     } finally {
@@ -444,7 +444,7 @@ describe('CLI + validate + publish on the audio-less fixture pack', () => {
   it('validate accepts the fixture pack and prints its branch map', () => {
     const result = cli(['validate', fixturePackPath]);
     expect(result.out).toContain('valid pack "a2-dialogue-001" v1');
-    expect(result.out).toContain('Branch map — «Ужин у мамы»');
+    expect(result.out).toContain('Branch map — «Вечеря в мами»');
   });
 
   it('publish accepts the audio-less dialogue pack against a scratch content repo', () => {
@@ -486,7 +486,7 @@ describe('CLI + validate + publish on the audio-less fixture pack', () => {
 describe('Ukrainian apostrophe rules apply to dialogue lines too (UT02)', () => {
   const withNode1 = (sentence: string, rows: string[]) =>
     minimalDialogueDraft((lines) => {
-      const idx = lines.indexOf('UK: Привет.');
+      const idx = lines.indexOf('UK: Привіт.');
       lines[idx] = `UK: ${sentence}`;
       lines[idx + 1] = 'EN: Five or nine?';
       lines.splice(idx + 5, 2, ...rows);
@@ -517,8 +517,8 @@ describe('Ukrainian apostrophe rules apply to dialogue lines too (UT02)', () => 
 
   it('a RU: line in a dialogue draft is rejected by name', () => {
     const draft = minimalDialogueDraft((lines) => {
-      const idx = lines.indexOf('UK: Привет.');
-      lines[idx] = 'RU: Привет.';
+      const idx = lines.indexOf('UK: Привіт.');
+      lines[idx] = 'RU: Привіт.';
     });
     const issues = issuesOf(() => annotateDrafts([{ path: 'd.dialogue.md', source: draft }]));
     expect(issues.some((i) => i.message.includes('RU: is not a Sutinki draft line'))).toBe(true);

@@ -1,29 +1,30 @@
 # Сутінки (Sutinki)
 
-Forked from `mrrobotisreal/sumrack@350425a` on 2026-09-12 — ADR-0001 in `docs-ua/adr/` (workspace root). Sutinki is the Ukrainian twin of Sumrak; the Sumrak README body below is inherited verbatim at the fork point and is rewritten in UT09. Sutinki-specific docs live at `../docs-ua/`.
+Personal, single-user, offline-first Android app for learning **Ukrainian** (A1 → the B1 state-language exam, «іспит на рівень володіння державною мовою»). The Ukrainian twin of Сумрак (Sumrak): the same study loop (reader with tap lookup and karaoke narration, word bank, FSRS reviews and games, pronunciation, journal with AI feedback), Ukrainian content, Ukrainian UI, Ukrainian speech models, and its own content repo, API, accounts and user data. Private: never store-published; Android package `io.winapps.sutinki`.
 
----
+## Where this came from
 
-# Сумрак (Sumrak)
+A history-preserving fork of `Sumrak@350425a` (ADR-0001). Sutinki follows Sumrak by ten release-sized `UP` merges (ADR-0010; procedure in `docs/SUTINKI_UPSTREAM.md` at the workspace root) — each one merged on a `upNN` branch, migrations regenerated, everything it brings in made Ukrainian before it lands on `main`. Until a merge brings a Sumrak feature in, it is simply absent here. The two apps coexist on a phone and never share data.
 
-Personal, single-user, offline-first Android app for mastering Russian (~A1 → C1+). Never store-published; built for one device (Samsung Galaxy S24 Ultra). Design docs live at the workspace root: `../docs/SUTINKI_DESIGN.md`, `../docs/SUTINKI_ROADMAP.md`, `../docs/SUTINKI_TICKETS.md`.
+Planning docs (design, roadmap, ADRs, tickets) live at the workspace root in `docs/`; the glossary is `CONTEXT.md` there and in this repo.
 
 ## Monorepo layout
 
 ```
-Sumrak/
+Sutinki/
   apps/mobile/          # Expo app (expo-router, NativeWind, custom dev build)
-  packages/schema/      # Zod schemas for content packs (T02)
-  packages/pipeline/    # Authoring pipeline CLI (T08/T09)
+  packages/schema/      # Zod schemas for content packs (+ Ukrainian fixture packs)
+  packages/pipeline/    # Authoring pipeline CLI: annotate / validate / audio / publish / models
 ```
 
-The Go `syncd` backup service lives in the separate `SumrakAPI` repo; content packs live in the private `sumrak-content` repo (ADR-0015).
+Sibling repos at the workspace root: `SutinkiAPI/` (Go `syncd`: backups + account sync), `sutinki-content/` (published packs, mirrored speech models, encrypted backups), plus the `Stories/` sources folder (not a repo).
 
 ## Prerequisites
 
 - Node 24+, pnpm 11 (`corepack enable pnpm`)
 - JDK 17
 - Android SDK (`ANDROID_HOME` set), platform-tools on PATH for `adb`
+- `ffmpeg` on PATH (pipeline audio only)
 
 ## Install
 
@@ -33,7 +34,7 @@ pnpm install
 
 ## Dev-build workflow (no Expo Go — ever)
 
-This project uses a **custom dev client** (`expo-dev-client`) because a local native Expo module (`sherpa-onnx` speech, T11) will be part of the app. Expo Go cannot load custom native code, so it is never used here.
+A **custom dev client** (`expo-dev-client`) is required because the local native Expo module `modules/sherpa-speech` (on-device Piper TTS + NeMo ASR via sherpa-onnx) cannot load in Expo Go.
 
 ```sh
 cd apps/mobile
@@ -48,14 +49,14 @@ npx expo run:android
 npx expo start
 ```
 
-### Running on the S24 Ultra (physical device)
+### Devices
 
-1. Enable **Developer options** → **USB debugging** on the phone.
-2. Plug in via USB and accept the RSA fingerprint prompt; `adb devices` should list the phone as `device`.
-3. `npx expo run:android` builds and installs the dev client, then starts Metro.
-4. After the dev client is installed once, `npx expo start` is enough — open the Сумрак dev client on the phone; it connects to Metro over USB or the same Wi-Fi network (the dev client's launcher screen lets you enter the dev server URL manually if auto-discovery fails).
+- **S24U** is Mitch's personal phone and the final destination — agents install there only at milestone releases with Mitch present.
+- **S25** (`R3GYA00L1XX`) is the development and test phone: every test walk runs there, and every ticket that changes the app ends with the signed release installed and launched on it.
 
-## Release builds (T22)
+Enable **Developer options → USB debugging**, plug in, accept the RSA prompt; `adb devices` should list the phone as `device`. After the dev client is installed once, `npx expo start` is enough. Sutinki's data on a phone is real progress: any session that touches it follows the device-data-hygiene rules in the workspace `CLAUDE.md` (snapshot first, restore + prove).
+
+## Release builds
 
 A release is a **signed, sideloadable APK** — no store, ever. One script does the
 whole thing (prebuild → signed `assembleRelease` → signature verification):
@@ -70,13 +71,13 @@ pnpm release:android
 ### One-time keystore setup
 
 The signing keystore lives **outside every repo** and is never committed, read
-into a session, or printed. Generate it once:
+into a session, or printed. Generate it once (never reuse Сумрак's keystore — the two apps are separate identities):
 
 ```sh
-mkdir -p ~/keystores
+mkdir -p ~/keystores ~/.sutinki
 keytool -genkeypair -v \
   -keystore ~/keystores/sutinki-release.keystore \
-  -alias sutinki-release -keyalg RSA -keysize 4096 -validity 20000
+  -alias sutinki-release -keyalg RSA -keysize 2048 -validity 10000
 # answer the password prompts with values of your choosing; CN=Sutinki is enough for the DN
 ```
 
@@ -97,7 +98,7 @@ export SUTINKI_KEY_PASSWORD="<key password>"
 
 **Back the keystore up** (password manager attachment + offline copy). Losing it
 means future builds can't update-install over the installed app — recovery is
-uninstall → install new → Settings → Restore from backup.
+uninstall → install new → Settings → Restore from backup. The release certificate's SHA-1/SHA-256 is what the Firebase project `sutinki-app` is registered with (UT08b).
 
 How it works: `android/` is regenerated by `expo prebuild` (gitignored), so
 signing can't live there — `plugins/with-release-signing.js` injects a release
@@ -111,7 +112,7 @@ back to the debug key — fine for local testing; the script refuses to produce 
 
 Both values live in `apps/mobile/app.json` and flow into the build via prebuild:
 
-- **`expo.version`** (versionName) — semver-ish: **1.0.0** = v1 (T22); bump
+- **`expo.version`** (versionName) — semver-ish: **1.0.0** = the first signed build (UT09); after that one minor per `UP` merge (UP01 → 1.3.0 … ADR-0010); bump
   **minor** per feature ticket/batch, **patch** for fix-only builds.
 - **`expo.android.versionCode`** — increment by 1 for **every build installed on
   the device** (dev or release), never reuse or decrease (Android refuses
@@ -130,15 +131,14 @@ Operational how-tos (add content, add voices, restore, diagnostics) live in
 pnpm typecheck     # tsc --noEmit, strict, all workspace packages
 pnpm lint          # eslint (expo config)
 pnpm format:check  # prettier
-pnpm test          # vitest: packages/schema + apps/mobile DB layer (better-sqlite3)
+pnpm test          # vitest: packages/schema + packages/pipeline + apps/mobile (better-sqlite3 DB layer)
 ```
 
-## Database migrations (from T03)
+Pipeline commands run from the repo root as `env -u NODE_OPTIONS pnpm pipeline <annotate|validate|audio|publish|models> …`.
 
-Drizzle schema lives in `apps/mobile/src/db/schema/`; migration `.sql` files in
-`apps/mobile/drizzle/` are bundled into the app (babel `inline-import`) and applied
-on startup by `DbProvider` (`useMigrations`). The DB-layer unit tests run the very
-same `.sql` files against better-sqlite3 in Node.
+## Database migrations
+
+Drizzle schema lives in `apps/mobile/src/db/schema/`; migration `.sql` files in `apps/mobile/drizzle/` (`0000_init`, `0001_fts5-search` — Sutinki's collapsed history, ADR-0003) are bundled into the app (babel `inline-import`) and applied on startup by `DbProvider` (`useMigrations`). The DB-layer unit tests run the very same `.sql` files against better-sqlite3 in Node.
 
 ```sh
 cd apps/mobile
@@ -146,15 +146,12 @@ pnpm db:generate           # after editing src/db/schema/* → new numbered migr
 pnpm db:generate:custom    # empty migration for hand-written SQL (FTS5, triggers…)
 ```
 
-**Rules:** migrations are additive — never edit a committed migration file; new
-files only. Repositories (`src/db/repositories/`) own ALL database access — no
-Drizzle imports outside `src/db/`. Content refs in user tables are plain stable-id
-strings, never enforced FKs (user data must survive pack reimport/removal).
+**Rules:** migrations are additive — never edit a committed migration file; new files only. Repositories (`src/db/repositories/`) own ALL database access — no Drizzle imports outside `src/db/`. Content refs in user tables are plain stable-id strings, never enforced FKs (user data must survive pack reimport/removal). `UP` merges never take Sumrak's migration files; they regenerate the delta as the next Sutinki number.
 
-## Conventions (enforced from T01 onward)
+## Conventions
 
 - **No hardcoded colors** — NativeWind token classes only (`bg-bg`, `text-text`, `text-accent`…). Token values live in `apps/mobile/src/global.css`, mirrored for native chrome in `src/theme/colors.ts`.
-- Feature code goes under `apps/mobile/src/features/<name>`; repositories own DB access (from T03); React Query for async reads.
-- Russian text is UTF-8 NFC, ё preserved.
+- Feature code goes under `apps/mobile/src/features/<name>`; repositories own DB access; React Query for async reads.
+- Ukrainian text is UTF-8 NFC; the **apostrophe is content** (kept as authored, U+0027 in the sources); all matching goes through `normalizeUk` (ADR-0004: NFC, lowercase, apostrophe fold, ґ→г fold). No russisms or surzhyk in authored Ukrainian.
 - Stable string ids, never renumbered.
-- Analytics: user actions go through `src/services/analytics.ts` `track()` (SQLite-backed from T03).
+- Analytics: user actions go through `src/services/analytics.ts` `track()` (SQLite-backed); every port keeps Sumrak's events.

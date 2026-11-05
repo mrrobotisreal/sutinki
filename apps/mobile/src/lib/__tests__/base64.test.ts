@@ -4,7 +4,7 @@ import { base64ToBytes, bytesToBase64 } from '../base64';
 
 describe('base64', () => {
   it('matches Node Buffer on known vectors', () => {
-    const vectors = ['', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar', 'тёмный лес'];
+    const vectors = ['', 'f', 'fo', 'foo', 'foob', 'fooba', 'foobar', 'темний ліс'];
     for (const v of vectors) {
       const bytes = new TextEncoder().encode(v);
       expect(bytesToBase64(bytes)).toBe(Buffer.from(bytes).toString('base64'));

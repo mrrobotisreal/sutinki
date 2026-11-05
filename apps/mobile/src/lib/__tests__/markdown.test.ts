@@ -8,12 +8,12 @@ describe('parseInline', () => {
   });
 
   it('bold, italic, and code runs', () => {
-    expect(parseInline('это **жирный** и *курсив* и `код`')).toEqual([
-      { text: 'это ' },
-      { text: 'жирный', bold: true },
-      { text: ' и ' },
+    expect(parseInline('це **жирний** і *курсив* і `код`')).toEqual([
+      { text: 'це ' },
+      { text: 'жирний', bold: true },
+      { text: ' і ' },
       { text: 'курсив', italic: true },
-      { text: ' и ' },
+      { text: ' і ' },
       { text: 'код', code: true },
     ]);
   });
@@ -24,7 +24,7 @@ describe('parseInline', () => {
 
   it('unclosed markers render literally', () => {
     expect(parseInline('2 * 3 равно 6')).toEqual([{ text: '2 * 3 равно 6' }]);
-    expect(parseInline('**не закрыто')).toEqual([{ text: '**не закрыто' }]);
+    expect(parseInline('**не закрито')).toEqual([{ text: '**не закрито' }]);
   });
 
   it('** never half-matches as two *', () => {
@@ -43,20 +43,20 @@ describe('parseMarkdown', () => {
   });
 
   it('paragraph lines join on single newlines, split on blank lines', () => {
-    const blocks = parseMarkdown('первая строка\nвторая строка\n\nновый абзац');
+    const blocks = parseMarkdown('перший рядок\nдругий рядок\n\nновий абзац');
     expect(blocks).toEqual([
-      { kind: 'paragraph', runs: [{ text: 'первая строка вторая строка' }] },
-      { kind: 'paragraph', runs: [{ text: 'новый абзац' }] },
+      { kind: 'paragraph', runs: [{ text: 'перший рядок другий рядок' }] },
+      { kind: 'paragraph', runs: [{ text: 'новий абзац' }] },
     ]);
   });
 
   it('unordered and ordered lists', () => {
-    const blocks = parseMarkdown('- один\n* два\n1. первый\n2) второй');
+    const blocks = parseMarkdown('- один\n* два\n1. перший\n2) другий');
     expect(blocks).toEqual([
       { kind: 'list-item', ordered: false, marker: '•', runs: [{ text: 'один' }] },
       { kind: 'list-item', ordered: false, marker: '•', runs: [{ text: 'два' }] },
-      { kind: 'list-item', ordered: true, marker: '1.', runs: [{ text: 'первый' }] },
-      { kind: 'list-item', ordered: true, marker: '2.', runs: [{ text: 'второй' }] },
+      { kind: 'list-item', ordered: true, marker: '1.', runs: [{ text: 'перший' }] },
+      { kind: 'list-item', ordered: true, marker: '2.', runs: [{ text: 'другий' }] },
     ]);
   });
 
@@ -66,16 +66,16 @@ describe('parseMarkdown', () => {
   });
 
   it('fenced code blocks keep their lines verbatim', () => {
-    const blocks = parseMarkdown('```\nродительный падеж\n  - кого? чего?\n```\nдальше');
+    const blocks = parseMarkdown('```\nродовий відмінок\n  - кого? чого?\n```\nдалі');
     expect(blocks).toEqual([
-      { kind: 'code', text: 'родительный падеж\n  - кого? чего?' },
-      { kind: 'paragraph', runs: [{ text: 'дальше' }] },
+      { kind: 'code', text: 'родовий відмінок\n  - кого? чого?' },
+      { kind: 'paragraph', runs: [{ text: 'далі' }] },
     ]);
   });
 
   it('unterminated fence still emits the code collected so far', () => {
-    const blocks = parseMarkdown('```\nоборванный код');
-    expect(blocks).toEqual([{ kind: 'code', text: 'оборванный код' }]);
+    const blocks = parseMarkdown('```\nобірваний код');
+    expect(blocks).toEqual([{ kind: 'code', text: 'обірваний код' }]);
   });
 
   it('inline markup inside a list item', () => {

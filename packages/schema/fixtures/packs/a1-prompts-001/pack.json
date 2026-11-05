@@ -1,158 +1,205 @@
 {
   "id": "a1-prompts-001",
-  "version": 1,
+  "version": 2,
   "type": "prompts",
   "title": {
-    "uk": "Первые страницы",
+    "uk": "Перші сторінки",
     "en": "First Pages"
   },
   "level": "A1",
-  "tags": ["prompts", "daily-life", "creepy"],
+  "tags": [
+    "prompts",
+    "daily-life",
+    "creepy"
+  ],
   "stories": [],
   "prompts": [
     {
       "id": "moy-den",
       "level": "A1",
       "prompt": {
-        "uk": "Опиши свой день. Что ты делал утром, днём и вечером?",
+        "uk": "Опиши свій день. Що ти робив уранці, вдень і ввечері?",
         "en": "Describe your day. What did you do in the morning, afternoon, and evening?"
       },
-      "tags": ["daily-life"]
+      "tags": [
+        "daily-life"
+      ]
     },
     {
       "id": "moya-komnata-nochyu",
       "level": "A1",
       "prompt": {
-        "uk": "Опиши свою комнату ночью. Что ты видишь и слышишь?",
+        "uk": "Опиши свою кімнату вночі. Що ти бачиш і чуєш?",
         "en": "Describe your room at night. What do you see and hear?"
       },
-      "tags": ["horror", "home"]
+      "tags": [
+        "horror",
+        "home"
+      ]
     },
     {
       "id": "moya-semya",
       "level": "A1",
       "prompt": {
-        "uk": "Расскажи о своей семье. Кто они? Где они живут?",
+        "uk": "Розкажи про свою родину. Хто вони? Де вони живуть?",
         "en": "Tell about your family. Who are they? Where do they live?"
       },
-      "tags": ["family"]
+      "tags": [
+        "family"
+      ]
     },
     {
       "id": "lyubimaya-eda",
       "level": "A1",
       "prompt": {
-        "uk": "Что ты любишь есть? Что ты ел сегодня?",
+        "uk": "Що ти любиш їсти? Що ти їв сьогодні?",
         "en": "What do you like to eat? What did you eat today?"
       },
-      "tags": ["food", "daily-life"]
+      "tags": [
+        "food",
+        "daily-life"
+      ]
     },
     {
       "id": "strannyy-son",
       "level": "A1",
       "prompt": {
-        "uk": "Расскажи про странный сон. Что ты видел во сне?",
+        "uk": "Розкажи про дивний сон. Що ти бачив уві сні?",
         "en": "Tell about a strange dream. What did you see in the dream?"
       },
-      "tags": ["dreams", "horror"]
+      "tags": [
+        "dreams",
+        "horror"
+      ]
     },
     {
       "id": "za-oknom",
       "level": "A1",
       "prompt": {
-        "uk": "Посмотри в окно. Что там? Опиши, что ты видишь.",
+        "uk": "Подивися у вікно. Що там? Опиши, що ти бачиш.",
         "en": "Look out the window. What is there? Describe what you see."
       },
-      "tags": ["daily-life", "observation"]
+      "tags": [
+        "daily-life",
+        "observation"
+      ]
     },
     {
       "id": "moy-dom",
       "level": "A1",
       "prompt": {
-        "uk": "Опиши свой дом. Какая комната самая тёмная?",
+        "uk": "Опиши свій дім. Яка кімната найтемніша?",
         "en": "Describe your home. Which room is the darkest?"
       },
-      "tags": ["home", "horror"]
+      "tags": [
+        "home",
+        "horror"
+      ]
     },
     {
       "id": "pogoda-segodnya",
       "level": "A1",
       "prompt": {
-        "uk": "Какая сегодня погода? Что ты чувствуешь?",
+        "uk": "Яка сьогодні погода? Що ти відчуваєш?",
         "en": "What is the weather today? How do you feel?"
       },
-      "tags": ["weather", "daily-life"]
+      "tags": [
+        "weather",
+        "daily-life"
+      ]
     },
     {
       "id": "lyubimoe-mesto",
       "level": "A1",
       "prompt": {
-        "uk": "Опиши любимое место. Почему тебе там хорошо?",
+        "uk": "Опиши улюблене місце. Чому тобі там добре?",
         "en": "Describe a favorite place. Why do you feel good there?"
       },
-      "tags": ["places"]
+      "tags": [
+        "places"
+      ]
     },
     {
       "id": "zvuk-nochyu",
       "level": "A1",
       "prompt": {
-        "uk": "Ты слышишь звук ночью. Что это? Напиши три предложения.",
+        "uk": "Ти чуєш звук уночі. Що це? Напиши три речення.",
         "en": "You hear a sound at night. What is it? Write three sentences."
       },
-      "tags": ["horror"]
+      "tags": [
+        "horror"
+      ]
     },
     {
       "id": "moi-plany",
       "level": "A1",
       "prompt": {
-        "uk": "Что ты будешь делать завтра? Напиши свои планы.",
+        "uk": "Що ти робитимеш завтра? Напиши свої плани.",
         "en": "What will you do tomorrow? Write your plans."
       },
-      "tags": ["daily-life", "future"]
+      "tags": [
+        "daily-life",
+        "future"
+      ]
     },
     {
       "id": "staraya-fotografiya",
       "level": "A1",
       "prompt": {
-        "uk": "Опиши старую фотографию. Кто на ней? Что странно?",
+        "uk": "Опиши стару фотографію. Хто на ній? Що дивного?",
         "en": "Describe an old photograph. Who is in it? What is strange?"
       },
-      "tags": ["horror", "memory"]
+      "tags": [
+        "horror",
+        "memory"
+      ]
     },
     {
       "id": "pismo-drugu",
       "level": "A2",
       "prompt": {
-        "uk": "Напиши короткое письмо другу о твоей неделе.",
+        "uk": "Напиши короткий лист другові про твій тиждень.",
         "en": "Write a short letter to a friend about your week."
       },
-      "tags": ["letters", "daily-life"]
+      "tags": [
+        "letters",
+        "daily-life"
+      ]
     },
     {
       "id": "istoriya-o-sosede",
       "level": "A2",
       "prompt": {
-        "uk": "Твой сосед ведёт себя странно. Напиши, что он делает.",
+        "uk": "Твій сусід поводиться дивно. Напиши, що він робить.",
         "en": "Your neighbor is acting strangely. Write what he does."
       },
-      "tags": ["horror", "neighbors"]
+      "tags": [
+        "horror",
+        "neighbors"
+      ]
     },
     {
       "id": "detskoe-vospominanie",
       "level": "A2",
       "prompt": {
-        "uk": "Расскажи о воспоминании из детства. Почему ты его помнишь?",
+        "uk": "Розкажи про спогад із дитинства. Чому ти його пам'ятаєш?",
         "en": "Tell about a childhood memory. Why do you remember it?"
       },
-      "tags": ["memory"]
+      "tags": [
+        "memory"
+      ]
     },
     {
       "id": "temnota",
       "level": "A2",
       "prompt": {
-        "uk": "Ты боишься темноты? Почему да или почему нет?",
+        "uk": "Ти боїшся темряви? Чому так або чому ні?",
         "en": "Are you afraid of the dark? Why or why not?"
       },
-      "tags": ["horror", "feelings"]
+      "tags": [
+        "horror",
+        "feelings"
+      ]
     }
   ]
 }

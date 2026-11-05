@@ -12,8 +12,8 @@ import {
 } from '../karaoke';
 
 const sentences: KaraokeSentenceInput[] = [
-  { id: 's1', uk: 'Я слышу стук.' },
-  { id: 's2', uk: 'Кто-то стучит в стене каждую ночь.' },
+  { id: 's1', uk: 'Я чую стукіт.' },
+  { id: 's2', uk: 'Хтось стукає в стіні щоночі.' },
   { id: 's3', uk: 'Тук. Тук. Тук.' },
 ];
 

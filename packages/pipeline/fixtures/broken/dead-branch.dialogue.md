@@ -17,8 +17,8 @@ characters:
     style: warm
 endings:
   - id: end-x
-    title: { uk: 'Конец', en: 'End' }
-    recap: { uk: 'Всё.', en: 'Done.' }
+    title: { uk: 'Кінець', en: 'End' }
+    recap: { uk: 'Усе.', en: 'Done.' }
     tone: good
 ---
 
@@ -26,12 +26,12 @@ endings:
 
 SPEAKER: mama
 
-UK: Привет.
+UK: Привіт.
 EN: Hello.
 
 | text   | lemma  | translation | pos    | grammar | level | note |
 | ------ | ------ | ----------- | ------ | ------- | ----- | ---- |
-| Привет | привет | hello       | interj |         | A1    |      |
+| Привіт | привіт | hello       | interj |         | A1    |      |
 | .      |        |             |        |         |       |      |
 
 NEXT: bd-n2
@@ -40,12 +40,12 @@ NEXT: bd-n2
 
 SPEAKER: mama
 
-UK: Пока.
+UK: Бувай.
 EN: Bye.
 
 | text | lemma | translation | pos    | grammar | level | note |
 | ---- | ----- | ----------- | ------ | ------- | ----- | ---- |
-| Пока | пока  | bye         | interj |         | A1    |      |
+| Бувай | бувай | bye         | interj |         | A1    |      |
 | .    |       |             |        |         |       |      |
 
 ENDING: end-x
@@ -54,12 +54,12 @@ ENDING: end-x
 
 SPEAKER: mama
 
-UK: Никто.
+UK: Ніхто.
 EN: Nobody.
 
 | text  | lemma | translation | pos  | grammar | level | note |
 | ----- | ----- | ----------- | ---- | ------- | ----- | ---- |
-| Никто | никто | nobody      | pron | nom.    | A1    |      |
+| Ніхто | ніхто | nobody      | pron | nom.    | A1    |      |
 | .     |       |             |      |         |       |      |
 
 ENDING: end-x

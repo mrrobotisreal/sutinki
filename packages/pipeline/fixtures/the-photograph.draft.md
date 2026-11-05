@@ -1,14 +1,14 @@
 ---
 pack:
   id: a1-creepypasta-002
-  version: 1
+  version: 2
   type: stories
-  title: { uk: "Фотография", en: "The Photograph" }
+  title: { uk: "Фотографія", en: "The Photograph" }
   level: A1
   tags: ["creepypasta", "horror", "family", "grammar:genitive", "grammar:past-tense"]
 story:
   id: the-photograph
-  title: { uk: "Фотография", en: "The Photograph" }
+  title: { uk: "Фотографія", en: "The Photograph" }
   level: A1
 voice:
   - id: photo-anton-creepy
@@ -22,43 +22,43 @@ voice:
       пустое.» should land flat and cold.
 ---
 
-# Фотография — The Photograph
+# Фотографія — The Photograph
 
 ## photo-s01
 
-UK: У меня есть старая фотография.
+UK: У мене є стара фотографія.
 EN: I have an old photograph.
 GRAMMAR: possession-u-genitive
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| У | у | at (possession) | prep | + gen.; у меня есть = I have | A1 |  |
-| меня | я | me | pron | gen. | A1 |  |
-| есть | есть | there is | pred | existential (у меня есть = I have) | A1 |  |
-| старая | старый | old | adj | f.sg. nom. | A1 |  |
-| фотография | фотография | photograph | noun | f.sg. nom. | A1 |  |
+| У | у | at (possession) | prep | + gen.; у мене є = I have | A1 |  |
+| мене | я | me | pron | gen. | A1 |  |
+| є | є | there is | pred | existential (у мене є = I have) | A1 |  |
+| стара | старий | old | adj | f.sg. nom. | A1 |  |
+| фотографія | фотографія | photograph | noun | f.sg. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s02
 
-UK: На ней мой дом и моя семья.
+UK: На ній мій будинок і моя родина.
 EN: In it are my house and my family.
-GRAMMAR: prepositional-case, possessive-pronouns
+GRAMMAR: locative-location, possessive-pronouns
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| На | на | in, on | prep | + prep. (location); на фотографии = in the photo | A1 |  |
-| ней | она | it (the photo) | pron | f.sg. prep. (н- after preposition) | A1 |  |
-| мой | мой | my | pron | m.sg. nom. | A1 |  |
-| дом | дом | house | noun | m.sg. nom. | A1 |  |
-| и | и | and | conj |  | A1 |  |
-| моя | мой | my | pron | f.sg. nom. | A1 |  |
-| семья | семья | family | noun | f.sg. nom. | A1 |  |
+| На | на | in, on | prep | + loc. (location); на фотографії = in the photo | A1 |  |
+| ній | вона | it (the photo) | pron | f.sg. loc. (н- after preposition) | A1 |  |
+| мій | мій | my | pron | m.sg. nom. | A1 |  |
+| будинок | будинок | house | noun | m.sg. nom. | A1 |  |
+| і | і | and | conj |  | A1 |  |
+| моя | мій | my | pron | f.sg. nom. | A1 |  |
+| родина | родина | family | noun | f.sg. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s03
 
-UK: Мама, папа, я и бабушка.
+UK: Мама, тато, я і бабуся.
 EN: Mom, dad, me, and grandma.
 GRAMMAR: family-vocabulary
 
@@ -66,134 +66,134 @@ GRAMMAR: family-vocabulary
 | --- | --- | --- | --- | --- | --- | --- |
 | Мама | мама | mom | noun | f.sg. nom. | A1 |  |
 | , |  |  |  |  |  |  |
-| папа | папа | dad | noun | m.sg. nom. (declines like f.) | A1 |  |
+| тато | тато | dad | noun | m.sg. nom. (declines like f.) | A1 |  |
 | , |  |  |  |  |  |  |
 | я | я | me | pron | nom. | A1 |  |
-| и | и | and | conj |  | A1 |  |
-| бабушка | бабушка | grandma | noun | f.sg. nom. | A1 |  |
+| і | і | and | conj |  | A1 |  |
+| бабуся | бабуся | grandma | noun | f.sg. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s04
 
-UK: Но есть проблема.
+UK: Але є проблема.
 EN: But there is a problem.
-GRAMMAR: existential-est
+GRAMMAR: existential-ye
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Но | но | but | conj |  | A1 |  |
-| есть | есть | there is | pred | existential | A1 |  |
+| Але | але | but | conj |  | A1 |  |
+| є | є | there is | pred | existential | A1 |  |
 | проблема | проблема | a problem | noun | f.sg. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s05
 
-UK: В окне дома стоит человек.
+UK: У вікні будинку стоїть чоловік.
 EN: In the window of the house stands a man.
-GRAMMAR: prepositional-case, genitive-case, word-order
+GRAMMAR: locative-location, genitive-case, word-order
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| В | в | in | prep | + prep. (location) | A1 |  |
-| окне | окно | the window | noun | n.sg. prep. | A1 |  |
-| дома | дом | of the house | noun | m.sg. gen. | A1 |  |
-| стоит | стоять | stands | verb | 3sg. pres. (impf.) | A1 |  |
-| человек | человек | a man, a person | noun | m.sg. nom. | A1 |  |
+| У | у | in | prep | + loc. (location) | A1 |  |
+| вікні | вікно | the window | noun | n.sg. loc. | A1 |  |
+| будинку | будинок | of the house | noun | m.sg. gen. | A1 |  |
+| стоїть | стояти | stands | verb | 3sg. pres. (impf.) | A1 |  |
+| чоловік | чоловік | a man, a person | noun | m.sg. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s06
 
-UK: Мы не знаем его.
+UK: Ми не знаємо його.
 EN: We do not know him.
 GRAMMAR: negation, accusative-case
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Мы | мы | we | pron | nom. | A1 |  |
+| Ми | ми | we | pron | nom. | A1 |  |
 | не | не | not | part |  | A1 |  |
-| знаем | знать | know | verb | 1pl. pres. (impf.) | A1 |  |
-| его | он | him | pron | m.sg. acc. | A1 |  |
+| знаємо | знати | know | verb | 1pl. pres. (impf.) | A1 |  |
+| його | він | him | pron | m.sg. acc. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s07
 
-UK: Его лицо белое, а глаза чёрные.
+UK: Його обличчя біле, а очі чорні.
 EN: His face is white, and his eyes are black.
 GRAMMAR: adjective-agreement, contrast-a
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Его | его | his | pron | possessive, indeclinable | A1 |  |
-| лицо | лицо | face | noun | n.sg. nom. | A1 |  |
-| белое | белый | white | adj | n.sg. nom. | A1 |  |
+| Його | його | his | pron | possessive, indeclinable | A1 |  |
+| обличчя | обличчя | face | noun | n.sg. nom. | A1 |  |
+| біле | білий | white | adj | n.sg. nom. | A1 |  |
 | , |  |  |  |  |  |  |
 | а | а | and (contrast) | conj | contrastive — softer than но | A1 |  |
-| глаза | глаз | eyes | noun | m.pl. nom. (irregular plural) | A1 |  |
-| чёрные | чёрный | black | adj | pl. nom. | A1 |  |
+| очі | око | eyes | noun | pl. nom. (irregular plural) | A1 |  |
+| чорні | чорний | black | adj | pl. nom. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s08
 
-UK: Каждый год он ближе к стеклу.
+UK: Кожного року він ближче до скла.
 EN: Every year he is closer to the glass.
 GRAMMAR: comparative, dative-case, time-expressions
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Каждый | каждый | every | pron | m.sg. acc. (time expression) | A1 |  |
-| год | год | year | noun | m.sg. acc. | A1 |  |
-| он | он | he | pron | m.sg. nom. | A1 |  |
-| ближе | близкий | closer | adj | comparative of близкий | A2 |  |
-| к | к | to, toward | prep | + dat. | A1 |  |
-| стеклу | стекло | the glass | noun | n.sg. dat. | A2 |  |
+| Кожного | кожний | every | pron | m.sg. gen. (time expression) | A1 |  |
+| року | рік | year | noun | m.sg. gen. | A1 |  |
+| він | він | he | pron | m.sg. nom. | A1 |  |
+| ближче | близький | closer | adj | comparative of близький | A2 |  |
+| до | до | to, toward | prep | + gen. | A1 |  |
+| скла | скло | the glass | noun | n.sg. gen. | A2 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s09
 
-UK: Вчера я снова смотрел на фотографию.
+UK: Вчора я знову дивився на фотографію.
 EN: Yesterday I looked at the photograph again.
 GRAMMAR: past-tense, accusative-case
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Вчера | вчера | yesterday | adv |  | A1 |  |
+| Вчора | вчора | yesterday | adv |  | A1 |  |
 | я | я | I | pron | nom. | A1 |  |
-| снова | снова | again | adv |  | A2 |  |
-| смотрел | смотреть | looked | verb | m.sg. past (impf.); смотреть на + acc. = look at | A1 |  |
+| знову | знову | again | adv |  | A2 |  |
+| дивився | дивитися | looked | verb | m.sg. past (impf.); дивитися на + acc. = look at | A1 |  |
 | на | на | at | prep | + acc. (direction of gaze) | A1 |  |
-| фотографию | фотография | the photograph | noun | f.sg. acc. | A1 |  |
+| фотографію | фотографія | the photograph | noun | f.sg. acc. | A1 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s10
 
-UK: Окно на ней пустое.
+UK: Вікно на ній порожнє.
 EN: The window in it is empty.
-GRAMMAR: adjective-agreement, prepositional-case
+GRAMMAR: adjective-agreement, locative-location
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
-| Окно | окно | the window | noun | n.sg. nom. | A1 |  |
-| на | на | in, on | prep | + prep. (location) | A1 |  |
-| ней | она | it (the photo) | pron | f.sg. prep. | A1 |  |
-| пустое | пустой | empty | adj | n.sg. nom. | A2 |  |
+| Вікно | вікно | the window | noun | n.sg. nom. | A1 |  |
+| на | на | in, on | prep | + loc. (location) | A1 |  |
+| ній | вона | it (the photo) | pron | f.sg. loc. | A1 |  |
+| порожнє | порожній | empty | adj | n.sg. nom. | A2 |  |
 | . |  |  |  |  |  |  |
 
 ## photo-s11
 
-UK: А сегодня утром я слышал шаги в моём доме.
+UK: А сьогодні вранці я чув кроки у моєму будинку.
 EN: And this morning I heard footsteps in my house.
-GRAMMAR: past-tense, time-expressions, prepositional-case
+GRAMMAR: past-tense, time-expressions, locative-location
 
 | text | lemma | translation | pos | grammar | level | note |
 | --- | --- | --- | --- | --- | --- | --- |
 | А | а | and | conj | contrastive opener | A1 |  |
-| сегодня | сегодня | today | adv |  | A1 |  |
-| утром | утро | in the morning | noun | n.sg. instr., used adverbially; сегодня утром = this morning | A1 |  |
+| сьогодні | сьогодні | today | adv |  | A1 |  |
+| вранці | вранці | in the morning | adv |  | A1 |  |
 | я | я | I | pron | nom. | A1 |  |
-| слышал | слышать | heard | verb | m.sg. past (impf.) | A1 |  |
-| шаги | шаг | footsteps | noun | m.pl. acc. | A2 |  |
-| в | в | in | prep | + prep. (location) | A1 |  |
-| моём | мой | my | pron | m.sg. prep. | A1 |  |
-| доме | дом | house | noun | m.sg. prep. | A1 |  |
+| чув | чути | heard | verb | m.sg. past (impf.) | A1 |  |
+| кроки | крок | footsteps | noun | m.pl. acc. | A2 |  |
+| у | у | in | prep | + loc. (location) | A1 |  |
+| моєму | мій | my | pron | m.sg. loc. | A1 |  |
+| будинку | будинок | house | noun | m.sg. loc. | A1 |  |
 | . |  |  |  |  |  |  |
 

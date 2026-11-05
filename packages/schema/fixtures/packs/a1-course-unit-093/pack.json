@@ -15,14 +15,14 @@
     {
       "id": "greenhouse-flowers",
       "title": {
-        "uk": "Ночные цветы",
+        "uk": "Нічні квіти",
         "en": "The Night Flowers"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "green-s01",
-          "uk": "За домом стоит оранжерея.",
+          "uk": "За будинком стоїть оранжерея.",
           "en": "A greenhouse stands behind the house.",
           "tokens": [
             {
@@ -34,16 +34,16 @@
               "grammar": "+instr."
             },
             {
-              "text": "домом",
-              "lemma": "дом",
+              "text": "будинком",
+              "lemma": "будинок",
               "translation": "house",
               "pos": "noun",
               "level": "A1",
               "grammar": "instr.sg."
             },
             {
-              "text": "стоит",
-              "lemma": "стоять",
+              "text": "стоїть",
+              "lemma": "стояти",
               "translation": "stands",
               "pos": "verb",
               "level": "A1",
@@ -64,12 +64,12 @@
         },
         {
           "id": "green-s02",
-          "uk": "Цветы там растут ночью.",
+          "uk": "Квіти там ростуть уночі.",
           "en": "The flowers there grow at night.",
           "tokens": [
             {
-              "text": "Цветы",
-              "lemma": "цветок",
+              "text": "Квіти",
+              "lemma": "квітка",
               "translation": "flowers",
               "pos": "noun",
               "level": "A1",
@@ -83,20 +83,19 @@
               "level": "A1"
             },
             {
-              "text": "растут",
-              "lemma": "расти",
+              "text": "ростуть",
+              "lemma": "рости",
               "translation": "grow",
               "pos": "verb",
               "level": "A2",
               "grammar": "3pl. pres. (impf.)"
             },
             {
-              "text": "ночью",
-              "lemma": "ночь",
+              "text": "уночі",
+              "lemma": "уночі",
               "translation": "at night",
-              "pos": "noun",
-              "level": "A1",
-              "grammar": "instr., used as adverb"
+              "pos": "adv",
+              "level": "A1"
             },
             {
               "text": ".",
@@ -111,12 +110,12 @@
   "lesson": {
     "id": "u093-lesson",
     "title": {
-      "uk": "За домом",
+      "uk": "За будинком",
       "en": "Behind the house"
     },
-    "body": "## За домом\n\nA scene the app does not know yet — the unit must render like any other.\n",
+    "body": "## За будинком\n\nA scene the app does not know yet — the unit must render like any other.\n",
     "grammarTopics": [
-      "instrumental-with-s"
+      "instrumental-with-z"
     ]
   },
   "theme": {

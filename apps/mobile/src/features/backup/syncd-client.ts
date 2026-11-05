@@ -5,7 +5,7 @@ import { parseBackupFileName } from './naming';
 
 /**
  * HTTP client for syncd, the home-server backup service (T21, design §9).
- * The contract is SumrakAPI's three endpoints; every response body is
+ * The contract is SutinkiAPI's three endpoints; every response body is
  * Zod-validated before use. Requests carry the bearer token in memory only —
  * it never appears in errors, logs, or analytics (T07/T20 rule).
  *

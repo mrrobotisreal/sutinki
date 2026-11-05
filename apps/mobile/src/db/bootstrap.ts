@@ -22,7 +22,7 @@ const BUNDLED_AUDIO: Record<string, Record<string, number>> = {
   },
 };
 
-const LEGACY_THEME_STORAGE_KEY = 'sumrak-theme';
+const LEGACY_THEME_STORAGE_KEY = 'sutinki-theme';
 
 /**
  * First-run (and every-run, idempotently) bootstrap, called once migrations

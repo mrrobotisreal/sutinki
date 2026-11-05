@@ -30,9 +30,9 @@ async function setup() {
     sentences: [
       {
         id: 's3',
-        uk: 'Странный дом ждёт',
+        uk: 'Дивний дім чекає',
         en: 'A strange house waits',
-        lemmas: ['странный', 'дом', 'ждать'],
+        lemmas: ['дивний', 'дім', 'чекати'],
       },
     ],
   });
@@ -72,7 +72,7 @@ describe('pickSentenceForLemma', () => {
   it('the unseenAllowed toggle opens unread stories', async () => {
     const { repos } = await setup();
     const index = await buildReadIndex(repos);
-    const picked = await pickSentenceForLemma(repos, 'странный', index, { unseenAllowed: true });
+    const picked = await pickSentenceForLemma(repos, 'дивний', index, { unseenAllowed: true });
     expect(picked?.sentence.id).toBe('s3');
   });
 

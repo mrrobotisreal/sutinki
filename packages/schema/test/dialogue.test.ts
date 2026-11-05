@@ -188,7 +188,7 @@ describe('dialogue graph — bounds & id uniqueness', () => {
     const pack = makeValidDialoguePack() as any;
     const d = dlg(pack);
     for (let i = 0; i < 57; i++) {
-      d.nodes.splice(1, 0, makeNode(`dlg-x${i}`, 'mama', 'Да.', { next: 'dlg-n2' }));
+      d.nodes.splice(1, 0, makeNode(`dlg-x${i}`, 'mama', 'Так.', { next: 'dlg-n2' }));
       d.nodes[0].next = `dlg-x${i}`;
       d.nodes[1].next = i === 0 ? 'dlg-n2' : `dlg-x${i - 1}`;
     }
@@ -206,7 +206,7 @@ describe('dialogue graph — bounds & id uniqueness', () => {
 
     const five = makeValidDialoguePack() as any;
     for (let i = 0; i < 3; i++) {
-      dlg(five).nodes[1].choices.push(makeChoice(`dlg-n2-x${i}`, 'Может быть.', 'dlg-n3'));
+      dlg(five).nodes[1].choices.push(makeChoice(`dlg-n2-x${i}`, 'Може бути.', 'dlg-n3'));
       dlg(five).nodes[1].choices[2 + i].sentence.id = `dlg-n2-x${i}`;
     }
     expectIssue(five, 'dialogues[0].nodes[1].choices', '4');

@@ -15,9 +15,9 @@ import {
  */
 
 const hungry: MatchableChoice[] = [
-  { id: 'c1', uk: 'Да, я очень голодный.', asrAlternates: ['Да, очень.'] },
-  { id: 'c2', uk: 'Нет, спасибо, я не голодный.' },
-  { id: 'c3', uk: 'А что это на стене?' },
+  { id: 'c1', uk: 'Так, я дуже голодний.', asrAlternates: ['Так, дуже.'] },
+  { id: 'c2', uk: 'Ні, дякую, я не голодний.' },
+  { id: 'c3', uk: 'А що це на стіні?' },
 ];
 
 const seconds: MatchableChoice[] = [
@@ -41,7 +41,7 @@ const minimalPair: MatchableChoice[] = [
 
 describe('matchTranscriptToChoices', () => {
   it('matches a cleanly spoken choice with a wide margin', () => {
-    const r = matchTranscriptToChoices('да я очень голодный', hungry);
+    const r = matchTranscriptToChoices('так я дуже голодний', hungry);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('c1');
     expect(r.best?.score).toBe(100);
@@ -49,7 +49,7 @@ describe('matchTranscriptToChoices', () => {
   });
 
   it('matches the negated twin by its differing tokens', () => {
-    const r = matchTranscriptToChoices('нет спасибо я не голодный', hungry);
+    const r = matchTranscriptToChoices('ні дякую я не голодний', hungry);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('c2');
   });
@@ -126,8 +126,8 @@ describe('matchTranscriptToChoices', () => {
   });
 
   it('survives ASR mis-spelled endings within the leniency budget', () => {
-    // «голодный» heard as «голодная» — 1 edit on a 9-letter word.
-    const r = matchTranscriptToChoices('да я очень голодная', hungry);
+    // «голодний» heard as «голодна» — 2 edits on a 8-letter word.
+    const r = matchTranscriptToChoices('так я дуже голодний', hungry);
     expect(r.outcome).toBe('matched');
     expect(r.best?.choiceId).toBe('c1');
   });
@@ -138,7 +138,7 @@ describe('matchTranscriptToChoices', () => {
   });
 
   it('keeps candidates sorted best-first with per-word detail', () => {
-    const r = matchTranscriptToChoices('да я очень голодный', hungry);
+    const r = matchTranscriptToChoices('так я дуже голодний', hungry);
     expect(r.candidates.map((c) => c.choiceId)[0]).toBe('c1');
     const scores = r.candidates.map((c) => c.score);
     expect([...scores].sort((a, b) => b - a)).toEqual(scores);

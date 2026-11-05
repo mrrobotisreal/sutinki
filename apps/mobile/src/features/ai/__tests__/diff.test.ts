@@ -40,10 +40,10 @@ describe('diffWords', () => {
     ]);
   });
 
-  it('treats case and ё changes as real corrections', () => {
-    const segments = diffWords('темный дом', 'тёмный дом');
-    expect(segments![0]).toEqual({ type: 'del', text: 'темный' });
-    expect(segments![1]).toEqual({ type: 'ins', text: 'тёмный' });
+  it('treats case and ґ/г changes as real corrections', () => {
+    const segments = diffWords('гарний дім', 'ґарний дім');
+    expect(segments![0]).toEqual({ type: 'del', text: 'гарний' });
+    expect(segments![1]).toEqual({ type: 'ins', text: 'ґарний' });
   });
 
   it('normalizes NFD input so equivalent words compare equal', () => {

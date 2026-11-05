@@ -16,7 +16,7 @@ describe('highlightSnippet', () => {
   });
 
   it('rebuilds the sentence exactly from its segments', () => {
-    const uk = 'Он  стоит   у стены.';
+    const uk = 'Він  стоїть   у стіни.';
     const segs = highlightSnippet(uk, []);
     expect(segs.map((s) => s.text).join('')).toBe(uk);
   });

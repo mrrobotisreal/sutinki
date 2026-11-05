@@ -3,7 +3,7 @@
   "version": 1,
   "type": "course-unit",
   "title": {
-    "uk": "Знакомство",
+    "uk": "Знайомство",
     "en": "Meeting the Family"
   },
   "level": "A2",
@@ -16,33 +16,33 @@
     {
       "id": "family-arrival",
       "title": {
-        "uk": "Приезд",
+        "uk": "Приїзд",
         "en": "The Arrival"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "fam-s01",
-          "uk": "Очень приятно познакомиться.",
+          "uk": "Дуже приємно познайомитися.",
           "en": "Very nice to meet you.",
           "tokens": [
             {
-              "text": "Очень",
-              "lemma": "очень",
+              "text": "Дуже",
+              "lemma": "дуже",
               "translation": "very",
               "pos": "adv",
               "level": "A1"
             },
             {
-              "text": "приятно",
-              "lemma": "приятно",
+              "text": "приємно",
+              "lemma": "приємно",
               "translation": "nice",
               "pos": "adv",
               "level": "A2"
             },
             {
-              "text": "познакомиться",
-              "lemma": "познакомиться",
+              "text": "познайомитися",
+              "lemma": "познайомитися",
               "translation": "to meet",
               "pos": "verb",
               "level": "A2",
@@ -56,7 +56,7 @@
         },
         {
           "id": "fam-s02",
-          "uk": "Мама Алины готовит ужин.",
+          "uk": "Мама Аліни готує вечерю.",
           "en": "Alina's mom is cooking dinner.",
           "tokens": [
             {
@@ -67,24 +67,24 @@
               "level": "A1"
             },
             {
-              "text": "Алины",
-              "lemma": "Алина",
+              "text": "Аліни",
+              "lemma": "Аліна",
               "translation": "of Alina",
               "pos": "name",
               "level": "A1",
               "grammar": "gen.sg."
             },
             {
-              "text": "готовит",
-              "lemma": "готовить",
+              "text": "готує",
+              "lemma": "готувати",
               "translation": "is cooking",
               "pos": "verb",
               "level": "A1",
               "grammar": "3sg. pres. (impf.)"
             },
             {
-              "text": "ужин",
-              "lemma": "ужин",
+              "text": "вечерю",
+              "lemma": "вечеря",
               "translation": "dinner",
               "pos": "noun",
               "level": "A1",
@@ -98,39 +98,39 @@
         },
         {
           "id": "fam-s03",
-          "uk": "Мы говорим о семье.",
+          "uk": "Ми говоримо про родину.",
           "en": "We talk about family.",
           "tokens": [
             {
-              "text": "Мы",
-              "lemma": "мы",
+              "text": "Ми",
+              "lemma": "ми",
               "translation": "we",
               "pos": "pron",
               "level": "A1"
             },
             {
-              "text": "говорим",
-              "lemma": "говорить",
+              "text": "говоримо",
+              "lemma": "говорити",
               "translation": "talk",
               "pos": "verb",
               "level": "A1",
               "grammar": "1pl. pres. (impf.)"
             },
             {
-              "text": "о",
-              "lemma": "о",
+              "text": "про",
+              "lemma": "про",
               "translation": "about",
               "pos": "prep",
               "level": "A1",
-              "grammar": "+prep."
+              "grammar": "+acc."
             },
             {
-              "text": "семье",
-              "lemma": "семья",
+              "text": "родину",
+              "lemma": "родина",
               "translation": "family",
               "pos": "noun",
               "level": "A1",
-              "grammar": "prep.sg."
+              "grammar": "acc.sg."
             },
             {
               "text": ".",
@@ -145,10 +145,10 @@
   "lesson": {
     "id": "fam090-lesson",
     "title": {
-      "uk": "Вы и ты",
+      "uk": "Ви і ти",
       "en": "Formal and informal you"
     },
-    "body": "## Вы и ты\n\nPoliteness formulas: «вы» for the parents until they offer «ты».\n",
+    "body": "## Ви і ти\n\nPoliteness formulas: «ви» for the parents until they offer «ти».\n",
     "grammarTopics": [
       "politeness-vy-ty"
     ]
@@ -158,7 +158,7 @@
       "id": "fam090-p1",
       "level": "A2",
       "prompt": {
-        "uk": "Напишите тост для семьи.",
+        "uk": "Напишіть тост для родини.",
         "en": "Write a toast for the family."
       },
       "tags": [

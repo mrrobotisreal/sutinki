@@ -17,7 +17,7 @@ export type BackupErrorCode =
   | 'syncd-unreachable'
   /** syncd target failed for a non-reachability reason (bad token, HTTP error). */
   | 'syncd'
-  /** File is not a sumrak-backup envelope (or is a corrupted one). */
+  /** File is not a sutinki-backup envelope (or is a corrupted one). */
   | 'invalid-envelope'
   /** Wrong passphrase OR ciphertext corruption — AES-GCM cannot tell them apart. */
   | 'decrypt-failed'

@@ -29,8 +29,8 @@ function seal(payloadJson: string) {
 }
 
 describe('backup crypto', () => {
-  it('round-trips payload JSON through gzip + AES-GCM, preserving ё and NFC', async () => {
-    const payload = JSON.stringify({ тест: 'тёмный лес', mixed: 'ещё раз — ok', n: 42 });
+  it('round-trips payload JSON through gzip + AES-GCM, preserving ї/є and NFC', async () => {
+    const payload = JSON.stringify({ тест: 'темний ліс', mixed: 'ще раз — їжак', n: 42 });
     const envelope = seal(payload);
     expect(envelope.format).toBe('sutinki-backup');
     expect(envelope.cipher.iterations).toBe(ITERATIONS);
@@ -44,7 +44,7 @@ describe('backup crypto', () => {
   });
 
   it('derivation is NFC-tolerant (composed vs decomposed passphrase input)', async () => {
-    const composed = 'пароль-ёж';
+    const composed = 'пароль-їжак';
     const decomposed = composed.normalize('NFD');
     expect(decomposed).not.toBe(composed);
     const k1 = await deriveBackupKey(composed, SALT_B64, ITERATIONS);

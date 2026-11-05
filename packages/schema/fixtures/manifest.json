@@ -4,14 +4,14 @@
   "packs": [
     {
       "id": "a1-creepypasta-001",
-      "version": 1,
+      "version": 2,
       "type": "stories",
       "level": "A1",
       "title": {
-        "uk": "Стук в стене",
+        "uk": "Стукіт у стіні",
         "en": "The Knock in the Wall"
       },
-      "bytes": 37776,
+      "bytes": 37635,
       "files": [
         {
           "path": "audio/knock-in-the-wall-anton-creepy.opus",
@@ -19,41 +19,41 @@
         },
         {
           "path": "pack.json",
-          "sha256": "c1a103b007c4b3841765c57a10bc573602fc1427f1b9a3deff7c48cba03ead9c"
+          "sha256": "7e7c03e4f96cdb174faa9c62344f25a985e5d8eb908ab8bf709987b122a785a5"
         }
       ]
     },
     {
       "id": "a1-creepypasta-002",
-      "version": 1,
+      "version": 2,
       "type": "stories",
       "level": "A1",
       "title": {
-        "uk": "Фотография",
+        "uk": "Фотографія",
         "en": "The Photograph"
       },
-      "bytes": 17805,
+      "bytes": 19111,
       "files": [
         {
           "path": "pack.json",
-          "sha256": "a4a0a2920c07a4573192c99b967da8950d1629f95095bef61411caca87333dff"
+          "sha256": "6dc287e102493a8fe485550f08b238f3e11a99da6b173ba4552bf8a6898f6aac"
         }
       ]
     },
     {
       "id": "a1-prompts-001",
-      "version": 1,
+      "version": 2,
       "type": "prompts",
       "level": "A1",
       "title": {
-        "uk": "Первые страницы",
+        "uk": "Перші сторінки",
         "en": "First Pages"
       },
-      "bytes": 5001,
+      "bytes": 5281,
       "files": [
         {
           "path": "pack.json",
-          "sha256": "e8e22ad6abe17cbfe22f17f5b1707d6a12b1076d92c774d280d6a19671d87da6"
+          "sha256": "fce949b17fbc5935d63799ae35f6a8351fb25416042d3e6af942a2517c20340a"
         }
       ]
     }

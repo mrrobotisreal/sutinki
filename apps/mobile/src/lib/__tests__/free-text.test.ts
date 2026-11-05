@@ -11,8 +11,8 @@ import {
 
 describe('chunkText', () => {
   it('splits on whitespace, punctuation glued to its word', () => {
-    const chunks = chunkText('Я слышу, как кто-то ходит.');
-    expect(chunks.map((c) => c.text)).toEqual(['Я', 'слышу,', 'как', 'кто-то', 'ходит.']);
+    const chunks = chunkText('Я чую, як хтось ходить.');
+    expect(chunks.map((c) => c.text)).toEqual(['Я', 'чую,', 'як', 'хтось', 'ходить.']);
     expect(chunks.every((c) => c.isWord)).toBe(true);
   });
 
@@ -33,10 +33,10 @@ describe('chunkText', () => {
 
 describe('chunkRuns (styled input)', () => {
   it('a bold run spanning two words produces two chunks carrying the style', () => {
-    const chunks = chunkRuns([{ text: 'это ' }, { text: 'очень важно', bold: true }]);
-    expect(chunks.map((c) => c.text)).toEqual(['это', 'очень', 'важно']);
+    const chunks = chunkRuns([{ text: 'це ' }, { text: 'дуже важливо', bold: true }]);
+    expect(chunks.map((c) => c.text)).toEqual(['це', 'дуже', 'важливо']);
     expect(chunks[1]!.segments).toEqual([
-      { text: 'очень', bold: true, italic: undefined, code: undefined },
+      { text: 'дуже', bold: true, italic: undefined, code: undefined },
     ]);
   });
 
@@ -59,7 +59,7 @@ describe('chunkRuns (styled input)', () => {
 
 describe('cleanSurface', () => {
   it('strips edge punctuation, keeps inner hyphens', () => {
-    expect(cleanSurface('слышу,')).toBe('слышу');
+    expect(cleanSurface('чую,')).toBe('чую');
     expect(cleanSurface('«кто-то»')).toBe('кто-то');
     expect(cleanSurface('ходит.')).toBe('ходит');
   });

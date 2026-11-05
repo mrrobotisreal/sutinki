@@ -60,10 +60,10 @@ async function seedSource(db: SutinkiDB) {
     {
       id: 'bi-word',
       kind: 'word',
-      lemma: 'тёмный',
-      lemmaNorm: 'темный',
-      surface: 'тёмном',
-      normalized: 'темном',
+      lemma: 'темний',
+      lemmaNorm: 'темний',
+      surface: 'темному',
+      normalized: 'темному',
       translation: 'dark',
       grammar: 'adj., prep. sg.',
       pos: 'adj',
@@ -79,8 +79,8 @@ async function seedSource(db: SutinkiDB) {
       kind: 'phrase',
       lemma: null,
       lemmaNorm: null,
-      surface: 'в тёмном лесу',
-      normalized: 'в темном лесу',
+      surface: 'у темному лісі',
+      normalized: 'у темному лісі',
       translation: 'in the dark forest',
       grammar: null,
       pos: null,
@@ -97,7 +97,7 @@ async function seedSource(db: SutinkiDB) {
     bankItemId: 'bi-word',
     sentenceId: 's1',
     journalEntryId: null,
-    surface: 'тёмном',
+    surface: 'темному',
     createdAt: NOW - 5000,
   });
   await db.insert(cards).values([
@@ -252,8 +252,8 @@ async function seedSource(db: SutinkiDB) {
   // T28: import request + imported pack ride the payload like every user table.
   await db.insert(importRequests).values({
     id: 'imp-1',
-    text: 'Тёмный вечер. Кто-то стучит.',
-    title: 'Тёмный вечер',
+    text: 'Темний вечір. Хтось стукає.',
+    title: 'Темний вечір',
     sourceLabel: 'Telegram',
     status: 'committed',
     annotationJson: null,
@@ -264,7 +264,7 @@ async function seedSource(db: SutinkiDB) {
   });
   await db.insert(importedPacks).values({
     id: 'imported-20260825-temnyi-vecher',
-    title: 'Тёмный вечер',
+    title: 'Темний вечір',
     sourceLabel: 'Telegram',
     packJsonGz: 'H4sIAAAAAAAAA6tWKkktLlGyUlAqSy0qzszPU9JRUEreBQBhpN6RFgAAAA==',
     createdAt: NOW - 650,

@@ -239,8 +239,8 @@ describe('dashboard repo — weakest lemmas + topic practice ids', () => {
       translation: 'to stand',
     });
     const dark = await repos.bank.addWord({
-      lemma: 'тёмный',
-      surface: 'тёмная',
+      lemma: 'темний',
+      surface: 'темна',
       translation: 'dark',
     });
     await setCoreStability(repos, bed.item.id, 5);
@@ -259,9 +259,9 @@ describe('dashboard repo — weakest lemmas + topic practice ids', () => {
       surface: 'кровать',
       translation: 'bed',
     });
-    await repos.bank.addWord({ lemma: 'тёмный', surface: 'тёмная', translation: 'dark' });
+    await repos.bank.addWord({ lemma: 'темний', surface: 'темна', translation: 'dark' });
     const ids = await repos.dashboard.getTopicPracticeItemIds('A1', 'prepositional-location');
-    expect(ids).toEqual([bed.item.id]); // тёмный is in adjective-agreement only
+    expect(ids).toEqual([bed.item.id]); // темний is in adjective-agreement only
   });
 });
 
