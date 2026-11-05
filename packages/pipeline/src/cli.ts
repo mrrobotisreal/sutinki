@@ -3,7 +3,7 @@ import { runAnnotate } from './annotate.ts';
 import { renderBranchMap } from './branch-map.ts';
 import { planAudioRun, runAudition, runFinalize, type AudioRunPlan } from './audio.ts';
 import type { StampResult } from './stamps.ts';
-import { ElevenLabsClient } from './elevenlabs.ts';
+import { DEFAULT_MODEL_ID, ElevenLabsClient } from './elevenlabs.ts';
 import { resolveEnvVar } from './env.ts';
 import { runModelsMirror } from './models.ts';
 import { runPublish } from './publish.ts';
@@ -51,7 +51,9 @@ Usage:
       --dialogues <id,id>   only these dialogue ids (T26)
       --player-audio        also render coach audio (the "player" character's
                             voice) for every choice + scripted player line
-      --model <id>          ElevenLabs model (default eleven_v3)
+      --model <id>          ElevenLabs model (default ${DEFAULT_MODEL_ID};
+                            eleven_v3 opt-in — a draft's per-direction
+                            "model:" always wins over this flag)
       --extras <file>       pack extras file (course-unit packs) — merged into
                             the written pack.json, same as annotate
       --yes                 confirm the pre-render summary without prompting
@@ -189,6 +191,15 @@ async function confirmAudioRun(plan: AudioRunPlan, yes: boolean): Promise<void> 
     `Pre-render summary: ${parts.join(', ') || 'nothing'} — ` +
       `${plan.requests} ElevenLabs request(s), ~${plan.chars} characters.`,
   );
+  // Per-track resolution (M14): the register-resolved voice/style and the
+  // model/language each request will carry — readable before anything fires.
+  for (const t of plan.tracks) {
+    const lang = t.languageCode === undefined ? '' : `, language_code ${t.languageCode}`;
+    console.log(
+      `  ${t.storyId}/${t.trackId}: model ${t.model}${lang}, voice ${t.voice}, style ${t.style} — ` +
+        `${t.requests} request(s), ~${t.chars} chars`,
+    );
+  }
   if (plan.requests === 0) fail('nothing to render — check the filters', 2);
   if (yes) return;
   if (!process.stdin.isTTY) {

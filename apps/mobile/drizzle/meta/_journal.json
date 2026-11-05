@@ -15,6 +15,13 @@
       "when": 1789290699740,
       "tag": "0001_fts5-search",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793906448487,
+      "tag": "0002_library-categories",
+      "breakpoints": true
     }
   ]
 }

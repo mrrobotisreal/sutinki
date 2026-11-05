@@ -4,8 +4,10 @@ import { useFocusEffect } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, View } from 'react-native';
 
+import { CategoryBadge } from '@/components/category-badge';
 import { LevelChip } from '@/components/level-chip';
 import { Text } from '@/components/ui/text';
+import { classifyPack } from '@/features/library/categories';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
@@ -133,6 +135,7 @@ export function PacksScreen() {
               key={item.state.packId}
               item={item}
               first={i === 0}
+              withCategory
               onRemove={() => confirmRemove(item)}
             />
           ))}
@@ -167,15 +170,21 @@ export function PacksScreen() {
 function PackRowView({
   item,
   first,
+  withCategory = false,
   onRemove,
 }: {
   item: InstalledPack;
   first: boolean;
+  withCategory?: boolean;
   onRemove: () => void;
 }) {
   const { tokens } = useAppTheme();
   const { state, pack } = item;
   const synced = new Date(state.updatedAt);
+  // M14 (T46): remote rows carry the md category badge on the caption line
+  // (the pack row already has category/genre) — a side column ate the title
+  // width on the S25; imported pastes are always «Импортировано» — no badge.
+  const cls = withCategory && pack ? classifyPack(pack) : null;
   return (
     <View
       className={`flex-row items-center gap-3 px-4 py-3.5 ${first ? '' : 'border-t border-border'}`}
@@ -185,10 +194,13 @@ function PackRowView({
         <Text className="font-ui-medium" numberOfLines={1}>
           {pack?.titleUk ?? state.packId}
         </Text>
-        <Text variant="caption" numberOfLines={1}>
-          v{state.version} · {formatBytes(state.bytes)} · {sourceLabel(state.source)} ·{' '}
-          {synced.toLocaleDateString()}
-        </Text>
+        <View className="flex-row items-center gap-2">
+          {cls ? <CategoryBadge category={cls.category} genre={cls.genre} size="md" /> : null}
+          <Text variant="caption" numberOfLines={1} className="shrink">
+            {cls ? '· ' : ''}v{state.version} · {formatBytes(state.bytes)} ·{' '}
+            {sourceLabel(state.source)} · {synced.toLocaleDateString()}
+          </Text>
+        </View>
       </View>
       <Pressable
         onPress={onRemove}
