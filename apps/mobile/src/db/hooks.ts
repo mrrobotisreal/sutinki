@@ -1,12 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import * as React from 'react';
 
 import { classifyPack, type Classified } from '@/features/library/categories';
+import { profileKeyFor } from '@/features/word-forms/profile-core';
 
 import { repos } from './index';
-import type { BankFilter, EncounterRow } from './repositories/bank';
+import type { BankFilter, BankItemRow, BankSort, EncounterRow } from './repositories/bank';
 import type { BookmarkRow } from './repositories/bookmarks';
 import type { ResolvedSentence } from './repositories/content';
+import type { ProfileKind } from './schema';
 import { MIXED_SESSION_DIRECTIONS, UNIFIED_SESSION_DIRECTIONS } from './repositories/reviews';
 
 /**
@@ -18,7 +25,8 @@ export const queryKeys = {
   packs: ['packs'] as const,
   stories: ['stories'] as const,
   storyDetail: (packId: string, storyId: string) => ['story', packId, storyId] as const,
-  bankItems: (filter?: BankFilter) => ['bank-items', filter ?? {}] as const,
+  bankItems: (filter?: BankFilter, sort?: BankSort) =>
+    ['bank-items', filter ?? {}, sort ?? null] as const,
   bankItem: (id: string) => ['bank-item', id] as const,
   bankItemDetail: (id: string) => ['bank-item', id, 'detail'] as const,
   bankCount: ['bank-count'] as const,
@@ -49,6 +57,21 @@ export const queryKeys = {
   dialogueRuns: (dialogueId?: string) => ['dialogue-runs', dialogueId ?? 'all'] as const,
   dialogueStamps: (packId: string, sentenceId: string) =>
     ['dialogue-stamps', packId, sentenceId] as const,
+  // M16 word profiles (T53, WORD_FORMS §5.4 key): keyed by the profile key,
+  // not the bank item id — profiles outlive items and are shared by lemma.
+  wordProfile: (lemmaNorm: string, kind: ProfileKind) => ['word-profile', lemmaNorm, kind] as const,
+  wordProfileVersions: (lemmaNorm: string, kind: ProfileKind) =>
+    ['word-profile', lemmaNorm, kind, 'versions'] as const,
+  lessonCounts: (lemmaNorm: string, kind: ProfileKind) =>
+    ['lesson-counts', lemmaNorm, kind] as const,
+  // M16 grammar lessons (T54, WORD_FORMS §7.3): keyed by the profile key like
+  // profiles — lessons outlive bank rows. `['lessons']` is the invalidation root.
+  lessonsForSection: (lemmaNorm: string, kind: ProfileKind, sectionId: string) =>
+    ['lessons', 'key', lemmaNorm, kind, sectionId] as const,
+  lessonsForKey: (lemmaNorm: string, kind: ProfileKind) =>
+    ['lessons', 'key', lemmaNorm, kind] as const,
+  lessonsGlobal: (search: string) => ['lessons', 'global', search] as const,
+  lesson: (id: string) => ['lessons', 'one', id] as const,
 };
 
 export function usePacks() {
@@ -81,10 +104,10 @@ export function useStoryDetail(packId: string, storyId: string) {
   });
 }
 
-export function useBankItems(filter?: BankFilter) {
+export function useBankItems(filter?: BankFilter, sort?: BankSort) {
   return useQuery({
-    queryKey: queryKeys.bankItems(filter),
-    queryFn: () => repos.bank.listItems(filter),
+    queryKey: queryKeys.bankItems(filter, sort),
+    queryFn: () => repos.bank.listItems(filter, sort),
   });
 }
 
@@ -388,4 +411,156 @@ export function useDialogueStamps(packId: string | undefined, sentenceId: string
     queryFn: () => repos.dialogues.getStampsForSentence(packId!, sentenceId!),
     enabled: !!packId && !!sentenceId,
   });
+}
+
+// --- M16 word profiles (T53) ------------------------------------------------
+
+type ProfileKeyItem = Pick<BankItemRow, 'kind' | 'lemmaNorm' | 'normalized'>;
+
+/**
+ * The current profile of a bank item (null = none yet, or the payload is
+ * unreadable). Disabled for lemma-less words — they have no key (§5.4), the
+ * Forms tab shows «Add a lemma first» instead of querying.
+ */
+export function useCurrentProfile(item: ProfileKeyItem | null | undefined) {
+  const key = item ? profileKeyFor(item) : null;
+  return useQuery({
+    queryKey: queryKeys.wordProfile(key?.lemmaNorm ?? '', key?.kind ?? 'word'),
+    queryFn: () => repos.wordForms.getCurrentProfile(key!.lemmaNorm, key!.kind),
+    enabled: key !== null,
+  });
+}
+
+/** Every stored version for the item's key, newest first (the Versions sheet). */
+export function useProfileVersions(item: ProfileKeyItem | null | undefined) {
+  const key = item ? profileKeyFor(item) : null;
+  return useQuery({
+    queryKey: queryKeys.wordProfileVersions(key?.lemmaNorm ?? '', key?.kind ?? 'word'),
+    queryFn: () => repos.wordForms.listProfileVersions(key!.lemmaNorm, key!.kind),
+    enabled: key !== null,
+  });
+}
+
+/** Lesson counts per section for the item's key (0 until T54 writes lessons). */
+export function useLessonCounts(item: ProfileKeyItem | null | undefined) {
+  const key = item ? profileKeyFor(item) : null;
+  return useQuery({
+    queryKey: queryKeys.lessonCounts(key?.lemmaNorm ?? '', key?.kind ?? 'word'),
+    queryFn: () => repos.wordForms.countLessonsForKey(key!.lemmaNorm, key!.kind),
+    enabled: key !== null,
+  });
+}
+
+/**
+ * How many bank items have no current profile — the batch entry row's N
+ * (T55, WORD_FORMS §7.5). Keyed under `['profile-coverage']`, which every
+ * profile write invalidates (`useInvalidateWordProfile`, the batch service).
+ */
+export function useItemsWithoutProfileCount() {
+  return useQuery({
+    queryKey: ['profile-coverage', 'count'] as const,
+    queryFn: () => repos.wordForms.countItemsWithoutProfile(),
+  });
+}
+
+/** Words the batch must skip (no lemma ⇒ no key) — the sheet's «{k} skipped — no lemma yet». */
+export function useItemsWithoutLemmaCount() {
+  return useQuery({
+    queryKey: ['profile-coverage', 'no-lemma'] as const,
+    queryFn: () => repos.wordForms.countItemsWithoutLemma(),
+  });
+}
+
+/**
+ * Invalidate everything the Forms tab reads for one key: the current
+ * profile, its versions list, and the lesson counts —
+ * after generate and promote, so the badge and the tables never disagree
+ * (ticket technical note). Also the batch entry's «N words without forms»
+ * count (T55) which changes whenever a profile appears.
+ */
+export function useInvalidateWordProfile() {
+  const queryClient = useQueryClient();
+  return React.useCallback(
+    (key: { lemmaNorm: string; kind: ProfileKind }) => {
+      void queryClient.invalidateQueries({
+        queryKey: ['word-profile', key.lemmaNorm, key.kind],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.lessonCounts(key.lemmaNorm, key.kind),
+      });
+      void queryClient.invalidateQueries({ queryKey: ['profile-coverage'] });
+    },
+    [queryClient],
+  );
+}
+
+// --- M16 grammar lessons (T54) ------------------------------------------------
+
+/** Lessons about one word × one section, newest first (the «Lessons · N» sheet). */
+export function useLessonsForSection(item: ProfileKeyItem | null | undefined, sectionId: string) {
+  const key = item ? profileKeyFor(item) : null;
+  return useQuery({
+    queryKey: queryKeys.lessonsForSection(key?.lemmaNorm ?? '', key?.kind ?? 'word', sectionId),
+    queryFn: () => repos.wordForms.listLessonsForSection(key!.lemmaNorm, key!.kind, sectionId),
+    enabled: key !== null,
+  });
+}
+
+/** Every lesson for the item's key, newest first (the item's Lessons tab groups by section). */
+export function useLessonsForKey(item: ProfileKeyItem | null | undefined) {
+  const key = item ? profileKeyFor(item) : null;
+  return useQuery({
+    queryKey: queryKeys.lessonsForKey(key?.lemmaNorm ?? '', key?.kind ?? 'word'),
+    queryFn: () => repos.wordForms.listLessonsForKey(key!.lemmaNorm, key!.kind),
+    enabled: key !== null,
+  });
+}
+
+/** §7.3 pagination step of the global Lessons screen. */
+export const LESSONS_PAGE_SIZE = 50;
+
+/**
+ * The global list (ё/е-tolerant `search`), newest first, paged by
+ * `limit/offset` 50 through an infinite query — `fetchNextPage` is «Load
+ * more»; a short page ends the list.
+ */
+export function useLessons(search: string) {
+  return useInfiniteQuery({
+    queryKey: queryKeys.lessonsGlobal(search),
+    queryFn: ({ pageParam }) =>
+      repos.wordForms.listLessons({
+        search,
+        limit: LESSONS_PAGE_SIZE,
+        offset: pageParam * LESSONS_PAGE_SIZE,
+      }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length < LESSONS_PAGE_SIZE ? undefined : pages.length,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useLesson(id: string | null | undefined) {
+  return useQuery({
+    queryKey: queryKeys.lesson(id ?? ''),
+    queryFn: () => repos.wordForms.getLesson(id!),
+    enabled: !!id,
+  });
+}
+
+/**
+ * After a lesson is generated: every lessons list (section sheet, item tab,
+ * global screen) and the T53 tab count for the key.
+ */
+export function useInvalidateLessons() {
+  const queryClient = useQueryClient();
+  return React.useCallback(
+    (key: { lemmaNorm: string; kind: ProfileKind }) => {
+      void queryClient.invalidateQueries({ queryKey: ['lessons'] });
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.lessonCounts(key.lemmaNorm, key.kind),
+      });
+    },
+    [queryClient],
+  );
 }

@@ -22,6 +22,20 @@
       "when": 1793906448487,
       "tag": "0002_library-categories",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793908188393,
+      "tag": "0003_review-source",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793908189052,
+      "tag": "0004_word-profiles",
+      "breakpoints": true
     }
   ]
 }

@@ -101,6 +101,8 @@ describe('migrations from empty DB', () => {
       'achievements',
       'import_requests',
       'imported_packs',
+      'word_profiles',
+      'grammar_lessons',
       'settings',
       'sync_state',
       'analytics_events',
@@ -140,6 +142,149 @@ describe('migrations from empty DB', () => {
     for (const c of M14_PACK_COLUMNS) expect(packCols).toContain(c);
     for (const c of M14_STORY_COLUMNS) expect(storyCols).toContain(c);
     expect(await indexNames(db, 'stories')).toContain('stories_source_date_idx');
+  });
+
+  it('0003_review-source: fresh DB has review_log.source + its index', async () => {
+    const db = createTestDb();
+    expect(await columnNames(db, 'review_log')).toContain('source');
+    expect(await indexNames(db, 'review_log')).toContain('review_log_source_idx');
+  });
+
+  it('0004_word-profiles: fresh DB has both M16 tables, all indexes, and the partial unique index', async () => {
+    const db = createTestDb();
+    await expectWordProfileTables(db);
+  });
+});
+
+const WORD_PROFILE_COLUMNS = [
+  'id',
+  'lemma_norm',
+  'kind',
+  'headword',
+  'pos',
+  'is_current',
+  'payload',
+  'provider',
+  'model',
+  'quality',
+  'effort',
+  'effort_applied',
+  'prompt_tokens',
+  'completion_tokens',
+  'reasoning_tokens',
+  'cost_usd',
+  'duration_ms',
+  'created_at',
+];
+const GRAMMAR_LESSON_COLUMNS = [
+  'id',
+  'lemma_norm',
+  'kind',
+  'headword',
+  'section_id',
+  'profile_id',
+  'markdown',
+  'provider',
+  'model',
+  'quality',
+  'effort',
+  'effort_applied',
+  'prompt_tokens',
+  'completion_tokens',
+  'reasoning_tokens',
+  'cost_usd',
+  'duration_ms',
+  'created_at',
+];
+
+/** T52 shape assertions shared by the fresh + upgrade cases (WORD_FORMS §2.2/§2.3). */
+async function expectWordProfileTables(db: SutinkiDB) {
+  expect(await columnNames(db, 'word_profiles')).toEqual(WORD_PROFILE_COLUMNS);
+  expect(await columnNames(db, 'grammar_lessons')).toEqual(GRAMMAR_LESSON_COLUMNS);
+  expect(await indexNames(db, 'word_profiles')).toEqual(
+    expect.arrayContaining(['word_profiles_key_idx', 'word_profiles_current_uq']),
+  );
+  expect(await indexNames(db, 'grammar_lessons')).toEqual(
+    expect.arrayContaining(['grammar_lessons_key_idx', 'grammar_lessons_created_idx']),
+  );
+  // The partial unique index must keep its WHERE through drizzle-kit — the
+  // versioning invariant (one current per key) rests on it.
+  const idx = await db.all<{ name: string; unique: number; partial: number }>(
+    sql.raw('PRAGMA index_list(word_profiles)'),
+  );
+  const current = idx.find((i) => i.name === 'word_profiles_current_uq');
+  expect(current).toMatchObject({ unique: 1, partial: 1 });
+  const master = await db.all<{ sql: string }>(
+    sql`SELECT sql FROM sqlite_master WHERE type = 'index' AND name = 'word_profiles_current_uq'`,
+  );
+  expect(master[0]!.sql).toMatch(/WHERE\s+is_current\s*=\s*1/i);
+}
+
+describe('0004_word-profiles upgrade from 0003', () => {
+  it('creates both tables + indexes on a device that ran 0003; the partial index enforces one current per key', async () => {
+    const { sqlite, db } = createDbUpTo('0003_review-source');
+    const before = await db.all<{ name: string }>(
+      sql`SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('word_profiles', 'grammar_lessons')`,
+    );
+    expect(before).toEqual([]);
+
+    migrate(drizzle(sqlite, { schema }), { migrationsFolder });
+
+    await expectWordProfileTables(db);
+    const insert = sqlite.prepare(
+      `INSERT INTO word_profiles (id, lemma_norm, kind, headword, pos, is_current, payload, provider, model, quality, effort, effort_applied, duration_ms, created_at)
+       VALUES (?, 'говорить', 'word', 'говорить', 'verb', ?, '{}', 'anthropic', 'm', 'normal', 'high', 1, 1, ?)`,
+    );
+    insert.run('wp-1', 1, 1);
+    // A second CURRENT row for the same key is rejected by the partial index…
+    expect(() => insert.run('wp-2', 1, 2)).toThrow(/UNIQUE/);
+    // …while a non-current version of the same key is fine (old versions kept).
+    insert.run('wp-3', 0, 3);
+    const applied = sqlite.prepare('SELECT COUNT(*) AS n FROM "__drizzle_migrations"').get() as {
+      n: number;
+    };
+    expect(applied.n).toBe(journal.entries.length);
+  });
+});
+
+describe('0003_review-source upgrade from 0002', () => {
+  it('adds the nullable column + index; pre-existing grades read NULL', async () => {
+    const { sqlite, db } = createDbUpTo('0002_library-categories');
+    expect(await columnNames(db, 'review_log')).not.toContain('source');
+    expect(await indexNames(db, 'review_log')).not.toContain('review_log_source_idx');
+
+    // A bank item + card + grade written by the previous release.
+    sqlite
+      .prepare(
+        `INSERT INTO bank_items (id, kind, lemma, lemma_norm, surface, normalized, translation, needs_enrichment, created_at)
+         VALUES ('bi-old', 'word', 'дом', 'дом', 'дом', 'дом', 'house', 0, 0)`,
+      )
+      .run();
+    sqlite
+      .prepare(
+        `INSERT INTO cards (id, bank_item_id, direction, due_at, stability, difficulty, elapsed_days, scheduled_days, learning_steps, reps, lapses, state, last_review_at, created_at)
+         VALUES ('c-old', 'bi-old', 'ru-en', 0, 1, 5, 0, 0, 0, 1, 0, 1, 0, 0)`,
+      )
+      .run();
+    sqlite
+      .prepare(
+        `INSERT INTO review_log (id, card_id, rating, state, due_at, stability, difficulty, elapsed_days, last_elapsed_days, scheduled_days, learning_steps, reviewed_at)
+         VALUES ('rl-old', 'c-old', 3, 1, 0, 1, 5, 0, 0, 0, 0, 0)`,
+      )
+      .run();
+
+    migrate(drizzle(sqlite, { schema }), { migrationsFolder });
+
+    expect(await columnNames(db, 'review_log')).toContain('source');
+    expect(await indexNames(db, 'review_log')).toContain('review_log_source_idx');
+    const rows = await db.all<{ source: string | null }>(
+      sql`SELECT source FROM review_log WHERE id = 'rl-old'`,
+    );
+    expect(rows[0]).toEqual({ source: null });
+    const applied = sqlite.prepare('SELECT COUNT(*) AS n FROM "__drizzle_migrations"').get() as {
+      n: number;
+    };
+    expect(applied.n).toBe(journal.entries.length);
   });
 });
 
