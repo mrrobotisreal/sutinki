@@ -1,8 +1,12 @@
 import { useLocalSearchParams } from 'expo-router';
 
-import { ItemDetailScreen } from '@/features/word-bank/item-detail-screen';
+import { ukPending } from '@/config/flags';
+import { ItemDetailScreen, type ItemDetailTab } from '@/features/word-bank/item-detail-screen';
 
+/** `?tab=forms|lessons` deep-links into a tab (T53 — the reader popup's «Форми», T54's global Lessons). */
 export default function BankItemRoute() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  return <ItemDetailScreen id={id} />;
+  const { id, tab } = useLocalSearchParams<{ id: string; tab?: string }>();
+  const initialTab: ItemDetailTab =
+    !ukPending('wordProfiles') && (tab === 'forms' || tab === 'lessons') ? tab : 'overview';
+  return <ItemDetailScreen id={id} initialTab={initialTab} />;
 }

@@ -85,6 +85,13 @@ export const SETTING_KEYS = {
    */
   libraryFilter: 'library.filter',
   /**
+   * Словарь sort (T50, WORD_FORMS §2.4): { v: 1, key: BankSortKey,
+   * familiarity: 'least' | 'most' }, defaults { 'added-asc', 'least' } —
+   * Zod-validated on read (store/bank-prefs.ts); a malformed value heals
+   * field-by-field to the defaults.
+   */
+  bankSort: 'bank.sort',
+  /**
    * Daily-session composition (T14): { length, weights: { flashcard, mc,
    * cloze, sentenceBuilder, listening } } — Zod-validated on read
    * (store/daily-prefs.ts), corrupt values fall back to defaults.
@@ -101,6 +108,39 @@ export const SETTING_KEYS = {
    * only (same rule as the GitHub PAT).
    */
   aiModel: 'ai.model',
+  /**
+   * «Grammar & word forms» run profile (T51, WORD_FORMS §2.4): { v: 1,
+   * provider: AiProvider, quality: AiQuality, effort: AiEffort }, defaults
+   * { 'anthropic', 'normal', 'high' } — Zod-validated on read
+   * (features/ai/run-profile.ts); a malformed value heals field-by-field.
+   * The five legacy AI features keep `ai.model` (ADR-0018 decision 4).
+   */
+  aiGrammarPreset: 'ai.grammarPreset',
+  /**
+   * Editable model-id table (T51, WORD_FORMS §2.4): { v: 1, anthropic:
+   * Record<AiQuality, string>, openai: Record<AiQuality, string> }, defaults
+   * = ADR-0018 decision 3; every id must match `ModelSchema` (features/ai/
+   * config.ts); a malformed slug heals to its own default only. This table
+   * is the ONLY place model slugs live.
+   */
+  aiModelTable: 'ai.modelTable',
+  /**
+   * Running generation receipts (T51 declares, T52/T54 write, the Generate
+   * sheet reads — WORD_FORMS §2.4): { v: 1, runs: Record<
+   * '${provider}:${quality}:${effort}:${'profile'|'lesson'}',
+   * { n, totalMs, totalCostUsd, totalCompletionTokens }> } — the batch
+   * estimate derives from these, never from hardcoded prices.
+   */
+  grammarStats: 'grammar.stats',
+  /**
+   * The durable word-forms batch (T55, WORD_FORMS §2.4): { v: 1, startedAt,
+   * preset: {provider, quality, effort}, pending: { bankItemId, lemmaNorm,
+   * kind, headword, attempts }[], done, failed: { …, code }[], count,
+   * costUsd, finishedAt? } or absent. Written BEFORE each request, an item
+   * removed AFTER its profile is stored; deleted when nothing is pending
+   * and nothing failed (features/word-forms/batch-service.ts).
+   */
+  grammarBatch: 'grammar.batch',
   /**
    * Daily goal (T19, §7.7): { reviews, readingMin } — Zod-validated on read
    * (features/motivation/goal-prefs), defaults 20 reviews + 10 min reading.

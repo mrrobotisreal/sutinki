@@ -157,6 +157,8 @@ export default function RootLayout() {
                   options={{ title: 'Add to word bank', presentation: 'modal' }}
                 />
                 <Stack.Screen name="word-bank/enrich" options={{ title: 'Enrich with AI' }} />
+                <Stack.Screen name="lessons/index" options={{ title: 'Уроки' }} />
+                <Stack.Screen name="lessons/[id]" options={{ title: 'Урок' }} />
                 <Stack.Screen name="packs" options={{ title: 'Пакети контенту' }} />
                 <Stack.Screen name="restore" options={{ title: 'Restore from backup' }} />
                 <Stack.Screen name="error-log" options={{ title: 'Error log' }} />

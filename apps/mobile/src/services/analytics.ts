@@ -315,7 +315,61 @@ export type AnalyticsEvent =
   // T49 Settings «Soundtracks» panel. Props: the theme slug only.
   // ambient_preview_played {theme} — ▶ on a row; ambient_rotation_reset {theme} — «Reset».
   | 'ambient_preview_played'
-  | 'ambient_rotation_reset';
+  | 'ambient_rotation_reset'
+  // M16 T50 Словарь sorting. bank_sort_changed {key, familiarity} — the sheet applied a sort.
+  // No new per-grade event: review_graded / *_item_graded carry `gradeSource` (= review_log.source;
+  // never `source`, which pron/listening items already use for other meanings).
+  | 'bank_sort_changed'
+  // M16 run profile (T51). Props: provider/quality/effort/model slugs + scope only — never the key.
+  // ai_grammar_preset_changed {provider, quality, effort, scope: 'default'|'run'} — the Settings
+  // preset (default) or a Generate-sheet run that differs from it (run);
+  // ai_model_table_edited {provider, quality} — one slug in the Advanced table saved;
+  // ai_effort_param_rejected {provider, model} — the §4.4 fallback fired (retried without effort).
+  // ai_request_sent/succeeded/failed gain optional provider/quality/effort/model when a run profile is used.
+  | 'ai_grammar_preset_changed'
+  | 'ai_model_table_edited'
+  | 'ai_effort_param_rejected'
+  // M16 word profiles (T52, WORD_FORMS §2.5). Props: kind/pos/provider/quality/effort slugs,
+  // counts, ms, tokens, cost — never the headword or any Russian text.
+  // word_profile_requested {kind, provider, quality, effort, regenerate} — a generation starts;
+  // word_profile_generated {kind, pos, sections, ms, promptTokens, completionTokens, costUsd, corrected};
+  // word_profile_invalid_retry {issues} — the one correction round fired (n = validator issues);
+  // word_profile_failed {kind, code, ms} — AiError code (invalid-response after the failed retry).
+  | 'word_profile_requested'
+  | 'word_profile_generated'
+  | 'word_profile_invalid_retry'
+  | 'word_profile_failed'
+  // M16 Forms tab + popup (T53, WORD_FORMS §2.5). Props: kind, booleans, a catalog section id —
+  // never the headword. forms_tab_viewed {kind, hasProfile} — the tab focused (once per mount);
+  // forms_section_expanded {sectionId} — a section card opened (once per section per mount);
+  // word_profile_version_promoted {kind} — «Make current» in the Versions sheet;
+  // popup_forms_opened {banked} — the reader/dialogue popup's «Форми» (banked=false ⇒ the word
+  // was added to the bank on the way).
+  | 'forms_tab_viewed'
+  | 'forms_section_expanded'
+  | 'word_profile_version_promoted'
+  | 'popup_forms_opened'
+  // M16 grammar lessons (T54, WORD_FORMS §2.5). Props: a catalog section id, run-profile slugs,
+  // ms/cost/chars counts, an AiError code — never the headword or lesson text.
+  // lesson_requested {sectionId, provider, quality, effort} — Learn / Learn again started;
+  // lesson_generated {sectionId, ms, costUsd, chars} — stored (append-only);
+  // lesson_failed {sectionId, code} — the run failed (invalid-response = out of §6.2 bounds, no auto-retry);
+  // lesson_opened {from: 'section'|'global'|'item'|'sheet'} — a saved lesson screen opened (the T17 path
+  // event of the same name carries {packId} — the `from` prop tells the two apart);
+  // lessons_screen_opened — the global Lessons screen (dictionary-tab header icon).
+  | 'lesson_requested'
+  | 'lesson_generated'
+  | 'lesson_failed'
+  | 'lessons_screen_opened'
+  // M16 durable batch (T55, WORD_FORMS §2.5). Props: counts, run-profile slugs, ms, cost —
+  // never a headword. profile_batch_started {count, provider, quality, effort} — the row was
+  // written; profile_batch_progress {done, failed, remaining} — at most once per resolved item
+  // (done + failed + remaining = count, always); profile_batch_finished {done, failed, ms,
+  // costUsd} — pending reached zero; profile_batch_cancelled {done, remaining} — Cancel tapped.
+  | 'profile_batch_started'
+  | 'profile_batch_progress'
+  | 'profile_batch_finished'
+  | 'profile_batch_cancelled';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 
