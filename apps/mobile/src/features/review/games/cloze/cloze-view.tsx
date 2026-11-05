@@ -207,7 +207,9 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
                   typed.trim() ? 'bg-accent active:opacity-80' : 'bg-surface-2 opacity-50'
                 }`}
               >
-                <Text className={`font-ui-medium ${typed.trim() ? 'text-bg' : ''}`}>Check</Text>
+                <Text className={`font-ui-medium ${typed.trim() ? 'text-on-accent' : ''}`}>
+                  Check
+                </Text>
               </Pressable>
             </View>
           )}
@@ -220,7 +222,7 @@ export function ClozeView({ entry, onDone }: ClozeViewProps) {
           accessibilityRole="button"
           className="mt-4 items-center rounded-xl bg-accent py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Continue</Text>
+          <Text className="font-ui-medium text-on-accent">Continue</Text>
         </Pressable>
       )}
     </View>

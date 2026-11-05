@@ -216,7 +216,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
             accessibilityRole="button"
             className="mt-1 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
           >
-            <Text className="text-accent">Open settings</Text>
+            <Text className="text-accent-2">Open settings</Text>
           </Pressable>
           <Pressable onPress={() => setPhase('idle')} accessibilityRole="button" hitSlop={8}>
             <Text variant="caption">Try again</Text>
@@ -235,7 +235,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
             accessibilityRole="button"
             className="rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
           >
-            <Text className="text-accent">Try again</Text>
+            <Text className="text-accent-2">Try again</Text>
           </Pressable>
         </View>
       )}
@@ -287,7 +287,7 @@ export function PronunciationView({ entry, onComplete }: PronunciationViewProps)
               accessibilityRole="button"
               className="flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
             >
-              <Text className="font-ui-medium text-bg">Continue</Text>
+              <Text className="font-ui-medium text-on-accent">Continue</Text>
             </Pressable>
           </View>
         )}

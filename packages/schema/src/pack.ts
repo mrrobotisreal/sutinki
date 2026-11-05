@@ -191,7 +191,7 @@ export const PackThemeSchema = z.strictObject({
   /** Optional accent color for the scene, "#RRGGBB". */
   accent: z
     .string()
-    .regex(/^#[0-9a-fA-F]{6}$/, 'accent is a hex color like "#B3402F"')
+    .regex(/^#[0-9a-fA-F]{6}$/, 'accent is a hex color like "#336699"')
     .optional(),
 });
 export type PackTheme = z.infer<typeof PackThemeSchema>;

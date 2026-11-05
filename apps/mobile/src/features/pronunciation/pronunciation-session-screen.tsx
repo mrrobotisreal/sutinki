@@ -214,7 +214,7 @@ export function PronunciationSessionScreen() {
           accessibilityRole="button"
           className="min-h-12 items-center justify-center rounded-full border border-border bg-surface px-5 active:bg-surface-2"
         >
-          <Text className="text-accent">Back</Text>
+          <Text className="text-accent-2">Back</Text>
         </Pressable>
       </View>
     );
@@ -238,7 +238,7 @@ export function PronunciationSessionScreen() {
           accessibilityRole="button"
           className="mt-2 rounded-full bg-accent px-5 py-2.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Відкрити налаштування</Text>
+          <Text className="font-ui-medium text-on-accent">Відкрити налаштування</Text>
         </Pressable>
       </View>
     );
@@ -257,7 +257,7 @@ export function PronunciationSessionScreen() {
           accessibilityRole="button"
           className="mt-2 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
         >
-          <Text className="text-accent">Back</Text>
+          <Text className="text-accent-2">Back</Text>
         </Pressable>
       </View>
     );

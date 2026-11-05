@@ -3,11 +3,13 @@
 @tailwind utilities;
 
 /*
- * Sumrak theme tokens — single source of truth for color VALUES
- * (UI_DESIGN.md §1). Space-separated RGB so Tailwind alpha modifiers work.
+ * Sutinki theme tokens «moonlight on water» — single source of truth for
+ * color VALUES (UI_DESIGN.md §Theme, ADR-0009). Space-separated RGB so
+ * Tailwind alpha modifiers work. WCAG ratios are asserted by
+ * src/theme/__tests__/contrast.test.ts.
  *
- * Dark is the default identity ("dark, atmospheric, restrained horror");
- * light is the deliberate warm-paper daylight variant, not an inversion.
+ * Dark is the default identity (navy night, moon-gold accent, sea-blue
+ * accent-2); light is the warm-paper daylight variant, not an inversion.
  *
  * NOTE: src/theme/colors.ts mirrors these values for the few places CSS
  * classes cannot reach (navigation theme, status bar, splash). Keep in sync.
@@ -21,38 +23,42 @@
     --surface-2: 239 236 231; /* #EFECE7 */
     --text: 26 26 31; /* #1A1A1F */
     --text-muted: 107 104 112; /* #6B6870 */
-    --accent: 160 56 40; /* #A03828 */
-    --success: 90 117 72; /* #5A7548 muted moss */
-    --danger: 150 50 43; /* #96322B dried blood */
+    --accent: 133 102 0; /* #856600 */
+    --accent-2: 31 86 200; /* #1F56C8 */
+    --on-accent: 255 255 255; /* #FFFFFF */
+    --success: 88 114 70; /* #587246 */
+    --danger: 150 50 43; /* #96322B */
     --border: 226 222 216; /* #E2DED8 */
     --scrim: 0 0 0; /* modal/sheet backdrop wash (used with alpha) */
-    --track-warm: 143 101 52; /* #8F6534 warm honey — «Семья» track identity (T30), 5.1:1 on surface */
-    /* CEFR chip ramp — one hue journey, A1 coolest → C1 ember (UI_DESIGN §1) */
-    --level-a1: 78 101 127; /* #4E657F cool slate */
-    --level-a2: 79 112 96; /* #4F7060 sage */
-    --level-b1: 117 104 61; /* #75683D dry olive */
-    --level-b2: 130 85 47; /* #82552F rust */
-    --level-c1: 160 56 40; /* #A03828 ember (= accent) */
+    --track-warm: 139 98 51; /* #8B6233 «Сім’я» track identity */
+    /* CEFR chip ramp — deep sea → moonlight gold (ADR-0009) */
+    --level-a1: 31 78 158; /* #1F4E9E */
+    --level-a2: 49 94 151; /* #315E97 */
+    --level-b1: 81 94 115; /* #515E73 */
+    --level-b2: 110 91 16; /* #6E5B10 */
+    --level-c1: 116 89 0; /* #745900 */
   }
 
-  /* Dark — near-black, desaturated ember (default identity) */
+  /* Dark — navy night (default identity) */
   .dark:root {
-    --bg: 11 11 14; /* #0B0B0E */
-    --surface: 20 20 25; /* #141419 */
-    --surface-2: 28 28 36; /* #1C1C24 */
+    --bg: 10 14 22; /* #0A0E16 */
+    --surface: 18 25 38; /* #121926 */
+    --surface-2: 26 35 51; /* #1A2333 */
     --text: 232 230 227; /* #E8E6E3 */
-    --text-muted: 154 151 160; /* #9A97A0 */
-    --accent: 179 64 47; /* #B3402F */
-    --success: 112 140 90; /* #708C5A muted moss */
-    --danger: 206 106 96; /* #CE6A60 dried blood, lightened for AA text contrast on all dark surfaces (T22 a11y; was #8E3B35 @ 2.65:1) */
-    --border: 38 38 46; /* #26262E */
+    --text-muted: 152 160 179; /* #98A0B3 */
+    --accent: 233 192 50; /* #E9C032 */
+    --accent-2: 75 133 255; /* #4B85FF */
+    --on-accent: 10 14 22; /* #0A0E16 */
+    --success: 117 147 94; /* #75935E */
+    --danger: 207 110 100; /* #CF6E64 */
+    --border: 37 48 71; /* #253047 */
     --scrim: 0 0 0; /* modal/sheet backdrop wash (used with alpha) */
-    --track-warm: 192 138 74; /* #C08A4A warm candle amber — «Семья» track identity (T30), 6.2:1 on surface */
-    /* CEFR chip ramp — one hue journey, A1 coolest → C1 ember (UI_DESIGN §1) */
-    --level-a1: 107 127 153; /* #6B7F99 cool slate */
-    --level-a2: 110 139 121; /* #6E8B79 sage */
-    --level-b1: 143 133 90; /* #8F855A dry olive */
-    --level-b2: 156 107 69; /* #9C6B45 rust */
-    --level-c1: 179 64 47; /* #B3402F ember (= accent) */
+    --track-warm: 217 164 65; /* #D9A441 «Сім’я» track identity */
+    /* CEFR chip ramp — deep sea → moonlight gold (ADR-0009) */
+    --level-a1: 124 159 221; /* #7C9FDD */
+    --level-a2: 157 181 230; /* #9DB5E6 */
+    --level-b1: 140 159 192; /* #8C9FC0 */
+    --level-b2: 194 164 67; /* #C2A443 */
+    --level-c1: 233 192 50; /* #E9C032 */
   }
 }

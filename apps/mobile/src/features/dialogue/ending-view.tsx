@@ -154,7 +154,7 @@ export function EndingView({
         className="mt-8 flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
       >
         <Ionicons name="refresh" size={16} color={theme.bg} />
-        <Text className="font-ui-medium text-bg">Пройти ще раз</Text>
+        <Text className="font-ui-medium text-on-accent">Пройти ще раз</Text>
       </Pressable>
       <Pressable
         onPress={onClose}

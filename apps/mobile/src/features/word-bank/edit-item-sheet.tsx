@@ -130,7 +130,7 @@ function EditForm({ item, onClose, onSaved }: Omit<EditItemSheetProps, 'open'>) 
             accessibilityLabel="Save changes"
             className="mt-4 items-center rounded-xl bg-accent py-3 active:opacity-80"
           >
-            <Text className="font-ui-medium text-bg">Save</Text>
+            <Text className="font-ui-medium text-on-accent">Save</Text>
           </Pressable>
         </ScrollView>
       </View>

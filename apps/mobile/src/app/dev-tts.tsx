@@ -152,7 +152,7 @@ export default function DevTtsScreen() {
                     : 'rounded-full border border-border bg-surface px-4 py-2 opacity-40'
               }
             >
-              <Text className={active ? 'font-ui-medium text-bg' : 'font-ui-medium'}>
+              <Text className={active ? 'font-ui-medium text-on-accent' : 'font-ui-medium'}>
                 {option.label}
               </Text>
             </Pressable>
@@ -179,7 +179,9 @@ export default function DevTtsScreen() {
                 : 'rounded-full border border-border bg-surface px-4 py-2 active:bg-surface-2'
             }
           >
-            <Text className={rate === r ? 'font-ui-medium text-bg' : 'font-ui-medium'}>{r}×</Text>
+            <Text className={rate === r ? 'font-ui-medium text-on-accent' : 'font-ui-medium'}>
+              {r}×
+            </Text>
           </Pressable>
         ))}
       </View>
@@ -197,7 +199,7 @@ export default function DevTtsScreen() {
           }
         >
           <Ionicons name="volume-high" size={18} color={tokens.bg} />
-          <Text className="font-ui-medium text-bg">{busy ? 'Starting…' : 'Speak'}</Text>
+          <Text className="font-ui-medium text-on-accent">{busy ? 'Starting…' : 'Speak'}</Text>
         </Pressable>
         <Pressable
           onPress={() => void stopSpeaking()}

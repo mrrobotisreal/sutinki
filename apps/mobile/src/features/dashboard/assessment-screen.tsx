@@ -180,7 +180,7 @@ export function AssessmentScreen() {
                 color={online === false ? tokens.textMuted : tokens.bg}
               />
               <Text
-                className={`font-ui-medium ${online === false ? 'text-text-muted' : 'text-bg'}`}
+                className={`font-ui-medium ${online === false ? 'text-text-muted' : 'text-on-accent'}`}
               >
                 {latest ? 'Reassess now' : 'Run first assessment'}
               </Text>

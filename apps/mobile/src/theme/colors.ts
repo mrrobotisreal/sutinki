@@ -13,6 +13,10 @@ export interface ColorTokens {
   text: string;
   textMuted: string;
   accent: string;
+  /** Sea blue — links, focus rings, listen/speak surfaces (ADR-0009). */
+  accent2: string;
+  /** Text/icon colour on accent and accent-2 fills. */
+  onAccent: string;
   success: string;
   danger: string;
   border: string;
@@ -24,16 +28,18 @@ export interface ColorTokens {
 
 export const colors: Record<ThemeScheme, ColorTokens> = {
   dark: {
-    bg: '#0B0B0E',
-    surface: '#141419',
-    surface2: '#1C1C24',
+    bg: '#0A0E16',
+    surface: '#121926',
+    surface2: '#1A2333',
     text: '#E8E6E3',
-    textMuted: '#9A97A0',
-    accent: '#B3402F',
-    success: '#708C5A',
-    danger: '#CE6A60',
-    border: '#26262E',
-    trackWarm: '#C08A4A',
+    textMuted: '#98A0B3',
+    accent: '#E9C032',
+    accent2: '#4B85FF',
+    onAccent: '#0A0E16',
+    success: '#75935E',
+    danger: '#CF6E64',
+    border: '#253047',
+    trackWarm: '#D9A441',
     scrim: '#000000',
   },
   light: {
@@ -42,11 +48,13 @@ export const colors: Record<ThemeScheme, ColorTokens> = {
     surface2: '#EFECE7',
     text: '#1A1A1F',
     textMuted: '#6B6870',
-    accent: '#A03828',
-    success: '#5A7548',
+    accent: '#856600',
+    accent2: '#1F56C8',
+    onAccent: '#FFFFFF',
+    success: '#587246',
     danger: '#96322B',
     border: '#E2DED8',
-    trackWarm: '#8F6534',
+    trackWarm: '#8B6233',
     scrim: '#000000',
   },
 };

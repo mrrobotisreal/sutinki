@@ -17,6 +17,11 @@ module.exports = {
         accent: 'rgb(var(--accent) / <alpha-value>)',
         // accent at 15% — selection washes, highlight, karaoke word bg
         'accent-soft': 'rgb(var(--accent) / 0.15)',
+        // sea blue (ADR-0009) — links, focus rings, listen/speak surfaces
+        'accent-2': 'rgb(var(--accent-2) / <alpha-value>)',
+        'accent-2-soft': 'rgb(var(--accent-2) / 0.15)',
+        // label colour on accent / accent-2 fills (near-black dark, white light)
+        'on-accent': 'rgb(var(--on-accent) / <alpha-value>)',
         success: 'rgb(var(--success) / <alpha-value>)',
         danger: 'rgb(var(--danger) / <alpha-value>)',
         border: 'rgb(var(--border) / <alpha-value>)',
@@ -28,7 +33,7 @@ module.exports = {
         // accents on track sections; soft = selection/highlight wash
         'track-warm': 'rgb(var(--track-warm) / <alpha-value>)',
         'track-warm-soft': 'rgb(var(--track-warm) / 0.15)',
-        // CEFR chip hue ramp (A1 coolest → C1 ember) — used via LevelChip only
+        // CEFR chip hue ramp (A1 deep sea → C1 moon gold) — used via LevelChip only
         'level-a1': 'rgb(var(--level-a1) / <alpha-value>)',
         'level-a2': 'rgb(var(--level-a2) / <alpha-value>)',
         'level-b1': 'rgb(var(--level-b1) / <alpha-value>)',
@@ -36,13 +41,13 @@ module.exports = {
         'level-c1': 'rgb(var(--level-c1) / <alpha-value>)',
       },
       fontFamily: {
-        // UI chrome: Golos Text (Cyrillic-friendly, used for the Russian tab titles)
+        // UI chrome: Golos Text (Cyrillic-friendly, used for the Ukrainian tab titles)
         ui: ['GolosText_400Regular'],
         'ui-medium': ['GolosText_500Medium'],
         'ui-bold': ['GolosText_700Bold'],
-        // Display / branding (Сумрак wordmark): dripping-paint horror, Cyrillic-capable
+        // Display / branding (Сутінки wordmark): dripping-paint horror, Cyrillic-capable
         display: ['RubikWetPaint_400Regular'],
-        // Reading (Russian story content): Literata with real Cyrillic italics
+        // Reading (Ukrainian story content): Literata with real Cyrillic italics
         reading: ['Literata_400Regular'],
         'reading-bold': ['Literata_700Bold'],
         'reading-italic': ['Literata_400Regular_Italic'],

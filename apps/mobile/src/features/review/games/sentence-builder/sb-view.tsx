@@ -141,7 +141,7 @@ export function SbView({ entry, onDone }: SbViewProps) {
           accessibilityRole="button"
           className="mt-5 items-center rounded-xl bg-accent py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-medium text-bg">Continue</Text>
+          <Text className="font-ui-medium text-on-accent">Continue</Text>
         </Pressable>
       ) : (
         <Pressable
@@ -152,7 +152,7 @@ export function SbView({ entry, onDone }: SbViewProps) {
             chosen.length === wordCount ? 'bg-accent active:opacity-80' : 'bg-surface-2 opacity-50'
           }`}
         >
-          <Text className={`font-ui-medium ${chosen.length === wordCount ? 'text-bg' : ''}`}>
+          <Text className={`font-ui-medium ${chosen.length === wordCount ? 'text-on-accent' : ''}`}>
             Check
           </Text>
         </Pressable>

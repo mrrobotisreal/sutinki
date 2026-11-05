@@ -481,7 +481,7 @@ function CheckpointNode({
             accessibilityRole="button"
             className="mt-3 items-center rounded-xl bg-accent py-3 active:opacity-80"
           >
-            <Text className="font-ui-medium text-bg">
+            <Text className="font-ui-medium text-on-accent">
               {checkpoint.passed ? 'Take it again' : 'Take the test'}
             </Text>
           </Pressable>

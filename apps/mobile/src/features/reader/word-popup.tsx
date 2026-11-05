@@ -221,7 +221,9 @@ function WordPopupSheet({
             size={18}
             color={inBank ? theme.success : theme.bg}
           />
-          <Text className={inBank ? 'font-ui-medium text-text-muted' : 'font-ui-medium text-bg'}>
+          <Text
+            className={inBank ? 'font-ui-medium text-text-muted' : 'font-ui-medium text-on-accent'}
+          >
             {inBank ? 'In bank ✓' : 'Add to word bank'}
           </Text>
         </Pressable>
