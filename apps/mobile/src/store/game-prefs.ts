@@ -25,6 +25,13 @@ interface GamePrefsState {
    * for silent environments; the mic stays available either way (T27).
    */
   dialogueTapMode: boolean;
+  /**
+   * UT20: probability (0–1, default 1 = predictable) that a cloze item whose
+   * word profile has a declension grid blanks only the case ending. No
+   * settings UI (hidden dev knob, set via this setter).
+   */
+  clozeEndingProbability: number;
+  setClozeEndingProbability: (value: number) => void;
   setDialogueTapMode: (value: boolean) => void;
 }
 
@@ -34,6 +41,12 @@ export const useGamePrefs = create<GamePrefsState>((set) => ({
     set({ clozeUnseenStoriesAllowed: value });
     track('games_unseen_stories_toggled', { enabled: value });
     void repos.settings.set(SETTING_KEYS.clozeUnseenStoriesAllowed, value);
+  },
+  clozeEndingProbability: 1,
+  setClozeEndingProbability: (value) => {
+    const v = Math.min(1, Math.max(0, value));
+    set({ clozeEndingProbability: v });
+    void repos.settings.set(SETTING_KEYS.clozeEndingProbability, v);
   },
   dialogueTapMode: false,
   setDialogueTapMode: (value) => {
@@ -45,10 +58,15 @@ export const useGamePrefs = create<GamePrefsState>((set) => ({
 
 /** Load persisted prefs after the DB is ready (called by DbProvider). */
 export async function hydrateGamePrefsFromDb(): Promise<void> {
-  const [unseen, tapMode] = await Promise.all([
+  const [unseen, tapMode, endingProb] = await Promise.all([
     repos.settings.get<unknown>(SETTING_KEYS.clozeUnseenStoriesAllowed),
     repos.settings.get<unknown>(SETTING_KEYS.dialogueTapMode),
+    repos.settings.get<unknown>(SETTING_KEYS.clozeEndingProbability),
   ]);
+  const parsedEnding = z.number().min(0).max(1).safeParse(endingProb);
+  if (parsedEnding.success) {
+    useGamePrefs.setState({ clozeEndingProbability: parsedEnding.data });
+  }
   const parsedUnseen = z.boolean().safeParse(unseen);
   if (parsedUnseen.success) {
     useGamePrefs.setState({ clozeUnseenStoriesAllowed: parsedUnseen.data });

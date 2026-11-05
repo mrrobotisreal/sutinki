@@ -40,6 +40,7 @@ export function DailySessionScreen() {
   // T18 "practice now": `focus` = comma-joined bank item ids — the session
   // narrows to those items' cards (due-agnostic) instead of the due queue.
   const { focus } = useLocalSearchParams<{ focus?: string }>();
+  const endingProbability = useGamePrefs((s) => s.clozeEndingProbability);
   // Captured once at mount — the session builds once; settings apply next launch.
   const [build] = React.useState(
     () => () =>
@@ -47,6 +48,7 @@ export function DailySessionScreen() {
         length: prefs.length,
         weights: prefs.weights,
         unseenAllowed,
+        endingProbability,
         focusItemIds: focus ? focus.split(',').filter(Boolean) : undefined,
       }),
   );

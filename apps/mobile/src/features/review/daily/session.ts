@@ -106,6 +106,8 @@ export interface DailySessionOpts {
   length?: number;
   weights?: DailyWeights;
   unseenAllowed?: boolean;
+  /** UT20 knob: chance an eligible cloze item takes the case-ending variant (default 1). */
+  endingProbability?: number;
   now?: number;
   /**
    * T18 "practice now": restrict the session to these bank items' cards,
@@ -123,6 +125,7 @@ export async function buildDailySession(
     length = DEFAULT_DAILY_PREFS.length,
     weights = DEFAULT_DAILY_PREFS.weights,
     unseenAllowed = false,
+    endingProbability = 1,
     now = Date.now(),
     focusItemIds,
   } = opts;
@@ -211,6 +214,7 @@ export async function buildDailySession(
       built = await tryBuildTextItem(repos, mode, card, item, {
         readIndex: readIndex!,
         unseenAllowed,
+        endingProbability,
         sentenceGameServed,
         clozeVariant: clozeCount % 2 === 0 ? 'tiles' : 'typed',
       });
@@ -258,6 +262,7 @@ async function tryBuildTextItem(
   ctx: {
     readIndex: ReadIndex;
     unseenAllowed: boolean;
+    endingProbability: number;
     sentenceGameServed: Set<string>;
     clozeVariant: 'tiles' | 'typed';
   },
@@ -267,6 +272,7 @@ async function tryBuildTextItem(
       if (ctx.sentenceGameServed.has(item.id)) return null;
       const entry = await buildClozeItemForCard(repos, card, item, ctx.readIndex, {
         unseenAllowed: ctx.unseenAllowed,
+        endingProbability: ctx.endingProbability,
         wantVariant: ctx.clozeVariant,
       });
       return entry ? { mode: 'cloze', entry } : null;

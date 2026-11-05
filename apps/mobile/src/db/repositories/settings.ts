@@ -65,6 +65,8 @@ export const SETTING_KEYS = {
    * from stories not yet read. Off = never spoil an unseen story.
    */
   clozeUnseenStoriesAllowed: 'games.clozeUnseenStoriesAllowed',
+  /** number 0–1 (UT20, default 1): chance an eligible cloze item blanks only the case ending. Zod-validated on read. */
+  clozeEndingProbability: 'cloze.endingProbability',
   /**
    * boolean (T27, default false): dialogue choices default to tap-to-choose
    * instead of voice-first (silent environments; mic stays available).
