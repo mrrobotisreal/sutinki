@@ -687,10 +687,10 @@ export const examItemCards = sqliteTable(
 
 /**
  * Hotel course progress (T89, HOTEL_PATH §3): one row per unit
- * (`${packId}:${unitId}`) or per floor exam / экстерн (`${packId}:floor`).
+ * (`${packId}:${unitId}`) or per floor exam / екстерн (`${packId}:floor`).
  * `packId` / `unitId` are unenforced content refs — progress survives a pack
  * update or removal (the T68 rule). `passedVia` is 'course' for a floor passed
- * by its exam and 'extern' for a floor passed by экстерн or the D12 cascade.
+ * by its exam and 'extern' for a floor passed by екстерн or the D12 cascade.
  * Cooldown and best-score rules live in `features/hotel/hotel-model.ts`; the
  * repo writes whatever the model decides.
  */
@@ -714,7 +714,7 @@ export const courseProgress = sqliteTable(
 
 /**
  * Hotel course attempts (T89): one sitting of a unit exercise, a floor exam or
- * an экстерн. `itemIds` is the drawn item list in order (JSON string[]);
+ * an екстерн. `itemIds` is the drawn item list in order (JSON string[]);
  * `responsesJson` maps item id → `{ answer, correct, half? }` (JSON). An
  * unfinished row (`finishedAt` NULL) is a resumable sitting after a kill.
  */

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -113,7 +113,7 @@ export function SpeakingItemView({
             onPress={() => (prompt.playing ? prompt.stop() : prompt.play(1))}
             disabled={!promptAudio.data || recording}
             accessibilityRole="button"
-            accessibilityLabel="Послушать собеседника"
+            accessibilityLabel="Послухати співрозмовника"
             testID="skill-speaking-play-prompt"
             className="h-12 w-12 items-center justify-center rounded-full bg-accent-soft"
           >
@@ -124,7 +124,7 @@ export function SpeakingItemView({
             />
           </Pressable>
           <Text className="flex-1 font-reading text-lg leading-7">
-            {item.situation?.ru ?? 'Ответьте вслух.'}
+            {item.situation?.uk ?? 'Дайте відповідь уголос.'}
           </Text>
         </View>
       </View>
@@ -145,12 +145,12 @@ export function SpeakingItemView({
         />
         <Text variant="caption" testID="skill-speaking-hint">
           {recording
-            ? 'Говорите. Нажмите «Готово», когда закончите.'
+            ? 'Говоріть. Натисніть «Готово», коли закінчите.'
             : processing
-              ? 'Распознаём…'
+              ? 'Розпізнаємо…'
               : answered
-                ? 'Ответ записан.'
-                : 'Нажмите микрофон и говорите.'}
+                ? 'Відповідь записано.'
+                : 'Натисніть мікрофон і говоріть.'}
         </Text>
         {recording ? (
           <>
@@ -175,9 +175,11 @@ export function SpeakingItemView({
           testID="skill-speaking-result"
         >
           <Text className="font-ui-bold text-base" testID="skill-speaking-verdict">
-            {verdict ? 'Ответ засчитан' : 'Пока не засчитано'}
+            {verdict ? 'Відповідь зараховано' : 'Поки не зараховано'}
           </Text>
-          <Text variant="caption">{transcript.trim() ? transcript : 'Речь не распознана.'}</Text>
+          <Text variant="caption">
+            {transcript.trim() ? transcript : 'Мовлення не розпізнано.'}
+          </Text>
         </View>
       ) : null}
     </View>

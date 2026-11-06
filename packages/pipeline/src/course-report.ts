@@ -1,4 +1,4 @@
-import type { Course, CourseItem, Pack } from '@sumrak/schema';
+import type { Course, CourseItem, Pack } from '@sutinki/schema';
 
 /**
  * The `course` validate report (T88, design HOTEL_PATH §2 decision 7): one
@@ -12,17 +12,17 @@ import type { Course, CourseItem, Pack } from '@sumrak/schema';
  * they need the manifest and live in {@link courseManifestIssues}.
  */
 
-/** TORFL bible §4.1.1 binary-option contrasts: the only pairs that may carry 2 options. */
+/** Binary-option contrasts (TORFL bible §4.1.1, Ukrainian equivalents; UT18 owns the real list): the only pairs that may carry 2 options. */
 export const BINARY_OPTION_SETS: readonly (readonly [string, string])[] = [
-  ['не', 'нет'],
-  ['в', 'на'],
-  ['уже', 'ещё'],
-  ['а', 'но'],
-  ['слушать', 'слышать'],
-  ['потому что', 'поэтому'],
+  ['не', 'ні'],
+  ['у', 'на'],
+  ['вже', 'ще'],
+  ['а', 'але'],
+  ['слухати', 'чути'],
+  ['тому що', 'тому'],
 ];
 
-const normalizeOpt = (s: string) => s.trim().toLowerCase().replaceAll('ё', 'е');
+const normalizeOpt = (s: string) => s.trim().toLowerCase().replaceAll('ґ', 'г');
 
 /** True when a two-option choice's options are one of the binary contrasts. */
 export function isBinaryPair(options: readonly string[]): boolean {
@@ -53,7 +53,7 @@ export function renderCourseReport(pack: Pack): string {
   const out: string[] = [];
 
   out.push(
-    `Course report — ${pack.id} (${course.ladder} ${course.level}, floor ${course.floor} «${course.title.ru}»)`,
+    `Course report — ${pack.id} (${course.ladder} ${course.level}, floor ${course.floor} «${course.title.uk}»)`,
     `  ${plural(course.units.length, 'unit', 'units')} · ${plural(items.length, 'item', 'items')} · gate ${course.gate.passPercent}% / extern ${course.gate.extern.passPercent}%`,
   );
 
@@ -66,7 +66,7 @@ export function renderCourseReport(pack: Pack): string {
     const byKind = (kind: CourseItem['kind']) => pool.filter((i) => i.kind === kind).length;
     out.push(
       '',
-      `  ${unit.id} «${unit.title.ru}»`,
+      `  ${unit.id} «${unit.title.uk}»`,
       `    cards ${cards}`,
       `    voiced examples ${unitVoicedExamples(course, ui)}`,
       `    pool ${unit.exercises.pool.length} (choice ${byKind('choice')} / typed ${byKind('typed')} / trigger ${byKind('trigger')} / transform ${byKind('transform')})`,

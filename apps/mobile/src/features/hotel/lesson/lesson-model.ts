@@ -1,4 +1,5 @@
-import type { CourseCard, CourseItem, CourseUnit } from '@sumrak/schema';
+import { normalizeUk } from '@/db/normalize';
+import type { CourseCard, CourseItem, CourseUnit } from '@sutinki/schema';
 
 /**
  * Pure lesson rules (T90, HOTEL_PATH D7 + decision 1). No DB, no React:
@@ -6,9 +7,9 @@ import type { CourseCard, CourseItem, CourseUnit } from '@sumrak/schema';
  * lesson position (where a learner resumes), and the card pager's bounds.
  */
 
-/** Lower-case, fold ё → е (the highlight match is ё/е tolerant). */
-export function foldRu(text: string): string {
-  return text.toLowerCase().replace(/ё/g, 'е');
+/** Lower-case + apostrophe/ґ fold via `normalizeUk` (the highlight match is apostrophe/ґ tolerant, ADR-0004). */
+export function foldUk(text: string): string {
+  return normalizeUk(text);
 }
 
 /** A token of a sentence as the matcher reads it (`text` = the surface). */
@@ -29,8 +30,8 @@ export function highlightIndices(
 ): Set<number> {
   const out = new Set<number>();
   for (const surface of highlight) {
-    const want = foldRu(surface);
-    const idx = tokens.findIndex((t, i) => !t.isPunct && !out.has(i) && foldRu(t.text) === want);
+    const want = foldUk(surface);
+    const idx = tokens.findIndex((t, i) => !t.isPunct && !out.has(i) && foldUk(t.text) === want);
     if (idx >= 0) out.add(idx);
   }
   return out;
@@ -41,7 +42,7 @@ export function cardForTopic(
   cards: readonly CourseCard[],
   topicLabel: string,
 ): { cardIndex: number; card: CourseCard } | null {
-  const needle = foldRu(topicLabel.trim());
+  const needle = foldUk(topicLabel.trim());
   const explains = cards
     .map((card, cardIndex) => ({ card, cardIndex }))
     .filter(
@@ -52,9 +53,9 @@ export function cardForTopic(
   const hit = needle
     ? explains.find(
         ({ card }) =>
-          foldRu(card.title.ru).includes(needle) ||
-          foldRu(card.title.en).includes(needle) ||
-          card.examples.some((ex) => ex.why !== undefined && foldRu(ex.why).includes(needle)),
+          foldUk(card.title.uk).includes(needle) ||
+          foldUk(card.title.en).includes(needle) ||
+          card.examples.some((ex) => ex.why !== undefined && foldUk(ex.why).includes(needle)),
       )
     : undefined;
   return hit ?? explains[0] ?? null;

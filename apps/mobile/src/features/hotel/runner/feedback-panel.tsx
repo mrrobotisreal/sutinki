@@ -13,7 +13,7 @@ import type { Verdict } from './runner-model';
  * The feedback sheet after EVERY answer in unit and check mode (T90 decision 4):
  * the verdict, the correct sentence (with its ▶), the explanation (always —
  * right or wrong), the learner's choice named when wrong, and the actions:
- * «Объясни ещё ✦», «Открыть карточку урока» (unit only), «Далее →».
+ * «Поясни ще ✦», «Відкрити картку уроку» (unit only), «Далі →».
  */
 export function FeedbackPanel({
   verdict,
@@ -24,10 +24,10 @@ export function FeedbackPanel({
   onExplainMore,
   onOpenCard,
   onNext,
-  nextLabel = 'Далее →',
+  nextLabel = 'Далі →',
 }: {
   verdict: Verdict;
-  /** The learner's pick, named when it was wrong («Вы выбрали «в театре»»). */
+  /** The learner's pick, named when it was wrong («Ви обрали «в театре»»). */
   chosenText?: string;
   /** The correct sentence: the answer filled into the stem, or the voiced sentence. */
   correctSentence: string;
@@ -45,13 +45,13 @@ export function FeedbackPanel({
   const half = verdict === 'half';
   const icon = ok ? 'checkmark-circle' : half ? 'remove-circle' : 'close-circle';
   const color = ok ? theme.success : half ? theme.trackWarm : theme.danger;
-  const label = ok ? 'Верно' : half ? 'Почти' : 'Неверно';
+  const label = ok ? 'Правильно' : half ? 'Майже' : 'Неправильно';
   return (
     <View
       className="gap-4 rounded-2xl border border-border bg-surface px-4 py-4"
       testID="feedback-panel"
     >
-      <View className="flex-row items-center gap-2" accessibilityLabel={`Ответ: ${label}`}>
+      <View className="flex-row items-center gap-2" accessibilityLabel={`Відповідь: ${label}`}>
         <Ionicons name={icon} size={22} color={color} />
         <Text className="font-ui-bold text-base" testID="feedback-verdict">
           {label}
@@ -59,7 +59,7 @@ export function FeedbackPanel({
       </View>
       {!ok && chosenText ? (
         <Text variant="muted" testID="feedback-chosen">
-          {`Вы выбрали «${chosenText}»`}
+          {`Ви обрали «${chosenText}»`}
         </Text>
       ) : null}
       <View className="gap-2 rounded-xl bg-surface-2 px-4 py-3">
@@ -71,7 +71,7 @@ export function FeedbackPanel({
             <Pressable
               onPress={playCorrect}
               accessibilityRole="button"
-              accessibilityLabel="Прослушать правильный ответ"
+              accessibilityLabel="Прослухати правильну відповідь"
               testID="feedback-play"
               className="h-11 w-11 items-center justify-center rounded-full bg-surface active:opacity-80"
             >
@@ -93,7 +93,7 @@ export function FeedbackPanel({
             style={{ opacity: online ? 1 : 0.45 }}
           >
             <Text className="font-ui-medium text-sm">
-              {online ? 'Объясни ещё ✦' : 'Объясни ещё ✦ · нужен интернет'}
+              {online ? 'Поясни ще ✦' : 'Поясни ще ✦ · потрібен інтернет'}
             </Text>
           </Pressable>
         ) : null}
@@ -104,7 +104,7 @@ export function FeedbackPanel({
             testID="feedback-open-card"
             className="rounded-xl border border-border px-4 py-2.5 active:bg-surface-2"
           >
-            <Text className="font-ui-medium text-sm">Открыть карточку урока</Text>
+            <Text className="font-ui-medium text-sm">Відкрити картку уроку</Text>
           </Pressable>
         ) : null}
       </View>

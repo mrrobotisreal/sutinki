@@ -1056,7 +1056,7 @@ describe('restore-core (full pipeline: export → encrypt → decrypt → restor
 });
 
 describe('course user tables round-trip (T89, decision 10)', () => {
-  async function seedCourse(db: SumrakDB) {
+  async function seedCourse(db: SutinkiDB) {
     await db.insert(courseProgress).values([
       {
         key: 'a1-hotel-f03:u1',

@@ -978,7 +978,7 @@ export default function DevDbScreen() {
           {hotelReadout?.floors.map((f) => (
             <View key={f.packId} className="rounded-xl border border-border bg-surface p-3">
               <Text className="font-ui-medium">
-                Этаж {f.floor} · {f.title.ru}
+                Поверх {f.floor} · {f.title.uk}
               </Text>
               <Text variant="caption" selectable>
                 {f.packId} · {f.unitCount} units · {f.course.floorExam?.size ?? 0} exam items

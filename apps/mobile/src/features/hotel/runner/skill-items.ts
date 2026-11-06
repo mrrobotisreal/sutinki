@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 
 /**
  * Skill-floor items in a course run (T92c, decision 8). Pure rules only; the

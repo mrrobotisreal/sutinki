@@ -276,13 +276,13 @@ describe('migrations from empty DB', () => {
   });
 });
 
-describe(', () => {
+describe('0011_hotel upgrade from 0010', () => {
   it('creates the four course tables on a device that ran 0010; prior rows untouched', async () => {
     const { sqlite, db } = createDbUpTo('0010_encounter-token-index');
     sqlite
       .prepare(
         `INSERT INTO bank_items (id, kind, lemma, lemma_norm, surface, normalized, translation, needs_enrichment, created_at)
-         VALUES ('bi-1', 'word', 'тёмный', 'темный', 'тёмный', 'темный', 'dark', 0, 1)`,
+         VALUES ('bi-1', 'word', 'темний', 'темний', 'темний', 'темний', 'dark', 0, 1)`,
       )
       .run();
     expect(
@@ -567,7 +567,7 @@ describe('0005_scenarios upgrade from 0004', () => {
     sqlite
       .prepare(
         `INSERT INTO bank_items (id, kind, lemma, lemma_norm, surface, normalized, translation, needs_enrichment, created_at)
-         VALUES ('bi-1', 'word', 'тёмный', 'темный', 'тёмный', 'темный', 'dark', 0, 1)`,
+         VALUES ('bi-1', 'word', 'темний', 'темний', 'темний', 'темний', 'dark', 0, 1)`,
       )
       .run();
     const before = await db.all<{ name: string }>(

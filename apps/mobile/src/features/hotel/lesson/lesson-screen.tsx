@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import type { CourseCard, CourseUnit, LibraryQuote } from '@sumrak/schema';
+import type { CourseCard, CourseUnit, LibraryQuote } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 
@@ -17,8 +17,8 @@ import { cardProgress, clampCard, lessonKey, resumeIndex } from './lesson-model'
 
 /**
  * The lesson (T90 decision 1): one card per page, the progress bar, resume at
- * the last card, the library quotes to the reader, and the «Начать
- * упражнения» / «Ещё раз с начала» finale. Long cards scroll inside a page.
+ * the last card, the library quotes to the reader, and the «Почати
+ * упражнения» / «Ще раз з початку» finale. Long cards scroll inside a page.
  */
 export function LessonScreen({ packId, unitId }: { packId: string; unitId: string }) {
   const { tokens: theme } = useAppTheme();
@@ -35,7 +35,7 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
   const sentences = useLessonSentences(packId, unit, quotes);
   const lessonPos = useLessonPositions();
   // The learner's own move (null = not moved yet, so the saved position decides).
-  // A `?card=` deep link (the runner's «Открыть карточку урока») wins over the saved position.
+  // A `?card=` deep link (the runner's «Відкрити картку уроку») wins over the saved position.
   const [moved, setMoved] = React.useState<number | null>(
     Number.isNaN(cardParam) ? null : cardParam,
   );
@@ -74,12 +74,12 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
 
   return (
     <View className="flex-1 bg-bg" testID="lesson-screen">
-      <Stack.Screen options={{ title: unit?.title.ru ?? 'Урок' }} />
+      <Stack.Screen options={{ title: unit?.title.uk ?? 'Урок' }} />
       <View className="flex-row items-center gap-3 px-4 pb-2 pt-3">
         <Pressable
           onPress={() => router.replace('/hotel' as never)}
           accessibilityRole="button"
-          accessibilityLabel="Закрыть урок"
+          accessibilityLabel="Закрити урок"
           testID="lesson-close"
           className="h-11 w-11 items-center justify-center active:opacity-70"
         >
@@ -94,7 +94,7 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
             />
           </View>
           <Text variant="caption" className="mt-1">
-            {count > 0 ? `${current + 1} из ${count}` : ''}
+            {count > 0 ? `${current + 1} з ${count}` : ''}
           </Text>
         </View>
       </View>
@@ -137,20 +137,20 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
                 testID="lesson-next"
                 className="flex-1 items-center rounded-xl bg-accent px-5 py-3 active:opacity-80"
               >
-                <Text className="font-ui-medium text-bg">Далее →</Text>
+                <Text className="font-ui-medium text-bg">Далі →</Text>
               </Pressable>
             )}
           </View>
           {last ? (
             <View className="gap-3 pt-2">
-              <Text className="font-ui-medium text-base">Урок пройден? Проверим.</Text>
+              <Text className="font-ui-medium text-base">Урок пройдено? Перевіримо.</Text>
               <Pressable
                 onPress={() => router.push(`/hotel/${packId}/${unit.id}/practice` as never)}
                 accessibilityRole="button"
                 testID="lesson-start-exercises"
                 className="items-center rounded-xl bg-accent py-3.5 active:opacity-80"
               >
-                <Text className="font-ui-medium text-bg">Начать упражнения</Text>
+                <Text className="font-ui-medium text-bg">Почати упражнения</Text>
               </Pressable>
               <Pressable
                 onPress={() => go(0)}
@@ -158,14 +158,14 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
                 testID="lesson-restart"
                 className="items-center rounded-xl border border-border py-3.5 active:bg-surface-2"
               >
-                <Text className="font-ui-medium">Ещё раз с начала</Text>
+                <Text className="font-ui-medium">Ще раз з початку</Text>
               </Pressable>
             </View>
           ) : null}
         </ScrollView>
       ) : (
         <View className="flex-1 items-center justify-center px-6">
-          <Text variant="muted">{floor.isLoading ? 'Загрузка…' : 'Урок не найден.'}</Text>
+          <Text variant="muted">{floor.isLoading ? 'Завантаження…' : 'Урок не знайдено.'}</Text>
         </View>
       )}
 
@@ -175,7 +175,7 @@ export function LessonScreen({ packId, unitId }: { packId: string; unitId: strin
 }
 
 /**
- * «читать дальше →» (T90 decision 1): the reader opens at the quoted sentence.
+ * «читати далі →» (T90 decision 1): the reader opens at the quoted sentence.
  * The reader's deep link takes the sentence's ORDER index, so resolve the id
  * first; if the source story is not installed, the link is a no-op.
  */

@@ -86,7 +86,7 @@ export function CoursePassageAudio({
           maxPlays={maxPlaysFor(mode)}
         />
       ) : (
-        <Text variant="caption">Аудио для этого задания не найдено.</Text>
+        <Text variant="caption">Аудіо для цього завдання не знайдено.</Text>
       )}
     </View>
   );

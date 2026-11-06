@@ -3,15 +3,15 @@ pack:
   id: a1-hotel-fixture
   version: 1
   type: course
-  title: { ru: "Отель «Сумрак»: тестовый этаж", en: "Hotel Sumrak: fixture floor" }
+  title: { uk: "Отель «Сумрак»: тестовый этаж", en: "Hotel Sumrak: fixture floor" }
   level: A1
   tags: ["torfl", "torfl:fixture", "hotel"]
 course:
   ladder: torfl
   level: A1
   floor: 3
-  title: { ru: "Где? О чём?", en: "Where? About what?" }
-  subtitle: { ru: "Предложный падеж", en: "Prepositional case" }
+  title: { uk: "Где? О чём?", en: "Where? About what?" }
+  subtitle: { uk: "Предложный падеж", en: "Prepositional case" }
   gate:
     passPercent: 80
     extern:
@@ -21,12 +21,12 @@ course:
       examId: lg-case-prep
   units:
   - id: u1
-    title: { ru: "в + где?", en: "в + where?" }
+    title: { uk: "в + где?", en: "в + where?" }
     summary: { en: "In + where takes the prepositional case: в + -е." }
     cards:
     - id: u1-x1
       kind: explain
-      title: { ru: "В + предложный: мужской и средний род", en: "In + prepositional: masculine and neuter" }
+      title: { uk: "В + предложный: мужской и средний род", en: "In + prepositional: masculine and neuter" }
       body: |
         The prepositional case (предложный падеж) answers the question где? (where?) after the preposition в.
         The ending is -е for most masculine and neuter nouns (в городе, в банке, в доме).
@@ -55,7 +55,7 @@ course:
       items: ["u1-k01"]
     - id: u1-x2
       kind: explain
-      title: { ru: "В + предложный: -ия, -ий и местоимения", en: "In + prepositional: -ия, -ий and pronouns" }
+      title: { uk: "В + предложный: -ия, -ий и местоимения", en: "In + prepositional: -ия, -ий and pronouns" }
       body: |
         Nouns ending in -ия and -ий change to -и, not -е (в Италии, в музее).
         Adjectives agree with the noun, so the ending moves too (в большом городе, в моей комнате).
@@ -77,7 +77,7 @@ course:
       items: ["u1-k02"]
     - id: u1-tr
       kind: traps
-      title: { ru: "Ловушки", en: "Traps" }
+      title: { uk: "Ловушки", en: "Traps" }
       pairs:
         - wrong: "Я живу в большой город."
           right: { storyId: u1-ex, sentenceId: u1s01 }
@@ -90,7 +90,7 @@ course:
           reason: "after о the feminine ending is -е: о школе"
     - id: u1-ed
       kind: edge
-      title: { ru: "Тонкости", en: "Edge cases" }
+      title: { uk: "Тонкости", en: "Edge cases" }
       body: |
         Some masculine nouns stress the ending in the prepositional (в лесу, в шкафу) — learn the stressed form as a unit.
         Words like «в году» and «в 2020 году» use the same case for time.
@@ -119,12 +119,12 @@ course:
       size: 4
       pool: ["u1-c01", "u1-c02", "u1-c03", "u1-c04", "u1-t01", "u1-t02", "u1-g01", "u1-g02", "u1-r01", "u1-r02"]
   - id: u2
-    title: { ru: "в или на?", en: "в or на?" }
+    title: { uk: "в или на?", en: "в or на?" }
     summary: { en: "In or on/at: the same case, a different preposition." }
     cards:
     - id: u2-x1
       kind: explain
-      title: { ru: "На + предложный: поверхность, почта, работа", en: "На + prepositional: surfaces, post office, work" }
+      title: { uk: "На + предложный: поверхность, почта, работа", en: "На + prepositional: surfaces, post office, work" }
       body: |
         Both в and на often translate as "in" or "at", so the choice is a question of the place, not the grammar.
         Use в for an enclosed space or a building you are inside (в школе, в университете, в кино).
@@ -146,7 +146,7 @@ course:
       items: ["u2-k01"]
     - id: u2-x2
       kind: explain
-      title: { ru: "В или на: места и события", en: "В or на: places and events" }
+      title: { uk: "В или на: места и события", en: "В or на: places and events" }
       body: |
         The case is the same (prepositional) for both; only the preposition changes.
         Some words only take на: на этаже, на улице, на кухне (the room is treated as a surface here).
@@ -168,7 +168,7 @@ course:
       items: ["u2-k02"]
     - id: u2-tr
       kind: traps
-      title: { ru: "Ловушки", en: "Traps" }
+      title: { uk: "Ловушки", en: "Traps" }
       pairs:
         - wrong: "Я работаю в почте."
           right: { storyId: u2-ex, sentenceId: u2s01 }
@@ -181,7 +181,7 @@ course:
           reason: "вокзал takes на: на вокзале"
     - id: u2-ed
       kind: edge
-      title: { ru: "Тонкости", en: "Edge cases" }
+      title: { uk: "Тонкости", en: "Edge cases" }
       body: |
         The word «работа» takes на: на работе. Its plural is on the same pattern.
         Some pairs differ only by the preposition and the meaning changes: в концерте is not a normal phrase; на концерте is.

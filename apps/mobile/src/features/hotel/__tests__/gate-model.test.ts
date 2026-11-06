@@ -5,7 +5,7 @@ import {
   debriefFloors,
   debriefForSubtests,
   floorForTopic,
-  formatCooldownRu,
+  formatCooldownUk,
   gateCooldownUntil,
   gatePasses,
   GATE_PACK_ID,
@@ -128,10 +128,10 @@ describe('gate cooldown (D13, decision 6)', () => {
     expect(cooldownLeft(null, now)).toBeNull();
   });
 
-  it('formats the Russian countdown line', () => {
-    expect(formatCooldownRu(342)).toBe('5 ч 42 мин');
-    expect(formatCooldownRu(120)).toBe('2 ч');
-    expect(formatCooldownRu(42)).toBe('42 мин');
+  it('formats the Ukrainian countdown line', () => {
+    expect(formatCooldownUk(342)).toBe('5 год 42 хв');
+    expect(formatCooldownUk(120)).toBe('2 год');
+    expect(formatCooldownUk(42)).toBe('42 хв');
   });
 });
 
@@ -191,7 +191,7 @@ describe('nextHotelAction (Today card, D18)', () => {
       none,
     );
     expect(a).toMatchObject({ kind: 'exam', floor: 6, cooldownMinutes: 12 });
-    expect(hotelCardLine(a!)).toBe('Экзамен этажа 6 · через 12 мин');
+    expect(hotelCardLine(a!)).toBe('Іспит поверху 6 · через 12 хв');
   });
 
   it('skips locked and passed floors', () => {
@@ -205,14 +205,14 @@ describe('nextHotelAction (Today card, D18)', () => {
     expect(a).toBeNull();
   });
 
-  it('says Номер 13 waits, then A1 пройден when the gate passes', () => {
+  it('says Номер 13 waits, then A1 складено when the gate passes', () => {
     expect(nextHotelAction([], { gatePassed: false, reveal13: true })).toMatchObject({
       kind: 'done-all',
-      label: 'Номер 13 ждёт',
+      label: 'Номер 13 чекає',
     });
     expect(nextHotelAction([], { gatePassed: true, reveal13: true })).toMatchObject({
       kind: 'done-all',
-      label: 'A1 пройден ✓',
+      label: 'A1 складено ✓',
     });
   });
 
@@ -228,7 +228,7 @@ describe('nextHotelAction (Today card, D18)', () => {
     };
     expect(
       nextHotelAction([passedFloor] as never, { gatePassed: false, reveal13: false }),
-    ).toMatchObject({ kind: 'done-all', label: 'Новые этажи скоро' });
+    ).toMatchObject({ kind: 'done-all', label: 'Нові поверхи скоро' });
     expect(nextHotelAction([], { gatePassed: false, reveal13: false })).toBeNull();
   });
 
@@ -237,7 +237,7 @@ describe('nextHotelAction (Today card, D18)', () => {
       [floor(6, [unit('u1', false, false), unit('u2', false, false)])],
       none,
     );
-    expect(hotelCardLine(a!)).toBe('Этаж 6 · T u1 · урок 1 из 2');
+    expect(hotelCardLine(a!)).toBe('Поверх 6 · T u1 · урок 1 з 2');
   });
 });
 
@@ -283,7 +283,7 @@ describe('room 13 model (T92c D6)', () => {
     expect(status).toEqual({
       kind: 'cooling',
       until: finishedAt + 6 * HOUR,
-      left: { minutesLeft: 300, text: '5 ч' },
+      left: { minutesLeft: 300, text: '5 год' },
     });
   });
 

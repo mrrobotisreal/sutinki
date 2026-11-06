@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
 import { checkAnswered, checkChosen, checkCorrect } from '../check-model';

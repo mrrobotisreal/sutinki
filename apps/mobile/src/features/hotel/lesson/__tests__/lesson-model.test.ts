@@ -1,11 +1,11 @@
-import type { CourseCard } from '@sumrak/schema';
+import type { CourseCard } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
 import {
   cardForTopic,
   cardProgress,
   clampCard,
-  foldRu,
+  foldUk,
   highlightIndices,
   lessonKey,
   lessonSentenceRefs,
@@ -23,10 +23,10 @@ describe('highlightIndices', () => {
     expect([...highlightIndices(sentence, ['городе'])]).toEqual([4]);
   });
 
-  it('matches ё and е interchangeably', () => {
-    const tokens = [tok('Она'), tok('живёт'), tok('в'), tok('Берлине')];
-    expect([...highlightIndices(tokens, ['живет'])]).toEqual([1]);
-    expect([...highlightIndices([tok('ёлка')], ['елка'])]).toEqual([0]);
+  it('matches apostrophes and ґ/г interchangeably', () => {
+    const tokens = [tok('Вона'), tok("п'ять"), tok('у'), tok('Берліні')];
+    expect([...highlightIndices(tokens, ['п’ять'])]).toEqual([1]);
+    expect([...highlightIndices([tok('ґанок')], ['ганок'])]).toEqual([0]);
   });
 
   it('is case-insensitive', () => {
@@ -43,9 +43,10 @@ describe('highlightIndices', () => {
   });
 });
 
-describe('foldRu', () => {
-  it('lowers case and folds ё', () => {
-    expect(foldRu('Ёлка')).toBe('елка');
+describe('foldUk', () => {
+  it('lowers case and folds the apostrophe and ґ', () => {
+    expect(foldUk('Ґанок')).toBe('ганок');
+    expect(foldUk("П'ять")).toBe(foldUk('п’ять'));
   });
 });
 
@@ -53,7 +54,7 @@ describe('cardForTopic', () => {
   const explain = (id: string, title: string, why?: string): CourseCard => ({
     id,
     kind: 'explain',
-    title: { ru: title, en: title },
+    title: { uk: title, en: title },
     body: 'b',
     examples: why
       ? [{ sentenceRef: { storyId: 's', sentenceId: 'x' }, highlight: ['x'], why }]
@@ -66,7 +67,7 @@ describe('cardForTopic', () => {
     {
       id: 'c3',
       kind: 'traps',
-      title: { ru: 't', en: 't' },
+      title: { uk: 't', en: 't' },
       pairs: [{ wrong: 'a', right: { storyId: 's', sentenceId: 'x' }, reason: 'r' }],
     },
     explain('c4', 'Ещё'),
@@ -121,7 +122,7 @@ describe('lessonSentenceRefs', () => {
       {
         id: 'x1',
         kind: 'explain',
-        title: { ru: 'a', en: 'a' },
+        title: { uk: 'a', en: 'a' },
         body: 'b',
         examples: [{ sentenceRef: { storyId: 's', sentenceId: 'e1' }, highlight: [] }],
       },
@@ -129,7 +130,7 @@ describe('lessonSentenceRefs', () => {
       {
         id: 't',
         kind: 'traps',
-        title: { ru: 't', en: 't' },
+        title: { uk: 't', en: 't' },
         pairs: [{ wrong: 'w', right: { storyId: 's', sentenceId: 'r1' }, reason: 'r' }],
       },
     ];

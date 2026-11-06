@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 
 import { passes, weakestUnit, type PassKind } from '../hotel-model';
 
@@ -62,7 +62,7 @@ export function allowsTranslation(mode: RunMode): boolean {
   return mode === 'unit';
 }
 
-/** «Объясни ещё»: in unit feedback and in a review; never mid-exam (decision 6). */
+/** «Поясни ще»: in unit feedback and in a review; never mid-exam (decision 6). */
 export function allowsExplainMore(mode: RunMode, phase: 'run' | 'review'): boolean {
   return mode === 'unit' || phase === 'review';
 }

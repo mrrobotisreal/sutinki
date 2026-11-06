@@ -6,18 +6,18 @@ import { Text } from '@/components/ui/text';
 import { track } from '@/services/analytics';
 
 import type { FloorState } from './hotel-model';
-import { formatCooldownRu } from './gate-model';
+import { formatCooldownUk } from './gate-model';
 import { PracticeRows, type PracticeRow } from './practice-rows';
 
 /**
  * T92b floor lobby (T92 decision 2): the floor number and title, the unit list
- * («Урок» and «Упражнения» — exercises stay disabled until the lesson was opened
+ * («Урок» and «Вправи» — exercises stay disabled until the lesson was opened
  * once), the floor exam row (cooldown countdown when cooling), «Практика» rows
  * with before/after, and the экстерн entry on the highest unlocked floor.
  */
 export interface FloorLobbyProps {
   state: FloorState;
-  floorTitle: { ru: string; en: string };
+  floorTitle: { uk: string; en: string };
   /** Units whose lesson has been opened at least once (`hotel-hooks` reads it from the progress rows). */
   lessonOpened: ReadonlySet<string>;
   /** «Практика» rows for this floor (only when the drill pack is installed). */
@@ -42,15 +42,15 @@ export function FloorLobby({
   if (!state.unlocked) {
     return (
       <View className="gap-2 p-4">
-        <Text variant="caption">Этаж закрыт</Text>
+        <Text variant="caption">Поверх зачинено</Text>
       </View>
     );
   }
   return (
     <View className="gap-3 p-4" testID="floor-lobby">
       <View className="gap-1">
-        <Text variant="caption">Этаж {state.floor}</Text>
-        <Text className="font-ui-medium text-lg">{floorTitle.ru}</Text>
+        <Text variant="caption">Поверх {state.floor}</Text>
+        <Text className="font-ui-medium text-lg">{floorTitle.uk}</Text>
       </View>
 
       {state.units.map((u, i) => {
@@ -64,7 +64,7 @@ export function FloorLobby({
             <Text className="font-ui-medium">
               {u.passed ? '✓' : u.unlocked ? '▶' : '🔒'} Урок {i + 1}
             </Text>
-            <Text variant="caption">Лучший результат: {u.best}%</Text>
+            <Text variant="caption">Найкращий результат: {u.best}%</Text>
             <View className="flex-row gap-2">
               <Pressable
                 disabled={!u.unlocked}
@@ -84,7 +84,7 @@ export function FloorLobby({
                 testID="floor-unit-exercises"
                 className="rounded-lg bg-surface-2 px-3 py-2"
               >
-                <Text>Упражнения</Text>
+                <Text>Вправи</Text>
               </Pressable>
             </View>
           </View>
@@ -101,13 +101,13 @@ export function FloorLobby({
         >
           <Text className="font-ui-medium">
             {!state.examUnlocked
-              ? '🔒 Экзамен этажа'
+              ? '🔒 Іспит поверху'
               : examCooldownMinutes !== null
-                ? `Экзамен этажа · через ${formatCooldownRu(examCooldownMinutes)}`
-                : 'Экзамен этажа · 80 %'}
+                ? `Іспит поверху · через ${formatCooldownUk(examCooldownMinutes)}`
+                : 'Іспит поверху · 80 %'}
           </Text>
           {state.bestPercent > 0 ? (
-            <Text variant="caption">Лучший: {state.bestPercent}%</Text>
+            <Text variant="caption">Найкращий: {state.bestPercent}%</Text>
           ) : null}
         </Pressable>
       ) : null}
@@ -121,7 +121,7 @@ export function FloorLobby({
           testID="floor-extern"
           className="items-center rounded-xl border border-border py-3"
         >
-          <Text className="font-ui-medium">Сдать экстерном следующий этаж →</Text>
+          <Text className="font-ui-medium">Скласти екстерном наступний поверх →</Text>
         </Pressable>
       ) : null}
     </View>

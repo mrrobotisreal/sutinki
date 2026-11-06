@@ -79,3 +79,10 @@ packages/schema/fixtures/packs/a2-torfl-* # UT16/UT17 (UP06) — Russian TORFL A
 packages/pipeline/tools/forced_align.py # UT15 (UP07) — Russian CTC aligner (model constant + letter filter); UT15 replaces it with a Ukrainian aligner
 packages/pipeline/tools/stamp-truth/** # UT15 (UP07) — Sumrak's frozen Russian stamp truth set + dev tooling; UT15 builds a Ukrainian one
 packages/pipeline/src/stamp-audit.ts # UT15 (UP07) — Russian CTC stamp-audit engine (Cyrillic letter class, ё fold, Russian lemmaLint); UT15 adds Ukrainian
+packages/schema/fixtures/packs/a1-hotel-fixture/* # UT18 — Russian-content hotel engine fixture (keys renamed to uk); UT18 re-authors it on the Ukrainian ladder
+packages/schema/src/course.ts # UT18 — «Отель «Сумрак»» wording in doc comments / TORFL course schema messages; removed when UT18 re-targets the course
+packages/schema/src/common.ts # UT18 — doc comment names the Sumrak hotel; removed when UT18 re-targets
+apps/mobile/src/features/hotel/* # UT18 — hotel logic comments/tests still use the Russian TORFL экстерн terminology; removed when UT18 re-targets
+apps/mobile/src/features/hotel/**/* # UT18 — same (runner/lesson/lift sub-folders)
+apps/mobile/src/app/hotel/* # UT18 — route doc comments; removed when UT18 re-targets
+apps/mobile/src/app/hotel/**/* # UT18 — same

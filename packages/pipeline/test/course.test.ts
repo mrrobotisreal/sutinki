@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync, mkdirSyn
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
-import { parsePack, type Pack } from '@sumrak/schema';
+import { parsePack, type Pack } from '@sutinki/schema';
 import {
   annotateDrafts,
   courseManifestIssues,
@@ -156,12 +156,12 @@ describe('course validate report', () => {
     expect(renderCourseReport(mutated)).toContain('not on the binary set');
   });
 
-  it('recognises the TORFL §4.1.1 binary contrasts, order-insensitively, ё-tolerant', () => {
-    expect(isBinaryPair(['на', 'в'])).toBe(true);
-    expect(isBinaryPair(['в', 'на'])).toBe(true);
-    expect(isBinaryPair(['ещё', 'уже'])).toBe(true);
+  it('recognises the TORFL §4.1.1 binary contrasts, order-insensitively, ґ-tolerant', () => {
+    expect(isBinaryPair(['на', 'у'])).toBe(true);
+    expect(isBinaryPair(['у', 'на'])).toBe(true);
+    expect(isBinaryPair(['ще', 'вже'])).toBe(true);
     expect(isBinaryPair(['большом', 'большой'])).toBe(false);
-    expect(isBinaryPair(['на', 'в', 'по'])).toBe(false);
+    expect(isBinaryPair(['на', 'у', 'по'])).toBe(false);
   });
 });
 
@@ -172,7 +172,7 @@ describe('course manifest checks (decision 5)', () => {
     dir = undefined;
   });
 
-  /** A temp sumrak-content with a manifest and the published packs the fixture cites. */
+  /** A temp sutinki-content with a manifest and the published packs the fixture cites. */
   function tempContent(packs: Record<string, Pack>, manifestIds: string[]) {
     dir = mkdtempSync(join(tmpdir(), 'hotel-manifest-'));
     const manifestPath = join(dir, 'manifest.json');
@@ -214,10 +214,10 @@ describe('course manifest checks (decision 5)', () => {
         {
           id: 'part-1',
           sentences: [
-            { id: 'nea1p1-s04', ru: 'Мы дружили в колледже.' },
+            { id: 'nea1p1-s04', uk: 'Мы дружили в колледже.' },
             {
               id: 'nea1p1-s08',
-              ru: 'После колледжа я жил в маленькой квартире и видел Питера редко.',
+              uk: 'После колледжа я жил в маленькой квартире и видел Питера редко.',
             },
           ],
         },
@@ -226,9 +226,9 @@ describe('course manifest checks (decision 5)', () => {
           sentences: [
             {
               id: 'nea1p2-s11',
-              ru: 'Внутри — обычный холл, как в гостинице, только с украшениями на Хеллоуин.',
+              uk: 'Внутри — обычный холл, как в гостинице, только с украшениями на Хеллоуин.',
             },
-            { id: 'nea1p2-s19', ru: 'В конце комнаты — выход.' },
+            { id: 'nea1p2-s19', uk: 'В конце комнаты — выход.' },
           ],
         },
       ],
@@ -254,7 +254,7 @@ describe('course manifest checks (decision 5)', () => {
     const publishedText = 'Мы дружили в колледже!';
     const fake = {
       id: 'a1-no-end-house-001',
-      stories: [{ id: 'part-1', sentences: [{ id: 'nea1p1-s04', ru: publishedText }] }],
+      stories: [{ id: 'part-1', sentences: [{ id: 'nea1p1-s04', uk: publishedText }] }],
     } as unknown as Pack;
     void house;
     const manifest = tempContent({ 'a1-torfl-lexgram-001': lexgram, 'a1-no-end-house-001': fake }, [

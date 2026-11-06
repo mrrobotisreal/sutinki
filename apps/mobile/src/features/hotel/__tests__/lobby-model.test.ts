@@ -62,7 +62,7 @@ describe('externMenu', () => {
 describe('extern confirm copy', () => {
   it('states the 90 % line, no hints, and the one-hour pause', () => {
     expect(EXTERN_PASS_PERCENT).toBe(90);
-    expect(EXTERN_CONFIRM.body).toBe('90 %, без подсказок, при неудаче — пауза 1 час');
+    expect(EXTERN_CONFIRM.body).toBe('90 %, без підказок, у разі невдачі — пауза 1 година');
   });
 });
 

@@ -12,7 +12,7 @@ export interface TriggerItemShape {
 
 /**
  * «Find the trigger» (HOTEL_PATH decision 9, T90 decision 3): the sentence's
- * tokens as tappable chips and the question «Какое слово требует эту форму?».
+ * tokens as tappable chips and the question «Яке слово вимагає цієї форми?».
  * Tap one → `onAnswer(index)` once. `feedback: 'instant'` marks the right chip
  * green and a wrong pick red; `'none'` only records the pick (exam mode).
  */
@@ -41,7 +41,7 @@ export function TriggerItemView({
 
   return (
     <View className="gap-5">
-      <Text className="font-ui-medium text-sm text-text-muted">Какое слово требует эту форму?</Text>
+      <Text className="font-ui-medium text-sm text-text-muted">Яке слово вимагає цієї форми?</Text>
       <View
         className="flex-row flex-wrap gap-2 rounded-2xl border border-border bg-surface px-4 py-5"
         testID="trigger-chips"

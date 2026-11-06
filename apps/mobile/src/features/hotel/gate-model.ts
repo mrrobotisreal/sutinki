@@ -133,16 +133,16 @@ export function cooldownLeft(
 ): { minutesLeft: number; text: string } | null {
   if (until === null || until <= now) return null;
   const minutesLeft = Math.ceil((until - now) / MINUTE_MS);
-  return { minutesLeft, text: formatCooldownRu(minutesLeft) };
+  return { minutesLeft, text: formatCooldownUk(minutesLeft) };
 }
 
-/** «N ч M мин» / «M мин» for a whole-minute count, Russian. */
-export function formatCooldownRu(minutes: number): string {
+/** «N год M хв» / «M хв» for a whole-minute count, Ukrainian. */
+export function formatCooldownUk(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  if (h === 0) return `${m} мин`;
-  if (m === 0) return `${h} ч`;
-  return `${h} ч ${m} мин`;
+  if (h === 0) return `${m} хв`;
+  if (m === 0) return `${h} год`;
+  return `${h} год ${m} хв`;
 }
 
 /**
@@ -157,7 +157,7 @@ export function ladderLevel(gatePassed: boolean): 'A1' | 'A2' {
 export type HotelNextAction =
   | {
       kind: 'done-all';
-      label: 'A1 пройден ✓' | 'Номер 13 ждёт' | 'Новые этажи скоро';
+      label: 'A1 складено ✓' | 'Номер 13 чекає' | 'Нові поверхи скоро';
       route: string;
     }
   | {
@@ -203,7 +203,7 @@ export interface NextFloorView {
  * The Today card's next step (decision 10): the first unlocked floor's first
  * unpassed unit — its lesson if never opened, else its exercises — else the
  * floor exam (cooldown → the minutes left), else the next floor. All done →
- * «Номер 13 ждёт» until the gate passes, then «A1 пройден ✓». Pure.
+ * «Номер 13 чекає» until the gate passes, then «A1 складено ✓». Pure.
  */
 export function nextHotelAction(
   floors: readonly NextFloorView[],
@@ -236,12 +236,12 @@ export function nextHotelAction(
       };
     }
   }
-  if (opts.gatePassed) return { kind: 'done-all', label: 'A1 пройден ✓', route: '/(tabs)/path' };
-  if (opts.reveal13) return { kind: 'done-all', label: 'Номер 13 ждёт', route: '/(tabs)/path' };
+  if (opts.gatePassed) return { kind: 'done-all', label: 'A1 складено ✓', route: '/(tabs)/path' };
+  if (opts.reveal13) return { kind: 'done-all', label: 'Номер 13 чекає', route: '/(tabs)/path' };
   // Every installed floor is passed but more are still to come (content arrives floor by floor):
   // the Today card stays visible instead of vanishing (T93c chunk D).
   if (floors.length > 0 && floors.every((f) => f.passed)) {
-    return { kind: 'done-all', label: 'Новые этажи скоро', route: '/(tabs)/path' };
+    return { kind: 'done-all', label: 'Нові поверхи скоро', route: '/(tabs)/path' };
   }
   return null;
 }
@@ -251,11 +251,11 @@ export function hotelCardLine(action: HotelNextAction): string {
   if (action.kind === 'done-all') return action.label;
   if (action.kind === 'exam') {
     return action.cooldownMinutes !== null
-      ? `Экзамен этажа ${action.floor} · через ${formatCooldownRu(action.cooldownMinutes)}`
-      : `Экзамен этажа ${action.floor}`;
+      ? `Іспит поверху ${action.floor} · через ${formatCooldownUk(action.cooldownMinutes)}`
+      : `Іспит поверху ${action.floor}`;
   }
-  const verb = action.kind === 'lesson' ? 'урок' : 'упражнения';
-  return `Этаж ${action.floor} · ${action.unitTitle} · ${verb} ${action.index} из ${action.total}`;
+  const verb = action.kind === 'lesson' ? 'урок' : 'вправи';
+  return `Поверх ${action.floor} · ${action.unitTitle} · ${verb} ${action.index} з ${action.total}`;
 }
 
 /**
@@ -280,7 +280,7 @@ export type RoomStatus =
 
 /**
  * The room's state from the last gate attempt (no new table): a pass is the
- * steady «A1 пройден» state; a fail cools for 6 h from its `finishedAt`.
+ * steady «A1 складено» state; a fail cools for 6 h from its `finishedAt`.
  */
 export function roomStatus(input: {
   verdict: 'pass' | 'pass-borderline' | 'fail' | null;

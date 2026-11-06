@@ -1,4 +1,4 @@
-import { CourseItemSchema, CourseSchema, type Course, type CourseItem } from '@sumrak/schema';
+import { CourseItemSchema, CourseSchema, type Course, type CourseItem } from '@sutinki/schema';
 import YAML, { LineCounter, isNode } from 'yaml';
 import { z } from 'zod';
 import { normalizeDeep, splitFrontmatter } from './draft.ts';

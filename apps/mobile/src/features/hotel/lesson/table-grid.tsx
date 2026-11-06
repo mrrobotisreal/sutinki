@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ScrollView, Text as RNText, View } from 'react-native';
 
-import type { CourseTable } from '@sumrak/schema';
+import type { CourseTable } from '@sutinki/schema';
 
 import { useAppTheme } from '@/theme/use-app-theme';
 

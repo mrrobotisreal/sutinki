@@ -1,4 +1,4 @@
-import type { CheckCard, CourseItem, CourseUnit } from '@sumrak/schema';
+import type { CheckCard, CourseItem, CourseUnit } from '@sutinki/schema';
 import * as React from 'react';
 import { View } from 'react-native';
 
@@ -38,7 +38,7 @@ export function CheckCardView({
   if (list.length === 0) {
     return (
       <Text variant="muted" testID="check-empty">
-        {items.isLoading ? 'Загрузка…' : 'Проверка появится в следующей версии.'}
+        {items.isLoading ? 'Завантаження…' : 'Перевірка з’явиться в наступній версії.'}
       </Text>
     );
   }
@@ -57,7 +57,7 @@ export function CheckCardView({
   return (
     <View className="gap-4" testID="check-card">
       <Text className="font-ui-medium text-sm text-text-muted">
-        Проверь себя · {index + 1} из {list.length}
+        Перевір себе · {index + 1} з {list.length}
       </Text>
       <CheckItem key={item.id} item={item} response={response} onAnswer={answer} />
       {response ? (
@@ -71,16 +71,16 @@ export function CheckCardView({
               ? setStep((s) => Math.min(s + 1, list.length - 1))
               : allDone && onFinished?.()
           }
-          nextLabel={index < list.length - 1 ? 'Далее →' : 'Дальше по уроку →'}
+          nextLabel={index < list.length - 1 ? 'Далі →' : 'Далі за уроком →'}
         />
       ) : null}
       {!allDone ? (
         <Text variant="caption" testID="check-pending">
-          Ответьте на каждый вопрос, чтобы продолжить.
+          Дайте відповідь на кожне питання, щоб продовжити.
         </Text>
       ) : (
         <Text variant="caption" testID="check-done">
-          Проверка пройдена. Можно идти дальше.
+          Перевірку пройдено. Можна йти далі.
         </Text>
       )}
     </View>

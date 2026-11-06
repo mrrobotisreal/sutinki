@@ -31,7 +31,7 @@ export function onConnectivityRegained(callback: () => void): () => void {
 }
 
 /**
- * Live online flag for UI that must look disabled offline (the hotel's «Объясни ещё», T90 D9).
+ * Live online flag for UI that must look disabled offline (the hotel's «Поясни ще», T90 D9).
  * Same semantics as `isOnline`; starts optimistic and follows network changes.
  */
 export function useOnline(): boolean {

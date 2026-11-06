@@ -61,7 +61,7 @@ Usage:
       packs (T38) print a census line per lemma list; they are hand-
       assembled JSON (no annotate) and publish like any pack. Course packs
       (T88) print the floor report; their practice and library refs are
-      checked against --manifest (default ../sumrak-content/manifest.json
+      checked against --manifest (default ../sutinki-content/manifest.json
       when present, else a warning line)
 
   pipeline audio <draft.md> [more-drafts.md ...] -o <pack-dir> [options]
@@ -238,7 +238,7 @@ function printReferenceReports(pack: Pack): void {
 }
 
 /**
- * T88: a published pack's pack.json, read from the sumrak-content checkout the
+ * T88: a published pack's pack.json, read from the sutinki-content checkout the
  * manifest sits in (`packs/<id>/pack.json`). Undefined when it is not there.
  */
 function readPublishedPack(manifestPath: string, id: string): Pack | undefined {

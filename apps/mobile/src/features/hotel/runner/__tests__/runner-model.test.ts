@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -49,7 +49,7 @@ describe('exam conditions by mode (decisions 4–6)', () => {
     expect(allowsTranslation('floor')).toBe(false);
   });
 
-  it('offers «Объясни ещё» mid-unit and in reviews, never mid-exam', () => {
+  it('offers «Поясни ще» mid-unit and in reviews, never mid-exam', () => {
     expect(allowsExplainMore('unit', 'run')).toBe(true);
     expect(allowsExplainMore('floor', 'run')).toBe(false);
     expect(allowsExplainMore('extern', 'run')).toBe(false);

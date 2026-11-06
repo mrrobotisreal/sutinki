@@ -76,7 +76,7 @@ export function ExampleRow({
           }}
           disabled={!audio}
           accessibilityRole="button"
-          accessibilityLabel={controls.playing ? 'Остановить' : 'Прослушать предложение'}
+          accessibilityLabel={controls.playing ? 'Зупинити' : 'Прослухати речення'}
           testID="example-play"
           className="h-11 w-11 items-center justify-center rounded-full bg-surface-2 active:opacity-80"
           style={{ opacity: audio ? 1 : 0.4 }}

@@ -1,12 +1,12 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { Pack } from '@sumrak/schema';
+import type { Pack } from '@sutinki/schema';
 
 /**
  * The live-manifest checks of a course pack (T88, decision 5). These are NOT
  * schema: a course pack is valid offline, but its practice refs and its
  * library quotes point at PUBLISHED packs, so they are checked against
- * `sumrak-content/manifest.json` at validate time. A missing manifest is a
+ * `sutinki-content/manifest.json` at validate time. A missing manifest is a
  * warning line, never a failure (the offline default).
  *
  * Library quotes resolve against the source pack's own `pack.json` (the
@@ -20,7 +20,7 @@ interface ManifestPack {
 
 /** Where `validate` looks for the live manifest when no `--manifest` is given. */
 export function defaultManifestPath(cwd: string = process.cwd()): string {
-  return resolve(cwd, '..', 'sumrak-content', 'manifest.json');
+  return resolve(cwd, '..', 'sutinki-content', 'manifest.json');
 }
 
 export interface CourseManifestReport {
@@ -92,7 +92,7 @@ export function courseManifestIssues(
         const sentence = story?.sentences.find((s) => s.id === quote.sentenceId);
         if (sentence === undefined) {
           bad(`${where} — sentence not found in that pack`);
-        } else if (sentence.ru !== quote.text) {
+        } else if (sentence.uk !== quote.text) {
           bad(`${where} — text is not byte-identical to the published sentence`);
         }
       }

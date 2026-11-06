@@ -270,7 +270,7 @@ export function Lift({
     track('hotel_up_blocked', { floor: shownFloor });
     sfxRef.current?.play('blocked');
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    flashToast('Сначала сдайте экзамен этажа');
+    flashToast('Спершу складіть іспит поверху');
     onBlockedRef.current();
   }, [panel, shownFloor, highestUnlocked, ride, flashToast]);
 
@@ -393,7 +393,7 @@ export function Lift({
           className="rounded-xl border px-4 py-2"
         >
           <Text style={{ color: t.hotelGlow }} className="font-ui">
-            Сначала сдайте экзамен этажа
+            Спершу складіть іспит поверху
           </Text>
         </Pressable>
       ) : null}

@@ -1195,7 +1195,7 @@ A **course pack** (`type: course`, ADR-0022, design `docs/design/HOTEL_PATH.md` 
 
 ```bash
 pnpm pipeline annotate stories/*.draft.md floor-03.course.md -o packs/a1-hotel-f03/pack.json
-pnpm pipeline validate packs/a1-hotel-f03/pack.json --manifest ../sumrak-content/manifest.json
+pnpm pipeline validate packs/a1-hotel-f03/pack.json --manifest ../sutinki-content/manifest.json
 ```
 
 The pack header (`pack:`) must say `type: course`, `level`, `id` and `version`, and be byte-identical across the story drafts. Use `category` only if the course needs one (course packs never appear on a Library shelf, so usually none).
@@ -1306,7 +1306,7 @@ A unit's cards run in order. Each card has a `kind` and an `id` unique across th
       text: 'Мы дружили в колледже.' # copied byte-exact from that pack's pack.json
 ```
 
-Library quotes come only from packs already in `sumrak-content/manifest.json` (never from a `Stories/**/OpenAI/` folder). `text` is checked against the published sentence by `validate --manifest`.
+Library quotes come only from packs already in `sutinki-content/manifest.json` (never from a `Stories/**/OpenAI/` folder). `text` is checked against the published sentence by `validate --manifest`.
 
 Every **non-floor-0** unit needs at least one `traps` card and one `edge` card.
 
@@ -1389,7 +1389,7 @@ Items are top-level, each with a unique `id` and a `topic` (a §3.4 slug, as for
 
 Plus the shape rules: `explain` ≥ 120 characters on every scored item; a table row as long as its header; `answer` in range (`choice` options, `trigger` tokens); `quotes` 1–8 per library card; `check` 1–4 items.
 
-Live-manifest checks are **not** schema: `validate --manifest <manifest.json>` (default `../sumrak-content/manifest.json` when present; otherwise a warning line) checks every `practice` ref exists in the manifest with that exam id, and every library quote's `packId/storyId/sentenceId` exists with a **byte-identical** `text`. A broken live ref is printed as `✗` but never changes the exit code.
+Live-manifest checks are **not** schema: `validate --manifest <manifest.json>` (default `../sutinki-content/manifest.json` when present; otherwise a warning line) checks every `practice` ref exists in the manifest with that exam id, and every library quote's `packId/storyId/sentenceId` exists with a **byte-identical** `text`. A broken live ref is printed as `✗` but never changes the exit code.
 
 ### The course report
 

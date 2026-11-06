@@ -1,4 +1,4 @@
-import { CourseItemSchema, CourseSchema, type CourseItem } from '@sumrak/schema';
+import { CourseItemSchema, CourseSchema, type CourseItem } from '@sutinki/schema';
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { Rating, type Grade } from 'ts-fsrs';
 import { z } from 'zod';
@@ -10,7 +10,7 @@ import { track } from '@/services/analytics';
 
 import { newId } from '../ids';
 import { courseAttempts, courseFloors, courseItems, courseProgress } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import { createExamsRepo } from './exams';
 
 type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
@@ -29,8 +29,8 @@ type CefrLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
 export interface CourseFloorRow {
   packId: string;
   floor: number;
-  title: { ru: string; en: string };
-  subtitle: { ru: string; en: string } | null;
+  title: { uk: string; en: string };
+  subtitle: { uk: string; en: string } | null;
   unitCount: number;
   course: z.infer<typeof CourseSchema>;
 }
@@ -187,7 +187,7 @@ async function enterMistakesInto(
   return count;
 }
 
-export function createCourseRepo(db: SumrakDB) {
+export function createCourseRepo(db: SutinkiDB) {
   const exams = createExamsRepo(db);
   const parseWarned = new Set<string>();
 
@@ -382,7 +382,7 @@ export function createCourseRepo(db: SumrakDB) {
       return rows.map(toProgress);
     },
 
-    /** Start a sitting (unit exercise, floor exam or экстерн). The drawn items are stored in order. */
+    /** Start a sitting (unit exercise, floor exam or екстерн). The drawn items are stored in order. */
     async startAttempt(input: StartCourseAttemptInput): Promise<AttemptRecord> {
       const now = input.now ?? Date.now();
       const id = newId();
@@ -423,7 +423,7 @@ export function createCourseRepo(db: SumrakDB) {
         .where(eq(courseAttempts.id, attemptId));
     },
 
-    /** The unfinished sitting for a unit / floor / экстерн, if the app was killed mid-way. */
+    /** The unfinished sitting for a unit / floor / екстерн, if the app was killed mid-way. */
     async activeAttempt(
       packId: string,
       unitId: string | null,
@@ -453,7 +453,7 @@ export function createCourseRepo(db: SumrakDB) {
      *
      * - the attempt row gets `finishedAt`, `percent`, `passed`, its responses;
      * - the progress row upserts: `bestPercent` = max, `passedAt` only on the
-     *   first pass, `passedVia` ('course' for a floor exam, 'extern' for экстерн),
+     *   first pass, `passedVia` ('course' for a floor exam, 'extern' for екстерн),
      *   `attempts`++, `lastAttemptAt`, and `cooldownUntil` = now + cooldownFor
      *   on a FAIL only (a pass never cools down);
      * - every MISSED scored item (choice/typed/trigger/transform) enters the exam
@@ -468,7 +468,7 @@ export function createCourseRepo(db: SumrakDB) {
       const key =
         input.unitId === null ? floorKey(input.packId) : unitKey(input.packId, input.unitId);
       // Cooldown is a timestamp only where the rule has one (decision 6): a unit
-      // fail and any pass leave it null, floor/экстерн/gate fails set it.
+      // fail and any pass leave it null, floor/екстерн/gate fails set it.
       const cooldownMs = pass ? 0 : cooldownFor(kind, false);
       const cooldown = cooldownMs > 0 ? now + cooldownMs : null;
 
@@ -511,7 +511,7 @@ export function createCourseRepo(db: SumrakDB) {
           .values(next)
           .onConflictDoUpdate({ target: courseProgress.key, set: next });
 
-        // The D12 cascade: a passing экстерн also passes every lower panel floor
+        // The D12 cascade: a passing екстерн also passes every lower panel floor
         // that is not yet passed (floor rows only).
         if (pass && input.kind === 'extern' && input.unitId === null) {
           await cascadeExternFloors(input.packId, now);
@@ -535,7 +535,7 @@ export function createCourseRepo(db: SumrakDB) {
     },
 
     /**
-     * D12 (decision 7): for each pack id whose экстерн passed, mark that floor and
+     * D12 (decision 7): for each pack id whose екстерн passed, mark that floor and
      * every lower panel floor not yet passed as passed via 'extern' (floor rows
      * only; units stay unpassed, and the model unlocks them). Runs in its own
      * transaction so a caller that already has one open is not affected.

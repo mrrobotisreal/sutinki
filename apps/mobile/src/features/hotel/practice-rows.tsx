@@ -42,7 +42,7 @@ export function PracticeRows({ rows }: { rows: readonly PracticeRow[] }) {
         >
           <Text className="font-ui-medium">{row.title}</Text>
           <Text variant="caption">
-            {`до: ${row.before === null ? '—' : `${row.before}%`} · после: ${row.after === null ? '—' : `${row.after}%`}`}
+            {`до: ${row.before === null ? '—' : `${row.before}%`} · після: ${row.after === null ? '—' : `${row.after}%`}`}
           </Text>
         </Pressable>
       ))}

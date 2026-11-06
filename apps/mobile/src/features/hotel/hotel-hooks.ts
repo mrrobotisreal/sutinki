@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CourseItem, CourseUnit, LibraryQuote } from '@sumrak/schema';
+import type { CourseItem, CourseUnit, LibraryQuote } from '@sutinki/schema';
 import * as React from 'react';
 
 import { repos } from '@/db';
@@ -120,7 +120,7 @@ export function useLessonSentences(
             )
           : null;
         sentences.set(key, { sentence, audio });
-        const title = detail ? `${detail.story.titleRu}, ${detail.pack.titleRu}` : null;
+        const title = detail ? `${detail.story.titleUk}, ${detail.pack.titleUk}` : null;
         if (title) sourceTitles.set(`${q.packId}/${q.storyId}`, title);
       }
       return { sentences, sourceTitles };
@@ -207,7 +207,7 @@ export function useHotelState() {
           const us = s.units.find((x) => x.unitId === u.id);
           return {
             unitId: u.id,
-            title: u.title.ru,
+            title: u.title.uk,
             passed: us?.passed ?? false,
             lessonOpened: rows.some(
               (r) => r.packId === s.packId && r.unitId === u.id && r.attempts > 0,
@@ -310,7 +310,7 @@ export function usePracticeRows(
           })),
           floorStart,
         );
-        rows.push({ packId: ref.packId, examId: ref.examId, title: exam.titleRu, before, after });
+        rows.push({ packId: ref.packId, examId: ref.examId, title: exam.titleUk, before, after });
       }
       return rows;
     },

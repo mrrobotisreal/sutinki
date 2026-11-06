@@ -11,7 +11,7 @@ set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 MOBILE="$(cd "$HERE/.." && pwd)"
-SRC="${1:-$MOBILE/../../../assets/elevator_doors.png}"
+SRC="${1:?usage: hotel-cut-doors.sh <elevator.png>}"
 OUT="$MOBILE/assets/images/hotel"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT

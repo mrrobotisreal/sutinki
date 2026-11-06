@@ -1,5 +1,5 @@
-import { CourseItemSchema, CourseSchema, type Pack } from '@sumrak/schema';
-import coursePackJson from '@sumrak/schema/fixtures/packs/a1-hotel-fixture/pack.json';
+import { CourseItemSchema, CourseSchema, type Pack } from '@sutinki/schema';
+import coursePackJson from '@sutinki/schema/fixtures/packs/a1-hotel-fixture/pack.json';
 import { asc, eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 
@@ -38,7 +38,7 @@ describe('course pack import (T89)', () => {
     expect(floor!.ladder).toBe('torfl');
     expect(floor!.level).toBe('A1');
     expect(floor!.floor).toBe(3);
-    expect(floor!.titleRu).toBe(PACK.course!.title.ru);
+    expect(floor!.titleUk).toBe(PACK.course!.title.uk);
     expect(floor!.titleEn).toBe(PACK.course!.title.en);
     // The stored JSON round-trips through the course schema.
     expect(CourseSchema.parse(JSON.parse(floor!.json))).toEqual(PACK.course);
@@ -66,7 +66,7 @@ describe('course pack import (T89)', () => {
     await importPack(db, PACK);
     const bumped = structuredClone(PACK);
     bumped.version = PACK.version + 1;
-    bumped.course!.title = { ru: 'Новый этаж', en: 'New floor' };
+    bumped.course!.title = { uk: 'Новый этаж', en: 'New floor' };
     const result = await importPack(db, bumped);
     expect(result.action).toBe('updated');
     expect(result.counts.courseItems).toBe(bumped.items!.length);
@@ -126,7 +126,7 @@ describe('course pack import (T89)', () => {
 
   it('a non-course pack writes no course rows (courseItems count is zero)', async () => {
     const db = createTestDb();
-    const exam = (await import('@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json')).default;
+    const exam = (await import('@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json')).default;
     const result = await importPack(db, exam as unknown as Pack);
     expect(result.counts.courseItems).toBe(0);
     expect(await db.select().from(courseFloors)).toEqual([]);

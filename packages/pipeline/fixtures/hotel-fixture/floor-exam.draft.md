@@ -3,12 +3,12 @@ pack:
   id: a1-hotel-fixture
   version: 1
   type: course
-  title: { ru: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
+  title: { uk: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
   level: A1
   tags: ['torfl', 'torfl:fixture', 'hotel']
 story:
   id: floor-exam
-  title: { ru: "Экзамен этажа", en: "Floor exam" }
+  title: { uk: "Экзамен этажа", en: "Floor exam" }
   level: A1
 ---
 
@@ -16,7 +16,7 @@ story:
 
 ## fe01s01
 
-RU: Я живу в большом городе.
+UK: Я живу в большом городе.
 EN: I live in a big city.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -30,7 +30,7 @@ EN: I live in a big city.
 
 ## fe01s02
 
-RU: Мой брат работает на почте.
+UK: Мой брат работает на почте.
 EN: My brother works at the post office.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -44,7 +44,7 @@ EN: My brother works at the post office.
 
 ## fe01s03
 
-RU: Мы говорим о работе.
+UK: Мы говорим о работе.
 EN: We are talking about work.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -57,7 +57,7 @@ EN: We are talking about work.
 
 ## fe01s04
 
-RU: Она в школе.
+UK: Она в школе.
 EN: She is at school.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -69,7 +69,7 @@ EN: She is at school.
 
 ## fe01s05
 
-RU: Я на уроке.
+UK: Я на уроке.
 EN: I am in class.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -81,7 +81,7 @@ EN: I am in class.
 
 ## fe01s06
 
-RU: Он живёт в доме.
+UK: Он живёт в доме.
 EN: He lives in a house.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -94,7 +94,7 @@ EN: He lives in a house.
 
 ## fe01s07
 
-RU: Мы сидим на кухне.
+UK: Мы сидим на кухне.
 EN: We sit in the kitchen.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -107,7 +107,7 @@ EN: We sit in the kitchen.
 
 ## fe01s08
 
-RU: Я думаю о доме.
+UK: Я думаю о доме.
 EN: I think about home.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -120,7 +120,7 @@ EN: I think about home.
 
 ## fe01s09
 
-RU: Это моя комната.
+UK: Это моя комната.
 EN: This is my room.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -132,7 +132,7 @@ EN: This is my room.
 
 ## fe01s10
 
-RU: Мы гуляем в парке.
+UK: Мы гуляем в парке.
 EN: We walk in the park.
 
 | text | lemma | translation | pos | grammar | level | note |

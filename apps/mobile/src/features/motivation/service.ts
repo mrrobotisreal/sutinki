@@ -398,7 +398,7 @@ export async function initMotivation(): Promise<void> {
 
 /**
  * A hotel exercise run finished (T90, decision 8): the pass XP, once per
- * pass. Unit first pass +10, floor exam +30, экстерн +30; a fail and check
+ * pass. Unit first pass +10, floor exam +30, екстерн +30; a fail and check
  * answers earn nothing. The caller computes `xp` with `hotelRunXp` and stores
  * it on the attempt; this bumps the daily XP and re-evaluates achievements.
  */

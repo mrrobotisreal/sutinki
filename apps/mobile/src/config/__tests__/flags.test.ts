@@ -6,7 +6,7 @@ import { UK_PENDING, ukPending } from '../flags';
  * Pins the `uk-pending` key list to the ledger (docs/SUTINKI_UPSTREAM.md §5): a forgotten key
  * (or a key a follow-up UT forgot to delete) fails CI. Update both together.
  */
-const LEDGER_KEYS: string[] = ['exam'];
+const LEDGER_KEYS: string[] = ['exam', 'hotel'];
 
 const g = globalThis as { __DEV__?: boolean };
 const original = g.__DEV__;

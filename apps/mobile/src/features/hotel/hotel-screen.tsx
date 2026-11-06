@@ -129,10 +129,10 @@ export function HotelScreen() {
   }
 
   const titleFor = (n: number) => {
-    if (n === 0) return { ru: 'Вестибюль', en: 'Lobby' };
-    if (n === 13) return { ru: 'Номер 13', en: 'Room 13' };
+    if (n === 0) return { uk: 'Вестибюль', en: 'Lobby' };
+    if (n === 13) return { uk: 'Номер 13', en: 'Room 13' };
     const f = (floors.data ?? []).find((x) => x.floor === n);
-    return { ru: f?.title.ru ?? `Этаж ${n}`, en: f?.title.en ?? `Floor ${n}` };
+    return { uk: f?.title.uk ?? `Поверх ${n}`, en: f?.title.en ?? `Floor ${n}` };
   };
 
   const nextAbove = panel.find((n) => n > top);
@@ -141,7 +141,7 @@ export function HotelScreen() {
     <ScrollView className="flex-1 bg-bg" contentContainerClassName="gap-4 px-4 py-6">
       <View className="gap-1">
         <Text variant="caption" className="uppercase tracking-wider">
-          ТРКИ-А1 · Отель «Сумрак»
+          ТРКИ-А1 · Готель «Сутінки»
         </Text>
         <Text variant="caption" className="text-text-muted">
           A1 ● — A2 ○ — B1 ○ — B2 ○ — C1 ○
@@ -165,9 +165,9 @@ export function HotelScreen() {
         {/* Through the open doors: just the floor's plate. The lobby itself sits below the lift as a normal
             scrolling panel — inside the clipped door opening it was cut off and the frame art swallowed taps. */}
         <View className="flex-1 items-center justify-center gap-1 p-4" testID="hotel-doorway">
-          <Text className="font-ui-medium text-lg text-center">{titleFor(shownFloor).ru}</Text>
+          <Text className="font-ui-medium text-lg text-center">{titleFor(shownFloor).uk}</Text>
           <Text variant="caption" className="text-center">
-            {state ? `Этаж ${shownFloor}` : shownFloor === 0 ? 'Этажи скоро появятся' : ''}
+            {state ? `Поверх ${shownFloor}` : shownFloor === 0 ? 'Поверхи скоро з’являться' : ''}
           </Text>
         </View>
       </Lift>
@@ -185,22 +185,22 @@ export function HotelScreen() {
       ) : shownFloor === 0 ? (
         <View className="gap-2 p-4" testID="hotel-empty">
           <Text className="font-ui-medium text-lg">Вестибюль</Text>
-          <Text variant="caption">Этажи скоро появятся</Text>
+          <Text variant="caption">Поверхи скоро з’являться</Text>
         </View>
       ) : null}
 
       {toast ? (
         <Pressable onPress={() => setToast(false)} accessibilityRole="button">
-          <Text variant="caption">Сначала сдайте экзамен этажа</Text>
+          <Text variant="caption">Спершу складіть іспит поверху</Text>
         </Pressable>
       ) : null}
 
       {nextAbove !== undefined && shownFloor === top ? (
         <Text variant="caption" testID="hotel-next-preview">
-          {`Следующий: ${titleFor(nextAbove).ru}`}
+          {`Наступний: ${titleFor(nextAbove).uk}`}
         </Text>
       ) : null}
-      {hotel.reveal13 && !hotel.gatePassed ? <Text variant="caption">Номер 13 ждёт</Text> : null}
+      {hotel.reveal13 && !hotel.gatePassed ? <Text variant="caption">Номер 13 чекає</Text> : null}
 
       <ExternMenuSheet
         open={externMenuOpen}
@@ -213,7 +213,7 @@ export function HotelScreen() {
       />
       <ExternConfirmSheet
         target={externTarget}
-        title={externTarget ? titleFor(externTarget.floor).ru : ''}
+        title={externTarget ? titleFor(externTarget.floor).uk : ''}
         onClose={() => setExternTarget(null)}
         onConfirm={(s) => {
           setExternTarget(null);
@@ -240,7 +240,7 @@ function ExternMenuSheet({
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
       <Pressable className="flex-1 justify-end bg-black/40" onPress={onClose}>
         <View className="gap-3 rounded-t-2xl bg-surface p-5" testID="extern-menu">
-          <Text className="font-ui-medium text-base">Сдать экстерном</Text>
+          <Text className="font-ui-medium text-base">Скласти екстерном</Text>
           {menu.map((s) => (
             <Pressable
               key={s.packId}
@@ -249,7 +249,7 @@ function ExternMenuSheet({
               testID={`extern-pick-${s.floor}`}
               className="rounded-xl border border-border px-4 py-3"
             >
-              <Text className="font-ui-medium">{`Этаж ${s.floor}`}</Text>
+              <Text className="font-ui-medium">{`Поверх ${s.floor}`}</Text>
             </Pressable>
           ))}
         </View>
@@ -282,14 +282,14 @@ function ExternConfirmSheet({
             testID="extern-start"
             className="items-center rounded-xl bg-accent py-3.5"
           >
-            <Text className="font-ui-medium text-bg">Начать</Text>
+            <Text className="font-ui-medium text-bg">Почати</Text>
           </Pressable>
           <Pressable
             onPress={onClose}
             accessibilityRole="button"
             className="items-center rounded-xl border border-border py-3"
           >
-            <Text className="font-ui-medium">Отмена</Text>
+            <Text className="font-ui-medium">Скасувати</Text>
           </Pressable>
         </View>
       </Pressable>

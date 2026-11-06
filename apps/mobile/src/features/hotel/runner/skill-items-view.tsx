@@ -1,4 +1,4 @@
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
@@ -67,16 +67,16 @@ export function WritingItemView({
   return (
     <View className="gap-4" testID="skill-writing">
       <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
-        <Text className="font-reading text-lg leading-7">{item.task.ru}</Text>
+        <Text className="font-reading text-lg leading-7">{item.task.uk}</Text>
         <View className="mt-1 gap-1.5">
           {checklist.map((row) => (
             <Text key={row.id} className="font-reading text-base leading-6 text-text-muted">
-              {`• ${row.ru}`}
+              {`• ${row.uk}`}
             </Text>
           ))}
         </View>
         <Text variant="caption" className="text-xs">
-          {countersLine(counters, item.topic, 'ru')}
+          {countersLine(counters, item.topic, 'uk')}
         </Text>
       </View>
 
@@ -88,10 +88,10 @@ export function WritingItemView({
         autoCapitalize="sentences"
         autoCorrect={false}
         spellCheck={false}
-        placeholder="Напишите письмо…"
+        placeholder="Напишіть листа…"
         placeholderTextColor={tokens.textMuted}
         testID="skill-writing-input"
-        accessibilityLabel="Письмо"
+        accessibilityLabel="Лист"
         className="min-h-[220px] rounded-2xl border border-border bg-surface px-4 py-4 text-text"
         style={{ fontFamily: 'Literata_400Regular', fontSize: 18, lineHeight: 29 }}
       />
@@ -103,11 +103,11 @@ export function WritingItemView({
         >
           <Text className="font-ui-bold text-base" testID="skill-writing-verdict">
             {(stored?.correct ?? (grade ? writingCorrect(grade.pct) : false))
-              ? 'Письмо засчитано'
-              : 'Пока не засчитано'}
+              ? 'Лист зараховано'
+              : 'Поки не зараховано'}
           </Text>
           <Text variant="caption">
-            {`Оценка на месте: ${Math.round(grade?.pct ?? 0)} %. Засчитывается от ${WRITING_CORRECT_PCT} %.`}
+            {`Оцінка на місці: ${Math.round(grade?.pct ?? 0)} %. Зараховується від ${WRITING_CORRECT_PCT} %.`}
           </Text>
         </View>
       ) : null}
@@ -121,7 +121,7 @@ export function WritingItemView({
           className={`items-center rounded-xl py-3.5 ${empty ? 'bg-surface-2' : 'bg-accent'}`}
         >
           <Text className={`font-ui-medium ${empty ? 'text-text-muted' : 'text-bg'}`}>
-            Сдать письмо
+            Надіслати лист
           </Text>
         </Pressable>
       ) : null}

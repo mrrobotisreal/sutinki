@@ -1,5 +1,5 @@
 import { Stack, useRouter } from 'expo-router';
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 
@@ -20,7 +20,7 @@ const GATE_EXAM_ID = 'a1-mock-04';
  * Номер 13 (T92c D6): the dark room behind the brass «13» plate. The exam text
  * and «Войти» → the mock intro. The last verdict with per-subtest bars; after a
  * fail, the 6 h cooldown and the debrief, whose floors get glowing markers on
- * the lift until their floor exam is retaken. A pass shows «A1 пройден».
+ * the lift until their floor exam is retaken. A pass shows «A1 складено».
  */
 export default function Room13Screen() {
   const { tokens } = useAppTheme();
@@ -102,18 +102,18 @@ export default function Room13Screen() {
       </View>
 
       <View className="gap-2 rounded-2xl border border-border px-4 py-4">
-        <Text className="font-ui-medium text-base">Вариант 4 · полный экзамен ТРКИ-А1</Text>
-        <Text variant="caption">~2,5 часа</Text>
-        <Text variant="caption">Правило СПбГУ: каждый субтест ≥ 66 %, один может быть ≥ 60 %.</Text>
+        <Text className="font-ui-medium text-base">Варіант 4 · повний іспит ТРКИ-А1</Text>
+        <Text variant="caption">~2,5 години</Text>
+        <Text variant="caption">Правило СПбДУ: кожен субтест ≥ 66 %, один може бути ≥ 60 %.</Text>
       </View>
 
       {results.length > 0 ? (
         <View className="gap-3" testID="room-13-last">
-          <Text className="font-ui-medium text-base">Последняя попытка</Text>
+          <Text className="font-ui-medium text-base">Остання спроба</Text>
           {results.map((r) => (
             <View key={r.kind} className="gap-1">
               <View className="flex-row justify-between">
-                <Text variant="caption">{SUBTEST_LABELS[r.kind as ExamSubtestKind].ru}</Text>
+                <Text variant="caption">{SUBTEST_LABELS[r.kind as ExamSubtestKind].uk}</Text>
                 <Text variant="caption">{`${Math.round(r.percent)} %`}</Text>
               </View>
               <View className="h-2 overflow-hidden rounded-full bg-surface-2">
@@ -133,7 +133,7 @@ export default function Room13Screen() {
       {status.kind === 'passed' ? (
         <View className="items-center gap-1" testID="room-13-passed">
           <Text className="font-ui-bold text-lg" style={{ color: tokens.hotelGlow }}>
-            A1 пройден
+            A1 складено
           </Text>
         </View>
       ) : null}
@@ -141,19 +141,19 @@ export default function Room13Screen() {
       {status.kind === 'cooling' ? (
         <View className="gap-2" testID="room-13-cooldown">
           <Text className="font-ui-medium text-base">
-            {`Можно снова через ${status.left.text}`}
+            {`Можна знову через ${status.left.text}`}
           </Text>
           {debrief.length > 0 ? (
             <View className="gap-1" testID="room-13-debrief">
-              <Text className="font-ui-medium">Повторите этажи:</Text>
+              <Text className="font-ui-medium">Повторіть поверхи:</Text>
               {debrief.map((d) => (
                 <Text key={d.kind} variant="caption">
-                  {`${SUBTEST_LABELS[d.kind as ExamSubtestKind]?.ru ?? d.kind}: ${d.floors.map((f) => `этаж ${f}`).join(', ') || '—'}`}
+                  {`${SUBTEST_LABELS[d.kind as ExamSubtestKind]?.uk ?? d.kind}: ${d.floors.map((f) => `поверх ${f}`).join(', ') || '—'}`}
                 </Text>
               ))}
               {markers.length > 0 ? (
                 <Text variant="caption" style={{ color: tokens.hotelGlow }}>
-                  {`Отмечены на лифте: ${markers.join(', ')}`}
+                  {`Позначені на ліфті: ${markers.join(', ')}`}
                 </Text>
               ) : null}
             </View>
@@ -172,7 +172,7 @@ export default function Room13Screen() {
             : 'items-center rounded-xl bg-surface-2 py-3.5'
         }
       >
-        <Text className="font-ui-medium text-bg">{canEnter ? 'Войти' : 'Закрыто'}</Text>
+        <Text className="font-ui-medium text-bg">{canEnter ? 'Увійти' : 'Закрито'}</Text>
       </Pressable>
     </ScrollView>
   );

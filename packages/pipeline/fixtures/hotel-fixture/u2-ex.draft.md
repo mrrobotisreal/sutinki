@@ -3,12 +3,12 @@ pack:
   id: a1-hotel-fixture
   version: 1
   type: course
-  title: { ru: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
+  title: { uk: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
   level: A1
   tags: ['torfl', 'torfl:fixture', 'hotel']
 story:
   id: u2-ex
-  title: { ru: "В или на", en: "в or на" }
+  title: { uk: "В или на", en: "в or на" }
   level: A1
 ---
 
@@ -16,7 +16,7 @@ story:
 
 ## u2s01
 
-RU: Я работаю на почте.
+UK: Я работаю на почте.
 EN: I work at the post office.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -29,7 +29,7 @@ EN: I work at the post office.
 
 ## u2s02
 
-RU: Мы живём на этаже пять.
+UK: Мы живём на этаже пять.
 EN: We live on floor five.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -43,7 +43,7 @@ EN: We live on floor five.
 
 ## u2s03
 
-RU: Я в школе.
+UK: Я в школе.
 EN: I am at school.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -55,7 +55,7 @@ EN: I am at school.
 
 ## u2s04
 
-RU: Он на концерте.
+UK: Он на концерте.
 EN: He is at the concert.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -67,7 +67,7 @@ EN: He is at the concert.
 
 ## u2s05
 
-RU: Она на вокзале.
+UK: Она на вокзале.
 EN: She is at the station.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -79,7 +79,7 @@ EN: She is at the station.
 
 ## u2s06
 
-RU: Мы в университете.
+UK: Мы в университете.
 EN: We are at the university.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -91,7 +91,7 @@ EN: We are at the university.
 
 ## u2s07
 
-RU: Я на уроке русского.
+UK: Я на уроке русского.
 EN: I am in Russian class.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -104,7 +104,7 @@ EN: I am in Russian class.
 
 ## u2s08
 
-RU: Он на работе.
+UK: Он на работе.
 EN: He is at work.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -116,7 +116,7 @@ EN: He is at work.
 
 ## u2s09
 
-RU: Они на улице.
+UK: Они на улице.
 EN: They are outside.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -128,7 +128,7 @@ EN: They are outside.
 
 ## u2s10
 
-RU: Мы были в кино.
+UK: Мы были в кино.
 EN: We were at the cinema.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -141,7 +141,7 @@ EN: We were at the cinema.
 
 ## u2s11
 
-RU: Вы на почте?
+UK: Вы на почте?
 EN: Are you at the post office?
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -153,7 +153,7 @@ EN: Are you at the post office?
 
 ## u2s12
 
-RU: Я на кухне.
+UK: Я на кухне.
 EN: I am in the kitchen.
 
 | text | lemma | translation | pos | grammar | level | note |

@@ -12,14 +12,14 @@ import { CourseItemSchema, CourseSchema, safeParsePack } from '../src';
 const EXPLAIN =
   'Trigger: в + где? The rule: the prepositional ending is -е or -и, named by the gender. Each wrong option fails because the case is wrong for the question.';
 
-const sentence = (id: string, ru: string) => ({
+const sentence = (id: string, uk: string) => ({
   id,
-  ru,
+  uk,
   en: `en ${id}`,
   tokens: [
     {
-      text: ru.replace(/[.?!]$/, ''),
-      lemma: ru,
+      text: uk.replace(/[.?!]$/, ''),
+      lemma: uk,
       translation: 'x',
       pos: 'noun',
       grammar: 'x',
@@ -106,20 +106,20 @@ function baseCourse(): any {
     ladder: 'torfl',
     level: 'A1',
     floor: 3,
-    title: { ru: 'Где? О чём?', en: 'Where? About what?' },
-    subtitle: { ru: 'Предложный падеж', en: 'Prepositional case' },
+    title: { uk: 'Где? О чём?', en: 'Where? About what?' },
+    subtitle: { uk: 'Предложный падеж', en: 'Prepositional case' },
     gate: { passPercent: 80, extern: { passPercent: 90 } },
     practice: [{ packId: 'a1-torfl-lexgram-001', examId: 'lg-case-prep' }],
     units: [
       {
         id: 'u1',
-        title: { ru: 'в + где', en: 'в + where' },
+        title: { uk: 'в + где', en: 'в + where' },
         summary: { en: 'In + where takes the prepositional case.' },
         cards: [
           {
             id: 'x1',
             kind: 'explain',
-            title: { ru: 'В + предложный', en: 'In + prepositional' },
+            title: { uk: 'В + предложный', en: 'In + prepositional' },
             body: 'The ending is -е for most masculine and neuter nouns.',
             table: { header: ['case', 'ending'], rows: [['prep', '-е']] },
             examples: [
@@ -130,7 +130,7 @@ function baseCourse(): any {
           {
             id: 'tr1',
             kind: 'traps',
-            title: { ru: 'Ловушки', en: 'Traps' },
+            title: { uk: 'Ловушки', en: 'Traps' },
             pairs: [
               {
                 wrong: 'Я живу в город',
@@ -142,7 +142,7 @@ function baseCourse(): any {
           {
             id: 'ed1',
             kind: 'edge',
-            title: { ru: 'Тонкости', en: 'Edge cases' },
+            title: { uk: 'Тонкости', en: 'Edge cases' },
             body: 'Some nouns take -и.',
             examples: [
               { sentenceRef: { storyId: STORY_ID, sentenceId: 's3' }, highlight: ['лесу'] },
@@ -174,7 +174,7 @@ function baseStories(): any[] {
   return [
     {
       id: STORY_ID,
-      title: { ru: 'Тест', en: 'Test' },
+      title: { uk: 'Тест', en: 'Test' },
       level: 'A1',
       sentences: SENTENCE_IDS.map((id, i) => sentence(id, `Предложение номер ${i + 1}.`)),
       audio: [],
@@ -187,7 +187,7 @@ function baseCoursePack(): any {
     id: 'a1-hotel-f03',
     version: 1,
     type: 'course',
-    title: { ru: 'Отель', en: 'Hotel' },
+    title: { uk: 'Отель', en: 'Hotel' },
     level: 'A1',
     tags: ['torfl'],
     stories: baseStories(),

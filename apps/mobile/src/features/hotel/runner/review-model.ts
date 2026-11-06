@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 
 import { verdictOf, type Verdict } from './runner-model';
 

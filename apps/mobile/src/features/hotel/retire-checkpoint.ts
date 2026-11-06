@@ -1,7 +1,7 @@
 import { removePack } from '@/db/importer';
 import { createSettingsRepo, SETTING_KEYS } from '@/db/repositories/settings';
 import { packs } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 import { track } from '@/services/analytics';
 import { eq } from 'drizzle-orm';
 
@@ -20,7 +20,7 @@ export const RETIRED_CHECKPOINT_PACK = 'a1-checkpoint-001';
  *
  * Returns true when this call removed an installed pack.
  */
-export async function retireCheckpointOnce(db: SumrakDB): Promise<boolean> {
+export async function retireCheckpointOnce(db: SutinkiDB): Promise<boolean> {
   const settings = createSettingsRepo(db);
   if ((await settings.get<boolean>(SETTING_KEYS.hotelRetiredCheckpoint)) === true) return false;
 

@@ -345,7 +345,7 @@ export type AnalyticsEvent =
   // M25 hotel lift (T91, HOTEL_PATH §4). Props are numbers, slugs and booleans only.
   // hotel_floor_entered {floor, via} — the lift arrived on a floor (or a deep link opened it).
   // hotel_lift_ride {from, to, passed13} — a ride finished (floor numbers; passed13 = crossed the missing 13).
-  // hotel_up_blocked {floor} — a tap on a dark ▲ (the «Сначала сдайте экзамен» toast).
+  // hotel_up_blocked {floor} — a tap on a dark ▲ (the «Спершу складіть іспит» toast).
   // hotel_drop_played {reduced} — the Номер 13 drop ran (reduced = the fade variant).
   | 'hotel_floor_entered'
   | 'hotel_lift_ride'
@@ -357,9 +357,9 @@ export type AnalyticsEvent =
   // hotel_check_answered {itemId, correct} — a Проверь себя item answered (ungraded).
   // hotel_unit_attempt {packId, unitId, percent, passed, attempt} — a unit exercise run finished.
   // hotel_floor_exam {packId, percent, passed, attempt, weakestUnitId} — a floor exam finished.
-  // hotel_extern {packId, percent, passed} — an экстерн finished.
-  // hotel_cooldown_blocked {kind, minutesLeft} — a floor/экстерн start refused by its cooldown.
-  // hotel_explain_more {context, packId, id, model} — «Объясни ещё» requested (context = card | item).
+  // hotel_extern {packId, percent, passed} — an екстерн finished.
+  // hotel_cooldown_blocked {kind, minutesLeft} — a floor/екстерн start refused by its cooldown.
+  // hotel_explain_more {context, packId, id, model} — «Поясни ще» requested (context = card | item).
   // hotel_practice_opened {packId, examId} — a floor's «Практика» drill opened.
   // hotel_library_quote_played {packId, storyId} — a library quote's ▶ played.
   | 'hotel_unit_opened'

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import type { CourseItem, CourseUnit } from '@sumrak/schema';
+import type { CourseItem, CourseUnit } from '@sutinki/schema';
 import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
 import { Alert, Pressable, ScrollView, View } from 'react-native';
@@ -10,7 +10,7 @@ import { Text } from '@/components/ui/text';
 import { repos } from '@/db';
 import type { AttemptRecord } from '@/db/repositories/course';
 import { canAttempt, drawItems } from '../hotel-model';
-import { formatCooldownRu } from '../gate-model';
+import { formatCooldownUk } from '../gate-model';
 import { recordHotelRun } from '@/features/motivation/service';
 import { ChoiceItemView } from '@/features/torfl/items/choice-item-view';
 import { TypedItemView } from '@/features/torfl/items/typed-item-view';
@@ -243,7 +243,7 @@ export function RunnerScreen({
   if (!course) {
     return (
       <View className="flex-1 items-center justify-center bg-bg px-6">
-        <Text variant="muted">{floor.isLoading ? 'Загрузка…' : 'Этаж не найден.'}</Text>
+        <Text variant="muted">{floor.isLoading ? 'Завантаження…' : 'Поверх не знайдено.'}</Text>
       </View>
     );
   }
@@ -254,9 +254,9 @@ export function RunnerScreen({
         className="flex-1 items-center justify-center gap-4 bg-bg px-6"
         testID="runner-cooldown"
       >
-        <Stack.Screen options={{ title: 'Упражнения' }} />
+        <Stack.Screen options={{ title: 'Вправи' }} />
         <Ionicons name="time-outline" size={36} color={theme.textMuted} />
-        <Text className="font-ui-medium text-base">{`Можно снова через ${formatCooldownRu(blockedMinutes)}`}</Text>
+        <Text className="font-ui-medium text-base">{`Можна знову через ${formatCooldownUk(blockedMinutes)}`}</Text>
         <Pressable
           onPress={() => router.back()}
           accessibilityRole="button"
@@ -283,15 +283,15 @@ export function RunnerScreen({
         <Text className="font-ui-medium text-base" testID="runner-verdict">
           {finished.passed
             ? mode === 'unit'
-              ? 'Урок пройден ✓'
-              : 'Этаж пройден'
-            : 'Пока не сдано'}
+              ? 'Урок складено ✓'
+              : 'Поверх складено'
+            : 'Поки не складено'}
         </Text>
         {mode !== 'unit' && !finished.passed ? (
           <Text
             variant="muted"
             testID="runner-cooldown-note"
-          >{`Следующая попытка через ${formatCooldownRu(finished.cooldownMinutes)}`}</Text>
+          >{`Наступна спроба через ${formatCooldownUk(finished.cooldownMinutes)}`}</Text>
         ) : null}
         {finished.weakestUnitId ? (
           <Pressable
@@ -300,7 +300,7 @@ export function RunnerScreen({
             testID="runner-weakest"
             className="items-center rounded-xl border border-border py-3.5"
           >
-            <Text className="font-ui-medium">Повторить урок</Text>
+            <Text className="font-ui-medium">Повторити урок</Text>
           </Pressable>
         ) : null}
         <Pressable
@@ -319,11 +319,11 @@ export function RunnerScreen({
             opacity: mode !== 'unit' && !finished.passed && finished.cooldownMinutes > 0 ? 0.4 : 1,
           }}
         >
-          <Text className="font-ui-medium text-bg">Повторить</Text>
+          <Text className="font-ui-medium text-bg">Повторити</Text>
         </Pressable>
         {mode !== 'unit' ? (
           <View className="gap-3">
-            <Text className="font-ui-medium text-base">Разбор</Text>
+            <Text className="font-ui-medium text-base">Розбір</Text>
             <ReviewList
               rows={reviewRows(
                 finished.review.items,
@@ -355,7 +355,7 @@ export function RunnerScreen({
             testID="runner-reread"
             className="items-center rounded-xl border border-border py-3.5"
           >
-            <Text className="font-ui-medium">Перечитать урок</Text>
+            <Text className="font-ui-medium">Перечитати урок</Text>
           </Pressable>
         ) : null}
       </ScrollView>
@@ -374,10 +374,10 @@ export function RunnerScreen({
   return (
     <View className="flex-1 bg-bg" testID="runner-screen">
       <ExplainSheet target={explainTarget} onClose={() => setExplainTarget(null)} />
-      <Stack.Screen options={{ title: unit?.title.ru ?? course.title.ru }} />
+      <Stack.Screen options={{ title: unit?.title.uk ?? course.title.uk }} />
       <View className="flex-row items-center justify-between px-4 pb-2 pt-3">
         <Text className="font-ui-medium text-sm text-text-muted">
-          {state ? `${cursorNo} из ${state.itemIds.length}` : ''}
+          {state ? `${cursorNo} з ${state.itemIds.length}` : ''}
         </Text>
         {allowsTranslation(mode) ? (
           <Pressable
@@ -387,7 +387,7 @@ export function RunnerScreen({
             className="rounded-lg px-3 py-1.5"
           >
             <Text className="font-ui-medium text-sm text-accent">
-              {translate ? 'скрыть перевод' : 'перевод'}
+              {translate ? 'сховати переклад' : 'переклад'}
             </Text>
           </Pressable>
         ) : null}
@@ -508,7 +508,7 @@ export function RunnerScreen({
             // Unit mode has no «Сдать» bar (feedback is on), so the last item's «Далее» finishes the run —
             // before this it clamped at the last item and the sitting never ended (T93c chunk C4).
             nextLabel={
-              state && state.cursor >= state.itemIds.length - 1 ? 'Завершить →' : undefined
+              state && state.cursor >= state.itemIds.length - 1 ? 'Завершити →' : undefined
             }
             onNext={() => {
               if (!state) return;
@@ -538,16 +538,16 @@ export function RunnerScreen({
               const left = unanswered(state).length;
               if (left === 0) void finish();
               else
-                Alert.alert('Сдать?', `Без ответа: ${left}`, [
-                  { text: 'Нет', style: 'cancel' },
-                  { text: 'Сдать', onPress: () => void finish() },
+                Alert.alert('Здати?', `Без відповіді: ${left}`, [
+                  { text: 'Ні', style: 'cancel' },
+                  { text: 'Здати', onPress: () => void finish() },
                 ]);
             }}
             accessibilityRole="button"
             testID="runner-submit"
             className="flex-1 items-center rounded-xl bg-accent py-2.5"
           >
-            <Text className="font-ui-medium text-bg">Сдать</Text>
+            <Text className="font-ui-medium text-bg">Здати</Text>
           </Pressable>
           <Pressable
             onPress={() => setState(moveTo(state, state.cursor + 1))}
@@ -589,7 +589,7 @@ function teachingCardIndex(unit: CourseUnit, item: CourseItem): number | null {
 }
 
 /**
- * «Объясни ещё ✦» target for an answered item (T90 decision 6). The caller only
+ * «Поясни ще ✦» target for an answered item (T90 decision 6). The caller only
  * offers it in unit feedback, never mid-exam. Offline is handled by the
  * sheet («Нужен интернет»), not by throwing here.
  */

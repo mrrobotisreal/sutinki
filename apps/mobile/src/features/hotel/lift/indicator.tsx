@@ -25,7 +25,7 @@ export const PULSE_MIN = 0.75;
 export const DIM_OPACITY = 0.4;
 
 export interface Titles {
-  ru: string;
+  uk: string;
   en: string;
 }
 
@@ -74,13 +74,13 @@ export function Indicator({ display, titles, reduced, dimmed, marked }: Indicato
         {marked ? (
           <View
             testID="indicator-marker"
-            accessibilityLabel="Отмечено на лифте"
+            accessibilityLabel="Позначено на ліфті"
             style={{ backgroundColor: t.hotelGlow, width: 8, height: 8, borderRadius: 4 }}
           />
         ) : null}
         <Text
           accessibilityRole="header"
-          accessibilityLabel={`Этаж ${display}`}
+          accessibilityLabel={`Поверх ${display}`}
           style={{
             color: t.hotelGlow,
             textShadowColor: t.hotelGlow,
@@ -99,7 +99,7 @@ export function Indicator({ display, titles, reduced, dimmed, marked }: Indicato
         style={{ color: t.hotelGlowDim, fontSize: 18, lineHeight: 24, marginTop: 4 }}
         className="text-center font-ui-medium"
       >
-        {titles.ru}
+        {titles.uk}
       </Text>
       <Text
         style={{ fontSize: 12, lineHeight: 16 }}

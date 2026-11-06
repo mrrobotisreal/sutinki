@@ -1,12 +1,12 @@
-import type { Pack } from '@sumrak/schema';
-import coursePackJson from '@sumrak/schema/fixtures/packs/a1-hotel-fixture/pack.json';
+import type { Pack } from '@sutinki/schema';
+import coursePackJson from '@sutinki/schema/fixtures/packs/a1-hotel-fixture/pack.json';
 import { eq } from 'drizzle-orm';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { importPack } from '../importer';
 import { createRepositories } from '../repositories';
 import { courseAttempts, courseProgress, examItemCards } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 import { createTestDb } from './helpers';
 
 const trackMock = vi.hoisted(() => vi.fn());
@@ -24,7 +24,7 @@ const PACK_ID = PACK.id;
 const T0 = 1_790_000_000_000;
 const MIN = 60_000;
 
-let db: SumrakDB;
+let db: SutinkiDB;
 let repos: ReturnType<typeof createRepositories>;
 
 beforeEach(async () => {
@@ -42,7 +42,7 @@ describe('reads', () => {
     expect(floors.map((f) => f.floor)).toEqual([3]);
     expect(floors[0]!.packId).toBe(PACK_ID);
     expect(floors[0]!.unitCount).toBe(PACK.course!.units.length);
-    expect(floors[0]!.title.ru).toBe(PACK.course!.title.ru);
+    expect(floors[0]!.title.uk).toBe(PACK.course!.title.uk);
   });
 
   it('listFloors filters by level', async () => {

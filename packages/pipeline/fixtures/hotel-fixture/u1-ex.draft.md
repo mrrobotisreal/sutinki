@@ -3,12 +3,12 @@ pack:
   id: a1-hotel-fixture
   version: 1
   type: course
-  title: { ru: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
+  title: { uk: 'Отель «Сумрак»: тестовый этаж', en: 'Hotel Sumrak: fixture floor' }
   level: A1
   tags: ['torfl', 'torfl:fixture', 'hotel']
 story:
   id: u1-ex
-  title: { ru: "Где? Ответ: в + предложный", en: "Where? Answer: в + prepositional" }
+  title: { uk: "Где? Ответ: в + предложный", en: "Where? Answer: в + prepositional" }
   level: A1
 ---
 
@@ -16,7 +16,7 @@ story:
 
 ## u1s01
 
-RU: Я живу в большом городе.
+UK: Я живу в большом городе.
 EN: I live in a big city.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -30,7 +30,7 @@ EN: I live in a big city.
 
 ## u1s02
 
-RU: Мой брат работает в банке.
+UK: Мой брат работает в банке.
 EN: My brother works at a bank.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -44,7 +44,7 @@ EN: My brother works at a bank.
 
 ## u1s03
 
-RU: Мы говорим о школе.
+UK: Мы говорим о школе.
 EN: We are talking about school.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -57,7 +57,7 @@ EN: We are talking about school.
 
 ## u1s04
 
-RU: Она живёт на улице Мира.
+UK: Она живёт на улице Мира.
 EN: She lives on Mira Street.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -71,7 +71,7 @@ EN: She lives on Mira Street.
 
 ## u1s05
 
-RU: Мы сидим в кафе.
+UK: Мы сидим в кафе.
 EN: We sit in a café.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -84,7 +84,7 @@ EN: We sit in a café.
 
 ## u1s06
 
-RU: Я читаю о Москве.
+UK: Я читаю о Москве.
 EN: I read about Moscow.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -97,7 +97,7 @@ EN: I read about Moscow.
 
 ## u1s07
 
-RU: Он был в театре вчера.
+UK: Он был в театре вчера.
 EN: He was at the theatre yesterday.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -111,7 +111,7 @@ EN: He was at the theatre yesterday.
 
 ## u1s08
 
-RU: В доме есть большая кухня.
+UK: В доме есть большая кухня.
 EN: In the house there is a big kitchen.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -125,7 +125,7 @@ EN: In the house there is a big kitchen.
 
 ## u1s09
 
-RU: Я думаю о работе.
+UK: Я думаю о работе.
 EN: I think about work.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -138,7 +138,7 @@ EN: I think about work.
 
 ## u1s10
 
-RU: Это моя комната в гостинице.
+UK: Это моя комната в гостинице.
 EN: This is my room in the hotel.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -152,7 +152,7 @@ EN: This is my room in the hotel.
 
 ## u1s11
 
-RU: Он живёт в Киеве.
+UK: Он живёт в Киеве.
 EN: He lives in Kyiv.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -165,7 +165,7 @@ EN: He lives in Kyiv.
 
 ## u1s12
 
-RU: Мы гуляем в парке.
+UK: Мы гуляем в парке.
 EN: We walk in the park.
 
 | text | lemma | translation | pos | grammar | level | note |

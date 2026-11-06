@@ -11,7 +11,7 @@ import { useMotionPrefs, useReduceMotion } from '@/store/motion-prefs';
  * the four acceptance cases, a reduce-motion toggle, and `[lift-lab]` JSON logs
  * so a driver can read what happened.
  *
- * Deep link: `sumrak://dev-lift?preset=start|mid|skip13|reveal13&n=<nonce>`.
+ * Deep link: `sutinki://dev-lift?preset=start|mid|skip13|reveal13&n=<nonce>`.
  *   start    – 0 unlocked, standing on 0 (▲ dark on the highest unlocked floor).
  *   mid      – unlocked 4, standing on 4 (▲ dark on 4).
  *   skip13   – unlocked 15, standing on 12 (a 12 → 14 ride shows the flicker).
@@ -42,10 +42,10 @@ function presetFrom(raw: string | undefined): PresetName {
 }
 
 /** Placeholder floor titles for the gallery (T92 supplies the real ones). */
-function titleFor(floor: number): { ru: string; en: string } {
-  if (floor === 0) return { ru: 'Вестибюль', en: 'Lobby' };
-  if (floor === 13) return { ru: 'Номер 13', en: 'Room 13' };
-  return { ru: `Этаж ${floor}`, en: `Floor ${floor}` };
+function titleFor(floor: number): { uk: string; en: string } {
+  if (floor === 0) return { uk: 'Вестибюль', en: 'Lobby' };
+  if (floor === 13) return { uk: 'Номер 13', en: 'Room 13' };
+  return { uk: `Поверх ${floor}`, en: `Floor ${floor}` };
 }
 
 function log(event: string, data: Record<string, unknown>): void {

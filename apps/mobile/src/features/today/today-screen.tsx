@@ -388,7 +388,7 @@ export function TodayScreen() {
       )}
 
       {/* continue on the path (T17) — current node's next uncompleted step */}
-      {hotel.action && <HotelContinueCard action={hotel.action} />}
+      {!ukPending('hotel') && hotel.action && <HotelContinueCard action={hotel.action} />}
 
       {/* where I left off */}
       {continueTarget && (

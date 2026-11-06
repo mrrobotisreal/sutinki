@@ -1,4 +1,4 @@
-import type { CourseItem } from '@sumrak/schema';
+import type { CourseItem } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -11,7 +11,7 @@ import type { Verdict } from './runner-model';
 /**
  * The review under exam conditions (decision 5): every item with the
  * learner's answer, the key, and the full explanation. Shown only after submit.
- * «Объясни ещё ✦» is offered here (T92 carried #1): the review is never mid-exam.
+ * «Поясни ще ✦» is offered here (T92 carried #1): the review is never mid-exam.
  */
 export function ReviewList({
   rows,
@@ -32,7 +32,7 @@ export function ReviewList({
           <Text className="font-ui-medium text-sm text-text-muted">
             {`${i + 1}. ${verdictLabel(row.verdict)}`}
           </Text>
-          <Text variant="muted">{`Ваш ответ: ${row.yourAnswer}`}</Text>
+          <Text variant="muted">{`Ваша відповідь: ${row.yourAnswer}`}</Text>
           <Text className="font-ui-medium">{`Ключ: ${row.key}`}</Text>
           <MarkdownView source={row.item.explain ?? ''} />
           {onExplainMore ? (
@@ -44,7 +44,7 @@ export function ReviewList({
               testID="review-explain-more"
               className="self-start rounded-xl border border-border px-4 py-2.5 active:bg-surface-2"
             >
-              <Text className="font-ui-medium text-sm">Объясни ещё ✦</Text>
+              <Text className="font-ui-medium text-sm">Поясни ще ✦</Text>
             </Pressable>
           ) : null}
         </View>
@@ -54,5 +54,5 @@ export function ReviewList({
 }
 
 function verdictLabel(v: Verdict): string {
-  return v === 'full' ? 'Верно' : v === 'half' ? 'Почти' : 'Неверно';
+  return v === 'full' ? 'Правильно' : v === 'half' ? 'Майже' : 'Неправильно';
 }

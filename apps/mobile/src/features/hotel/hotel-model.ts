@@ -1,4 +1,4 @@
-import type { CourseItem, TypedItem } from '@sumrak/schema';
+import type { CourseItem, TypedItem } from '@sutinki/schema';
 
 import { scoreTyped } from '@/features/torfl/scoring';
 
@@ -368,8 +368,8 @@ export function externMenu(states: readonly FloorState[]): FloorState[] {
 
 /** The экстерн confirm copy (decision 3): «90 %, без подсказок, при неудаче — пауза 1 час». */
 export const EXTERN_CONFIRM = {
-  title: 'Сдать экстерном',
-  body: `${EXTERN_PASS_PERCENT} %, без подсказок, при неудаче — пауза 1 час`,
+  title: 'Скласти екстерном',
+  body: `${EXTERN_PASS_PERCENT} %, без підказок, у разі невдачі — пауза 1 година`,
 } as const;
 
 /** The last floor Mitch was on (`hotel.lastFloor`): an integer 0–99, anything else is null. */

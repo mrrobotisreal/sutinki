@@ -45,7 +45,7 @@ export const XP_TABLE = {
   hotelUnitPassed: 10,
   /** The hotel (T90): a floor exam pass (≥ 80 %). */
   hotelFloorPassed: 30,
-  /** The hotel (T90): an экстерн pass (≥ 90 %). */
+  /** The hotel (T90): an екстерн pass (≥ 90 %). */
   hotelExternPassed: 30,
   /** A TORFL mock subtest scored (M18/T71, TORFL §7.5) — once per scored subtest, credited when the attempt finishes. */
   examSubtestFinished: 15,

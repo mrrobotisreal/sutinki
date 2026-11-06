@@ -481,7 +481,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       ladder: course.ladder,
       level: course.level,
       floor: course.floor,
-      titleRu: course.title.ru,
+      titleUk: course.title.uk,
       titleEn: course.title.en,
       json: JSON.stringify(course),
     });

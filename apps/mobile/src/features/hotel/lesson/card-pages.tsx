@@ -1,4 +1,4 @@
-import type { CourseCard, CourseUnit, LibraryQuote } from '@sumrak/schema';
+import type { CourseCard, CourseUnit, LibraryQuote } from '@sutinki/schema';
 import * as React from 'react';
 
 import type { TokenRow } from '@/db/repositories/content';

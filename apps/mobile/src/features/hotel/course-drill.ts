@@ -1,4 +1,4 @@
-import type { ChoiceItem, CourseItem, ExamPart, ExamSubtest, TypedItem } from '@sumrak/schema';
+import type { ChoiceItem, CourseItem, ExamPart, ExamSubtest, TypedItem } from '@sutinki/schema';
 
 import type { DrillEntry } from '@/features/torfl/drill/drill-model';
 import { torflLevelOf } from '@/features/torfl/level-profile';
@@ -24,8 +24,8 @@ function courseSubtest(kind: string): ExamSubtest {
   return {
     id: `course-${kind}`,
     kind: kind as ExamSubtest['kind'],
-    title: { ru: 'Отель «Сумрак»', en: 'Hotel «Sumrak»' },
-    instructions: { ru: '', en: '' },
+    title: { uk: 'Готель «Сутінки»', en: 'Hotel «Sutinki»' },
+    instructions: { uk: '', en: '' },
     durationMin: 1,
     dictionary: false,
     navigation: 'free',
@@ -38,7 +38,7 @@ function courseSubtest(kind: string): ExamSubtest {
 function coursePart(id: string, item: ChoiceItem | TypedItem): ExamPart {
   return {
     id,
-    instructions: { ru: '', en: '' },
+    instructions: { uk: '', en: '' },
     items: [item],
   } as ExamPart;
 }

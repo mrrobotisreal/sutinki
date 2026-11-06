@@ -87,7 +87,8 @@ export function CallButton({
     shadowRadius: 10 * flash.value,
   }));
 
-  const ringColor = accentGlow ? '#E0602E' : t.hotelGlow;
+  const glowColor = accentGlow ? t.accent2 : t.hotelGlow;
+  const ringColor = glowColor;
 
   return (
     <Pressable
@@ -125,7 +126,7 @@ export function CallButton({
       >
         <Text
           style={{
-            color: lit ? (accentGlow ? '#E0602E' : t.hotelGlow) : t.textMuted,
+            color: lit ? glowColor : t.textMuted,
             fontSize: label.length > 1 ? 18 : 22,
             fontFamily: 'Literata_700Bold',
             opacity: lit ? 1 : 0.55,
@@ -136,7 +137,7 @@ export function CallButton({
         {marked ? (
           <View
             testID={testID ? `${testID}-marker` : undefined}
-            accessibilityLabel="Отмечено на лифте"
+            accessibilityLabel="Позначено на ліфті"
             style={{
               position: 'absolute',
               top: 4,
@@ -196,7 +197,7 @@ export function CallPanel({
       <CallButton
         label="▲"
         lit={upLit}
-        a11y={upLit ? 'Выше' : 'Выше — закрыто'}
+        a11y={upLit ? 'Вище' : 'Вище — закрито'}
         reduced={reduced}
         onPress={onUp}
         testID="lift-up"
@@ -205,7 +206,7 @@ export function CallPanel({
       <CallButton
         label="▼"
         lit={downLit}
-        a11y="Ниже"
+        a11y="Нижче"
         reduced={reduced}
         onPress={onDown}
         testID="lift-down"

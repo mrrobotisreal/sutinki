@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { SentenceWithTokens, TokenRow } from '@/db/repositories/content';
-import type { CourseCard, CourseExample, LibraryQuote } from '@sumrak/schema';
+import type { CourseCard, CourseExample, LibraryQuote } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -70,14 +70,14 @@ export function ExplainCardView({
     <View className="gap-5">
       <View className="gap-1">
         <Text variant="heading" className="font-ui-bold text-2xl">
-          {card.title.ru}
+          {card.title.uk}
         </Text>
         <Text variant="caption">{card.title.en}</Text>
       </View>
       <MarkdownView source={card.body} />
       {card.table ? <TableGrid table={card.table} /> : null}
       <View className="gap-3">
-        <Text className="font-ui-medium text-sm text-text-muted">Примеры</Text>
+        <Text className="font-ui-medium text-sm text-text-muted">Приклади</Text>
         <ExampleList examples={card.examples} sentences={sentences} cb={cb} />
       </View>
     </View>
@@ -99,11 +99,11 @@ export function EdgeCardView({
       <View className="flex-row items-center gap-2">
         <Ionicons name="sparkles-outline" size={18} color={theme.accent} />
         <View className="rounded-full bg-accent-soft px-2.5 py-0.5">
-          <Text className="font-ui-medium text-xs text-accent">Тонкость</Text>
+          <Text className="font-ui-medium text-xs text-accent">Тонкість</Text>
         </View>
       </View>
       <Text variant="heading" className="font-ui-bold text-2xl">
-        {card.title.ru}
+        {card.title.uk}
       </Text>
       <MarkdownView source={card.body} />
       <ExampleList examples={card.examples} sentences={sentences} cb={cb} />
@@ -124,7 +124,7 @@ export function TrapsCardView({
   return (
     <View className="gap-4">
       <Text variant="heading" className="font-ui-bold text-2xl">
-        {card.title.ru}
+        {card.title.uk}
       </Text>
       {card.pairs.map((pair, i) => {
         const key = `${pair.right.storyId}/${pair.right.sentenceId}` as SentenceRefKey;
@@ -179,7 +179,7 @@ export function LibraryCardView({
   return (
     <View className="gap-4">
       <Text variant="heading" className="font-ui-bold text-2xl">
-        Из библиотеки
+        Із бібліотеки
       </Text>
       {card.quotes.map((q, i) => {
         const source = sourceTitles.get(`${q.packId}/${q.storyId}`);
@@ -210,7 +210,7 @@ export function LibraryCardView({
               testID="library-read-more"
               className="self-start active:opacity-80"
             >
-              <Text className="font-ui-medium text-sm text-accent">читать дальше →</Text>
+              <Text className="font-ui-medium text-sm text-accent">читати далі →</Text>
             </Pressable>
           </View>
         );

@@ -4,8 +4,8 @@ import { createTestDb } from '@/db/__tests__/helpers';
 import { importPack } from '@/db/importer';
 import { createSettingsRepo, SETTING_KEYS } from '@/db/repositories/settings';
 import { checkpointResults, packs, syncState } from '@/db/schema';
-import type { Manifest } from '@sumrak/schema';
-import storiesPack from '@sumrak/schema/fixtures/packs/a1-creepypasta-001/pack.json';
+import type { Manifest } from '@sutinki/schema';
+import storiesPack from '@sutinki/schema/fixtures/packs/a1-creepypasta-001/pack.json';
 import { eq } from 'drizzle-orm';
 
 import { diffManifest, RETIRED_PACKS } from '@/features/sync/sync-core';
@@ -84,8 +84,12 @@ describe('retireCheckpointOnce', () => {
   it('the sync-state row of a retired pack is removed along with its content', async () => {
     const db = createTestDb();
     await importPack(db, { ...storiesPack, id: RETIRED_CHECKPOINT_PACK } as never);
-    expect(await db.select().from(syncState).where(eq(syncState.packId, RETIRED_CHECKPOINT_PACK))).toHaveLength(1);
+    expect(
+      await db.select().from(syncState).where(eq(syncState.packId, RETIRED_CHECKPOINT_PACK)),
+    ).toHaveLength(1);
     await retireCheckpointOnce(db);
-    expect(await db.select().from(syncState).where(eq(syncState.packId, RETIRED_CHECKPOINT_PACK))).toEqual([]);
+    expect(
+      await db.select().from(syncState).where(eq(syncState.packId, RETIRED_CHECKPOINT_PACK)),
+    ).toEqual([]);
   });
 });
