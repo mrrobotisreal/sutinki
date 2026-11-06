@@ -13,20 +13,20 @@ describe('computeForecast', () => {
   it('buckets by local day; overdue lands in day 0; beyond-window → later', () => {
     const f = computeForecast(
       [
-        { dueAt: at(2026, 9, 1), direction: 'ru-en' }, // overdue
-        { dueAt: at(2026, 10, 9, 0), direction: 'ru-en' }, // overdue (00:00 today)
-        { dueAt: at(2026, 10, 9, 23), direction: 'en-ru' }, // later today
-        { dueAt: new Date(2026, 9, 10, 0, 0).getTime(), direction: 'ru-en' }, // midnight → day 1
+        { dueAt: at(2026, 9, 1), direction: 'uk-en' }, // overdue
+        { dueAt: at(2026, 10, 9, 0), direction: 'uk-en' }, // overdue (00:00 today)
+        { dueAt: at(2026, 10, 9, 23), direction: 'en-uk' }, // later today
+        { dueAt: new Date(2026, 9, 10, 0, 0).getTime(), direction: 'uk-en' }, // midnight → day 1
         { dueAt: at(2026, 10, 12), direction: 'listening' },
         { dueAt: at(2026, 10, 12), direction: 'listening' },
-        { dueAt: at(2026, 11, 7, 23), direction: 'ru-en' }, // offset 29, last in window
-        { dueAt: at(2026, 11, 8, 0), direction: 'ru-en' }, // offset 30 → later
+        { dueAt: at(2026, 11, 7, 23), direction: 'uk-en' }, // offset 29, last in window
+        { dueAt: at(2026, 11, 8, 0), direction: 'uk-en' }, // offset 30 → later
       ],
       now,
     );
     expect(f.days).toHaveLength(30);
     expect(f.days[0]).toMatchObject({ date: '2026-10-09', total: 3 });
-    expect(f.days[0]!.byDirection).toEqual({ 'ru-en': 2, 'en-ru': 1 });
+    expect(f.days[0]!.byDirection).toEqual({ 'uk-en': 2, 'en-uk': 1 });
     expect(f.overdue).toBe(2);
     expect(f.days[1]).toMatchObject({ date: '2026-10-10', total: 1 });
     expect(f.days[3]).toMatchObject({ date: '2026-10-12', total: 2 });

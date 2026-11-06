@@ -30,7 +30,7 @@ export const ReferenceLemmaSchema = z.strictObject({
 });
 export type ReferenceLemma = z.infer<typeof ReferenceLemmaSchema>;
 
-/** Folded match key — the app's `normalizeRu` (NFC + lowercase + ё→е). */
+/** Folded match key — the app's `normalizeUk` (NFC + lowercase + ё→е). */
 export function referenceLemmaKey(lemma: string): string {
   return lemma.normalize('NFC').toLowerCase().replaceAll('ё', 'е');
 }

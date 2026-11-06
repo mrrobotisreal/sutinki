@@ -1,4 +1,4 @@
-package expo.modules.sumrakwidget
+package expo.modules.sutinkiwidget
 
 import android.content.Context
 import org.json.JSONObject

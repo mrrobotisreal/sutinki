@@ -1,4 +1,4 @@
-# sumrak-widget — home-screen widget (T40)
+# sutinki-widget — home-screen widget (T40)
 
 A Kotlin **Glance** home-screen widget for Сумрак: goal ring + streak flame + due-review count, with tap targets for the daily session and the continue-reading story. The widget never touches the database. The app writes a tiny JSON snapshot into SharedPreferences, and the widget renders only that snapshot.
 
@@ -8,7 +8,7 @@ The JS surface is `index.ts` (typed `requireNativeModule`). The device writer li
 
 | Item                   | Value           | Kotlin (`WidgetContract.kt`) | TS (`widget-contract.ts`) |
 | ---------------------- | --------------- | ---------------------------- | ------------------------- |
-| SharedPreferences file | `sumrak_widget` | `PREFS_NAME`                 | `WIDGET_PREFS_NAME`       |
+| SharedPreferences file | `sutinki_widget` | `PREFS_NAME`                 | `WIDGET_PREFS_NAME`       |
 | Key (JSON string)      | `snapshot`      | `KEY_SNAPSHOT`               | `WIDGET_SNAPSHOT_KEY`     |
 | Schema version         | `1`             | `SNAPSHOT_VERSION`           | `WIDGET_SNAPSHOT_VERSION` |
 | Stale window           | 36 h            | `STALE_MS`                   | `WIDGET_STALE_MS`         |
@@ -24,10 +24,10 @@ The snapshot schema is `WidgetSnapshotSchema` in `widget-snapshot.ts`: `{ v, str
 `android/` is generated and gitignored, so nothing in it can be relied on. Everything the widget needs lives in this directory:
 
 1. **Autolinking.** Expo discovers `modules/*/expo-module.config.json` automatically. Verify with `npx expo-modules-autolinking resolve -p android | grep -i widget`.
-2. **Receiver and resources via the module's own manifest.** `android/src/main/AndroidManifest.xml` declares `SumrakWidgetReceiver`. Library manifests merge into the app's manifest on every build, so the receiver is recreated after `prebuild --clean`. There is no config plugin and no edit to the generated `android/`.
+2. **Receiver and resources via the module's own manifest.** `android/src/main/AndroidManifest.xml` declares `SutinkiWidgetReceiver`. Library manifests merge into the app's manifest on every build, so the receiver is recreated after `prebuild --clean`. There is no config plugin and no edit to the generated `android/`.
 3. **Glance and Compose.** `android/build.gradle` applies the Compose compiler plugin the way `@expo/ui` does, enables `buildFeatures { compose true }`, and depends on `androidx.glance:glance-appwidget:1.1.1` and `glance-material3:1.1.1`.
 
-Verified 2026-10-09: `npx expo prebuild --platform android --clean --no-install` followed by `cd android && JAVA_HOME=$(/usr/libexec/java_home -v 17) ./gradlew :app:assembleDebug -x lint` passed, and the merged manifest contains `SumrakWidgetReceiver`. A second `--clean` prebuild and a fresh assemble also passed. The debug APK is 139,283,221 bytes (132.8 MB).
+Verified 2026-10-09: `npx expo prebuild --platform android --clean --no-install` followed by `cd android && JAVA_HOME=$(/usr/libexec/java_home -v 17) ./gradlew :app:assembleDebug -x lint` passed, and the merged manifest contains `SutinkiWidgetReceiver`. A second `--clean` prebuild and a fresh assemble also passed. The debug APK is 139,283,221 bytes (132.8 MB).
 
 ## Ring decision
 
@@ -36,8 +36,8 @@ Glance cannot draw arcs, so `GoalRing.kt` renders the ring as a bitmap with `Can
 ## States
 
 - **Normal**: ring, streak, and due count are shown. The card taps through to the continue-reading story, or to the daily session when there is none.
-- **Stale** (`now - updatedAtMs > 36 h`): numbers dim to the muted colour and «открой приложение» appears.
-- **Missing** (no snapshot, fresh install, app never run) and **Corrupt** (malformed JSON): both show the «Открой Сумрак» placeholder, which opens the app. Neither crashes.
+- **Stale** (`now - updatedAtMs > 36 h`): numbers dim to the muted colour and «відкрий застосунок» appears.
+- **Missing** (no snapshot, fresh install, app never run) and **Corrupt** (malformed JSON): both show the «Відкрий Сутінки» placeholder, which opens the app. Neither crashes.
 - Any composition failure also falls back to the placeholder.
 
 ## Triggers
@@ -55,11 +55,11 @@ The native `writeSnapshot` commits with `commit()` and then refreshes every plac
 
 ## Deep links
 
-Taps use `sumrak://review/daily?from=widget` and `sumrak://reader/<packId>/<storyId>?from=widget`, with ids URL-encoded. `WidgetLinkTracker` (mounted in `_layout.tsx`) records `widget_opened` with `{ screen, from: 'widget' }` once per URL. expo-router does the navigation; the tracker never pushes a route.
+Taps use `sutinki://review/daily?from=widget` and `sutinki://reader/<packId>/<storyId>?from=widget`, with ids URL-encoded. `WidgetLinkTracker` (mounted in `_layout.tsx`) records `widget_opened` with `{ screen, from: 'widget' }` once per URL. expo-router does the navigation; the tracker never pushes a route.
 
 ## Rebuild steps (native change)
 
-After any change under `modules/sumrak-widget/android/`:
+After any change under `modules/sutinki-widget/android/`:
 
 ```sh
 cd apps/mobile
@@ -74,7 +74,7 @@ The `*.kt` and `res/` changes need a rebuilt dev client. The orchestrator instal
 On a debuggable build:
 
 ```sh
-adb exec-out run-as io.winapps.sumrak cat shared_prefs/sumrak_widget.xml
+adb exec-out run-as io.winapps.sutinki cat shared_prefs/sutinki_widget.xml
 ```
 
 To demo each state, use the `__DEV__` **Widget (T40)** section on the dev-db screen:

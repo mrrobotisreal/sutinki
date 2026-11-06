@@ -472,7 +472,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
       level: list.level,
       entryIdx,
       lemma: entry.lemma,
-      lemmaNorm: normalizeRu(entry.lemma),
+      lemmaNorm: normalizeUk(entry.lemma),
       pos: entry.pos ?? null,
       translation: entry.translation ?? null,
     }));

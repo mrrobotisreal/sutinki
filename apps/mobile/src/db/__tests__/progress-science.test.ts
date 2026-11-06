@@ -79,7 +79,7 @@ async function setCore(
   stability: number,
 ) {
   for (const c of await repos.reviews.listCardsForItem(itemId)) {
-    if (c.direction === 'ru-en' || c.direction === 'en-ru') {
+    if (c.direction === 'uk-en' || c.direction === 'en-uk') {
       await repos.reviews.saveCard({ ...c, stability, reps: 1, state: 2 });
     }
   }
@@ -165,7 +165,7 @@ describe('leech candidates (T38)', () => {
     const { repos } = await setup();
     const w = await repos.bank.addWord({ lemma: 'дом', surface: 'дом', translation: 'house' });
     const card = (await repos.reviews.listCardsForItem(w.item.id)).find(
-      (c) => c.direction === 'ru-en',
+      (c) => c.direction === 'uk-en',
     )!;
     let t = 1_000_000;
     // 4 Agains then 6 Goods → still 4 in the last 10 → leech
@@ -176,7 +176,7 @@ describe('leech candidates (T38)', () => {
     expect(cands).toHaveLength(1);
     expect(cands[0]).toMatchObject({
       cardId: card.id,
-      direction: 'ru-en',
+      direction: 'uk-en',
       againCount: 4,
       windowSize: 10,
       dismissedAt: null,

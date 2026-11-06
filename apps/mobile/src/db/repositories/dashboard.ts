@@ -180,7 +180,7 @@ const CORE_JOIN = sql`
     SELECT b.lemma_norm,
            MIN((SELECT MIN(c.stability) FROM cards c
                  WHERE c.bank_item_id = b.id
-                   AND c.direction IN ('ru-en', 'en-ru') AND c.reps > 0)) AS min_stab
+                   AND c.direction IN ('uk-en', 'en-uk') AND c.reps > 0)) AS min_stab
     FROM bank_items b
     WHERE b.kind = 'word' AND b.lemma_norm IS NOT NULL
     GROUP BY b.lemma_norm
@@ -251,7 +251,7 @@ export function createDashboardRepo(db: SutinkiDB) {
       // T39: suspended cards are absent; a buried card lands on its unbury day.
       return db.all<{ dueAt: number; direction: string }>(sql`
         SELECT MAX(due_at, COALESCE(buried_until, 0)) AS dueAt, direction FROM cards
-        WHERE direction IN ('ru-en', 'en-ru', 'production', 'listening')
+        WHERE direction IN ('uk-en', 'en-uk', 'production', 'listening')
           AND suspended_at IS NULL
       `);
     },
@@ -684,7 +684,7 @@ export function createDashboardRepo(db: SutinkiDB) {
         JOIN topic_sent ts ON ts.pack_id = t.pack_id AND ts.sentence_id = t.sentence_id
         WHERE b.kind = 'word' AND b.lemma_norm IS NOT NULL
           AND EXISTS (SELECT 1 FROM cards sc WHERE sc.bank_item_id = b.id
-                      AND sc.direction IN ('ru-en', 'en-ru', 'production', 'listening')
+                      AND sc.direction IN ('uk-en', 'en-uk', 'production', 'listening')
                       AND sc.suspended_at IS NULL)
         GROUP BY b.id
         ORDER BY (SELECT MIN(c.stability) FROM cards c

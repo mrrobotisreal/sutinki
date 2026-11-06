@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sutinki_widget_label">Сутінки</string>
+    <string name="sutinki_widget_description">Серія, повторення й мета на сьогодні</string>
+</resources>

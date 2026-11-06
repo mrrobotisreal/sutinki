@@ -107,8 +107,8 @@ export function CoreCoverageSection({
 
 const RU_WEEKDAY = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 const DIRECTION_LABEL: Record<string, string> = {
-  'ru-en': 'RU→EN',
-  'en-ru': 'EN→RU',
+  'uk-en': 'RU→EN',
+  'en-uk': 'EN→RU',
   listening: 'listening',
   production: 'speaking',
 };

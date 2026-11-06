@@ -63,7 +63,7 @@ describe('reference pack (T38)', () => {
     }
   });
 
-  it('referenceLemmaKey folds ё and case like the app normalizeRu', () => {
+  it('referenceLemmaKey folds ё and case like the app normalizeUk', () => {
     expect(referenceLemmaKey('Ещё')).toBe('еще');
     expect(referenceLemmaKey('чёрный')).toBe('черный');
   });

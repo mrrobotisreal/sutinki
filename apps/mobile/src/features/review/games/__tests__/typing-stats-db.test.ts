@@ -5,7 +5,7 @@ import { createTestDb } from '@/db/__tests__/helpers';
 import { createRepositories } from '@/db/repositories';
 import { SETTING_KEYS } from '@/db/repositories/settings';
 import { bankItems, cards, dailyActivity } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 
 import { pickNextWord, type TypingAttempt } from '../typing/engine';
 import { DEFAULT_TYPING_STATS, mergeTypingStats, parseTypingStats } from '../typing/stats';
@@ -19,7 +19,7 @@ import { finishTypingRound, loadTypingStats, startTypingRound } from '../typing/
 
 /** Bank word with its ru-en and en-ru cards set to a stability (days) and reps. */
 async function seedWord(
-  db: SumrakDB,
+  db: SutinkiDB,
   repos: ReturnType<typeof createRepositories>,
   lemma: string,
   stability: number | null,
@@ -30,7 +30,7 @@ async function seedWord(
     await db
       .update(cards)
       .set({ stability, reps: 2 })
-      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} IN ('ru-en','en-ru')`);
+      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} IN ('uk-en','en-uk')`);
   }
   return item.id;
 }
@@ -64,11 +64,11 @@ describe('listTypingCandidates (query level)', () => {
     await db
       .update(cards)
       .set({ stability: 50, reps: 3 })
-      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} = 'ru-en'`);
+      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} = 'uk-en'`);
     await db
       .update(cards)
       .set({ stability: 2, reps: 1 })
-      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} = 'en-ru'`);
+      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} = 'en-uk'`);
     const row = (await repos.bank.listTypingCandidates()).find((r) => r.id === item.id);
     expect(row?.minCoreStability).toBe(2);
   });

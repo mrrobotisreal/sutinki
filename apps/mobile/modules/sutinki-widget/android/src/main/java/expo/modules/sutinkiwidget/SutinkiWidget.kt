@@ -1,4 +1,4 @@
-package expo.modules.sumrakwidget
+package expo.modules.sutinkiwidget
 
 import android.content.Context
 import android.content.Intent
@@ -42,9 +42,9 @@ import androidx.compose.ui.unit.sp
 import java.net.URLEncoder
 
 /**
- * The Сумрак home-screen widget (T40). Renders ONLY from the SharedPreferences
+ * The Сутінки home-screen widget (T40). Renders ONLY from the SharedPreferences
  * snapshot — never the DB. Every failure path renders the fallback, never throws.
- * Colours mirror `src/theme/colors.ts`.
+ * Colours mirror `src/theme/colors.ts` — values from docs/design/UI_DESIGN.md (ADR-0009).
  */
 
 /** One palette per scheme, mirror of `colors.ts` (bg, surface, text, textMuted, accent). */
@@ -58,19 +58,19 @@ internal data class WidgetPalette(
 ) {
   companion object {
     val DARK = WidgetPalette(
-      bg = 0xFF0B0B0E.toInt(),
-      surface = 0xFF141419.toInt(),
+      bg = 0xFF0A0E16.toInt(),
+      surface = 0xFF121926.toInt(),
       text = 0xFFE8E6E3.toInt(),
-      textMuted = 0xFF9A97A0.toInt(),
-      accent = 0xFFB3402F.toInt(),
-      border = 0xFF26262E.toInt(),
+      textMuted = 0xFF98A0B3.toInt(),
+      accent = 0xFFE9C032.toInt(),
+      border = 0xFF253047.toInt(),
     )
     val LIGHT = WidgetPalette(
       bg = 0xFFF7F5F2.toInt(),
       surface = 0xFFFFFFFF.toInt(),
       text = 0xFF1A1A1F.toInt(),
       textMuted = 0xFF6B6870.toInt(),
-      accent = 0xFFA03828.toInt(),
+      accent = 0xFF856600.toInt(),
       border = 0xFFE2DED8.toInt(),
     )
   }
@@ -83,12 +83,12 @@ internal fun paletteFor(context: Context): WidgetPalette {
 
 internal fun appUri(path: String, from: String? = "widget"): Uri {
   val query = if (from != null) "?from=$from" else ""
-  return Uri.parse("sumrak://$path$query")
+  return Uri.parse("sutinki://$path$query")
 }
 
 /**
  * A VIEW intent pinned to this app (never a chooser) — MainActivity owns the
- * `sumrak` scheme; NEW_TASK + CLEAR_TOP reuse a running task or start cold.
+ * `sutinki` scheme; NEW_TASK + CLEAR_TOP reuse a running task or start cold.
  */
 internal fun viewIntent(context: Context, uri: Uri): Intent =
   Intent(Intent.ACTION_VIEW, uri)
@@ -96,15 +96,15 @@ internal fun viewIntent(context: Context, uri: Uri): Intent =
     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
 /** Glance-state key the app bumps on every snapshot write, forcing a re-read. */
-internal val SNAPSHOT_REV = longPreferencesKey("sumrak_snapshot_rev")
+internal val SNAPSHOT_REV = longPreferencesKey("sutinki_snapshot_rev")
 
-class SumrakWidget : GlanceAppWidget() {
+class SutinkiWidget : GlanceAppWidget() {
 
   override suspend fun provideGlance(context: Context, id: GlanceId) {
     val palette = paletteFor(context)
     provideContent {
       // Read the snapshot INSIDE composition, keyed on the Glance-state revision
-      // the app bumps on every write (SumrakWidgetModule.refreshAll). Reading it
+      // the app bumps on every write (SutinkiWidgetModule.refreshAll). Reading it
       // once before provideContent froze the first value for the whole Glance
       // session — update() recomposed with the stale capture (S25 finding).
       val rev = currentState(SNAPSHOT_REV) ?: 0L
@@ -122,7 +122,7 @@ class SumrakWidget : GlanceAppWidget() {
     }
 
   companion object {
-    private const val TAG = "SumrakWidget"
+    private const val TAG = "SutinkiWidget"
   }
 }
 
@@ -151,7 +151,7 @@ private fun Placeholder(context: Context, palette: WidgetPalette, uri: Uri) {
     contentAlignment = Alignment.Center,
   ) {
     Text(
-      text = "Открой Сумрак",
+      text = "Відкрий Сутінки",
       style = TextStyle(
         color = ColorProvider(Color(palette.text)),
         fontWeight = FontWeight.Medium,
@@ -206,7 +206,7 @@ private fun Normal(
     }
     Spacer(GlanceModifier.height(6.dp))
     Text(
-      text = "${snap.dueCount} к повторению",
+      text = "${snap.dueCount} до повторення",
       modifier = GlanceModifier.clickable(actionStartActivity(viewIntent(context, dailyUri))),
       style = TextStyle(
         color = ColorProvider(Color(numberColor)),
@@ -229,7 +229,7 @@ private fun Normal(
     if (stale) {
       Spacer(GlanceModifier.height(4.dp))
       Text(
-        text = "открой приложение",
+        text = "відкрий застосунок",
         style = TextStyle(
           color = ColorProvider(Color(palette.textMuted)),
           fontSize = 10.sp,
@@ -245,7 +245,7 @@ private fun Normal(
 private fun GoalRingImage(context: Context, fraction: Float, palette: WidgetPalette) {
   val bitmap = runCatching {
     GoalRing.render(fraction, sizePx = 192, trackColor = palette.border, accentColor = palette.accent)
-  }.onFailure { Log.w("SumrakWidget", "ring render failed, using bar", it) }.getOrNull()
+  }.onFailure { Log.w("SutinkiWidget", "ring render failed, using bar", it) }.getOrNull()
   if (bitmap != null) {
     Image(
       provider = ImageProvider(bitmap),

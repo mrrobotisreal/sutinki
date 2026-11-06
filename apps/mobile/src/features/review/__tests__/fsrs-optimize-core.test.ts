@@ -68,7 +68,7 @@ function synthRows(cards: number, seed = 42): ReviewRow[] {
       const rating = u < 0.05 ? 1 : u < 0.1 ? 2 : u < 0.95 ? 3 : 4;
       rows.push({
         cardId,
-        direction: 'ru-en',
+        direction: 'uk-en',
         rating,
         state,
         reviewedAt: Math.round(t + rnd() * 3_600_000),
@@ -88,26 +88,26 @@ function synthRows(cards: number, seed = 42): ReviewRow[] {
 }
 
 describe('export JSON parsing', () => {
-  it('accepts the exact sumrak-review-log v1 shape', () => {
+  it('accepts the exact sutinki-review-log v1 shape', () => {
     const text = JSON.stringify({
       v: 1,
-      kind: 'sumrak-review-log',
+      kind: 'sutinki-review-log',
       exportedAt: '2026-10-09T00:00:00.000Z',
       timezone: 'America/Denver',
       rows: [
-        { cardId: 'a', direction: 'ru-en', rating: 3, state: 0, reviewedAt: T0, durationMs: 900 },
+        { cardId: 'a', direction: 'uk-en', rating: 3, state: 0, reviewedAt: T0, durationMs: 900 },
       ],
     });
     const parsed = parseExportJson(text);
     expect(parsed.timezone).toBe('America/Denver');
     expect(parsed.rows).toEqual([
-      { cardId: 'a', direction: 'ru-en', rating: 3, state: 0, reviewedAt: T0, durationMs: 900 },
+      { cardId: 'a', direction: 'uk-en', rating: 3, state: 0, reviewedAt: T0, durationMs: 900 },
     ]);
   });
 
   it('rejects a wrong kind or version', () => {
     expect(() =>
-      parseExportJson(JSON.stringify({ v: 2, kind: 'sumrak-review-log', rows: [] })),
+      parseExportJson(JSON.stringify({ v: 2, kind: 'sutinki-review-log', rows: [] })),
     ).toThrow(FsrsOptimizeError);
     expect(() => parseExportJson(JSON.stringify({ v: 1, kind: 'other', rows: [] }))).toThrow(
       /Not a/,
@@ -134,16 +134,16 @@ describe('export → binding CSV', () => {
     const rows: ReviewRow[] = [
       {
         cardId: 'b',
-        direction: 'ru-en',
+        direction: 'uk-en',
         rating: 3,
         state: 2,
         reviewedAt: T0 + 5 * DAY,
         durationMs: 700,
       },
-      { cardId: 'a', direction: 'ru-en', rating: 3, state: 0, reviewedAt: T0, durationMs: null },
+      { cardId: 'a', direction: 'uk-en', rating: 3, state: 0, reviewedAt: T0, durationMs: null },
       {
         cardId: 'b',
-        direction: 'ru-en',
+        direction: 'uk-en',
         rating: 4,
         state: 0,
         reviewedAt: T0 + 1 * DAY,
@@ -151,7 +151,7 @@ describe('export → binding CSV', () => {
       },
       {
         cardId: 'a',
-        direction: 'ru-en',
+        direction: 'uk-en',
         rating: 2,
         state: 2,
         reviewedAt: T0 + 2 * DAY,
@@ -182,7 +182,7 @@ describe('export → binding CSV', () => {
 });
 
 describe('output shape and guards', () => {
-  it('builds the exact sumrak-fsrs-params v1 object', () => {
+  it('builds the exact sutinki-fsrs-params v1 object', () => {
     const w = roundWeights(Array.from(default_w));
     const file = buildParamsFile({
       w,
@@ -207,7 +207,7 @@ describe('output shape and guards', () => {
       'defaultRmse',
     ]);
     expect(file.v).toBe(1);
-    expect(file.kind).toBe('sumrak-fsrs-params');
+    expect(file.kind).toBe('sutinki-fsrs-params');
     expect(file.w).toHaveLength(21);
   });
 
@@ -279,7 +279,7 @@ describe('CLI end-to-end (file DB with real migrations)', () => {
       const insertCard = sqlite.prepare(
         `INSERT INTO cards (id, bank_item_id, direction, due_at, stability, difficulty, elapsed_days,
            scheduled_days, learning_steps, reps, lapses, state, created_at)
-         VALUES (?, ?, 'ru-en', 0, 1, 5, 0, 0, 0, 0, 0, 0, 0)`,
+         VALUES (?, ?, 'uk-en', 0, 1, 5, 0, 0, 0, 0, 0, 0, 0)`,
       );
       const insertLog = sqlite.prepare(
         `INSERT INTO review_log (id, card_id, rating, state, due_at, stability, difficulty, elapsed_days,
@@ -317,7 +317,7 @@ describe('CLI end-to-end (file DB with real migrations)', () => {
 
       const file = JSON.parse(readFileSync(outPath, 'utf8'));
       expect(file.v).toBe(1);
-      expect(file.kind).toBe('sumrak-fsrs-params');
+      expect(file.kind).toBe('sutinki-fsrs-params');
       expect(file.w).toHaveLength(21);
       expect(file.reviewCount).toBe(rows.length);
       expect(file.cardCount).toBe(seen.size);
@@ -360,7 +360,7 @@ describe('CLI end-to-end (file DB with real migrations)', () => {
         input,
         JSON.stringify({
           v: 1,
-          kind: 'sumrak-review-log',
+          kind: 'sutinki-review-log',
           exportedAt: '2026-10-09T00:00:00Z',
           timezone: 'UTC',
           rows: [],

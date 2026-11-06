@@ -63,18 +63,18 @@ describe('suspend / unsuspend', () => {
   it('a suspended card is excluded from listDueCards and countDueCards; unsuspend restores it', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['дом']);
-    const card = (await repos.reviews.getCard(ids['дом']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['дом']!, 'uk-en'))!;
 
     await repos.reviews.suspendCard(card.id, NOW);
     const dueIds = (
-      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en'] })
+      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en'] })
     ).map((c) => c.id);
     expect(dueIds).not.toContain(card.id);
-    expect(await repos.reviews.countDueCards({ now: NOW + 1000, directions: ['ru-en'] })).toBe(0);
+    expect(await repos.reviews.countDueCards({ now: NOW + 1000, directions: ['uk-en'] })).toBe(0);
 
     await repos.reviews.unsuspendCard(card.id);
     expect(
-      (await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en'] })).map(
+      (await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en'] })).map(
         (c) => c.id,
       ),
     ).toContain(card.id);
@@ -99,16 +99,16 @@ describe('bury', () => {
   it('a buried card is hidden at now and returns at the start of the next local day', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['вода']);
-    const card = (await repos.reviews.getCard(ids['вода']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['вода']!, 'uk-en'))!;
 
     await repos.reviews.buryUntilTomorrow(card.id, NOW);
     const hidden = (
-      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en'] })
+      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en'] })
     ).map((c) => c.id);
     expect(hidden).not.toContain(card.id);
 
     const back = startOfNextLocalDay(NOW) + 1;
-    const visible = (await repos.reviews.listDueCards({ now: back, directions: ['ru-en'] })).map(
+    const visible = (await repos.reviews.listDueCards({ now: back, directions: ['uk-en'] })).map(
       (c) => c.id,
     );
     expect(visible).toContain(card.id);
@@ -117,12 +117,12 @@ describe('bury', () => {
   it('unburyCard clears the bury immediately', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['сон']);
-    const card = (await repos.reviews.getCard(ids['сон']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['сон']!, 'uk-en'))!;
     await repos.reviews.buryUntilTomorrow(card.id, NOW);
     await repos.reviews.unburyCard(card.id);
     expect((await repos.reviews.getCardById(card.id))!.buriedUntil).toBeNull();
     expect(
-      (await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en'] })).map(
+      (await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en'] })).map(
         (c) => c.id,
       ),
     ).toContain(card.id);
@@ -133,40 +133,40 @@ describe('reviews queue exclusion audit', () => {
   it('listWeakestCards, listCardsForItems and countDueCards honour suspension and bury', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['один', 'два', 'три']);
-    const suspended = (await repos.reviews.getCard(ids['один']!, 'ru-en'))!;
-    const buried = (await repos.reviews.getCard(ids['два']!, 'ru-en'))!;
+    const suspended = (await repos.reviews.getCard(ids['один']!, 'uk-en'))!;
+    const buried = (await repos.reviews.getCard(ids['два']!, 'uk-en'))!;
     await repos.reviews.suspendCard(suspended.id, NOW);
     await repos.reviews.buryUntilTomorrow(buried.id, NOW);
 
-    const due = await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en'] });
+    const due = await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en'] });
     expect(due.map((c) => c.id)).not.toContain(suspended.id);
     expect(due.map((c) => c.id)).not.toContain(buried.id);
-    expect(await repos.reviews.countDueCards({ now: NOW + 1000, directions: ['ru-en'] })).toBe(1);
+    expect(await repos.reviews.countDueCards({ now: NOW + 1000, directions: ['uk-en'] })).toBe(1);
 
     // listWeakestCards serves only NOT-yet-due cards; these are due now, so the
     // weak list excludes them by due-ness alone. The exclusion check below is
     // therefore asserted against due=NOT-due semantics via the buried/suspended
     // cards being dropped from the due queue above.
-    const weak = await repos.reviews.listWeakestCards({ now: NOW + 1000, directions: ['ru-en'] });
+    const weak = await repos.reviews.listWeakestCards({ now: NOW + 1000, directions: ['uk-en'] });
     expect(weak.map((c) => c.id)).not.toContain(suspended.id);
     expect(weak.map((c) => c.id)).not.toContain(buried.id);
 
     const forItems = await repos.reviews.listCardsForItems(
       [ids['один']!, ids['два']!, ids['три']!],
-      ['ru-en'],
+      ['uk-en'],
       NOW + 1000,
     );
     expect(forItems.map((c) => c.id)).not.toContain(suspended.id);
     expect(forItems.map((c) => c.id)).not.toContain(buried.id);
     expect(forItems.map((c) => c.id)).toContain(
-      (await repos.reviews.getCard(ids['три']!, 'ru-en'))!.id,
+      (await repos.reviews.getCard(ids['три']!, 'uk-en'))!.id,
     );
   });
 
   it('listCardsForItem (item detail) still shows suspended and buried cards', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['мама']);
-    const card = (await repos.reviews.getCard(ids['мама']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['мама']!, 'uk-en'))!;
     await repos.reviews.suspendCard(card.id, NOW);
     await repos.reviews.buryUntilTomorrow(card.id, NOW);
     const all = await repos.reviews.listCardsForItem(ids['мама']!);
@@ -176,11 +176,11 @@ describe('reviews queue exclusion audit', () => {
   it('per-direction: suspend ru-en only leaves the en-ru card due', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['папа']);
-    const ruEn = (await repos.reviews.getCard(ids['папа']!, 'ru-en'))!;
-    const enRu = (await repos.reviews.getCard(ids['папа']!, 'en-ru'))!;
+    const ruEn = (await repos.reviews.getCard(ids['папа']!, 'uk-en'))!;
+    const enRu = (await repos.reviews.getCard(ids['папа']!, 'en-uk'))!;
     await repos.reviews.suspendCard(ruEn.id, NOW);
     const due = (
-      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['ru-en', 'en-ru'] })
+      await repos.reviews.listDueCards({ now: NOW + 1000, directions: ['uk-en', 'en-uk'] })
     ).map((c) => c.id);
     expect(due).not.toContain(ruEn.id);
     expect(due).toContain(enRu.id);
@@ -191,14 +191,14 @@ describe('dashboard exclusion audit', () => {
   it('getForecastCards: suspended absent; buried lands on the next local day', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['лес']);
-    const sus = (await repos.reviews.getCard(ids['лес']!, 'ru-en'))!;
-    const bur = (await repos.reviews.getCard(ids['лес']!, 'en-ru'))!;
+    const sus = (await repos.reviews.getCard(ids['лес']!, 'uk-en'))!;
+    const bur = (await repos.reviews.getCard(ids['лес']!, 'en-uk'))!;
     await repos.reviews.suspendCard(sus.id, NOW);
     await repos.reviews.buryUntilTomorrow(bur.id, NOW);
 
     const forecast = await repos.dashboard.getForecastCards();
-    expect(forecast.filter((f) => f.direction === 'ru-en')).toHaveLength(0);
-    const enRu = forecast.filter((f) => f.direction === 'en-ru');
+    expect(forecast.filter((f) => f.direction === 'uk-en')).toHaveLength(0);
+    const enRu = forecast.filter((f) => f.direction === 'en-uk');
     expect(enRu).toHaveLength(1);
     expect(enRu[0]!.dueAt).toBe(startOfNextLocalDay(NOW));
   });
@@ -207,7 +207,7 @@ describe('dashboard exclusion audit', () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['гость']);
     // give the cards reps>0 so they qualify for the weak lists
-    for (const direction of ['ru-en', 'production'] as const) {
+    for (const direction of ['uk-en', 'production'] as const) {
       const c = (await repos.reviews.getCard(ids['гость']!, direction))!;
       await repos.reviews.gradeCard(c.id, Rating.Good, { now: NOW });
     }
@@ -216,7 +216,7 @@ describe('dashboard exclusion audit', () => {
     const pronBefore = await repos.dashboard.getWeakestPronunciation();
     expect(pronBefore.map((w) => w.bankItemId)).toContain(ids['гость']);
 
-    const ru = (await repos.reviews.getCard(ids['гость']!, 'ru-en'))!;
+    const ru = (await repos.reviews.getCard(ids['гость']!, 'uk-en'))!;
     const pr = (await repos.reviews.getCard(ids['гость']!, 'production'))!;
     await repos.reviews.suspendCard(ru.id, NOW);
     await repos.reviews.suspendCard(pr.id, NOW);
@@ -249,7 +249,7 @@ describe('dashboard exclusion audit', () => {
           VALUES ('tp', 's1', 0, 'tst', 'тема', 'тема', 0, 0, 'тема', 'тема', 'theme', 'noun')`,
     );
     expect(await repos.dashboard.getTopicPracticeItemIds('A1', 'topic-x')).toContain(ids['тема']);
-    for (const dir of ['ru-en', 'en-ru', 'production', 'listening'] as const) {
+    for (const dir of ['uk-en', 'en-uk', 'production', 'listening'] as const) {
       const c = (await repos.reviews.getCard(ids['тема']!, dir))!;
       await repos.reviews.suspendCard(c.id, NOW);
     }
@@ -261,7 +261,7 @@ describe('dashboard exclusion audit', () => {
   it('getLeechCandidates excludes a suspended card with ≥ threshold Agains', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['трудно']);
-    const card = (await repos.reviews.getCard(ids['трудно']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['трудно']!, 'uk-en'))!;
     for (let i = 0; i < 4; i++) {
       await repos.reviews.gradeCard(card.id, Rating.Again, { now: NOW + i * 1000 });
     }
@@ -277,7 +277,7 @@ describe('reset', () => {
   it('a Good ×4 card resets to New and keeps its full review log', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['дорога']);
-    const card = (await repos.reviews.getCard(ids['дорога']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['дорога']!, 'uk-en'))!;
     for (let i = 0; i < 4; i++) {
       await repos.reviews.gradeCard(card.id, Rating.Good, { now: NOW + i * 86_400_000 });
     }
@@ -299,7 +299,7 @@ describe('reset', () => {
   it('reset keeps suspension and does not touch the review log', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['сад']);
-    const card = (await repos.reviews.getCard(ids['сад']!, 'ru-en'))!;
+    const card = (await repos.reviews.getCard(ids['сад']!, 'uk-en'))!;
     await repos.reviews.gradeCard(card.id, Rating.Good, { now: NOW });
     await repos.reviews.suspendCard(card.id, NOW);
     const reset = await repos.reviews.resetCard(card.id, NOW);
@@ -312,18 +312,18 @@ describe('listAllReviewLog', () => {
   it('joins each log row to its card direction + bank item, ordered by card then time', async () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['поле']);
-    const card = (await repos.reviews.getCard(ids['поле']!, 'en-ru'))!;
+    const card = (await repos.reviews.getCard(ids['поле']!, 'en-uk'))!;
     await repos.reviews.gradeCard(card.id, Rating.Hard, { now: NOW + 2000, durationMs: 1200 });
     await repos.reviews.gradeCard(card.id, Rating.Good, { now: NOW + 1000 });
     const rows = await repos.reviews.listAllReviewLog();
     const mine = rows.filter((r) => r.cardId === card.id);
     expect(mine.map((r) => r.reviewedAt)).toEqual([NOW + 1000, NOW + 2000]);
     expect(mine[0]).toMatchObject({
-      direction: 'en-ru',
+      direction: 'en-uk',
       bankItemId: ids['поле'],
       rating: Rating.Good,
     });
-    expect(mine[1]).toMatchObject({ direction: 'en-ru', rating: Rating.Hard, durationMs: 1200 });
+    expect(mine[1]).toMatchObject({ direction: 'en-uk', rating: Rating.Hard, durationMs: 1200 });
   });
 });
 
@@ -384,7 +384,7 @@ describe('scheduler configuration', () => {
     const { repos } = setup();
     const ids = await seedWords(repos, ['ночь', 'день']);
     // Two review-state cards (New cards grade to a learning step, identical across retention).
-    const matured = async (lemma: string, direction: 'ru-en' | 'en-ru') => {
+    const matured = async (lemma: string, direction: 'uk-en' | 'en-uk') => {
       const c = (await repos.reviews.getCard(ids[lemma]!, direction))!;
       await repos.reviews.saveCard({
         ...c,
@@ -399,8 +399,8 @@ describe('scheduler configuration', () => {
       });
       return (await repos.reviews.getCardById(c.id))!;
     };
-    const low = await matured('ночь', 'ru-en');
-    const high = await matured('день', 'ru-en');
+    const low = await matured('ночь', 'uk-en');
+    const high = await matured('день', 'uk-en');
     try {
       configureReviewScheduler({ desiredRetention: 0.8, w: null });
       const lowRow = (await repos.reviews.gradeCard(low.id, Rating.Good, { now: NOW })).card;

@@ -51,7 +51,7 @@ async function setup() {
   // The suspended item and the buried item (both must never surface).
   const suspendedItem = ids[WORDS[0]!]!;
   const buriedItem = ids[WORDS[1]!]!;
-  for (const dir of ['ru-en', 'en-ru', 'listening', 'production'] as const) {
+  for (const dir of ['uk-en', 'en-uk', 'listening', 'production'] as const) {
     const s = (await repos.reviews.getCard(suspendedItem, dir))!;
     await repos.reviews.suspendCard(s.id, NOW);
     const b = (await repos.reviews.getCard(buriedItem, dir))!;

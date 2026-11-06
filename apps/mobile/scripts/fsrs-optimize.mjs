@@ -2,14 +2,14 @@
 /**
  * Offline FSRS parameter optimizer (T39). Fits the 21 FSRS-6 weights to your
  * own review history with the official fsrs-rs binding
- * (@open-spaced-repetition/binding), then writes a `sumrak-fsrs-params` file
+ * (@open-spaced-repetition/binding), then writes a `sutinki-fsrs-params` file
  * that Settings → Scheduling → Optimizer → «Import parameters» accepts.
  *
  *   node scripts/fsrs-optimize.mjs <input> [--out <file>] [--tz America/Denver]
  *        [--next-day-hour 4]
  *
  * <input> is either:
- *   - the in-app review-history export `sumrak-review-log-<date>.json`
+ *   - the in-app review-history export `sutinki-review-log-<date>.json`
  *     (Settings → Scheduling → «Export review history»), or
  *   - a pulled `sumrak.db` (opened read-only; see RUNBOOK §10).
  * Timezone defaults to the export's timezone (or this machine's for a DB).
