@@ -1,5 +1,14 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -840,6 +849,57 @@ EN: Silence.
     expect(new Set(takes.map((t) => t.seed)).size).toBe(2);
     for (const take of takes) expect(existsSync(take.file)).toBe(true);
     expect(existsSync(join(outDir, 'pack.json'))).toBe(false);
+  });
+});
+
+describe('runFinalize on an exam pack (UISS-009)', () => {
+  const fx = join(__dirname, '..', 'fixtures', 'ukr-exam-fixture');
+  function stage(withExams: boolean): string {
+    const dir = tempDir();
+    for (const f of readdirSync(fx)) {
+      if (f.endsWith('.exam.md') && !withExams) continue;
+      copyFileSync(join(fx, f), join(dir, f));
+    }
+    return dir;
+  }
+  const storyDrafts = (dir: string) =>
+    readdirSync(dir)
+      .filter((f) => f.endsWith('.draft.md'))
+      .sort()
+      .map((f) => join(dir, f));
+  const mockClient = (dir: string) =>
+    new ElevenLabsClient('test-key', {
+      fetchImpl: fakeElevenLabsFetch(makeSilentMp3(dir, 3)),
+    });
+
+  it('keeps `exams` in pack.json when only story drafts are on the command line (finds *.exam.md beside them)', async () => {
+    const work = stage(true);
+    const outDir = join(work, 'pack');
+    const summary = await runFinalize(storyDrafts(work), outDir, mockClient(work), {
+      defaultSeed: 7,
+    });
+    const onDisk = JSON.parse(readFileSync(join(outDir, 'pack.json'), 'utf8')) as Pack;
+    expect(summary.pack.exams?.length).toBeGreaterThan(0);
+    expect(onDisk.exams?.map((e) => e.id).sort()).toEqual(
+      annotateDrafts(
+        readdirSync(fx)
+          .filter((f) => f.endsWith('.md'))
+          .map((f) => ({ path: join(fx, f), source: readFileSync(join(fx, f), 'utf8') })),
+      )
+        .exams!.map((e) => e.id)
+        .sort(),
+    );
+    expect(onDisk.stories.find((s) => s.id === 'ls-01')!.audio.length).toBeGreaterThan(0);
+  });
+
+  it('errors clearly when an exam pack has no *.exam.md anywhere', async () => {
+    const work = stage(false);
+    await expect(
+      runFinalize(storyDrafts(work), join(work, 'pack'), mockClient(work), {
+        defaultSeed: 7,
+        stories: ['ls-01'],
+      }),
+    ).rejects.toThrow(/no \*\.exam\.md drafts/);
   });
 });
 

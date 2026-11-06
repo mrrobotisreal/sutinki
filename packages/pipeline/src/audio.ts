@@ -1,5 +1,13 @@
 import { randomInt } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import {
@@ -188,6 +196,29 @@ function parseAll(
   const drafts = files
     .filter((f) => sniffDraftKind(f.path, f.source) === 'story')
     .map((f) => parseDraft(f.path, f.source));
+  // UISS-009: an exam pack's `exams` come from its `*.exam.md` drafts. The caller
+  // may omit them; find the siblings of the given drafts (as `annotate` globs the
+  // pack dir) so `pack.json` is never rewritten without `exams`, or error clearly.
+  const hasExamDraft = files.some((f) => sniffDraftKind(f.path, f.source) === 'exam');
+  const extras = extrasPath === undefined ? undefined : loadExtras(extrasPath);
+  const isExamPack = drafts.some((d) => d.frontmatter.pack?.type === 'exam');
+  if (isExamPack && !hasExamDraft) {
+    const given = new Set(draftPaths.map((p) => resolve(p)));
+    const found = [...new Set(draftPaths.map((p) => dirname(resolve(p))))].flatMap((dir) =>
+      readdirSync(dir)
+        .filter((n) => n.endsWith('.exam.md'))
+        .sort()
+        .map((n) => join(dir, n))
+        .filter((p) => !given.has(p)),
+    );
+    if (found.length === 0) {
+      throw new Error(
+        `${drafts.find((d) => d.frontmatter.pack)?.frontmatter.pack?.id ?? 'the pack'} is an exam pack (type: exam) but no *.exam.md drafts were given and none sit beside the story drafts — pass them on the command line`,
+      );
+    }
+    for (const path of found) files.push({ path, source: readFileSync(path, 'utf8') });
+  }
+  const pack = annotateDrafts(files, extras);
   // Scenario drafts (T57) carry render-time `characters[].cues` that never
   // reach pack.json — collect them here, keyed like the seed groups.
   const cues: CuesByCharacter = {};
@@ -198,7 +229,6 @@ function parseAll(
       if (c.cues) cues[`${parsed.frontmatter.scenario.id}/${c.id}`] = c.cues;
     }
   }
-  const pack = annotateDrafts(files, extrasPath === undefined ? undefined : loadExtras(extrasPath));
   return { drafts, pack, cues };
 }
 
