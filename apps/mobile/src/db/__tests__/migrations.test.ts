@@ -224,7 +224,79 @@ describe('migrations from empty DB', () => {
       sql`PRAGMA table_info(encounters)`,
     );
     expect(rows.find((r) => r.name === 'token_index')?.notnull).toBe(0);
-    expect(journal.entries.at(-1)).toMatchObject({ idx: 10, tag: '0010_encounter-token-index' });
+    expect(journal.entries.find((e) => e.tag === '0010_encounter-token-index')).toMatchObject({
+      idx: 10,
+    });
+  });
+
+  it('0011_hotel: fresh DB has course_floors + course_items (content) and course_progress + course_attempts (user)', async () => {
+    const db = createTestDb();
+    expect(await columnNames(db, 'course_floors')).toEqual([
+      'pack_id',
+      'ladder',
+      'level',
+      'floor',
+      'title_uk',
+      'title_en',
+      'json',
+    ]);
+    expect(await columnNames(db, 'course_items')).toEqual([
+      'pack_id',
+      'item_id',
+      'kind',
+      'topic',
+      'json',
+    ]);
+    expect(await columnNames(db, 'course_progress')).toEqual([
+      'key',
+      'pack_id',
+      'unit_id',
+      'best_percent',
+      'passed_at',
+      'passed_via',
+      'attempts',
+      'last_attempt_at',
+      'cooldown_until',
+      'updated_at',
+    ]);
+    expect(await columnNames(db, 'course_attempts')).toEqual([
+      'id',
+      'pack_id',
+      'unit_id',
+      'kind',
+      'started_at',
+      'finished_at',
+      'percent',
+      'passed',
+      'item_ids',
+      'responses_json',
+    ]);
+    expect(await indexNames(db, 'course_floors')).toContain('course_floors_ladder_idx');
+    expect(journal.entries.at(-1)).toMatchObject({ idx: 11, tag: '0011_hotel' });
+  });
+});
+
+describe(', () => {
+  it('creates the four course tables on a device that ran 0010; prior rows untouched', async () => {
+    const { sqlite, db } = createDbUpTo('0010_encounter-token-index');
+    sqlite
+      .prepare(
+        `INSERT INTO bank_items (id, kind, lemma, lemma_norm, surface, normalized, translation, needs_enrichment, created_at)
+         VALUES ('bi-1', 'word', 'тёмный', 'темный', 'тёмный', 'темный', 'dark', 0, 1)`,
+      )
+      .run();
+    expect(
+      await db.all<{ name: string }>(
+        sql`SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'course%'`,
+      ),
+    ).toEqual([]);
+
+    migrate(drizzle(sqlite, { schema }), { migrationsFolder });
+
+    for (const table of ['course_floors', 'course_items', 'course_progress', 'course_attempts']) {
+      expect(await columnNames(db, table)).not.toEqual([]);
+    }
+    expect(sqlite.prepare('SELECT COUNT(*) AS n FROM bank_items').get()).toEqual({ n: 1 });
   });
 });
 

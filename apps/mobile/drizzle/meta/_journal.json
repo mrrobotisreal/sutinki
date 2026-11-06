@@ -78,6 +78,13 @@
       "when": 1793935872899,
       "tag": "0010_encounter-token-index",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1793937510564,
+      "tag": "0011_hotel",
+      "breakpoints": true
     }
   ]
 }

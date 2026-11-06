@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { sql } from 'drizzle-orm';
 import { Directory, File, Paths } from 'expo-file-system';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as React from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
 
@@ -76,6 +76,9 @@ const FIXTURE_PACKS = [
   // files/packs/core-lemmas-fixture/pack.json (e.g. the real core-lemmas-001 before its
   // push) wins over the bundled copy, like the exam fixture.
   { id: 'core-lemmas-fixture', note: 'reference · core-a1 10 · core-a2 5 lemmas' },
+  // T89 (M25): the hotel course fixture — one floor (floor 3, two units + floor exam).
+  // Dev import only; it must never survive on a phone that holds Mitch's data.
+  { id: 'a1-hotel-fixture', note: 'course · floor 3 · 2 units · 34 items' },
 ] as const;
 type FixtureId = (typeof FIXTURE_PACKS)[number]['id'];
 
@@ -97,6 +100,7 @@ const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
     require('@sutinki/schema/fixtures/packs/a2-torfl-prompts-fixture/pack.json'),
   'core-lemmas-fixture': () =>
     require('@sutinki/schema/fixtures/packs/core-lemmas-fixture/pack.json'),
+  'a1-hotel-fixture': () => require('@sutinki/schema/fixtures/packs/a1-hotel-fixture/pack.json'),
 };
 
 const EXAM_FIXTURE_ID = 'a1-exam-fixture';
@@ -105,6 +109,14 @@ const PROMPTS_FIXTURE_ID = 'a1-torfl-prompts-fixture';
 // T75 (M19): the A2 exam + prompts fixtures.
 const A2_EXAM_FIXTURE_ID = 'a2-exam-fixture';
 const A2_PROMPTS_FIXTURE_ID = 'a2-torfl-prompts-fixture';
+
+/** T89 dev readout: installed course floors, item count, progress rows and the last attempts. */
+interface HotelReadout {
+  floors: Awaited<ReturnType<typeof repos.course.listFloors>>;
+  items: number;
+  progress: Awaited<ReturnType<typeof repos.course.getProgress>>;
+  attempts: Awaited<ReturnType<typeof repos.course.listAttempts>>;
+}
 
 /** T68 dev readout: installed exams + the last 5 attempts + response counts + deck counts. */
 interface ExamReadout {
@@ -326,6 +338,19 @@ export default function DevDbScreen() {
     const runs = await repos.scenarios.listRuns(undefined, { limit: 5 });
     setScenarioReadout({ families, perRung, runs });
   }, []);
+  // --- T89 «Hotel» readout (read-only) ----------------------------------------
+  const [hotelReadout, setHotelReadout] = React.useState<HotelReadout | null>(null);
+  const refreshHotel = React.useCallback(async () => {
+    const floors = await repos.course.listFloors({ ladder: 'torfl', level: 'A1' });
+    const progress = await repos.course.getProgress();
+    const attempts = await repos.course.listAttempts({ limit: 5 });
+    const items = await repos.course.countItems();
+    setHotelReadout({ floors, items, progress, attempts });
+  }, []);
+  React.useEffect(() => {
+    void refreshHotel();
+  }, [refreshHotel]);
+
   // --- T68 «Exams» readout + dev actions ------------------------------------
   const [examReadout, setExamReadout] = React.useState<ExamReadout | null>(null);
   const [examLog, setExamLog] = React.useState<string | null>(null);
@@ -630,6 +655,7 @@ export default function DevDbScreen() {
           queryClient.invalidateQueries({ queryKey: queryKeys.stories }),
           queryClient.invalidateQueries({ queryKey: queryKeys.scenarios }),
           queryClient.invalidateQueries({ queryKey: syncQueryKeys.installedPacks }),
+          queryClient.invalidateQueries({ queryKey: ['hotel'] }),
           invalidateExams(),
         ]);
         await refreshScenarios();
@@ -642,6 +668,17 @@ export default function DevDbScreen() {
     },
     [busy, queryClient, refreshScenarios, refreshExams],
   );
+
+  // Device walks (T93): `sutinki://dev-db?import=<fixture-id>` imports that fixture on mount, so a
+  // QA session does not have to scroll this long screen. __DEV__-only like the rest of the screen.
+  const { import: importParam } = useLocalSearchParams<{ import?: string }>();
+  const autoImported = React.useRef(false);
+  React.useEffect(() => {
+    if (!__DEV__ || autoImported.current || !importParam) return;
+    if (!FIXTURE_PACKS.some((f) => f.id === importParam)) return;
+    autoImported.current = true;
+    void importFixture(importParam as FixtureId);
+  }, [importParam, importFixture]);
   // Built-in FTS smoke test (UT03, ADR-0004): the apostrophe word «п'ять»
   // queried with the TYPOGRAPHIC apostrophe («п’ять») and the ґ word
   // «ґанок» queried as «ганок» — proves FTS5 MATCH works on-device with
@@ -931,6 +968,39 @@ export default function DevDbScreen() {
             <Text variant="caption">No runs yet.</Text>
           )}
         </View>
+      </View>
+
+      <View>
+        <Text variant="caption" className="mb-2 uppercase tracking-wider">
+          Hotel (M25 · T89)
+        </Text>
+        <View className="gap-2">
+          {hotelReadout?.floors.map((f) => (
+            <View key={f.packId} className="rounded-xl border border-border bg-surface p-3">
+              <Text className="font-ui-medium">
+                Этаж {f.floor} · {f.title.ru}
+              </Text>
+              <Text variant="caption" selectable>
+                {f.packId} · {f.unitCount} units · {f.course.floorExam?.size ?? 0} exam items
+              </Text>
+            </View>
+          ))}
+          {hotelReadout && hotelReadout.floors.length === 0 && (
+            <Text variant="caption">
+              No course floors installed — import a1-hotel-fixture above.
+            </Text>
+          )}
+        </View>
+        <Text variant="caption" className="mt-2" selectable>
+          {hotelReadout
+            ? `items ${hotelReadout.items} · progress rows ${hotelReadout.progress.length} · attempts (last 5) ${hotelReadout.attempts.length}`
+            : '…'}
+        </Text>
+        {hotelReadout?.progress.map((p) => (
+          <Text key={p.key} variant="caption" selectable>
+            {p.key} · best {p.bestPercent}% · passedVia {p.passedVia ?? '—'} · attempts {p.attempts}
+          </Text>
+        ))}
       </View>
 
       <View>
