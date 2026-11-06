@@ -21,7 +21,7 @@ import {
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const KOTLIN_DIR = path.resolve(
   HERE,
-  '../../../../modules/sumrak-widget/android/src/main/java/expo/modules/sumrakwidget',
+  '../../../../modules/sutinki-widget/android/src/main/java/expo/modules/sutinkiwidget',
 );
 
 const NOW = Date.UTC(2026, 9, 9, 12, 0, 0);
@@ -34,7 +34,7 @@ function base(overrides: Partial<Parameters<typeof buildWidgetSnapshot>[0]> = {}
     readingMs: 4 * 60_000 + 30_000,
     goal: { reviews: 20, readingMin: 10 },
     goalMet: false,
-    continueReading: { packId: 'a1-pack', storyId: 'story-1', title: 'Тестовая история' },
+    continueReading: { packId: 'a1-pack', storyId: 'story-1', title: 'Тестова історія' },
     now: NOW,
     ...overrides,
   });
@@ -69,7 +69,7 @@ describe('buildWidgetSnapshot', () => {
         readingMinTarget: 10,
         met: false,
       },
-      continueReading: { packId: 'a1-pack', storyId: 'story-1', title: 'Тестовая история' },
+      continueReading: { packId: 'a1-pack', storyId: 'story-1', title: 'Тестова історія' },
       updatedAtMs: NOW,
     });
     expect(s.goal).not.toHaveProperty('questProgress');

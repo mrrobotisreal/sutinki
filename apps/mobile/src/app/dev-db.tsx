@@ -487,7 +487,7 @@ export default function DevDbScreen() {
   // T40 widget: write the home-screen snapshot directly (demo every state on the device).
   const [widgetLog, setWidgetLog] = React.useState<string | null>(null);
   const writeWidget = React.useCallback((label: string, json: string | null) => {
-    const native = requireOptionalNativeModule<{ writeSnapshot(j: string): void }>('SumrakWidget');
+    const native = requireOptionalNativeModule<{ writeSnapshot(j: string): void }>('SutinkiWidget');
     if (!native) {
       setWidgetLog(`${label}: native module missing (rebuild the dev client)`);
       return;
@@ -811,7 +811,7 @@ export default function DevDbScreen() {
           >
             <Text className="font-ui-medium">Write stale snapshot (−48 h)</Text>
             <Text variant="caption" selectable>
-              Stale state: numbers dim + «открой приложение».
+              Stale state: numbers dim + «відкрий застосунок».
             </Text>
           </Pressable>
         )}
@@ -837,7 +837,7 @@ export default function DevDbScreen() {
           >
             <Text className="font-ui-medium">Clear snapshot</Text>
             <Text variant="caption" selectable>
-              Empty string → Missing: «Открой Сумрак» placeholder.
+              Empty string → Missing: «Відкрий Сутінки» placeholder.
             </Text>
           </Pressable>
         )}

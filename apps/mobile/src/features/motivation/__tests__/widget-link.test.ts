@@ -12,9 +12,9 @@ describe('widgetScreenFromUrl', () => {
   });
 
   it('maps the continue-reading tap with encoded ids', () => {
-    expect(widgetScreenFromUrl('sutinki://reader/a1-course-unit-001/the-wardrobe?from=widget')).toBe(
-      'reader',
-    );
+    expect(
+      widgetScreenFromUrl('sutinki://reader/a1-course-unit-001/the-wardrobe?from=widget'),
+    ).toBe('reader');
     expect(widgetScreenFromUrl('sutinki://reader/p%20x/s%2F1?from=widget')).toBe('reader');
   });
 

@@ -30,7 +30,7 @@ import type { TypingStats } from './stats';
 
 /**
  * The typing trainer screen (T40, route `/games/typing`). A 2-minute burst:
- * a Russian word, its English gloss as context, type it, Space or Enter.
+ * a Ukrainian word, its English gloss as context, type it, Space or Enter.
  *
  * Decisions recorded here (not in the ticket):
  * - The clock starts at the Start tap, not the first keystroke.
@@ -311,7 +311,7 @@ export function TypingScreen() {
   if (phase === 'empty') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <Text className="font-reading text-xl">Мало слов</Text>
+        <Text className="font-reading text-xl">Замало слів</Text>
         <Text variant="muted" className="text-center">
           Typing needs at least {MIN_CANDIDATES} single-word bank items. Save more words from your
           reading and come back.
@@ -409,7 +409,7 @@ export function TypingScreen() {
           keyboardType="default"
           submitBehavior="submit"
           returnKeyType="next"
-          placeholder="Печатай…"
+          placeholder="Друкуй…"
           placeholderTextColor={tokens.textMuted}
           className="rounded-xl border border-border bg-surface px-4 py-3.5 text-center font-reading text-2xl text-text"
           accessibilityLabel="Type the word"
@@ -475,12 +475,13 @@ function ReadyPanel({
       </View>
       <View className="flex-1 justify-center gap-5">
         <View className="gap-1">
-          <Text variant="heading">Печать</Text>
+          <Text variant="heading">Друк</Text>
           <Text variant="caption">Typing trainer · 2-minute burst</Text>
         </View>
         <Text variant="muted">
-          A Russian word appears with its English meaning. Type it, then press Space or Enter. ё and
-          е count the same. {candidateCount} words in the pool, shaky ones come up more often.
+          A Ukrainian word appears with its English meaning. Type it, then press Space or Enter. The
+          apostrophe and ґ/г count the same when checked. {candidateCount} words in the pool, shaky
+          ones come up more often.
         </Text>
         <View className="gap-1 rounded-xl border border-border bg-surface p-4">
           {hasRounds ? (

@@ -31,7 +31,7 @@ async function setup() {
       id: `s${i}`,
       uk: `Ось ${w} тут`,
       en: `Here is ${w}`,
-      lemmas: ["ось", w, "тут"],
+      lemmas: ['ось', w, 'тут'],
     })),
   });
   await repos.reading.markFinished('p1', 'st1');

@@ -154,7 +154,7 @@ export default function RootLayout() {
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
                 />
                 <Stack.Screen name="torfl/index" options={{ title: 'ТРКИ' }} />
-                <Stack.Screen name="torfl/texts" options={{ title: 'Тексты' }} />{' '}
+                <Stack.Screen name="torfl/texts" options={{ title: 'Тексти' }} />
                 {/* upstream-ok: hidden TORFL route (UT16/UT17) */}
                 <Stack.Screen
                   name="torfl/drill"
@@ -164,7 +164,7 @@ export default function RootLayout() {
                   name="torfl/writing"
                   options={{ headerShown: false, animation: 'fade' }}
                 />
-                <Stack.Screen name="exam/[packId]/[examId]" options={{ title: 'Экзамен' }} />{' '}
+                <Stack.Screen name="exam/[packId]/[examId]" options={{ title: 'Іспит' }} />
                 {/* upstream-ok: hidden TORFL route (UT16/UT17) */}
                 <Stack.Screen
                   name="exam/run/[attemptId]"
@@ -199,7 +199,7 @@ export default function RootLayout() {
                   name="torfl/tickets"
                   options={{ headerShown: false, animation: 'fade' }}
                 />
-                <Stack.Screen name="torfl/answers" options={{ title: 'Мои ответы' }} />{' '}
+                <Stack.Screen name="torfl/answers" options={{ title: 'Мої відповіді' }} />
                 {/* upstream-ok: hidden TORFL route (UT16/UT17) */}
                 <Stack.Screen
                   name="torfl/rehearse"

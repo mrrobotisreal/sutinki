@@ -463,7 +463,7 @@ async function insertPackRows(db: SutinkiDB, pack: Pack, opts: ImportOptions): P
   }
 
   // T38: reference lemma lists → `core_lemmas`, one row per entry with the
-  // T03 fold so coverage joins are ё/е-tolerant. Batched — a core list is
+  // T03 fold so coverage joins are ґ/г- and apostrophe-tolerant. Batched — a core list is
   // ~1k rows and one INSERT per row would dominate the import.
   for (const list of pack.lemmaLists ?? []) {
     const rows = list.lemmas.map((entry, entryIdx) => ({

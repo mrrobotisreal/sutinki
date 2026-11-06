@@ -42,7 +42,7 @@ describe('listTypingCandidates (query level)', () => {
     const learning = await seedWord(db, repos, 'дом', 3);
     const young = await seedWord(db, repos, 'кошка', 12);
     const mature = await seedWord(db, repos, 'окно', 45);
-    const fresh = await seedWord(db, repos, 'ёлка', null);
+    const fresh = await seedWord(db, repos, 'ґуля', null);
     const rows = await repos.bank.listTypingCandidates();
     const byId = new Map(rows.map((r) => [r.id, r]));
     expect(byId.get(learning)?.minCoreStability).toBe(3);
@@ -170,7 +170,7 @@ describe('weighted sourcing frequency (seeded rng, 10 000 picks)', () => {
   it('never-reviewed items are weighted as shaky (×3, same as learning)', async () => {
     const db = createTestDb();
     const repos = createRepositories(db);
-    await seedWord(db, repos, 'четыре', null); // unreviewed, weight 3
+    await seedWord(db, repos, 'чотири', null); // unreviewed, weight 3
     await seedWord(db, repos, 'три', 40); // mature, weight 1
     const rows = await repos.bank.listTypingCandidates();
 
@@ -281,7 +281,7 @@ describe('finishTypingRound (service, against the test DB)', () => {
       { expected: 'дом', typed: 'дом', correct: true, msTaken: 1000 },
       { expected: 'кошка', typed: 'кошка', correct: true, msTaken: 2000 },
       { expected: 'окно', typed: 'окн', correct: false, msTaken: 1500 },
-      { expected: 'ёлка', typed: 'елка', correct: true, msTaken: 1200 },
+      { expected: 'ґуля', typed: 'гуля', correct: true, msTaken: 1200 },
     ];
     const res = await finishTypingRound(deps, sessionId, attempts, 30_000);
 

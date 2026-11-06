@@ -60,7 +60,7 @@ export function LeechInboxScreen() {
           leech: { againCount: l.againCount, windowSize: l.windowSize, direction: l.direction },
         });
       } else if (action === 'note') {
-        const title = `${headword} — трудное слово`;
+        const title = `${headword} — важке слово`;
         const body = `**${headword}** — ${l.translation}\n\n(${DIRECTION_LABELS[l.direction as keyof typeof DIRECTION_LABELS] ?? l.direction} · Again ×${l.againCount} of the last ${l.windowSize})\n\n`;
         router.push({ pathname: '/notes/[id]', params: { id: 'new', title, body } });
       } else if (action === 'drill') {
@@ -117,7 +117,7 @@ export function LeechInboxScreen() {
         ListEmptyComponent={
           <View className="items-center gap-2 py-16">
             <Ionicons name="leaf-outline" size={28} color={tokens.textMuted} />
-            <Text className="font-ui-medium">Пиявок нет</Text>
+            <Text className="font-ui-medium">{"П'явок нема"}</Text>
             <Text variant="muted" className="text-center">
               No leeches right now — nothing keeps failing.
             </Text>

@@ -131,7 +131,7 @@ const REVIEWED_LEMMAS = sql`
 /** T38 core coverage, one row per CEFR level that has an installed list. */
 export interface CoreCoverage {
   level: Cefr;
-  /** Distinct (ё-folded) core lemmas across every installed list at this level. */
+  /** Distinct (normalizeUk-folded) core lemmas across every installed list at this level. */
   total: number;
   /** ∩ T18 encountered (read sentences ∪ collected). */
   encountered: number;
@@ -192,7 +192,7 @@ export function createDashboardRepo(db: SutinkiDB) {
      * Core-vocabulary coverage (T38, V2 §7.7): each installed reference
      * list's lemmas ∩ T18's definitions — encountered (read ∪ collected),
      * collected (bank word items), mastered (mature band). Joined on the
-     * T03 `lemma_norm` fold, so a core «ещё» matches a banked «еще».
+     * T03 `lemma_norm` fold, so a core «ґанок» matches a banked «ганок».
      * Several lists at one level union by folded lemma.
      */
     async getCoreCoverage(): Promise<CoreCoverage[]> {

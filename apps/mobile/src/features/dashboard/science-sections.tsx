@@ -9,6 +9,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { LegendItem, mixHex, SegmentedBar, useMasteryRamp } from './charts';
 import type { Forecast } from './science/forecast';
+import { buildHeatRamp } from './science/heat-ramp';
 import type { HeatLevel, HeatmapLayout } from './science/heatmap';
 import { EmptyHint, SectionCard } from './section-card';
 
@@ -105,20 +106,20 @@ export function CoreCoverageSection({
 
 // --- Due forecast --------------------------------------------------------------------
 
-const RU_WEEKDAY = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+const UK_WEEKDAY = ['нд', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
 const DIRECTION_LABEL: Record<string, string> = {
-  'uk-en': 'RU→EN',
-  'en-uk': 'EN→RU',
+  'uk-en': 'UK→EN',
+  'en-uk': 'EN→UK',
   listening: 'listening',
   production: 'speaking',
 };
 
 function dayLabel(date: string, offset: number): string {
-  if (offset === 0) return 'Сегодня';
+  if (offset === 0) return 'Сьогодні';
   if (offset === 1) return 'Завтра';
   const [y, m, d] = date.split('-').map(Number);
   const dt = new Date(y!, m! - 1, d!);
-  return `${RU_WEEKDAY[dt.getDay()]} ${d}.${String(m).padStart(2, '0')}`;
+  return `${UK_WEEKDAY[dt.getDay()]} ${d}.${String(m).padStart(2, '0')}`;
 }
 
 /**
@@ -157,7 +158,7 @@ export function ForecastSection({
         {forecast.overdue > 0 ? ` (${forecast.overdue} overdue)` : ''} · {total30} in 30 days
       </Text>
       <Text variant="caption" className="mt-0.5">
-        если не заниматься — what falls due if you do no reviews at all
+        якщо не займатися — what falls due if you do no reviews at all
       </Text>
       <View
         className="mt-3 flex-row items-end"
@@ -196,7 +197,7 @@ export function ForecastSection({
           <View key={d.date} className="flex-1 items-center" style={{ overflow: 'visible' }}>
             {[0, 7, 14, 21, 29].includes(d.offset) ? (
               <Text variant="caption" style={{ fontSize: 9, width: 40, textAlign: 'center' }}>
-                {d.offset === 0 ? 'сег' : `+${d.offset}`}
+                {d.offset === 0 ? 'сьо' : `+${d.offset}`}
               </Text>
             ) : null}
           </View>
@@ -233,32 +234,13 @@ export function ForecastSection({
  * validated with the dataviz ordinal check (one hue, monotone lightness)
  * AND the T22 contrast bar: every active step ≥ 3:1 vs the card surface
  * (WCAG 1.4.11 non-text) — recorded in the T38 notes:
- * dark  #B3402F 3.2 · #be6153 4.4 · #c88277 6.1 · #d4a79f 8.6 (on #141419)
- * light #b86a5e 4.0 · #A03828 6.8 · #782f25 9.4 · #502623 12.8 (on #FFFFFF)
+ * Measured for the Sutinki accent by science/__tests__/heat-ramp.test.ts: HEAT_NUMBERS
  * Level 0 (no activity) is the near-neutral track, so "nothing" never
  * reads as "a little".
  */
 export function useHeatRamp(): Record<HeatLevel, string> {
   const { tokens, scheme } = useAppTheme();
-  return React.useMemo(() => {
-    const empty = mixHex(tokens.text, tokens.surface, 0.08);
-    if (scheme === 'dark') {
-      return {
-        0: empty,
-        1: tokens.accent,
-        2: mixHex(tokens.text, tokens.accent, 0.2),
-        3: mixHex(tokens.text, tokens.accent, 0.4),
-        4: mixHex(tokens.text, tokens.accent, 0.62),
-      };
-    }
-    return {
-      0: empty,
-      1: mixHex(tokens.accent, tokens.surface, 0.75),
-      2: tokens.accent,
-      3: mixHex(tokens.text, tokens.accent, 0.3),
-      4: mixHex(tokens.text, tokens.accent, 0.6),
-    };
-  }, [tokens, scheme]);
+  return React.useMemo(() => buildHeatRamp(tokens, scheme), [tokens, scheme]);
 }
 
 const WEEKDAY_ROWS = ['пн', '', 'ср', '', 'пт', '', ''];
@@ -266,7 +248,7 @@ const WEEKDAY_ROWS = ['пн', '', 'ср', '', 'пт', '', ''];
 function prettyDate(date: string): string {
   const [y, m, d] = date.split('-').map(Number);
   const dt = new Date(y!, m! - 1, d!);
-  return `${RU_WEEKDAY[dt.getDay()]} ${d}.${String(m).padStart(2, '0')}.${y}`;
+  return `${UK_WEEKDAY[dt.getDay()]} ${d}.${String(m).padStart(2, '0')}.${y}`;
 }
 
 /**

@@ -13,7 +13,7 @@ import { localDateKey } from './forecast';
  * thresholds so a day's colour never shifts when another day is added:
  *   1: 1–19 · 2: 20–49 · 3: 50–99 · 4: ≥ 100 XP.
  *
- * Grid: GitHub-style columns = weeks (Monday-first, the Russian convention),
+ * Grid: GitHub-style columns = weeks (Monday-first, the Ukrainian convention),
  * rows = weekdays; the last column holds today; 53 columns cover a full
  * year plus the partial current week. Cells after today are `future`.
  */
@@ -50,18 +50,18 @@ export interface HeatmapLayout {
 }
 
 const RU_MONTHS_SHORT = [
-  'янв',
-  'фев',
-  'мар',
-  'апр',
-  'май',
-  'июн',
-  'июл',
-  'авг',
-  'сен',
-  'окт',
-  'ноя',
-  'дек',
+  'січ',
+  'лют',
+  'бер',
+  'кві',
+  'тра',
+  'чер',
+  'лип',
+  'сер',
+  'вер',
+  'жов',
+  'лис',
+  'гру',
 ];
 
 export function dayIntensity(r: Omit<ActivityRow, 'date'>): number {

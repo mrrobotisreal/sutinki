@@ -11,7 +11,7 @@
  * <input> is either:
  *   - the in-app review-history export `sutinki-review-log-<date>.json`
  *     (Settings → Scheduling → «Export review history»), or
- *   - a pulled `sumrak.db` (opened read-only; see RUNBOOK §10).
+ *   - a pulled `sutinki.db` (opened read-only; see RUNBOOK §10).
  * Timezone defaults to the export's timezone (or this machine's for a DB).
  * --out defaults to fsrs-params-<YYYY-MM-DD>.json in the current directory.
  *

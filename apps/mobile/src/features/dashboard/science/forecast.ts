@@ -1,7 +1,7 @@
 /**
  * Due-load forecast (T38, V2 §7.7) — pure. Buckets every active card's
  * `due` into local calendar days for the next `days` days ASSUMING NO
- * REVIEWS HAPPEN (simple + honest: the UI says «если не заниматься»).
+ * REVIEWS HAPPEN (simple + honest: the UI says «якщо не займатися»).
  * Everything already due — today's backlog, including overdue — lands in
  * day 0, so day 0 equals the review queue's due count at end of today.
  *

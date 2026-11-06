@@ -31,20 +31,20 @@ describe('ROUND_MS', () => {
 describe('computeTypingStats', () => {
   /*
    * Hand-computed round (ticket example):
-   *   дом     typed дом    ✓  folded length 3 → correct chars (3+1) = 4
-   *   кошка   typed кошка  ✓  folded length 5 → correct chars (5+1) = 6
-   *   окно    typed окн    ✗  wrong → 0 correct chars (still counts 3 typed chars)
-   *   ёлка    typed елка   ✓  folded «елка» length 4 → correct chars (4+1) = 5
+   *   дім     typed дім    ✓  folded length 3 → correct chars (3+1) = 4
+   *   кішка   typed кішка  ✓  folded length 5 → correct chars (5+1) = 6
+   *   вікно   typed вік     ✗  wrong → 0 correct chars (still counts 3 typed chars)
+   *   ґуля    typed гуля   ✓  folded «гуля» length 4 → correct chars (4+1) = 5
    * correctChars = 4 + 6 + 5 = 15
    * elapsed 30 000 ms = 0.5 min → wpm = (15 / 5) / 0.5 = 6.0
    * accuracy = 3 correct / 4 words = 0.75
    * chars typed = 3 + 5 + 3 + 4 = 15
    */
   const round: TypingAttempt[] = [
-    attempt('дом', 'дом', true),
-    attempt('кошка', 'кошка', true),
-    attempt('окно', 'окн', false),
-    attempt('ёлка', 'елка', true),
+    attempt('дім', 'дім', true),
+    attempt('кішка', 'кішка', true),
+    attempt('вікно', 'вік', false),
+    attempt('ґуля', 'гуля', true),
   ];
 
   it('matches the hand-computed round', () => {
@@ -58,11 +58,12 @@ describe('computeTypingStats', () => {
     expect(s.elapsedMs).toBe(30_000);
   });
 
-  it('judges ё/е, casing and stress marks through the shared comparator', () => {
-    expect(judgeTypedWord('ёлка', 'елка')).toBe(true);
-    expect(judgeTypedWord('Дом', 'дом')).toBe(true);
+  it('judges ґ/г, apostrophes, casing and stress marks through the shared comparator', () => {
+    expect(judgeTypedWord('ґуля', 'гуля')).toBe(true);
+    expect(judgeTypedWord('Дім', 'дім')).toBe(true);
     expect(judgeTypedWord('ма́ма', 'мама')).toBe(true);
-    expect(judgeTypedWord('дом', 'дома')).toBe(false);
+    expect(judgeTypedWord("п'ять", 'пʼять')).toBe(true);
+    expect(judgeTypedWord('дім', 'доми')).toBe(false);
   });
 
   it('counts a correct word by the folded expected length, not the typed one', () => {

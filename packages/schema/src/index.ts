@@ -128,6 +128,7 @@ export {
 export {
   LemmaListSchema,
   ReferenceLemmaSchema,
+  normalizeLemmaUk,
   referenceLemmaKey,
   type LemmaList,
   type ReferenceLemma,

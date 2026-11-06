@@ -70,7 +70,7 @@ export function parseOptimizerFile(text: string): ParseOptimizerResult {
   if (raw === null || typeof raw !== 'object') return { ok: false, reason: 'not a params file' };
   const obj = raw as Record<string, unknown>;
   if (obj.kind !== 'sutinki-fsrs-params')
-    return { ok: false, reason: 'not a Sumrak FSRS params file' };
+    return { ok: false, reason: 'not a Sutinki FSRS params file' };
   if (obj.v !== 1) return { ok: false, reason: `unsupported version ${String(obj.v)}` };
   if (!Array.isArray(obj.w)) return { ok: false, reason: 'missing weights (w)' };
   if (obj.w.length !== W_COUNT) {

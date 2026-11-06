@@ -233,15 +233,15 @@ describe('dashboard exclusion audit', () => {
     const ids = await seedWords(repos, ['тема']);
     // a sentence tagged with a grammar topic that contains the lemma
     await db.run(
-      sql`INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at)
+      sql`INSERT INTO packs (id, version, type, title_uk, title_en, level, tags, imported_at)
           VALUES ('tp', 1, 'stories', 'tp', 'tp', 'A1', '[]', ${NOW})`,
     );
     await db.run(
-      sql`INSERT INTO stories (pack_id, id, order_idx, title_ru, title_en, level)
+      sql`INSERT INTO stories (pack_id, id, order_idx, title_uk, title_en, level)
           VALUES ('tp', 'tst', 0, 'tst', 'tst', 'A1')`,
     );
     await db.run(
-      sql`INSERT INTO sentences (pack_id, id, story_id, order_idx, ru, en, grammar_topics)
+      sql`INSERT INTO sentences (pack_id, id, story_id, order_idx, uk, en, grammar_topics)
           VALUES ('tp', 's1', 'tst', 0, 'тема', 'theme', '["topic-x"]')`,
     );
     await db.run(

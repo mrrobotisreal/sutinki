@@ -1,17 +1,17 @@
 # sutinki-widget — home-screen widget (T40)
 
-A Kotlin **Glance** home-screen widget for Сумрак: goal ring + streak flame + due-review count, with tap targets for the daily session and the continue-reading story. The widget never touches the database. The app writes a tiny JSON snapshot into SharedPreferences, and the widget renders only that snapshot.
+A Kotlin **Glance** home-screen widget for Сутінки: goal ring + streak flame + due-review count, with tap targets for the daily session and the continue-reading story. The widget never touches the database. The app writes a tiny JSON snapshot into SharedPreferences, and the widget renders only that snapshot.
 
 The JS surface is `index.ts` (typed `requireNativeModule`). The device writer lives in `apps/mobile/src/features/motivation/widget-sync.ts`. This module stays a thin native wrapper.
 
 ## Cross-process contract
 
-| Item                   | Value           | Kotlin (`WidgetContract.kt`) | TS (`widget-contract.ts`) |
-| ---------------------- | --------------- | ---------------------------- | ------------------------- |
+| Item                   | Value            | Kotlin (`WidgetContract.kt`) | TS (`widget-contract.ts`) |
+| ---------------------- | ---------------- | ---------------------------- | ------------------------- |
 | SharedPreferences file | `sutinki_widget` | `PREFS_NAME`                 | `WIDGET_PREFS_NAME`       |
-| Key (JSON string)      | `snapshot`      | `KEY_SNAPSHOT`               | `WIDGET_SNAPSHOT_KEY`     |
-| Schema version         | `1`             | `SNAPSHOT_VERSION`           | `WIDGET_SNAPSHOT_VERSION` |
-| Stale window           | 36 h            | `STALE_MS`                   | `WIDGET_STALE_MS`         |
+| Key (JSON string)      | `snapshot`       | `KEY_SNAPSHOT`               | `WIDGET_SNAPSHOT_KEY`     |
+| Schema version         | `1`              | `SNAPSHOT_VERSION`           | `WIDGET_SNAPSHOT_VERSION` |
+| Stale window           | 36 h             | `STALE_MS`                   | `WIDGET_STALE_MS`         |
 
 The snapshot schema is `WidgetSnapshotSchema` in `widget-snapshot.ts`: `{ v, streak, dueCount, goal: { reviewsDone, reviewsTarget, readingMinDone, readingMinTarget, met, questProgress? }, continueReading: {packId, storyId, title} | null, updatedAtMs }`. `questProgress` is reserved for T34's quest registry, which does not exist yet, so it is always omitted.
 

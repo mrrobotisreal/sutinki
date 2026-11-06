@@ -63,8 +63,8 @@ function codePoints(text: string): number {
 /**
  * Round stats from the attempts and the elapsed time.
  *
- * Hand-checked example (see __tests__/typing-engine.test.ts): «дом»✓
- * «кошка»✓ «окно»✗ «ёлка» typed «елка»✓ over 30 000 ms →
+ * Hand-checked example (see __tests__/typing-engine.test.ts): «дім»✓
+ * «кішка»✓ «вікно»✗ «ґуля» typed «гуля»✓ over 30 000 ms →
  * correctChars = (3+1)+(5+1)+(4+1) = 15 → wpm = (15/5)/0.5 = 6.0;
  * accuracy = 3/4 = 0.75.
  */

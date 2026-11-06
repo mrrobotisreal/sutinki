@@ -35,31 +35,27 @@ const storyPack = {
   id: 'a1-sci-test',
   version: 1,
   type: 'stories',
-  title: { ru: 'Тест', en: 'Test' },
+  title: { uk: 'Тест', en: 'Test' },
   level: 'A1',
   tags: [],
   stories: [
     {
       id: 'st-1',
-      title: { ru: 'История', en: 'Story' },
+      title: { uk: 'Історія', en: 'Story' },
       level: 'A1',
       audio: [],
       sentences: [
         {
           id: 'sn-1',
-          ru: 'Дом ночь.',
+          uk: 'Дім ніч.',
           en: 'x',
-          tokens: [tok('Дом', 'дом'), tok('ночь', 'ночь'), { text: '.', isPunct: true }],
+          tokens: [tok('Дім', 'дім'), tok('ніч', 'ніч'), { text: '.', isPunct: true }],
         },
         {
           id: 'sn-2',
-          ru: 'Стена тишина.',
+          uk: 'Стіна тиша.',
           en: 'x',
-          tokens: [
-            tok('Стена', 'стена'),
-            tok('тишина', 'тишина', 'A2'),
-            { text: '.', isPunct: true },
-          ],
+          tokens: [tok('Стіна', 'стіна'), tok('тиша', 'тиша', 'A2'), { text: '.', isPunct: true }],
         },
       ],
     },
@@ -86,21 +82,21 @@ async function setCore(
 }
 
 describe('reference import (T38)', () => {
-  it('imports every list entry into core_lemmas with the ё fold; reimport of a higher version replaces', async () => {
+  it('imports every list entry into core_lemmas with the ґ/apostrophe fold; reimport of a higher version replaces', async () => {
     const { db } = await setup();
     const res = await importPack(db, refPack);
-    expect(res.counts.lemmas).toBe(15);
+    expect(res.counts.lemmas).toBe(28);
     const rows = await db.all<{ lemma: string; lemma_norm: string }>(
-      sql`SELECT lemma, lemma_norm FROM core_lemmas WHERE lemma = 'ещё'`,
+      sql`SELECT lemma, lemma_norm FROM core_lemmas WHERE lemma = 'ґанок'`,
     );
-    expect(rows).toEqual([{ lemma: 'ещё', lemma_norm: 'еще' }]);
+    expect(rows).toEqual([{ lemma: 'ґанок', lemma_norm: 'ганок' }]);
 
     const v2 = structuredClone(refPack);
     v2.version = 2;
     v2.lemmaLists[1].lemmas.pop();
     expect((await importPack(db, v2)).action).toBe('updated');
     const n = await db.all<{ n: number }>(sql`SELECT COUNT(*) AS n FROM core_lemmas`);
-    expect(n[0]!.n).toBe(14);
+    expect(n[0]!.n).toBe(27);
   });
 });
 
@@ -110,44 +106,56 @@ describe('core coverage (T38)', () => {
     expect(await repos.dashboard.getCoreCoverage()).toEqual([]);
   });
 
-  it('encountered = read ∪ collected; collected; mastered — ∩ core, ё/е-tolerant', async () => {
+  it('encountered = read ∪ collected; collected; mastered — ∩ core, ґ/г- and apostrophe-tolerant', async () => {
     const { db, repos } = await setup();
     await importPack(db, refPack);
     await repos.reading.savePosition('a1-sci-test', 'st-1', 0); // sn-1 read: дом, ночь
 
-    const still = await repos.bank.addWord({ lemma: 'еще', surface: 'еще', translation: 'still' });
+    const still = await repos.bank.addWord({
+      lemma: 'ганок',
+      surface: 'ганок',
+      translation: 'porch',
+    });
     const wall = await repos.bank.addWord({
-      lemma: 'стена',
-      surface: 'стена',
+      lemma: 'стіна',
+      surface: 'стіна',
       translation: 'wall',
     });
     await setCore(repos, still.item.id, STABILITY_MATURE_MIN);
     await setCore(repos, wall.item.id, 3);
     // a banked non-core word changes nothing
-    await repos.bank.addWord({ lemma: 'призрак', surface: 'призрак', translation: 'ghost' });
+    await repos.bank.addWord({ lemma: 'привид', surface: 'привид', translation: 'ghost' });
 
     const cov = await repos.dashboard.getCoreCoverage();
     expect(cov).toEqual([
-      { level: 'A1', total: 10, encountered: 4, collected: 2, mastered: 1 },
-      { level: 'A2', total: 5, encountered: 0, collected: 0, mastered: 0 },
+      { level: 'A1', total: 20, encountered: 4, collected: 2, mastered: 1 },
+      { level: 'A2', total: 8, encountered: 0, collected: 0, mastered: 0 },
     ]);
 
     const gaps = await repos.dashboard.getCoreGaps('A1');
-    expect(gaps.map((g) => g.lemma)).toEqual(['я', 'жить', 'один', 'что-то', 'чёрный', 'окно']);
-    expect(gaps[0]).toEqual({ lemma: 'я', pos: 'pron', translation: 'I' });
+    expect(gaps).toHaveLength(16);
+    expect(gaps.map((g) => g.lemma)).toContain("п'ять");
+    expect(gaps.map((g) => g.lemma)).not.toContain('ґанок');
+    expect(gaps.map((g) => g.lemma)).not.toContain('дім');
+    expect(gaps.map((g) => g.lemma)).not.toContain('стіна');
+    expect(gaps.find((g) => g.lemma === 'я')).toEqual({
+      lemma: 'я',
+      pos: 'pron',
+      translation: 'I',
+    });
 
-    // reading further moves the meter: sn-2 brings тишина (A2)
+    // reading further moves the meter: sn-2 brings тиша (A2)
     await repos.reading.savePosition('a1-sci-test', 'st-1', 1);
     const cov2 = await repos.dashboard.getCoreCoverage();
     expect(cov2.find((c) => c.level === 'A2')!.encountered).toBe(1);
-    expect((await repos.dashboard.getCoreGaps('A2')).map((g) => g.lemma)).not.toContain('тишина');
+    expect((await repos.dashboard.getCoreGaps('A2')).map((g) => g.lemma)).not.toContain('тиша');
   });
 });
 
 describe('forecast + heatmap sources (T38)', () => {
   it('forecast cards = every active-direction card; heatmap reads daily_activity since a date', async () => {
     const { db, repos } = await setup();
-    const w = await repos.bank.addWord({ lemma: 'дом', surface: 'дом', translation: 'house' });
+    const w = await repos.bank.addWord({ lemma: 'дім', surface: 'дім', translation: 'house' });
     const cards = await repos.dashboard.getForecastCards();
     expect(cards.length).toBe((await repos.reviews.listCardsForItem(w.item.id)).length);
     await db.run(
@@ -163,7 +171,7 @@ describe('forecast + heatmap sources (T38)', () => {
 describe('leech candidates (T38)', () => {
   it('≥4 Agains in the last 10 reviews; older Agains fall out of the window; dismissal round-trip', async () => {
     const { repos } = await setup();
-    const w = await repos.bank.addWord({ lemma: 'дом', surface: 'дом', translation: 'house' });
+    const w = await repos.bank.addWord({ lemma: 'дім', surface: 'дім', translation: 'house' });
     const card = (await repos.reviews.listCardsForItem(w.item.id)).find(
       (c) => c.direction === 'uk-en',
     )!;

@@ -58,7 +58,7 @@ export function CoreGapsScreen() {
       }
       ListEmptyComponent={
         <Text variant="muted" className="py-12 text-center">
-          Every core {level} word is met — отлично.
+          Every core {level} word is met — чудово.
         </Text>
       }
       renderItem={({ item }) => (

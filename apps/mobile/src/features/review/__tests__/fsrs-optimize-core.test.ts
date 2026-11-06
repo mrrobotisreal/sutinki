@@ -265,10 +265,10 @@ describe('real binding run', () => {
 });
 
 describe('CLI end-to-end (file DB with real migrations)', () => {
-  it('reads a pulled sumrak.db and writes a valid params file', () => {
+  it('reads a pulled sutinki.db and writes a valid params file', () => {
     const dir = mkdtempSync(path.join(tmpdir(), 't39-cli-'));
     try {
-      const dbPath = path.join(dir, 'sumrak.db');
+      const dbPath = path.join(dir, 'sutinki.db');
       const sqlite = new Database(dbPath);
       migrate(drizzle(sqlite, { schema }), { migrationsFolder: MIGRATIONS });
 

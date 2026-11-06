@@ -88,8 +88,8 @@ describe('heatmap', () => {
     const [y, m, d] = h.weeks[0]![0]!.date.split('-').map(Number);
     expect(new Date(y!, m! - 1, d!).getDay()).toBe(1);
     // a month label sits on the first column whose MONDAY is in that month (Oct 5)
-    expect(h.monthLabels.at(-1)).toEqual({ col: 52, label: 'окт' });
-    expect(h.monthLabels.at(-2)).toEqual({ col: 48, label: 'сен' });
+    expect(h.monthLabels.at(-1)).toEqual({ col: 52, label: 'жов' });
+    expect(h.monthLabels.at(-2)).toEqual({ col: 48, label: 'вер' });
     expect(localDateKey(now)).toBe('2026-10-09');
   });
 });
