@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`course «Поясни ще» prompts (T90 D9) > a card target asks for a fresh English re-explanation with three new examples 1`] = `
+"Lesson card: «У + місцевий»
+
+The ending is -і for most nouns.
+
+Examples from the card:
+- Я живу у великому місті."
+`;
+
+exports[`course «Поясни ще» prompts (T90 D9) > an item target names the chosen option as wrong and gives the authored explanation 1`] = `
+"Exercise sentence: «Я читаю про …»
+Topic: case-prep
+Options: «Москва», «Москві», «Москву»
+Correct answer: «Москві»
+The learner chose: «Москву» (wrong)
+The authored explanation the learner already read: Trigger: у + де? …"
+`;
