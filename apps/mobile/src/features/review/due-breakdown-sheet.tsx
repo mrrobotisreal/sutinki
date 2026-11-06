@@ -11,37 +11,39 @@ import { useFsrsPrefs } from '@/store/fsrs-prefs';
 import { useQueuePrefs } from '@/store/queue-prefs';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { backlogLine, type DuePlan, type DueSource } from './due-core';
+import { pluralUk } from '@/lib/uk-plural';
+
+import { backlogLine, splitLine, type DuePlan, type DueSource } from './due-core';
 import { formatRetentionPercent } from './scheduling-core';
 
 const MONO = Platform.select({ ios: 'Menlo', default: 'monospace' });
 
 const STATE_LABEL: [keyof DuePlan['byState'], string][] = [
-  ['new', 'Новые'],
-  ['learning', 'Учатся'],
-  ['review', 'Повторение'],
-  ['relearning', 'Заново'],
+  ['new', 'Нові'],
+  ['learning', 'Вчаться'],
+  ['review', 'Повторення'],
+  ['relearning', 'Знову'],
 ];
 const DIRECTION_LABEL: Record<string, string> = {
-  'uk-en': 'RU → EN',
-  'en-uk': 'EN → RU',
-  listening: 'Аудирование',
-  production: 'Произношение',
+  'uk-en': 'UK → EN',
+  'en-uk': 'EN → UK',
+  listening: 'Аудіювання',
+  production: 'Вимова',
 };
 const SOURCE_LABEL: Record<DueSource, string> = {
   reader: 'Читалка',
-  topic: 'Тема целиком',
-  scenario: 'Сценарий',
-  journal: 'Дневник',
-  manual: 'Вручную',
-  unknown: 'Неизвестно',
+  topic: 'Вся тема',
+  scenario: 'Сценарій',
+  journal: 'Щоденник',
+  manual: 'Уручну',
+  unknown: 'Невідомо',
 };
 const OVERDUE_LABEL: [keyof DuePlan['overdue'], string][] = [
-  ['today', 'сегодня'],
-  ['d1to2', '1–2 дня'],
-  ['d3to7', '3–7 дней'],
-  ['d8to30', '8–30 дней'],
-  ['d31plus', '31+ дней'],
+  ['today', 'сьогодні'],
+  ['d1to2', '1–2 дні'],
+  ['d3to7', '3–7 днів'],
+  ['d8to30', '8–30 днів'],
+  ['d31plus', '31+ днів'],
 ];
 
 function Row({ label, value }: { label: string; value: number | string }) {
@@ -66,7 +68,7 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-/** «Почему столько?» — permanent readout of what the Today number is made of (T82). */
+/** «Чому стільки?» — permanent readout of what the Today number is made of (T82). */
 export function DueBreakdownSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { tokens } = useAppTheme();
   const insets = useSafeAreaInsets();
@@ -101,7 +103,7 @@ export function DueBreakdownSheet({ open, onClose }: { open: boolean; onClose: (
         style={{ paddingBottom: insets.bottom + 24, maxHeight: '85%' }}
       >
         <View className="mb-1 flex-row items-center justify-between">
-          <Text className="font-ui-medium text-lg">Почему столько?</Text>
+          <Text className="font-ui-medium text-lg">Чому стільки?</Text>
           <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Close">
             <Ionicons name="close" size={22} color={tokens.textMuted} />
           </Pressable>
@@ -109,48 +111,48 @@ export function DueBreakdownSheet({ open, onClose }: { open: boolean; onClose: (
         {plan ? (
           <ScrollView>
             <Text variant="caption">
-              Сегодня: {plan.reviewDue} повторений + {plan.newToday} новых ({plan.newTodayWords}{' '}
-              слов из {newPerDay} в день). Новые слова не накапливаются в счётчике — лишнее ждёт в
-              очереди.
+              Сьогодні: {splitLine(plan.reviewDue, plan.newToday)} ({plan.newTodayWords}{' '}
+              {pluralUk(plan.newTodayWords, ['слово', 'слова', 'слів'])} з {newPerDay} на день).
+              Нові слова не накопичуються в лічильнику — решта чекає в черзі.
             </Text>
-            <Block title="Сегодня">
-              <Row label="К повторению" value={plan.reviewDue} />
-              <Row label="Новые сегодня" value={plan.newToday} />
+            <Block title="Сьогодні">
+              <Row label="До повторення" value={plan.reviewDue} />
+              <Row label="Нові сьогодні" value={plan.newToday} />
               <Row
-                label="Бюджет новых слов осталось"
+                label="Залишилось з бюджету нових слів"
                 value={`${plan.newBudgetLeft} / ${newPerDay}`}
               />
-              <Row label="Учатся / заново (внутри повторений)" value={plan.learning} />
-              <Row label="В очереди (не в счёте)" value={backlogLine(plan.newBacklog) ?? '0'} />
-              <Row label="Прятать родственные карточки" value={bury ? 'да' : 'нет'} />
+              <Row label="Вчаться / знову (серед повторень)" value={plan.learning} />
+              <Row label="У черзі (не враховано)" value={backlogLine(plan.newBacklog) ?? '0'} />
+              <Row label="Ховати споріднені картки" value={bury ? 'так' : 'ні'} />
             </Block>
-            <Block title="По состоянию">
+            <Block title="За станом">
               {STATE_LABEL.map(([k, label]) => (
                 <Row key={k} label={label} value={plan.byState[k]} />
               ))}
             </Block>
-            <Block title="По направлению">
+            <Block title="За напрямком">
               {Object.entries(plan.byDirection).map(([d, n]) => (
                 <Row key={d} label={DIRECTION_LABEL[d] ?? d} value={n} />
               ))}
             </Block>
-            <Block title="По источнику слова">
+            <Block title="За джерелом слова">
               {(Object.keys(SOURCE_LABEL) as DueSource[])
                 .filter((s) => plan.bySource[s] > 0)
                 .map((s) => (
                   <Row key={s} label={SOURCE_LABEL[s]} value={plan.bySource[s]} />
                 ))}
             </Block>
-            <Block title="Просрочено (повторения)">
+            <Block title="Прострочено (повторення)">
               {OVERDUE_LABEL.map(([k, label]) => (
                 <Row key={k} label={label} value={plan.overdue[k]} />
               ))}
             </Block>
-            <Block title="Планировщик">
-              <Row label="Желаемое удержание" value={formatRetentionPercent(retention)} />
+            <Block title="Планувальник">
+              <Row label="Бажане утримання" value={formatRetentionPercent(retention)} />
               <Row
-                label="Веса"
-                value={params ? `оптимизированы ${params.fittedAt.slice(0, 10)}` : 'по умолчанию'}
+                label="Ваги"
+                value={params ? `оптимізовано ${params.fittedAt.slice(0, 10)}` : 'за замовчуванням'}
               />
               <Text variant="caption" className="mt-1" style={{ fontFamily: MONO }}>
                 w[0..3] ={' '}

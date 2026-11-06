@@ -42,7 +42,7 @@ export const SETTING_KEYS = {
    */
   syncdConfig: 'backup.syncd',
   /**
-   * Retired by T85: no longer read (the «Неверный звук?» flag was removed with the
+   * Retired by T85: no longer read (the «Хибний звук?» flag was removed with the
    * story-slice listening audio). Kept so old rows and backups stay harmless.
    */
   listeningAudioFlags: 'listening.audioFlags',

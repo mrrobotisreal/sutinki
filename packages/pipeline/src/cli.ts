@@ -21,6 +21,8 @@ import {
   auditPack,
   formatAuditTable,
   alignerPreflight,
+  runStampAudit,
+  type StampAuditMode,
   pythonAligner,
   restampPack,
   type PackAudit,
@@ -79,9 +81,11 @@ Usage:
                             voice) for every choice + scripted player line
                             (dialogues) and for accept[0] of every
                             expectation (scenarios, → expect.coachAudio)
-      --no-restamp          (finalize) keep the provider's character-time stamps;
-                            by default every story track is re-stamped from its
-                            Opus by forced alignment (T80; needs the aligner venv)
+      --restamp             (finalize) re-stamp every story track from its Opus by
+                            forced alignment (T80). OFF by default in Sutinki (UP07):
+                            the only engine is the Russian CTC model, which cannot
+                            align Ukrainian; provider stamps are kept until UT15.
+      --no-restamp          (finalize) keep the provider's character-time stamps (default)
       --mouth-only          no rendering: recompute the mouth track of every
                             already-rendered scenario line in <pack-dir>/
                             pack.json from the Opus on disk (T57 tuning);
@@ -103,15 +107,18 @@ Usage:
                    [--allow-stamp-risk] [--skip-stamp-audit] [--stamp-audit enforce|report|off]
       Copy the pack into the content repo, recompute hashes, update
       manifest.json, and commit. Pushes only with --push. Runs stamp-audit
-      first and refuses on failure (--allow-stamp-risk logs the override to
-      <pack-dir>/BUILD_NOTES.md; --skip-stamp-audit is for packs with no
-      word-sliced audio and needs the aligner venv otherwise).
+      first, in --stamp-audit mode (default "report" in Sutinki, UP07: prints
+      the table, notes «report-only (UT15 pending)» in <pack-dir>/BUILD_NOTES.md,
+      prints «stamp audit skipped: no Ukrainian aligner (UT15)» when no
+      aligner venv exists, and NEVER refuses). "enforce" refuses on failure
+      (--allow-stamp-risk logs the override); "off" = --skip-stamp-audit.
 
   pipeline stamp-audit <pack-dir|pack.json>... [--track id] [--json out.json]
       T80: offline word-stamp accuracy audit over the real audio (forced
       alignment; no network, no API key). Per track: median / p95 |offset|,
-      step, drift, end-clip risk, token-index + lemma lint. Exit 1 over the
-      thresholds (median > 40 ms, p95 > 120 ms, any step > 250 ms, drift >
+      step, drift, end-clip risk, token-index + lemma lint. REPORT-ONLY in
+      Sutinki (UP07): exit 0 and a «skipped» line without a Ukrainian
+      aligner; --enforce restores Sumrak's exit 1 over the thresholds (median > 40 ms, p95 > 120 ms, any step > 250 ms, drift >
       20 ms/min, any structural/lemma hit).
 
   pipeline restamp <pack-dir|pack.json> [--track id] [-o out.json]
@@ -322,7 +329,7 @@ async function audioCommand(args: string[]): Promise<void> {
   let scenarios: string[] | undefined;
   let playerAudio = false;
   let mouthOnly = false;
-  let restampFlag = true;
+  let restampFlag = false; // UP07: Sutinki keeps provider stamps until UT15 (the Russian CTC model cannot align Ukrainian)
   let yes = false;
   let extras: string | undefined;
   const seeds: Record<string, number> = {};
@@ -358,6 +365,7 @@ async function audioCommand(args: string[]): Promise<void> {
     else if (arg === '--player-audio') playerAudio = true;
     else if (arg === '--mouth-only') mouthOnly = true;
     else if (arg === '--no-restamp') restampFlag = false;
+    else if (arg === '--restamp') restampFlag = true;
     else if (arg === '--yes' || arg === '-y') yes = true;
     else if (arg === '--model') model = next();
     else if (arg === '--extras') extras = next();
@@ -486,6 +494,7 @@ function publishCommand(args: string[]): void {
   let message: string | undefined;
   let allowStampRisk = false;
   let skipStampAudit = false;
+  let stampMode: StampAuditMode = 'report';
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
     const next = (): string => {
@@ -495,7 +504,12 @@ function publishCommand(args: string[]): void {
     };
     if (arg === '--allow-stamp-risk') allowStampRisk = true;
     else if (arg === '--skip-stamp-audit') skipStampAudit = true;
-    else if (arg === '--content') content = next();
+    else if (arg === '--stamp-audit') {
+      const v = next();
+      if (v !== 'enforce' && v !== 'report' && v !== 'off')
+        fail(`--stamp-audit takes enforce|report|off\n\n${USAGE}`, 2);
+      stampMode = v as StampAuditMode;
+    } else if (arg === '--content') content = next();
     else if (arg === '--push') push = true;
     else if (arg === '-m' || arg === '--message') message = next();
     else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
@@ -510,6 +524,7 @@ function publishCommand(args: string[]): void {
       push,
       message,
       allowStampRisk,
+      stampAuditMode: stampMode,
       ...(skipStampAudit ? {} : { stampAudit: pythonAligner() }),
     });
     if (summary.outcome === 'unchanged') {
@@ -590,9 +605,11 @@ function stampAuditCommand(args: string[]): void {
   const targets: string[] = [];
   let track: string | undefined;
   let jsonOut: string | undefined;
+  let enforce = false;
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
-    if (arg === '--track') track = args[++i];
+    if (arg === '--enforce') enforce = true;
+    else if (arg === '--track') track = args[++i];
     else if (arg === '--json') jsonOut = args[++i];
     else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
     else targets.push(arg);
@@ -603,6 +620,15 @@ function stampAuditCommand(args: string[]): void {
   try {
     for (const t of targets) {
       const { pack, dir } = loadPackFor(t);
+      if (!enforce) {
+        // UP07: report-only for Ukrainian (exit 0) — see runStampAudit.
+        const res = runStampAudit('report', pack, dir, aligner);
+        if (res.audit) {
+          audits.push(res.audit);
+          if (res.audit.ok) console.log(formatAuditTable(res.audit));
+        }
+        continue;
+      }
       const audit = auditPack(pack, dir, aligner, { trackId: track });
       audits.push(audit);
       console.log(formatAuditTable(audit));
@@ -611,7 +637,7 @@ function stampAuditCommand(args: string[]): void {
     fail(e instanceof Error ? e.message : String(e), 1);
   }
   if (jsonOut) writeFileSync(jsonOut, `${JSON.stringify(audits, null, 1)}\n`);
-  if (audits.some((a) => !a.ok)) process.exit(1);
+  if (enforce && audits.some((a) => !a.ok)) process.exit(1);
 }
 
 function restampCommand(args: string[]): void {

@@ -10,11 +10,11 @@ const pw = (n: number): ContinueStory => ({
   packId: 'a2-peeking-wife-001',
   id: `part-${n}`,
   orderIdx: n - 1,
-  titleRu: `Часть ${n}`,
+  titleUk: `Часть ${n}`,
 });
 const STORIES: ContinueStory[] = [
   ...[1, 2, 3, 4, 5, 6, 7].map(pw),
-  { packId: 'a2-news-001', id: 'drones', orderIdx: 0, titleRu: 'Новости' },
+  { packId: 'a2-news-001', id: 'drones', orderIdx: 0, titleUk: 'Новости' },
 ];
 const row = (
   packId: string,
@@ -111,7 +111,7 @@ describe('resolveContinueTarget series step (T86)', () => {
       packId,
       id: `${packId}-p${p}`,
       orderIdx: p - 1,
-      titleRu: `${packId} ${p}`,
+      titleUk: `${packId} ${p}`,
     }));
   const placements: Record<string, { series: string; chapter: number; level: string }> = {
     'a2-three-body-ch04': { series: 'three-body', chapter: 4, level: 'A2' },

@@ -73,6 +73,7 @@ import { useExamListItems } from '@/features/torfl/hooks';
 import { isTorflCategory, levelForCategory } from '@/features/torfl/level-profile';
 import { TorflHubCard } from '@/features/torfl/torfl-hub-card';
 import { runSync } from '@/features/sync/sync-service';
+import { pluralUk } from '@/lib/uk-plural';
 import { track } from '@/services/analytics';
 import { useLibraryExpansion } from '@/store/library-expansion';
 import { useLibraryPrefs } from '@/store/library-prefs';
@@ -123,7 +124,7 @@ interface LibrarySection {
   book?: {
     series: string;
     book: number;
-    titleRu: string;
+    titleUk: string;
     subtitle?: string;
     chapters: { chapter: number; section: LibrarySection }[];
   };
@@ -404,7 +405,7 @@ export function LibraryScreen() {
       if (group.kind === 'plain') return group.item;
       const first = group.chapters[0]!.item;
       const chapters = group.chapters.map(({ chapter, item }) => ({ chapter, section: item }));
-      const bookTitle = seriesBookTitle(group.series, group.book, first.pack.titleRu);
+      const bookTitle = seriesBookTitle(group.series, group.book, first.pack.titleUk);
       return {
         pack: first.pack,
         data: chapters.map((c): LibraryRow => ({
@@ -415,7 +416,7 @@ export function LibraryScreen() {
         book: {
           series: group.series,
           book: group.book,
-          titleRu: bookTitle.title,
+          titleUk: bookTitle.title,
           subtitle: bookTitle.subtitle,
           chapters,
         },
@@ -454,7 +455,7 @@ export function LibraryScreen() {
     return new Set([...persistedSet, ...ancestors]);
   }, [persistedSet, continueAncestors, touchedKeys]);
 
-  // T86 toolbar: «Свернуть всё» when anything is open, else «Развернуть всё».
+  // T86 toolbar: «Згорнути все» when anything is open, else «Розгорнути все».
   // Expand-all adds only the top-level keys (packs, families, books); chapters
   // stay collapsed. Collapse-all clears everything (persisted).
   const topLevelKeys = React.useMemo(() => collectTopLevelKeys(remote), [remote]);
@@ -583,11 +584,11 @@ export function LibraryScreen() {
             <Pressable
               onPress={onToggleAll}
               accessibilityRole="button"
-              accessibilityLabel={anyExpanded ? 'Свернуть всё' : 'Развернуть всё'}
+              accessibilityLabel={anyExpanded ? 'Згорнути все' : 'Розгорнути все'}
               className="rounded-lg px-2 py-1 active:bg-surface-2"
             >
               <Text variant="caption" className="text-accent">
-                {anyExpanded ? 'Свернуть всё' : 'Развернуть всё'}
+                {anyExpanded ? 'Згорнути все' : 'Розгорнути все'}
               </Text>
             </Pressable>
           </View>
@@ -858,16 +859,16 @@ function SectionHeader({
           onPress={() => onToggle(true)}
           accessibilityRole="button"
           accessibilityState={{ expanded: false }}
-          accessibilityLabel={`${section.family?.titleRu ?? section.pack.titleRu}. Expand`}
+          accessibilityLabel={`${section.family?.titleUk ?? section.pack.titleUk}. Expand`}
           className="mb-2 mt-4 flex-row items-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
         >
           <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
           <Text className="flex-1 font-ui-medium text-lg" numberOfLines={1}>
             {section.book
               ? section.book.subtitle
-                ? `${section.book.titleRu} · ${section.book.subtitle}`
-                : section.book.titleRu
-              : (section.family?.titleRu ?? section.pack.titleRu)}
+                ? `${section.book.titleUk} · ${section.book.subtitle}`
+                : section.book.titleUk
+              : (section.family?.titleUk ?? section.pack.titleUk)}
           </Text>
           <View className="flex-row gap-1">
             {levels.map((level) => (
@@ -886,11 +887,11 @@ function SectionHeader({
           onPress={() => onToggle(false)}
           accessibilityRole="button"
           accessibilityState={{ expanded: true }}
-          accessibilityLabel={`${section.family?.titleRu ?? section.pack.titleRu}. Collapse`}
+          accessibilityLabel={`${section.family?.titleUk ?? section.pack.titleUk}. Collapse`}
           className="mt-4 flex-row items-center gap-2 self-start rounded-lg px-1 py-1 active:bg-surface-2"
         >
           <Ionicons name="chevron-down" size={16} color={tokens.textMuted} />
-          <Text variant="caption">Свернуть</Text>
+          <Text variant="caption">Згорнути</Text>
         </Pressable>
       )}
       {expanded && section.book && (
@@ -901,7 +902,7 @@ function SectionHeader({
         (section.family ? (
           <FamilyShelfHeader
             slug={section.family.slug}
-            titleRu={section.family.titleRu}
+            titleUk={section.family.titleUk}
             tags={section.family.tags}
             rungs={section.family.rungs}
             selectedLevel={section.family.selectedLevel}
@@ -961,7 +962,7 @@ function BookHeader({
   return (
     <View className="mb-1 mt-2 gap-1">
       <Text variant="caption">
-        {`${book.chapters.length} глав · ${summary.finished}/${summary.total} частей`}
+        {`${book.chapters.length} ${pluralUk(book.chapters.length, ['розділ', 'розділи', 'розділів'])} · ${summary.finished}/${summary.total} ${pluralUk(summary.total, ['частина', 'частини', 'частин'])}`}
       </Text>
     </View>
   );
@@ -988,7 +989,7 @@ function ChapterRow({
   renderPartRow: (item: LibraryRow) => React.ReactNode;
 }) {
   const { tokens } = useAppTheme();
-  const title = chapterLabel(section.family?.titleRu ?? section.pack.titleRu);
+  const title = chapterLabel(section.family?.titleUk ?? section.pack.titleUk);
   const levels = sectionLevels(section);
   const summary = summarizeStories(sectionStories(section, progressByStory));
   return (
@@ -1022,7 +1023,7 @@ function ChapterRow({
       {expanded && section.family && (
         <FamilyShelfHeader
           slug={section.family.slug}
-          titleRu={section.family.titleRu}
+          titleUk={section.family.titleUk}
           tags={section.family.tags}
           rungs={section.family.rungs}
           selectedLevel={section.family.selectedLevel}

@@ -42,13 +42,43 @@ describe('classifySource', () => {
 describe('copy', () => {
   it('split line + backlog + bulk toast', async () => {
     const { splitLine, backlogLine, bulkBankToast } = await import('../due-core');
-    expect(splitLine(30, 12)).toBe('30 повторений + 12 новых');
-    expect(splitLine(21, 1)).toBe('21 повторение + 1 новая');
-    expect(splitLine(0, 10)).toBe('10 новых');
-    expect(splitLine(5, 0)).toBe('5 повторений');
-    expect(backlogLine(286)).toBe('В очереди: 286 новых');
+    expect(splitLine(30, 12)).toBe('30 повторень + 12 нових');
+    expect(splitLine(21, 1)).toBe('21 повторення + 1 нова');
+    expect(splitLine(0, 10)).toBe('10 нових');
+    expect(splitLine(5, 0)).toBe('5 повторень');
+    expect(backlogLine(286)).toBe('У черзі: 286 нових');
     expect(backlogLine(0)).toBeNull();
-    expect(bulkBankToast(87, 10)).toBe('+87 слов в Словаре · по 10 в день');
+    expect(bulkBankToast(87, 10)).toBe('+87 слів у Словнику · по 10 на день');
+    expect(bulkBankToast(0, 10)).toBe('+0 слів — усі слова вже в Словнику');
+    expect(bulkBankToast(3, 0)).toBe('+3 слова у Словнику · нові слова вимкнено');
+  });
+
+  it('plural agreement at 1/2/5/11/21/22/25', async () => {
+    const { splitLine, bulkBankToast } = await import('../due-core');
+    const reviews = (n: number) => splitLine(n, 0);
+    expect(reviews(1)).toBe('1 повторення');
+    expect(reviews(2)).toBe('2 повторення');
+    expect(reviews(5)).toBe('5 повторень');
+    expect(reviews(11)).toBe('11 повторень');
+    expect(reviews(21)).toBe('21 повторення');
+    expect(reviews(22)).toBe('22 повторення');
+    expect(reviews(25)).toBe('25 повторень');
+    const news = (n: number) => splitLine(0, n);
+    expect(news(1)).toBe('1 нова');
+    expect(news(2)).toBe('2 нові');
+    expect(news(5)).toBe('5 нових');
+    expect(news(11)).toBe('11 нових');
+    expect(news(21)).toBe('21 нова');
+    expect(news(22)).toBe('22 нові');
+    expect(news(25)).toBe('25 нових');
+    const words = (n: number) => bulkBankToast(n, 10).split(' у ')[0];
+    expect(words(1)).toBe('+1 слово');
+    expect(words(2)).toBe('+2 слова');
+    expect(words(5)).toBe('+5 слів');
+    expect(words(11)).toBe('+11 слів');
+    expect(words(21)).toBe('+21 слово');
+    expect(words(22)).toBe('+22 слова');
+    expect(words(25)).toBe('+25 слів');
   });
 });
 

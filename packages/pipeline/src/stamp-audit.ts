@@ -127,6 +127,17 @@ export interface PythonAlignerOptions {
   engine?: 'ctc-ru' | 'whisper';
 }
 
+/**
+ * Stamp-audit modes (UP07, SUTINKI_DESIGN §3). Sutinki's default is `report`: the only shipped engine is the
+ * RUSSIAN CTC model, which cannot align Ukrainian — so until UT15 a Ukrainian audit prints a report (or the
+ * «skipped» line) and NEVER refuses a render or a publish. `enforce` is the Sumrak behaviour (throws on failure).
+ */
+export type StampAuditMode = 'enforce' | 'report' | 'off';
+export const STAMP_AUDIT_SKIPPED = 'stamp audit skipped: no Ukrainian aligner (UT15)';
+export const STAMP_AUDIT_REPORT_NOTE = 'report-only (UT15 pending)';
+/** Letters/marks that exist in Ukrainian but not in Russian — their presence means the Russian CTC model must not run. */
+const UK_ONLY = /[іїєґ'ʼ’]/i;
+
 const TOOL = resolve(dirname(new URL(import.meta.url).pathname), '..', 'tools', 'forced_align.py');
 
 /** The shipped aligner: tools/forced_align.py, cached by sha256(audio + words). */
@@ -136,6 +147,9 @@ export function pythonAligner(opts: PythonAlignerOptions = {}): Aligner {
     opts.cacheDir ?? process.env.SUTINKI_ALIGN_CACHE ?? join(homedir(), '.cache', 'sutinki-align');
   const engine = opts.engine ?? 'ctc-ru';
   return (audioFile, words) => {
+    if (engine === 'ctc-ru' && words.some((w) => UK_ONLY.test(w.text))) {
+      throw new Error('Russian CTC model cannot align Ukrainian (UT15)');
+    }
     const key = createHash('sha256')
       .update(readFileSync(audioFile))
       .update(JSON.stringify(words))
@@ -428,9 +442,13 @@ export function structuralChecks(
   return issues;
 }
 
-/** Adverb surface (-о) carrying its adjective's lemma («ужасно» → «ужасный»). */
-export function lemmaLint(sentences: readonly Sentence[]): string[] {
+/**
+ * Adverb surface (-о) carrying its adjective's lemma («ужасно» → «ужасный»). RUSSIAN morphology: for
+ * `uk` (the default in Sutinki) it returns [] — the Ukrainian rule is UT15's.
+ */
+export function lemmaLint(sentences: readonly Sentence[], language: 'ru' | 'uk' = 'uk'): string[] {
   const issues: string[] = [];
+  if (language !== 'ru') return issues;
   for (const s of sentences) {
     s.tokens.forEach((t, i) => {
       if (t.isPunct || !t.lemma) return;
@@ -658,7 +676,7 @@ export function analyseTrack(
     throw new Error(`${track.id}: aligner returned ${aligned.length} words for ${words.length}`);
   }
   const db = loadFrameDb(file);
-  const letters = words.map((x) => (x.text.toLowerCase().match(/[а-яё]/g) ?? []).length);
+  const letters = words.map((x) => (x.text.toLowerCase().match(/[а-яёіїєґ]/g) ?? []).length);
   const refined = refineWords(aligned, db, track.durationMs, letters);
   return { storyId, track, sentences, refined, db };
 }
@@ -667,6 +685,32 @@ export interface PackAudit {
   packId: string;
   tracks: TrackAudit[];
   ok: boolean;
+}
+
+/**
+ * Run an audit under a mode. `report` never throws (aligner/venv errors become the «skipped» line, a failing audit
+ * is printed and noted); `enforce` rethrows aligner errors and returns the audit so the caller can refuse; `off` skips.
+ */
+export function runStampAudit(
+  mode: StampAuditMode,
+  pack: Pack,
+  packDir: string,
+  aligner: Aligner,
+  log: (line: string) => void = console.log,
+): { audit?: PackAudit; skipped?: string; refuse: boolean } {
+  if (mode === 'off') return { refuse: false };
+  try {
+    const audit = auditPack(pack, packDir, aligner);
+    if (mode === 'report') {
+      if (!audit.ok) log(`${formatAuditTable(audit)}\n${STAMP_AUDIT_REPORT_NOTE}`);
+      return { audit, refuse: false };
+    }
+    return { audit, refuse: !audit.ok };
+  } catch (e) {
+    if (mode === 'enforce') throw e;
+    log(STAMP_AUDIT_SKIPPED);
+    return { skipped: e instanceof Error ? e.message : String(e), refuse: false };
+  }
 }
 
 /** Audit every timestamped story track of a pack. */

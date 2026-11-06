@@ -48,7 +48,7 @@ function clickOnsets(file: string): number[] {
 
 describe('pipeline audio timeline is exact (T80 drift regression)', () => {
   it('click positions survive decode → excise → concat → MP3 → Opus within 6 ms', () => {
-    const dir = mkdtempSync(join(tmpdir(), 'sumrak-t80-'));
+    const dir = mkdtempSync(join(tmpdir(), 'sutinki-t80-'));
     dirs.push(dir);
     // 90 s of 20 ms bursts at every whole second (≥ 0.4 s).
     const expr = 'if(lt(mod(t,1),0.02)*gt(t,0.4),0.8*sin(2*PI*1000*t),0)';
@@ -116,13 +116,13 @@ describe('mapAlignmentToStamps tail guard (T80 step regression)', () => {
   const sentences = [
     {
       id: 's1',
-      ru: 'Ночь.',
+      uk: 'Ночь.',
       en: 'Night.',
       tokens: [{ text: 'Ночь' }, { text: '.', isPunct: true as const }],
     },
     {
       id: 's2',
-      ru: 'Тишина.',
+      uk: 'Тишина.',
       en: 'Silence.',
       tokens: [{ text: 'Тишина' }, { text: '.', isPunct: true as const }],
     },

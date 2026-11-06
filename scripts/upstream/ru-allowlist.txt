@@ -76,3 +76,6 @@ apps/mobile/src/app/dev-exam-capture.tsx # UT16/UT17 (UP06) — dev-only A2 capt
 apps/mobile/src/features/ai/__tests__/__fixtures__/a1-prompts.golden.json # UT16/UT17 (UP06) — Russian exam prompt golden; removed when UT16/UT17 rewrite the prompts
 packages/schema/fixtures/packs/a2-exam-fixture/* # UT16/UT17 (UP06) — Russian TORFL A2 engine fixture; removed when UT16/UT17 re-target it
 packages/schema/fixtures/packs/a2-torfl-* # UT16/UT17 (UP06) — Russian TORFL A2 prompts fixture; removed when UT16/UT17 re-target it
+packages/pipeline/tools/forced_align.py # UT15 (UP07) — Russian CTC aligner (model constant + letter filter); UT15 replaces it with a Ukrainian aligner
+packages/pipeline/tools/stamp-truth/** # UT15 (UP07) — Sumrak's frozen Russian stamp truth set + dev tooling; UT15 builds a Ukrainian one
+packages/pipeline/src/stamp-audit.ts # UT15 (UP07) — Russian CTC stamp-audit engine (Cyrillic letter class, ё fold, Russian lemmaLint); UT15 adds Ukrainian

@@ -19,7 +19,7 @@ export function canBankTopic(pack: { category: string | null; tags: readonly str
 }
 
 /**
- * «+87 слов в Словаре · по 10 в день» / «+0 слов — все слова уже в Словаре».
+ * «+87 слів у Словнику · по 10 на день» / «+0 слів — усі слова вже в Словнику».
  * T82: new words join the queue at the daily budget, the toast says so.
  */
 export function bankTopicToast(added: number, perDay: number = NEW_PER_DAY_DEFAULT): string {

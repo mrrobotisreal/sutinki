@@ -157,7 +157,7 @@ export function SchedulingSettingsSection() {
         <View className="border-t border-border px-4 py-3.5">
           <View className="flex-row items-center justify-between gap-3">
             <View className="flex-1 gap-0.5 pr-3">
-              <Text className="font-ui-medium">Новых слов в день</Text>
+              <Text className="font-ui-medium">Нових слів на день</Text>
               <Text variant="caption">
                 New words introduced per day (0–50). Extra banked words wait in the New queue;
                 reviews are always served first.
@@ -195,7 +195,7 @@ export function SchedulingSettingsSection() {
         {/* T82: sibling bury */}
         <View className="flex-row items-center justify-between border-t border-border px-4 py-3.5">
           <View className="flex-1 gap-0.5 pr-3">
-            <Text className="font-ui-medium">Прятать родственные карточки</Text>
+            <Text className="font-ui-medium">Ховати споріднені картки</Text>
             <Text variant="caption">
               After one direction of a word is answered, its other directions wait until tomorrow.
             </Text>

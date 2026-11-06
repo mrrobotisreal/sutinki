@@ -8,6 +8,9 @@ import {
   assertOnlyTimestampsChanged,
   auditPack,
   lemmaLint,
+  pythonAligner,
+  runStampAudit,
+  STAMP_AUDIT_SKIPPED,
   loadFrameDb,
   refineWords,
   pauseEdges,
@@ -37,7 +40,7 @@ const trueStart = (i: number) => 500 + i * PERIOD;
 
 const sentences: Sentence[] = Array.from({ length: N / 6 }, (_, s) => ({
   id: `t-s${String(s + 1).padStart(2, '0')}`,
-  ru: Array.from({ length: 6 }, (_, k) => `слово${s * 6 + k}`).join(' ') + '.',
+  uk: Array.from({ length: 6 }, (_, k) => `слово${s * 6 + k}`).join(' ') + '.',
   en: 'x',
   tokens: [
     ...Array.from({ length: 6 }, (_, k) => ({
@@ -50,14 +53,12 @@ const sentences: Sentence[] = Array.from({ length: N / 6 }, (_, s) => ({
 }));
 
 function makeAudio(): { dir: string; file: string; durationMs: number } {
-  const dir = mkdtempSync(join(tmpdir(), 'sumrak-t80sa-'));
+  const dir = mkdtempSync(join(tmpdir(), 'sutinki-t80sa-'));
   dirs.push(dir);
   const durationMs = trueStart(N) + 500;
-  // sum of gated sines, one per word
-  const gate = Array.from({ length: N }, (_, i) => {
-    const t0 = trueStart(i) / 1000;
-    return `between(t,${t0},${t0 + BURST / 1000})`;
-  }).join('+');
+  // gated sine, one burst per word. Compact periodic form (ffmpeg 9 rejects a 120-term sum with ENOMEM).
+  const t0 = trueStart(0) / 1000;
+  const gate = `gte(t,${t0})*lt(t,${t0 + (N * PERIOD) / 1000})*lt(mod(t-${t0},${PERIOD / 1000}),${BURST / 1000})`;
   execFileSync('ffmpeg', [
     '-y',
     '-v',
@@ -87,13 +88,13 @@ function packWith(
     id: 'test-stamps',
     version: 1,
     type: 'stories',
-    title: { ru: 'Т', en: 'T' },
+    title: { uk: 'Т', en: 'T' },
     level: 'A1',
     tags: [],
     stories: [
       {
         id: 'story',
-        title: { ru: 'Т', en: 'T' },
+        title: { uk: 'Т', en: 'T' },
         level: 'A1',
         sentences: sentences.map((s, i) => ({ ...s, ...(extra[i] ?? {}) })),
         audio: [
@@ -234,7 +235,7 @@ describe('stamp-audit on a synthetic track', () => {
     expect(auditPack(next, dir, aligner).ok).toBe(true);
     assertOnlyTimestampsChanged(pack, next);
     const tampered = structuredClone(next);
-    tampered.title = { ru: 'другое', en: 'other' };
+    tampered.title = { uk: 'другое', en: 'other' };
     expect(() => assertOnlyTimestampsChanged(pack, tampered)).toThrow(/more than/);
   });
 
@@ -273,19 +274,79 @@ describe('structural + lemma lint', () => {
 
   it('lemmaLint flags an adverb with an adjective lemma («ужасно» → «ужасный») and nothing else', () => {
     const mk = (text: string, lemma: string): Sentence =>
-      ({ id: 'l-s01', ru: text, en: 'x', tokens: [{ text, lemma }] }) as unknown as Sentence;
-    expect(lemmaLint([mk('ужасно', 'ужасный')])).toHaveLength(1);
-    expect(lemmaLint([mk('ужасно', 'ужасно')])).toEqual([]);
-    expect(lemmaLint([mk('ужасное', 'ужасный')])).toEqual([]);
-    expect(lemmaLint([mk('хорошо', 'хороший')])).toHaveLength(1);
-    expect(lemmaLint([mk('окно', 'окно')])).toEqual([]);
+      ({ id: 'l-s01', uk: text, en: 'x', tokens: [{ text, lemma }] }) as unknown as Sentence;
+    expect(lemmaLint([mk('ужасно', 'ужасный')], 'ru')).toHaveLength(1);
+    expect(lemmaLint([mk('ужасно', 'ужасно')], 'ru')).toEqual([]);
+    expect(lemmaLint([mk('ужасное', 'ужасный')], 'ru')).toEqual([]);
+    expect(lemmaLint([mk('хорошо', 'хороший')], 'ru')).toHaveLength(1);
+    expect(lemmaLint([mk('окно', 'окно')], 'ru')).toEqual([]);
+  });
+});
+
+// Russian stamp-audit engine fixtures above — UT15 adds Ukrainian ones (allowlisted, owner UT15).
+describe('UP07 audit modes (Ukrainian: report-only until UT15)', () => {
+  const { dir, durationMs } = makeAudio();
+  const bad = () =>
+    packWith(
+      durationMs,
+      published((i) => trueStart(i) - (i >= 40 ? 1800 : 0)),
+    );
+  const aligner = alignerWith((_, t) => t);
+
+  it('lemmaLint is empty for uk (default) and active for ru', () => {
+    const s = { id: 'l-s01', uk: 'x', en: 'x', tokens: [{ text: 'ужасно', lemma: 'ужасный' }] };
+    expect(lemmaLint([s as unknown as Sentence])).toEqual([]);
+    expect(lemmaLint([s as unknown as Sentence], 'ru')).toHaveLength(1);
+  });
+
+  it('report mode never throws on a failing audit; enforce mode refuses', () => {
+    const lines: string[] = [];
+    const rep = runStampAudit('report', bad(), dir, aligner, (l) => lines.push(l));
+    expect(rep.refuse).toBe(false);
+    expect(rep.audit?.ok).toBe(false);
+    expect(lines.join('\n')).toMatch(/report-only \(UT15 pending\)/);
+    expect(runStampAudit('enforce', bad(), dir, aligner).refuse).toBe(true);
+    expect(runStampAudit('off', bad(), dir, aligner).refuse).toBe(false);
+  });
+
+  it('report mode turns a missing aligner into the skipped line; enforce rethrows', () => {
+    const boom: Aligner = () => {
+      throw new Error('no venv');
+    };
+    const lines: string[] = [];
+    expect(runStampAudit('report', bad(), dir, boom, (l) => lines.push(l)).skipped).toBe('no venv');
+    expect(lines).toEqual([STAMP_AUDIT_SKIPPED]);
+    expect(() => runStampAudit('enforce', bad(), dir, boom)).toThrow('no venv');
+  });
+
+  it('ctc-ru refuses Ukrainian input', () => {
+    const a = pythonAligner({ engine: 'ctc-ru', python: '/nonexistent/python' });
+    expect(() => a('x.opus', [{ id: 's:0', text: "п'ять" }])).toThrow(/cannot align Ukrainian/);
+    expect(() => a('x.opus', [{ id: 's:0', text: 'ґанок' }])).toThrow(/cannot align Ukrainian/);
+  });
+
+  it('publish in report mode publishes a failing pack, notes it in BUILD_NOTES.md', () => {
+    writeFileSync(join(dir, 'pack.json'), JSON.stringify(bad()));
+    const c = mkdtempSync(join(tmpdir(), 'sutinki-up07pub-'));
+    dirs.push(c);
+    execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: c });
+    execFileSync('git', ['config', 'user.email', 't@t'], { cwd: c });
+    execFileSync('git', ['config', 'user.name', 't'], { cwd: c });
+    writeFileSync(join(c, 'manifest.json'), `${JSON.stringify({ schemaVersion: 1, packs: [] })}\n`);
+    execFileSync('git', ['add', '.'], { cwd: c });
+    execFileSync('git', ['commit', '-q', '-m', 'i'], { cwd: c });
+    const out = runPublish(dir, c, { stampAudit: aligner, stampAuditMode: 'report' });
+    expect(out.outcome).toBe('published');
+    expect(readFileSync(join(dir, 'BUILD_NOTES.md'), 'utf8')).toMatch(
+      /report-only \(UT15 pending\)/,
+    );
   });
 });
 
 describe('publish gate', () => {
   const { dir, durationMs } = makeAudio();
   const content = () => {
-    const c = mkdtempSync(join(tmpdir(), 'sumrak-t80pub-'));
+    const c = mkdtempSync(join(tmpdir(), 'sutinki-t80pub-'));
     dirs.push(c);
     execFileSync('git', ['init', '-q', '-b', 'main'], { cwd: c });
     execFileSync('git', ['config', 'user.email', 't@t'], { cwd: c });

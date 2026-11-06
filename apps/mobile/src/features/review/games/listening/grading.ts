@@ -2,9 +2,9 @@ import { foldForAnswer } from '@/lib/text';
 
 /**
  * T81 form-tolerant listening grading (pure).
- * - `exact`: folds equal to the heard/keyed form (today's rule: ё/е, case, stress).
+ * - `exact`: folds equal to the heard/keyed form (today's rule: ґ/г kept distinct, apostrophe, case, stress).
  * - `form`: not the keyed form, but the lemma or another known surface form of
- *   the SAME lemma («Почти — та же лексема, другая форма»). Counts as correct
+ *   the SAME lemma («Майже — та сама лексема, інша форма»). Counts as correct
  *   for FSRS with a Hard cap (default; Mitch's call pending, recorded in T81).
  * - `wrong`: anything else.
  */

@@ -38,15 +38,14 @@ describe('parseSeriesTags', () => {
 describe('seriesBookTitle', () => {
   it('uses the registry title and subtitle when known', () => {
     expect(seriesBookTitle('three-body', 2, 'anything')).toEqual({
-      title: 'Задача трёх тел 2',
-      subtitle: 'Три тела',
+      title: 'Проблема трьох тіл 2',
     });
-    expect(seriesBookTitle('three-body', 3, 'anything')).toEqual({ title: 'Задача трёх тел 3' });
+    expect(seriesBookTitle('three-body', 3, 'anything')).toEqual({ title: 'Проблема трьох тіл 3' });
   });
 
   it('falls back to the first member prefix with the trailing number stripped', () => {
-    expect(seriesBookTitle('mystery', 4, 'Мистерия 2 — Глава 1. Старт')).toEqual({
-      title: 'Мистерия 4',
+    expect(seriesBookTitle('mystery', 4, 'Містерія 2 — Розділ 1. Старт')).toEqual({
+      title: 'Містерія 4',
     });
   });
 
@@ -57,8 +56,8 @@ describe('seriesBookTitle', () => {
 
 describe('chapterLabel', () => {
   it('returns the part after the dash', () => {
-    expect(chapterLabel('Задача трёх тел 2 — Глава 4. Границы науки')).toBe(
-      'Глава 4. Границы науки',
+    expect(chapterLabel('Проблема трьох тіл 2 — Розділ 4. Межі науки')).toBe(
+      'Розділ 4. Межі науки',
     );
   });
 

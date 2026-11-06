@@ -30,7 +30,7 @@ export interface ContinueStory {
   packId: string;
   id: string;
   orderIdx: number;
-  titleRu: string;
+  titleUk: string;
 }
 
 export type ContinueKind = 'resume' | 'next' | 'fallback';
@@ -69,14 +69,14 @@ export function resolveContinueTarget(
 
   const lastStory = storyByKey.get(key(last.packId, last.storyId))!;
   if (last.finishedAt == null) {
-    return { packId: last.packId, storyId: last.storyId, title: lastStory.titleRu, kind: 'resume' };
+    return { packId: last.packId, storyId: last.storyId, title: lastStory.titleUk, kind: 'resume' };
   }
 
   const next = stories
     .filter((s) => s.packId === last.packId && s.orderIdx > lastStory.orderIdx)
     .sort((a, b) => a.orderIdx - b.orderIdx)[0];
   if (next && progressByKey.get(key(next.packId, next.id))?.finishedAt == null) {
-    return { packId: next.packId, storyId: next.id, title: next.titleRu, kind: 'next' };
+    return { packId: next.packId, storyId: next.id, title: next.titleUk, kind: 'next' };
   }
 
   // Series step only when the last-read story is the LAST part of its pack.
@@ -87,7 +87,7 @@ export function resolveContinueTarget(
       return {
         packId: nextChapter.packId,
         storyId: nextChapter.id,
-        title: nextChapter.titleRu,
+        title: nextChapter.titleUk,
         kind: 'next',
         fromPackId: last.packId,
       };
@@ -100,7 +100,7 @@ export function resolveContinueTarget(
   return {
     packId: unfinished.packId,
     storyId: unfinished.storyId,
-    title: s.titleRu,
+    title: s.titleUk,
     kind: 'fallback',
   };
 }

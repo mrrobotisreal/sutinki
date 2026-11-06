@@ -1,5 +1,5 @@
 import json,re,difflib,subprocess,numpy as np,os
-R='/Users/mitchwintrow/Workspaces/Russian/'
+R=os.environ['SUTINKI_STAMP_TRUTH_ROOT']  # no default: never read the Russian repo by accident (UT15 owns this tooling)
 P=R+'sutinki-content/packs/'
 D=R+'Stories/_build/stamp-audit-2026-10-10/'
 def norm(s): return re.sub(r'[^а-я]','',s.lower().replace('ё','е'))

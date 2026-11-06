@@ -85,10 +85,10 @@ describe('bank a topic (pure)', () => {
   it('toast copy + topic slug', async () => {
     const { bankTopicToast, topicSlugOfStory } = await import('../bank-topic');
     // T82: the toast says how the words arrive (the daily new-word budget).
-    expect(bankTopicToast(1)).toBe('+1 слово в Словаре · по 10 в день');
-    expect(bankTopicToast(23, 5)).toBe('+23 слова в Словаре · по 5 в день');
-    expect(bankTopicToast(67)).toBe('+67 слов в Словаре · по 10 в день');
-    expect(bankTopicToast(0)).toBe('+0 слов — все слова уже в Словаре');
+    expect(bankTopicToast(1)).toBe('+1 слово у Словнику · по 10 на день');
+    expect(bankTopicToast(23, 5)).toBe('+23 слова у Словнику · по 5 на день');
+    expect(bankTopicToast(67)).toBe('+67 слів у Словнику · по 10 на день');
+    expect(bankTopicToast(0)).toBe('+0 слів — усі слова вже в Словнику');
     expect(topicSlugOfStory('lx-o-sebe')).toBe('o-sebe');
     expect(topicSlugOfStory('rd-01')).toBe('rd-01');
   });

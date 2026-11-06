@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { pluralUk } from '@/lib/uk-plural';
+
 /**
  * T82 — the pure "what is due" core. No DB, no React: the reviews repo loads
  * candidate cards, this module decides which of them are today's queue and how
@@ -223,33 +225,24 @@ export function planDue(input: PlanInput): DuePlan {
 
 // ---- copy (pure, tested) ---------------------------------------------------
 
-function plural(n: number, forms: readonly [string, string, string]): string {
-  const abs = Math.abs(n);
-  const mod10 = abs % 10;
-  const mod100 = abs % 100;
-  if (mod10 === 1 && mod100 !== 11) return forms[0];
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return forms[1];
-  return forms[2];
-}
-
-/** «30 повторений + 12 новых» — the split under the Today headline. */
+/** «30 повторень + 12 нових» — the split under the Today headline («нова» = нова картка). */
 export function splitLine(reviewDue: number, newToday: number): string {
-  const reviews = `${reviewDue} ${plural(reviewDue, ['повторение', 'повторения', 'повторений'])}`;
+  const reviews = `${reviewDue} ${pluralUk(reviewDue, ['повторення', 'повторення', 'повторень'])}`;
   if (newToday === 0) return reviews;
-  if (reviewDue === 0) return `${newToday} ${plural(newToday, ['новая', 'новые', 'новых'])}`;
-  return `${reviews} + ${newToday} ${plural(newToday, ['новая', 'новые', 'новых'])}`;
+  if (reviewDue === 0) return `${newToday} ${pluralUk(newToday, ['нова', 'нові', 'нових'])}`;
+  return `${reviews} + ${newToday} ${pluralUk(newToday, ['нова', 'нові', 'нових'])}`;
 }
 
-/** «В очереди: 286 новых» — never part of the headline. */
+/** «У черзі: 286 нових» — never part of the headline. */
 export function backlogLine(newBacklog: number): string | null {
-  return newBacklog > 0 ? `В очереди: ${newBacklog} новых` : null;
+  return newBacklog > 0 ? `У черзі: ${newBacklog} нових` : null;
 }
 
-/** «+87 слов в Словаре · по 10 в день» — the bulk-bank toast. */
+/** «+87 слів у Словнику · по 10 на день» — the bulk-bank toast. */
 export function bulkBankToast(added: number, perDay: number): string {
-  if (added === 0) return '+0 слов — все слова уже в Словаре';
-  const words = plural(added, ['слово', 'слова', 'слов']);
+  if (added === 0) return '+0 слів — усі слова вже в Словнику';
+  const words = pluralUk(added, ['слово', 'слова', 'слів']);
   return perDay > 0
-    ? `+${added} ${words} в Словаре · по ${perDay} в день`
-    : `+${added} ${words} в Словаре · новые слова выключены`;
+    ? `+${added} ${words} у Словнику · по ${perDay} на день`
+    : `+${added} ${words} у Словнику · нові слова вимкнено`;
 }

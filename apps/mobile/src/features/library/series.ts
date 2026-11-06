@@ -39,36 +39,38 @@ export interface SeriesBookInfo {
 
 /** App-owned book titles (packs carry only `book:<B>`). */
 export const SERIES_REGISTRY: Readonly<Record<string, Readonly<Record<number, SeriesBookInfo>>>> = {
+  // Titles per USRC024 (published Ukrainian title «Проблема трьох тіл», Ширинос/BookChef).
+  // TODO(USRC024): book subtitles (Sumrak had «Безмолвная весна» / «Три тела») — Mitch's call, none for now.
   'three-body': {
-    1: { title: 'Задача трёх тел 1', subtitle: 'Безмолвная весна' },
-    2: { title: 'Задача трёх тел 2', subtitle: 'Три тела' },
-    3: { title: 'Задача трёх тел 3' },
+    1: { title: 'Проблема трьох тіл 1' },
+    2: { title: 'Проблема трьох тіл 2' },
+    3: { title: 'Проблема трьох тіл 3' },
   },
 };
 
-const RU_DASH = ' — ';
+const TITLE_DASH = ' — ';
 
 /**
  * Book heading (title + optional subtitle). Registry hit → registry title + subtitle. Otherwise the first
  * member's title before « — » with any trailing number stripped, plus ` <B>`
- * (the literal design form would render «Задача трёх тел 2 2»).
+ * (the literal design form would render «Проблема трьох тіл 2 2»).
  */
 export function seriesBookTitle(
   series: string,
   book: number,
-  fallbackTitleRu: string,
+  fallbackTitleUk: string,
 ): SeriesBookInfo {
   const hit = SERIES_REGISTRY[series]?.[book];
   if (hit) return hit;
-  const head = fallbackTitleRu.split(RU_DASH)[0] ?? fallbackTitleRu;
+  const head = fallbackTitleUk.split(TITLE_DASH)[0] ?? fallbackTitleUk;
   const stem = head.replace(/\s*\d+\s*$/, '').trim() || head.trim();
   return { title: `${stem} ${book}` };
 }
 
 /** Chapter row label: the part after « — »; no « — » → the full title. */
-export function chapterLabel(titleRu: string): string {
-  const idx = titleRu.indexOf(RU_DASH);
-  return idx === -1 ? titleRu : titleRu.slice(idx + RU_DASH.length).trim();
+export function chapterLabel(titleUk: string): string {
+  const idx = titleUk.indexOf(TITLE_DASH);
+  return idx === -1 ? titleUk : titleUk.slice(idx + TITLE_DASH.length).trim();
 }
 
 export interface SeriesChapter<T> {

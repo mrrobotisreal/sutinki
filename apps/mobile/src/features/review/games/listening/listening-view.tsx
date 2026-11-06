@@ -145,7 +145,7 @@ export function ListeningView({ entry, onDone }: ListeningViewProps) {
             </RNText>
             {almost && (
               <Text className="text-center" variant="muted">
-                Почти — та же лексема, другая форма. Вы слышали «{entry.answerUk}».
+                Майже — та сама лексема, інша форма. Ти почув(-ла) «{entry.answerUk}».
               </Text>
             )}
             {entry.translation && <Text variant="muted">{entry.translation}</Text>}
