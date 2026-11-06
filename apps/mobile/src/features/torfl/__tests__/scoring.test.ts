@@ -1,5 +1,11 @@
-import { ExamSchema, type ChoiceItem, type Exam, type TypedItem } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import {
+  ExamSchema,
+  type ChoiceItem,
+  type Exam,
+  type MatchingItem,
+  type TypedItem,
+} from '@sutinki/schema';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { Rating } from 'ts-fsrs';
 import { describe, expect, it } from 'vitest';
 
@@ -17,12 +23,14 @@ import {
   acceptedDisplay,
   itemMaxPoints,
   matchesPattern,
+  matchingCorrect,
   normalizeAnswer,
   refSentenceIds,
   resolveAudioSpan,
   roundPct,
   scoreChoice,
   scoreItem,
+  scoreMatching,
   scoreTyped,
   splitStemAtGap,
   subtestPercent,
@@ -46,36 +54,40 @@ function typed(partial: Partial<TypedItem>): TypedItem {
 }
 
 describe('normalizeAnswer', () => {
-  it('folds NFC, case, ё→е, stress marks, punctuation and spaces', () => {
-    expect(normalizeAnswer('  Ёлка,  ЗЕЛЁНАЯ!  ')).toBe('елка зеленая');
+  it('folds NFC, case, apostrophes, ґ, stress marks, punctuation and spaces', () => {
+    expect(normalizeAnswer('  Ялинка,  ЗЕЛЕНА!  ')).toBe('ялинка зелена');
     expect(normalizeAnswer('мама́')).toBe('мама');
-    expect(normalizeAnswer('«Привет»…')).toBe('привет');
+    expect(normalizeAnswer('«Привіт»…')).toBe('привіт');
+    expect(normalizeAnswer("п'ять")).toBe(normalizeAnswer('п’ять'));
+    expect(normalizeAnswer('п\u02BCять')).toBe(normalizeAnswer("п'ять"));
+    expect(normalizeAnswer('ґанок')).toBe(normalizeAnswer('ганок'));
     // decomposed й (и + breve) composes under NFC and stays a letter
     expect(normalizeAnswer('й')).toBe('й');
   });
   it('keeps in-word hyphens, drops stray ones', () => {
-    expect(normalizeAnswer('кто-то')).toBe('кто-то');
-    expect(normalizeAnswer('- кто-то -')).toBe('кто-то');
+    expect(normalizeAnswer('хтось-то')).toBe('хтось-то');
+    expect(normalizeAnswer('- хтось-то -')).toBe('хтось-то');
   });
   it('is idempotent', () => {
-    const once = normalizeAnswer('  Всё,  ЭТО — ёлка!  ');
+    const once = normalizeAnswer('  Все,  ЦЕ — ялинка!  ');
     expect(normalizeAnswer(once)).toBe(once);
   });
 });
 
 describe('matchesPattern (trailing-* globs)', () => {
   it('exact without a star, prefix with one', () => {
-    expect(matchesPattern('парке', 'парке')).toBe(true);
-    expect(matchesPattern('парке', 'парки')).toBe(false);
-    expect(matchesPattern('рабоч*', 'рабочий')).toBe(true);
-    expect(matchesPattern('рабоч*', 'рабочая')).toBe(true);
-    expect(matchesPattern('рабоч*', 'раб')).toBe(false);
+    expect(matchesPattern('парку', 'парку')).toBe(true);
+    expect(matchesPattern('парку', 'парки')).toBe(false);
+    expect(matchesPattern('робіт*', 'робітник')).toBe(true);
+    expect(matchesPattern('робіт*', 'робітниця')).toBe(true);
+    expect(matchesPattern('робіт*', 'роб')).toBe(false);
   });
-  it('normalizes the pattern too (ё, case)', () => {
-    expect(matchesPattern('Зелён*', 'зеленый')).toBe(true);
+  it('normalizes the pattern too (apostrophe, ґ, case)', () => {
+    expect(matchesPattern("П'ят*", normalizeAnswer('п’ятниця'))).toBe(true);
+    expect(matchesPattern('Ґанок*', 'ганок')).toBe(true);
   });
   it('a bare star never matches everything', () => {
-    expect(matchesPattern('*', 'что угодно')).toBe(false);
+    expect(matchesPattern('*', 'що завгодно')).toBe(false);
   });
 });
 
@@ -104,10 +116,11 @@ describe('scoreTyped (demo v1 half credit)', () => {
     expect(scoreTyped(item, 'врачом', 5)).toEqual({ points: 0, maxPoints: 5, outcome: 'wrong' });
     expect(scoreTyped(item, '   ', 5).outcome).toBe('blank');
   });
-  it('is ё/е tolerant on accept and half', () => {
-    const e = typed({ accept: ['зелёным'], half: ['зелёный'] });
-    expect(scoreTyped(e, 'зеленым', 1).outcome).toBe('full');
-    expect(scoreTyped(e, 'зеленый', 2).points).toBe(1);
+  it('is apostrophe / ґ tolerant on accept and half', () => {
+    const e = typed({ accept: ["м'яко"], half: ['ґанок'] });
+    expect(scoreTyped(e, 'м’яко', 1).outcome).toBe('full');
+    expect(scoreTyped(e, 'мʼяко', 1).outcome).toBe('full');
+    expect(scoreTyped(e, 'ганок', 2).points).toBe(1);
   });
   it('globs in accept and half', () => {
     const g = typed({ accept: ['студент*'], half: ['учени*'] });
@@ -226,26 +239,25 @@ describe('stem + refs helpers', () => {
 });
 
 describe('pace constants + the drill grading rule', () => {
-  it('are the real A1 paces: 40·60/70 ≈ 34, 40·60/25 = 96, 30·60/20 = 90', () => {
-    expect(PACE_SEC).toEqual({ lexgram: 34, reading: 96, listening: 90 });
-    expect(Math.round((40 * 60) / 70)).toBe(PACE_SEC.lexgram);
-    expect((40 * 60) / 25).toBe(PACE_SEC.reading);
-    expect((30 * 60) / 20).toBe(PACE_SEC.listening);
+  it('are the real A1 state-exam paces: section minutes × 60 ÷ items', () => {
+    expect(PACE_SEC).toEqual({ lexgram: 30, reading: 113, listening: 60 });
+    expect(PACE_SEC).toBe(paceFor('A1'));
     expect(LIGHTNING_ITEMS).toBe(20);
     expect(paceSecFor('writing')).toBeNull();
-    expect(paceSecFor('lexgram')).toBe(34);
+    expect(paceSecFor('speaking')).toBeNull();
+    expect(paceSecFor('lexgram')).toBe(30);
   });
   it('wrong / blank = Again regardless of speed', () => {
     expect(ratingForDrillAnswer('wrong', 1000, 'lexgram')).toBe(Rating.Again);
     expect(ratingForDrillAnswer('blank', 1000, 'reading')).toBe(Rating.Again);
   });
   it('correct ≤ 2× pace = Good, slower = Hard (per kind)', () => {
-    expect(ratingForDrillAnswer('full', 68_000, 'lexgram')).toBe(Rating.Good);
-    expect(ratingForDrillAnswer('full', 68_001, 'lexgram')).toBe(Rating.Hard);
-    expect(ratingForDrillAnswer('full', 192_000, 'reading')).toBe(Rating.Good);
-    expect(ratingForDrillAnswer('full', 192_001, 'reading')).toBe(Rating.Hard);
-    expect(ratingForDrillAnswer('full', 180_000, 'listening')).toBe(Rating.Good);
-    expect(ratingForDrillAnswer('full', 180_001, 'listening')).toBe(Rating.Hard);
+    expect(ratingForDrillAnswer('full', 60_000, 'lexgram')).toBe(Rating.Good);
+    expect(ratingForDrillAnswer('full', 60_001, 'lexgram')).toBe(Rating.Hard);
+    expect(ratingForDrillAnswer('full', 226_000, 'reading')).toBe(Rating.Good);
+    expect(ratingForDrillAnswer('full', 226_001, 'reading')).toBe(Rating.Hard);
+    expect(ratingForDrillAnswer('full', 120_000, 'listening')).toBe(Rating.Good);
+    expect(ratingForDrillAnswer('full', 120_001, 'listening')).toBe(Rating.Hard);
   });
   it('half credit is Hard even when fast; never Easy', () => {
     expect(ratingForDrillAnswer('half', 1000, 'lexgram')).toBe(Rating.Hard);
@@ -254,21 +266,75 @@ describe('pace constants + the drill grading rule', () => {
     }
   });
   it('pace helpers', () => {
-    expect(paceFraction(17_000, 34)).toBe(0.5);
-    expect(paceFraction(-5, 34)).toBe(0);
+    expect(paceFraction(15_000, 30)).toBe(0.5);
+    expect(paceFraction(-5, 30)).toBe(0);
     expect(paceFraction(100, 0)).toBe(0);
-    expect(averageSeconds(680_000, 20)).toBe(34);
+    expect(averageSeconds(600_000, 20)).toBe(30);
     expect(averageSeconds(0, 0)).toBe(0);
   });
-  it('T75: the A2 pace row, the A2 drill rule, and the A1 default unchanged', () => {
-    expect(paceFor('A2')).toEqual({ lexgram: 30, reading: 100, listening: 72 });
+  it('UT16b: per-level pace rows, the level drill rule, and the A1 default', () => {
+    expect(paceFor('A2')).toEqual({ lexgram: 30, reading: 123, listening: 66 });
+    expect(paceFor('B1')).toEqual({ lexgram: 30, reading: 116, listening: 75 });
     expect(paceSecFor('lexgram', 'A2')).toBe(30);
+    expect(paceSecFor('listening', 'A2')).toBe(66);
     expect(paceSecFor('writing', 'A2')).toBeNull();
     expect(lightningPaceSec('A2')).toBe(30);
-    expect(lightningPaceSec()).toBe(34);
-    expect(ratingForDrillAnswer('full', 60_000, 'lexgram', 'A2')).toBe(Rating.Good);
-    expect(ratingForDrillAnswer('full', 60_001, 'lexgram', 'A2')).toBe(Rating.Hard);
-    expect(ratingForDrillAnswer('full', 68_000, 'lexgram')).toBe(Rating.Good);
-    expect(ratingForDrillAnswer('full', 68_001, 'lexgram')).toBe(Rating.Hard);
+    expect(lightningPaceSec()).toBe(30);
+    expect(ratingForDrillAnswer('full', 132_000, 'listening', 'A2')).toBe(Rating.Good);
+    expect(ratingForDrillAnswer('full', 132_001, 'listening', 'A2')).toBe(Rating.Hard);
+    expect(ratingForDrillAnswer('full', 60_000, 'lexgram')).toBe(Rating.Good);
+    expect(ratingForDrillAnswer('full', 60_001, 'lexgram')).toBe(Rating.Hard);
+  });
+});
+
+describe('scoreMatching (per-pair partial credit)', () => {
+  const item = {
+    id: 'm',
+    topic: 'rd-heading',
+    kind: 'matching',
+    stem: 'Підберіть заголовки',
+    left: ['Абзац 1', 'Абзац 2', 'Абзац 3', 'Абзац 4'],
+    right: ['A', 'B', 'C', 'D', 'E', 'F'],
+    key: [2, 0, 4, 1],
+  } as MatchingItem;
+
+  it('all pairs right = full', () => {
+    expect(scoreMatching(item, [2, 0, 4, 1], 8)).toEqual({
+      points: 8,
+      maxPoints: 8,
+      outcome: 'full',
+    });
+  });
+  it('some pairs right = half with proportional points', () => {
+    expect(scoreMatching(item, [2, 0, 3, 5], 8)).toEqual({
+      points: 4,
+      maxPoints: 8,
+      outcome: 'half',
+    });
+    expect(scoreMatching(item, [2, null, null, null], 8)).toEqual({
+      points: 2,
+      maxPoints: 8,
+      outcome: 'half',
+    });
+  });
+  it('none right = wrong; nothing picked = blank', () => {
+    expect(scoreMatching(item, [0, 1, 2, 3], 8)).toEqual({
+      points: 0,
+      maxPoints: 8,
+      outcome: 'wrong',
+    });
+    expect(scoreMatching(item, [null, null, null, null], 8)).toEqual({
+      points: 0,
+      maxPoints: 8,
+      outcome: 'blank',
+    });
+    expect(scoreMatching(item, [], 8).outcome).toBe('blank');
+  });
+  it('matchingCorrect marks each pair', () => {
+    expect(matchingCorrect(item, [2, 1, 4, null])).toEqual([true, false, true, false]);
+  });
+  it('scoreItem routes {picks} to matching and rejects other shapes', () => {
+    expect(scoreItem(item, { picks: [2, 0, 4, 1] }, { pointsPerItem: 1 })?.outcome).toBe('full');
+    expect(scoreItem(item, { index: 1 }, { pointsPerItem: 1 })).toBeNull();
   });
 });

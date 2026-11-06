@@ -38,7 +38,7 @@ export interface DrillParams {
   packId?: string;
   examId?: string;
   topic?: string;
-  /** THE LEVEL RULE (T75): the deck / «Молния» level; absent = A1 (back-compat). */
+  /** THE LEVEL RULE (T75): the deck / quick round level; absent = A1 (back-compat). */
   level?: TorflLevel;
 }
 
@@ -50,7 +50,7 @@ export interface DrillOutcome {
   /** Lightning: average seconds per item vs the exam pace. */
   avgSec: number;
   source: DrillSource;
-  /** THE LEVEL RULE (T75): the session's level — picks the «Молния» pace and the copy. */
+  /** THE LEVEL RULE (T75): the session's level — picks the quick round pace and the copy. */
   level: TorflLevel;
 }
 
@@ -170,7 +170,7 @@ export function useDrillSession(params: DrillParams) {
       subtestKind: entry.subtest.kind,
       outcome: args.score.outcome,
       ms: args.ms,
-      label: entry.item.kind === 'choice' ? entry.item.stem : entry.item.prompt,
+      label: entry.item.kind === 'typed' ? entry.item.prompt : entry.item.stem,
     });
     trackTorfl('exam_drill_item_answered', {
       subtestKind: entry.subtest.kind,
@@ -237,10 +237,10 @@ export function useDrillSession(params: DrillParams) {
       return;
     }
     const n = resultsRef.current.length;
-    Alert.alert('Закончить тренировку?', `Уже записано ответов: ${n} — они сохранятся.`, [
-      { text: 'Продолжить', style: 'cancel' },
+    Alert.alert('Завершити тренування?', `Уже записано відповідей: ${n} — вони збережуться.`, [
+      { text: 'Продовжити', style: 'cancel' },
       {
-        text: 'Закончить',
+        text: 'Завершити',
         style: 'destructive',
         onPress: () => {
           finishedRef.current = true;

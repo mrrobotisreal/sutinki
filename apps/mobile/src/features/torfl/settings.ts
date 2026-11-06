@@ -2,7 +2,7 @@ import { repos } from '@/db';
 import { SETTING_KEYS } from '@/db/repositories/settings';
 import { getGrammarPreset, type AiRunProfile } from '@/features/ai/run-profile';
 
-import { TORFL_PROFILES, type TorflLevel } from './level-profile';
+import { EXAM_LEVELS, UKR_PROFILES, isTorflLevel, type TorflLevel } from './level-profile';
 import {
   DEFAULT_EXAM_GRADING_PRESET,
   parseExamDate,
@@ -28,9 +28,9 @@ export async function setTorflPrefs(patch: Partial<Omit<TorflPrefs, 'v'>>): Prom
   return next;
 }
 
-/** The exam date of one level (T75, TORFL_A2 A2-5): A1 = `torfl.examDate`, A2 = `torfl.examDateA2`. */
+/** The exam date of one level (A1 = `torfl.examDate`, A2 = `torfl.examDateA2`, B1/B2/C1 = `torfl.examDateB1|B2|C1`). */
 export async function getExamDate(level: TorflLevel = 'A1'): Promise<string | null> {
-  return parseExamDate(await repos.settings.get<unknown>(TORFL_PROFILES[level].examDateKey));
+  return parseExamDate(await repos.settings.get<unknown>(UKR_PROFILES[level].examDateKey));
 }
 
 /**
@@ -38,7 +38,7 @@ export async function getExamDate(level: TorflLevel = 'A1'): Promise<string | nu
  * date throws.
  */
 export async function setExamDate(date: string | null, level: TorflLevel = 'A1'): Promise<void> {
-  const key = TORFL_PROFILES[level].examDateKey;
+  const key = UKR_PROFILES[level].examDateKey;
   if (date === null) {
     await repos.settings.remove(key);
     return;
@@ -48,9 +48,21 @@ export async function setExamDate(date: string | null, level: TorflLevel = 'A1')
   await repos.settings.set(key, clean);
 }
 
-/** Both levels' exam dates, each healed on its own key (T75). */
+/** Every level's exam date, each healed on its own key. */
 export async function getExamDates(): Promise<Record<TorflLevel, string | null>> {
-  return { A1: await getExamDate('A1'), A2: await getExamDate('A2') };
+  const out = {} as Record<TorflLevel, string | null>;
+  for (const level of EXAM_LEVELS) out[level] = await getExamDate(level);
+  return out;
+}
+
+/** The last-used hub level (`torfl.level`), healed: anything unknown → null. */
+export async function getStoredLevel(): Promise<TorflLevel | null> {
+  const raw = await repos.settings.get<unknown>(SETTING_KEYS.torflLevel);
+  return isTorflLevel(raw) ? raw : null;
+}
+
+export async function setStoredLevel(level: TorflLevel): Promise<void> {
+  await repos.settings.set(SETTING_KEYS.torflLevel, level);
 }
 
 /** The default triple: provider follows the grammar preset; quality normal; effort high. */

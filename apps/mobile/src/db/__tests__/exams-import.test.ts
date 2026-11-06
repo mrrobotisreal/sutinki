@@ -1,6 +1,6 @@
 import { ExamSchema, type Pack } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import a2ExamPackJson from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import { a2TorflPack as a2ExamPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { asc, eq } from 'drizzle-orm';
 import { describe, expect, it } from 'vitest';
 
@@ -187,7 +187,7 @@ describe('exam pack import (T68)', () => {
     const packRows = await db.select().from(packs);
     const byId = Object.fromEntries(packRows.map((p) => [p.id, p.category]));
     expect(byId[PACK.id]).toBe('torfl');
-    expect(byId['a2-exam-fixture']).toBe('torfl-a2');
+    expect(byId['a2-torfl-inline']).toBe('torfl-a2');
     expect(await db.select().from(exams)).toHaveLength(5);
   });
 });

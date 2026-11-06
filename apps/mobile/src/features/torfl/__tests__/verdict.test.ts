@@ -1,7 +1,7 @@
 import type { ExamSubtestKind } from '@sutinki/schema';
 import { describe, expect, it } from 'vitest';
 
-import { predictVerdict as predictViaReadiness } from '../readiness';
+import * as readiness from '../readiness';
 import { predictVerdict, verdict, verdictHeadline } from '../verdict';
 
 const all = (n: number): Record<ExamSubtestKind, number> => ({
@@ -98,8 +98,11 @@ describe('verdict (§6.3)', () => {
 });
 
 describe('predictVerdict (unknown = fail)', () => {
-  it('re-exported from readiness, identical function', () => {
-    expect(predictViaReadiness).toBe(predictVerdict);
+  it('the legacy SPbU rule is no longer exported from readiness (UT16b)', () => {
+    expect('predictVerdict' in readiness).toBe(false);
+    expect('predictedLine' in readiness).toBe(false);
+    expect('PASS_PCT' in readiness).toBe(false);
+    expect('BORDERLINE_PCT' in readiness).toBe(false);
   });
 
   it('an unknown subtest is a failure to retake', () => {

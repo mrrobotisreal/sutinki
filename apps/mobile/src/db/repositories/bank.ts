@@ -468,7 +468,7 @@ export function createBankRepo(db: SutinkiDB, hooks: BankRepoHooks = {}) {
      * lemma (CONTENT_POS) of a story that is not banked yet — one word item
      * per lemma with ONE encounter, the first sentence (story order) it
      * occurs in — in a single transaction. Already-banked lemmas are skipped
-     * untouched, so a second run adds 0. Dedup = the addWord rule (ё/е- and
+     * untouched, so a second run adds 0. Dedup = the addWord rule (apostrophe-/ґ- and
      * case-tolerant `lemmaNorm`).
      */
     async bankLemmasFromStory(packId: string, storyId: string): Promise<BulkBankResult> {

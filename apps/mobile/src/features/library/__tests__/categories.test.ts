@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TORFL_PROFILES } from '@/features/torfl/level-profile';
+import { UKR_PROFILES } from '@/features/torfl/level-profile';
 
 import {
   ALL_GENRES,
@@ -95,44 +95,28 @@ describe('classifyPack — the §2.4 default table', () => {
     });
   });
 
-  it('M18 (T69): none; type exam → torfl/null («ТРКИ» is the only shelf an exam pack can sit on)', () => {
-    expect(classifyPack(pack({ type: 'exam' }))).toEqual({ category: 'torfl', genre: null });
-    // the authored category (CT packs carry `category: torfl`) wins as for any pack
-    expect(classifyPack(pack({ type: 'exam', category: 'torfl' }))).toEqual({
-      category: 'torfl',
+  it('UT16b: none; type exam → the level picks the «Іспит» shelf (unknown / missing level → A1)', () => {
+    for (const level of ['A1', 'A2', 'B1', 'B2', 'C1'] as const) {
+      expect(classifyPack(pack({ type: 'exam', level }))).toEqual({
+        category: `ukr-exam-${level.toLowerCase()}`,
+        genre: null,
+      });
+    }
+    expect(classifyPack(pack({ type: 'exam' }))).toEqual({ category: 'ukr-exam-a1', genre: null });
+  });
+
+  it('UT16b: an authored category wins over the exam level', () => {
+    expect(classifyPack(pack({ type: 'exam', category: 'ukr-exam-b1', level: 'A1' }))).toEqual({
+      category: 'ukr-exam-b1',
       genre: null,
     });
   });
 
-  it('T75: none; type exam → the level picks the shelf (A1 / unknown → torfl, A2 → torfl-a2)', () => {
-    expect(classifyPack(pack({ type: 'exam', level: 'A1' }))).toEqual({
-      category: 'torfl',
+  it('an exam STORY pack (the lexicon) classifies by its authored category', () => {
+    expect(classifyPack(pack({ category: 'ukr-exam-a1' }))).toEqual({
+      category: 'ukr-exam-a1',
       genre: null,
     });
-    expect(classifyPack(pack({ type: 'exam', level: 'A2' }))).toEqual({
-      category: 'torfl-a2',
-      genre: null,
-    });
-    expect(classifyPack(pack({ type: 'exam' }))).toEqual({ category: 'torfl', genre: null });
-    expect(classifyPack(pack({ type: 'exam', level: 'B1' }))).toEqual({
-      category: 'torfl',
-      genre: null,
-    });
-  });
-
-  it('T75: an authored category wins over the exam level', () => {
-    expect(classifyPack(pack({ type: 'exam', category: 'torfl-a2', level: 'A1' }))).toEqual({
-      category: 'torfl-a2',
-      genre: null,
-    });
-    expect(classifyPack(pack({ type: 'exam', category: 'torfl', level: 'A2' }))).toEqual({
-      category: 'torfl',
-      genre: null,
-    });
-  });
-
-  it('a torfl STORY pack (the lexicon) classifies by its authored category', () => {
-    expect(classifyPack(pack({ category: 'torfl' }))).toEqual({ category: 'torfl', genre: null });
   });
 
   it('none; type dialogue → stories/null (genre-less unless authored)', () => {
@@ -210,15 +194,16 @@ describe('labels', () => {
 });
 
 describe('sets & order', () => {
-  it('isKnownCategory matches exactly the eight slugs (six M14 + torfl + torfl-a2, T69/T75)', () => {
+  it('isKnownCategory matches exactly the eleven slugs (six M14 + ukr-exam-a1…c1, UT16b)', () => {
     for (const slug of CATEGORY_ORDER) expect(isKnownCategory(slug)).toBe(true);
-    expect(isKnownCategory('torfl-a2')).toBe(true);
+    expect(isKnownCategory('ukr-exam-b1')).toBe(true);
+    expect(isKnownCategory('torfl-a2')).toBe(false);
     expect(isKnownCategory('all')).toBe(false);
     expect(isKnownCategory('horror')).toBe(false);
     expect(isKnownCategory('')).toBe(false);
   });
 
-  it('CATEGORY_ORDER is exactly the table keys in the §3 chip order', () => {
+  it('CATEGORY_ORDER is exactly the table keys: six base chips, then the exam shelves A1…C1', () => {
     expect([...CATEGORY_ORDER]).toEqual([
       'stories',
       'news',
@@ -226,29 +211,39 @@ describe('sets & order', () => {
       'podcast',
       'documentary',
       'travel',
-      'torfl',
-      'torfl-a2',
+      'ukr-exam-a1',
+      'ukr-exam-a2',
+      'ukr-exam-b1',
+      'ukr-exam-b2',
+      'ukr-exam-c1',
     ]);
     expect(new Set(CATEGORY_ORDER)).toEqual(new Set(Object.keys(CATEGORIES)));
-    expect(CATEGORIES.torfl).toEqual({ uk: 'ТРКИ-А1', en: 'TORFL A1', icon: 'ribbon-outline' });
-    expect(CATEGORIES['torfl-a2']).toEqual({
-      uk: 'ТРКИ-А2',
-      en: 'TORFL A2',
+    expect(CATEGORIES['ukr-exam-a1']).toEqual({
+      uk: 'Іспит · A1',
+      en: 'Exam · A1',
       icon: 'ribbon-outline',
     });
-    expect(CATEGORIES.torfl.uk).toBe(TORFL_PROFILES.A1.chipLabel);
-    expect(CATEGORIES['torfl-a2'].uk).toBe(TORFL_PROFILES.A2.chipLabel);
+    for (const level of ['A1', 'A2', 'B1', 'B2', 'C1'] as const) {
+      expect(CATEGORIES[`ukr-exam-${level.toLowerCase()}` as 'ukr-exam-a1'].uk).toBe(
+        UKR_PROFILES[level].chipLabel,
+      );
+    }
   });
 
-  it('labelForCategory resolves both TORFL shelves to their level chip labels', () => {
-    expect(labelForCategory('torfl')).toEqual({
-      uk: 'ТРКИ-А1',
-      en: 'TORFL A1',
-      icon: 'ribbon-outline',
-    });
-    expect(labelForCategory('torfl-a2')).toEqual({
-      uk: 'ТРКИ-А2',
-      en: 'TORFL A2',
+  it('no category label mixes Cyrillic and Latin letters inside one word (CEFR letters are Latin)', () => {
+    for (const { uk } of Object.values(CATEGORIES)) {
+      for (const word of uk.split(/[^\p{L}\p{N}]+/u)) {
+        const cyr = /\p{Script=Cyrillic}/u.test(word);
+        const lat = /\p{Script=Latin}/u.test(word);
+        expect(cyr && lat, `${uk} → ${word}`).toBe(false);
+      }
+    }
+  });
+
+  it('labelForCategory resolves the exam shelves to their level chip labels', () => {
+    expect(labelForCategory('ukr-exam-b1')).toEqual({
+      uk: 'Іспит · B1',
+      en: 'Exam · B1',
       icon: 'ribbon-outline',
     });
   });

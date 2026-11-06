@@ -252,7 +252,7 @@ function fromFsrsJson(card: ExamFsrsCard): FsrsCard {
  * is the joined row's own `pack_id` column.
  */
 export function levelIs(level: TorflLevel, packId: AnyColumn): SQL {
-  return sql`COALESCE(${exams.level}, CASE WHEN ${packId} LIKE 'a2-%' THEN 'A2' ELSE 'A1' END) = ${level}`;
+  return sql`COALESCE(${exams.level}, CASE WHEN ${packId} LIKE 'a2-%' THEN 'A2' WHEN ${packId} LIKE 'b1-%' THEN 'B1' WHEN ${packId} LIKE 'b2-%' THEN 'B2' WHEN ${packId} LIKE 'c1-%' THEN 'C1' ELSE 'A1' END) = ${level}`;
 }
 
 export function createExamsRepo(db: SutinkiDB) {
@@ -1154,18 +1154,22 @@ export function createExamsRepo(db: SutinkiDB) {
     /**
      * T70 `torfl-deck-100`: non-suspended exam cards in the FSRS Review
      * state (2) — «cleared» items. Suspended cards don't count.
-     * Cross-level by design (TORFL_A2 A2-11): `torfl-deck-100` counts the A1 and A2 decks together, so this stays unscoped — never pass a level here.
+     * UT16b: `exam-<level>-deck-100` is per level (THE LEVEL RULE); no level = every level.
      */
-    async countCardsInReview(): Promise<number> {
+    async countCardsInReview(level?: TorflLevel): Promise<number> {
+      const conds = [
+        eq(examItemCards.suspended, false),
+        sql`json_extract(${examItemCards.fsrsJson}, '$.state') = 2`,
+      ];
+      if (level) conds.push(levelIs(level, examItemCards.packId));
       const rows = await db
         .select({ n: sql<number>`COUNT(*)` })
         .from(examItemCards)
-        .where(
-          and(
-            eq(examItemCards.suspended, false),
-            sql`json_extract(${examItemCards.fsrsJson}, '$.state') = 2`,
-          ),
-        );
+        .leftJoin(
+          exams,
+          and(eq(exams.packId, examItemCards.packId), eq(exams.examId, examItemCards.examId)),
+        )
+        .where(and(...conds));
       return rows[0]?.n ?? 0;
     },
 

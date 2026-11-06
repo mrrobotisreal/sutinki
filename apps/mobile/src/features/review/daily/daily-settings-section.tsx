@@ -31,7 +31,13 @@ export function DailySettingsSection() {
   const { tokens } = useAppTheme();
   const { prefs, setLength, setWeight, setTorfl } = useDailyPrefs();
   const dates = useExamDates();
-  const torflOn = torflSegmentEnabled(prefs, { A1: dates.A1.date, A2: dates.A2.date });
+  const torflOn = torflSegmentEnabled(prefs, {
+    A1: dates.A1.date,
+    A2: dates.A2.date,
+    B1: dates.B1.date,
+    B2: dates.B2.date,
+    C1: dates.C1.date,
+  });
 
   return (
     <>
@@ -114,22 +120,22 @@ export function DailySettingsSection() {
           );
         })}
 
-        {/* M18 (T70, T75): the TORFL deck block — auto-on once any exam date (A1 or A2) is set */}
+        {/* M18 (T70) / UT16b: the exam-deck block — auto-on once any exam date (A1…C1) is set */}
         {!ukPending('exam') && (
           <View className="flex-row items-center justify-between border-t border-border px-4 py-3">
             <View className="flex-1 gap-0.5 pr-3">
-              <Text className="font-ui-medium">ТРКИ: Работа над ошибками</Text>
+              <Text className="font-ui-medium">Іспит: робота над помилками</Text>
               <Text variant="caption">
-                До 10 карточек экзамена (А1 и А2) в конце сессии
+                До 10 карток іспиту в кінці сесії
                 {prefs.torfl === undefined
-                  ? ' · включается сама, когда задана дата экзамена — или включи вручную без даты'
+                  ? ' · вмикається сама, коли задано дату іспиту — або ввімкни вручну без дати'
                   : ''}
               </Text>
             </View>
             <Switch
               value={torflOn}
               onValueChange={setTorfl}
-              accessibilityLabel="TORFL deck segment in the daily session"
+              accessibilityLabel="Exam deck segment in the daily session"
               testID="daily-torfl-switch"
             />
           </View>

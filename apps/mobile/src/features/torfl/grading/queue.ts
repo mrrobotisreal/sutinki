@@ -172,6 +172,7 @@ export function pumpGradingQueue(): Promise<number> {
         job.answer &&
         job.answer.kind !== 'choice' &&
         job.answer.kind !== 'typed' &&
+        job.answer.kind !== 'matching' &&
         job.answer.kind !== 'writing'
       ) {
         trackTorfl('exam_speaking_scored', {
@@ -198,6 +199,7 @@ export function pumpGradingQueue(): Promise<number> {
         !!job.answer &&
         job.answer.kind !== 'choice' &&
         job.answer.kind !== 'typed' &&
+        job.answer.kind !== 'matching' &&
         job.answer.kind !== 'writing';
       trackTorfl('exam_grading_failed', {
         kind: speaking ? 'speaking' : 'writing',
@@ -230,7 +232,10 @@ export async function requestGrading(responseId: string): Promise<boolean> {
   });
   useGradingQueue.setState((s) => ({ sending: { ...s.sending, [responseId]: true } }));
   const speaking =
-    row.answer.kind !== 'choice' && row.answer.kind !== 'typed' && row.answer.kind !== 'writing';
+    row.answer.kind !== 'choice' &&
+    row.answer.kind !== 'typed' &&
+    row.answer.kind !== 'matching' &&
+    row.answer.kind !== 'writing';
   track('ai_request_queued', { feature: speaking ? 'exam-speaking' : 'exam-writing' });
   void invalidateExams();
   void pumpGradingQueue();

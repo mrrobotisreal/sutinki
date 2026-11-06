@@ -248,6 +248,20 @@ export const SETTING_KEYS = {
   /** The A2 (ТБУ) exam date (M19, T75; TORFL_A2 A2-5): ISO 'YYYY-MM-DD' or null — healed like torfl.examDate. `torfl.examDate` stays A1's. */
   torflExamDateA2: 'torfl.examDateA2',
   /**
+   * UT16b: the B1 / B2 / C1 exam dates of the «Іспит» shelf — same shape and healing as
+   * `torfl.examDate` (ISO 'YYYY-MM-DD' or null). Account-sync classification: SYNCED (Mitch's
+   * personal exam calendar follows him across devices) — class recorded here until UP09's registry exists.
+   */
+  torflExamDateB1: 'torfl.examDateB1',
+  torflExamDateB2: 'torfl.examDateB2',
+  torflExamDateC1: 'torfl.examDateC1',
+  /**
+   * UT16b: the last-used «Іспит» hub level ('A1' | 'A2' | 'B1' | 'B2' | 'C1'); anything else heals to
+   * null (= lowest level with a pack, else B1). Account-sync classification: DEVICE-LOCAL (a view
+   * preference, never synced).
+   */
+  torflLevel: 'torfl.level',
+  /**
    * «Exam grading» run profile (M18 §4.4, ADR-0020 decision 10): { v: 1,
    * provider, quality, effort } — the M16 run-profile triple only; default
    * { <the grammar preset's provider>, 'normal', 'high' }; healed

@@ -60,7 +60,13 @@ export function TodayScreen() {
   const scenarios = useScenarios();
   const torflLevels = useTorflLevelsToday();
   const examDates = useExamDates();
-  const dates: ExamDates = { A1: examDates.A1.date, A2: examDates.A2.date };
+  const dates: ExamDates = {
+    A1: examDates.A1.date,
+    A2: examDates.A2.date,
+    B1: examDates.B1.date,
+    B2: examDates.B2.date,
+    C1: examDates.C1.date,
+  };
   // T75: one row per ACTIVE level, nearest exam date first (no date → A1 then A2).
   const activeLevels = levelOrder(dates).filter((l) =>
     isLevelActive(dates[l], torflLevels[l].deckDue),
@@ -303,7 +309,7 @@ export function TodayScreen() {
         </Pressable>
       )}
 
-      {/* M18/M19 (T70/T75, TORFL_A2 §3): one row per ACTIVE level (exam date set or deck items due), nearest exam date first, no date → A1 then A2; each → its hub */}
+      {/* M18 / UT16b (T70/T75): one row per ACTIVE level (exam date set or deck items due), nearest exam date first, no date → A1 → C1 order; each → its hub */}
       {!ukPending('exam') && activeLevels.length > 0 && (
         <View
           className="gap-3 rounded-xl border border-border bg-surface p-4"
@@ -311,7 +317,7 @@ export function TodayScreen() {
         >
           {activeLevels.map((level, idx) => {
             const t = torflLevels[level];
-            const sfx = level === 'A2' ? '-a2' : '';
+            const sfx = level === 'A1' ? '' : `-${level.toLowerCase()}`;
             const chip = profileFor(level).chipLabel;
             return (
               <React.Fragment key={level}>
@@ -321,7 +327,7 @@ export function TodayScreen() {
                     router.push({ pathname: '/torfl', params: { from: 'today', level } });
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={`Открыть подготовку к ${chip}`} // upstream-ok: hidden TORFL card (UT16/UT17)
+                  accessibilityLabel={`Відкрити підготовку: ${chip}`}
                   className="flex-row items-center justify-between gap-3 active:opacity-70"
                 >
                   <View className="flex-1 gap-0.5">
@@ -329,7 +335,7 @@ export function TodayScreen() {
                       {chip}
                     </Text>
                     <Text className="font-ui-medium" testID={`today-torfl-countdown${sfx}`}>
-                      {countdownLabel(dates[level], examDates[level].today)}
+                      {countdownLabel(dates[level] ?? null, examDates[level].today)}
                     </Text>
                   </View>
                   <View className="h-10 w-10 items-center justify-center rounded-full bg-surface-2">
@@ -344,7 +350,9 @@ export function TodayScreen() {
                     className="flex-row items-center gap-3 rounded-lg bg-surface-2 px-3 py-3 active:opacity-70"
                   >
                     <Ionicons name="albums-outline" size={18} color={tokens.accent} />
-                    <Text className="flex-1 font-ui-medium">Работа над ошибками · {t.deckDue}</Text>
+                    <Text className="flex-1 font-ui-medium">
+                      Робота над помилками · {t.deckDue}
+                    </Text>
                     <Ionicons name="play" size={14} color={tokens.accent} />
                   </Pressable>
                 )}
@@ -373,7 +381,7 @@ export function TodayScreen() {
                     <Ionicons name="compass-outline" size={18} color={tokens.accent} />
                     <View className="flex-1 gap-0.5">
                       <Text variant="caption" className="uppercase tracking-wider">
-                        Тренировка дня
+                        Тренування дня
                       </Text>
                       <Text className="font-ui-medium" numberOfLines={2}>
                         {describeStep(t.step).title}

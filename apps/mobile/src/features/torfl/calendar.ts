@@ -1,22 +1,23 @@
 /**
  * Month-grid helpers for the exam-date sheet (T69). Pure string arithmetic
  * over 'YYYY-MM' / 'YYYY-MM-DD' keys — no Date objects carrying a timezone
- * (the lib/dates rule), Monday-first like a Russian calendar.
+ * (the lib/dates rule), Monday-first like a Ukrainian calendar.
  */
 
+/** Nominative month names (a month title: «Листопад 2026»). */
 const MONTHS = [
-  'Январь',
-  'Февраль',
-  'Март',
-  'Апрель',
-  'Май',
-  'Июнь',
-  'Июль',
-  'Август',
-  'Сентябрь',
-  'Октябрь',
-  'Ноябрь',
-  'Декабрь',
+  'Січень',
+  'Лютий',
+  'Березень',
+  'Квітень',
+  'Травень',
+  'Червень',
+  'Липень',
+  'Серпень',
+  'Вересень',
+  'Жовтень',
+  'Листопад',
+  'Грудень',
 ];
 
 function parse(month: string): { y: number; m: number } {
@@ -33,7 +34,7 @@ export function shiftMonth(month: string, n: number): string {
   return `${Math.floor(idx / 12)}-${pad((idx % 12) + 1)}`;
 }
 
-/** «Октябрь 2026». */
+/** «Жовтень 2026». */
 export function monthTitle(month: string): string {
   const { y, m } = parse(month);
   return `${MONTHS[m - 1]} ${y}`;

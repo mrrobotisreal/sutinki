@@ -10,7 +10,7 @@ describe('exam-date calendar', () => {
   });
 
   it('monthTitle', () => {
-    expect(monthTitle('2026-10')).toBe('Октябрь 2026');
+    expect(monthTitle('2026-10')).toBe('Жовтень 2026');
   });
 
   it('monthGrid is Monday-first and padded to whole weeks', () => {

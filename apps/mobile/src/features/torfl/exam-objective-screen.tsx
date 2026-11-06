@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ChoiceItem, ExamItem, ExamSubtest, TypedItem } from '@sutinki/schema';
+import type { ChoiceItem, ExamItem, ExamSubtest, MatchingItem, TypedItem } from '@sutinki/schema';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,6 +17,7 @@ import { formatClock, timerTone, dictionaryAllowed } from './engine/rules';
 import { ExamMatrixSheet } from './exam-matrix-sheet';
 import { loadItemAssets, type ExamPassage, type ItemAssets } from './items/exam-audio';
 import { ChoiceItemView } from './items/choice-item-view';
+import { MatchingItemView } from './items/matching-item-view';
 import { ListeningPlayer } from './items/listening-player';
 import { clearPassageOffsets } from './items/passage-scroll';
 import { PassagePanel } from './items/passage-panel';
@@ -339,7 +340,7 @@ function MockItem({
 }) {
   const { tokens } = useAppTheme();
   const passage = useMockPassage(packId, part, itemIdx, item, subtest.kind === 'reading');
-  if (item.kind !== 'choice' && item.kind !== 'typed') return null;
+  if (item.kind !== 'choice' && item.kind !== 'typed' && item.kind !== 'matching') return null;
   return (
     <View className="gap-3" testID={`mock-item-${item.id}`}>
       <View className="flex-row items-center justify-between px-1">
@@ -384,7 +385,15 @@ function MockItem({
           onLookup={onLookup}
         />
       ) : null}
-      {item.kind === 'choice' ? (
+      {item.kind === 'matching' ? (
+        <MatchingItemView
+          key={item.id}
+          item={item as MatchingItem}
+          feedback="none"
+          initialPicks={answer?.kind === 'matching' ? answer.picks : undefined}
+          onChange={(picks) => onAnswer({ kind: 'matching', picks })}
+        />
+      ) : item.kind === 'choice' ? (
         <ChoiceItemView
           item={item as ChoiceItem}
           feedback="none"
@@ -416,7 +425,7 @@ function useMockPassage(
   enabled: boolean,
 ): ExamPassage | 'loading' | null {
   const storyId =
-    enabled && (item.kind === 'choice' || item.kind === 'typed')
+    enabled && (item.kind === 'choice' || item.kind === 'typed' || item.kind === 'matching')
       ? item.passage?.storyId
       : undefined;
   const [loaded, setLoaded] = React.useState<{
@@ -424,7 +433,8 @@ function useMockPassage(
     passage: ExamPassage | null;
   } | null>(null);
   React.useEffect(() => {
-    if (!storyId || (item.kind !== 'choice' && item.kind !== 'typed')) return;
+    if (!storyId || (item.kind !== 'choice' && item.kind !== 'typed' && item.kind !== 'matching'))
+      return;
     let cancelled = false;
     const whole = { ...item, passage: { storyId } } as ExamItem;
     void loadItemAssets(repos.content, packId, part, itemIdx, whole, fileExists)

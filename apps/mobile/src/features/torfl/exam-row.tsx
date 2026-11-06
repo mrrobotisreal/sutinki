@@ -6,16 +6,19 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/cn';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { MODE_LABELS, bestLabel, formatMinutes, ruPlural, type ExamListItem } from './hub-model';
+import { pluralUk } from '@/lib/uk-plural';
+
+import { MODE_LABELS, bestLabel, formatMinutes, type ExamListItem } from './hub-model';
+import { MODELLED_BADGE } from './level-profile';
 import { SUBTEST_LABELS } from './topics';
 
-const ITEMS = ['задание', 'задания', 'заданий'] as const;
+const ITEMS = ['завдання', 'завдання', 'завдань'] as const;
 
 /**
- * One exam as a row (T69, TORFL §5.2 item 3) — the Library «ТРКИ» shelf and
- * the hub's «Пробные экзамены» list share it. Title, a mode badge
- * («Пробный экзамен» accent-washed / «Тренировка» neutral), one chip per
- * subtest, the best result or «не пройден»; tap → the exam's intro.
+ * One exam as a row (T69, UT16b) — the Library «Іспит» shelf and
+ * the hub's «Пробні іспити» list share it. Title, a mode badge
+ * («Пробний іспит» accent-washed / «Тренування» neutral), one chip per
+ * section, the best result or «не пройдено»; tap → the exam's intro.
  */
 export function ExamRow({ item, onPress }: { item: ExamListItem; onPress: () => void }) {
   const { tokens } = useAppTheme();
@@ -34,8 +37,15 @@ export function ExamRow({ item, onPress }: { item: ExamListItem; onPress: () => 
             {MODE_LABELS[item.mode]}
           </Text>
         </View>
+        {item.modelled && (
+          <View className="rounded-full border border-border px-2 py-0.5">
+            <Text variant="caption" className="text-xs">
+              {MODELLED_BADGE}
+            </Text>
+          </View>
+        )}
         <Text variant="caption" className="flex-1" numberOfLines={1}>
-          {item.itemCount} {ruPlural(item.itemCount, ITEMS)} · {formatMinutes(item.totalMin)}
+          {item.itemCount} {pluralUk(item.itemCount, ITEMS)} · {formatMinutes(item.totalMin)}
         </Text>
         <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
       </View>

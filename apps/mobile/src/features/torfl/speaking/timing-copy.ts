@@ -1,4 +1,4 @@
-import { minutesUk } from '../minutes-ru';
+import { minutesUk } from '../minutes-uk';
 import type { InstructionLang } from '../settings-core';
 
 /**

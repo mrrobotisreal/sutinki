@@ -4,7 +4,7 @@ import type { ExamWritingInput } from '../prompts/exam-writing';
 /**
  * T76 capture cases: the five A2 grading inputs (letter strong + weak, note, reply, monologue) the
  * dev-only capture screen sends to BOTH graders and `capture-ai-fixtures.ts` documents. Task text and
- * bullets are the `a2-exam-fixture` mock's (wr01 / wr02 / sp01 / sp05), so a captured grade reads
+ * bullets are the retired inline TORFL A2 mock's (wr01 / wr02 / sp01 / sp05), so a captured grade reads
  * against what the exam printed. The candidate texts are authored with realistic A2 slips.
  */
 

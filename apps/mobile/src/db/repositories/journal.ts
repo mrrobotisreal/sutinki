@@ -50,7 +50,7 @@ export function createJournalRepo(db: SutinkiDB) {
     },
 
     /**
-     * T74 («Мои ответы», TORFL §9): every entry written against one of the
+     * T74 («Мої відповіді», exam answers): every entry written against one of the
      * given prompt ids, newest first — the answer bank joins these to the
      * installed `torfl` prompts. Empty input → empty output (no full scan).
      */

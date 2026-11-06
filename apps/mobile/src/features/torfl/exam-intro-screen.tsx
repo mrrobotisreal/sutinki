@@ -8,19 +8,13 @@ import { Text } from '@/components/ui/text';
 import { useActiveExamAttempt, useExam } from '@/db/hooks';
 import { useStudyAmbience } from '@/features/ambient-audio/activity';
 import { cn } from '@/lib/cn';
+import { pluralUk } from '@/lib/uk-plural';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import {
-  MODE_LABELS,
-  examTopics,
-  formatMinutes,
-  introSubtestRows,
-  mockRules,
-  ruPlural,
-} from './hub-model';
+import { MODE_LABELS, examTopics, formatMinutes, introSubtestRows, mockRules } from './hub-model';
 import { SUBTEST_LABELS, topicLabel } from './topics';
 
-const ITEMS = ['задание', 'задания', 'заданий'] as const;
+const ITEMS = ['завдання', 'завдання', 'завдань'] as const;
 
 /** What «Начать» starts: the whole mock, one of its subtests, or a drill set. */
 export type ExamStartScope =
@@ -111,7 +105,7 @@ export function ExamIntroScreen({
             <Text
               className={cn('font-ui-medium text-xs', mock ? 'text-accent' : 'text-text-muted')}
             >
-              {MODE_LABELS[data.mode]} · ТРКИ-{data.level}
+              {MODE_LABELS[data.mode]} · Іспит · {data.level}
             </Text>
           </View>
           <Text className="font-reading-bold text-2xl leading-9">{data.title.uk}</Text>
@@ -187,7 +181,7 @@ export function ExamIntroScreen({
                 <View className="flex-1 gap-0.5">
                   <Text className="font-ui-medium">{r.titleUk}</Text>
                   <Text variant="caption">
-                    {r.itemCount} {ruPlural(r.itemCount, ITEMS)} ·{' '}
+                    {r.itemCount} {pluralUk(r.itemCount, ITEMS)} ·{' '}
                     {r.points === null ? 'оценка по критериям' : `${r.points} б.`}
                     {r.audioPlays ? ` · аудио ×${r.audioPlays}` : ''}
                   </Text>
@@ -269,7 +263,7 @@ export function ExamIntroScreen({
                     <Text variant="caption">{topicLabel(t.topic).en}</Text>
                   </View>
                   <Text variant="caption">
-                    {t.itemCount} {ruPlural(t.itemCount, ITEMS)}
+                    {t.itemCount} {pluralUk(t.itemCount, ITEMS)}
                   </Text>
                 </View>
               ))}

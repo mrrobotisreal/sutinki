@@ -1,8 +1,8 @@
 import { ExamSchema, type Pack } from '@sutinki/schema';
-import a1ExamPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import a2ExamPackJson from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
-import a1PromptsPackJson from '@sutinki/schema/fixtures/packs/a1-torfl-prompts-fixture/pack.json';
-import a2PromptsPackJson from '@sutinki/schema/fixtures/packs/a2-torfl-prompts-fixture/pack.json';
+import { a1TorflPack as a1ExamPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import { a2TorflPack as a2ExamPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import { a1PromptsPack as a1PromptsPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import { a2PromptsPack as a2PromptsPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { groupTexts, type TextStoryLike } from '@/features/torfl/hub-model';

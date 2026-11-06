@@ -67,43 +67,51 @@ describe('sample pack fixtures', () => {
     expect(family.prompts).toHaveLength(1);
   });
 
-  it('T69 torfl lexicon fixture validates (category torfl + the torfl:lexicon tag, no audio)', () => {
-    const lexicon = loadPack('a1-torfl-lexicon-fixture');
-    expect(lexicon.type).toBe('stories');
-    expect(lexicon.category).toBe('torfl');
-    expect(lexicon.tags).toContain('torfl:lexicon');
-    expect(lexicon.stories).toHaveLength(1);
-    expect(lexicon.stories[0]!.sentences).toHaveLength(6);
+  it('UT16b exam fixture carries the five drills + the four-part A1 mock (ids pinned)', () => {
+    const exam = loadPack('a1-ukrexam-fixture');
+    expect(exam.exams!.filter((e) => e.mode === 'drill').map((e) => e.id)).toEqual([
+      'lg-g19',
+      'ls-liudyna',
+      'rd-liudyna',
+      'sp-photo',
+      'wr-message',
+    ]);
+    const mock = exam.exams!.find((e) => e.id === 'a1-mock-fx')!;
+    expect(mock.mode).toBe('mock');
+    expect(mock.subtests.map((st) => st.id)).toEqual(['ls', 'rd', 'wr', 'sp']);
   });
 
-  it('T74 torfl prompts fixture validates (a prompts pack in category torfl; every prompt tagged torfl)', () => {
-    const prompts = loadPack('a1-torfl-prompts-fixture');
-    expect(prompts.type).toBe('prompts');
-    expect(prompts.category).toBe('torfl');
-    expect(prompts.prompts).toHaveLength(4);
-    for (const p of prompts.prompts ?? []) expect(p.tags).toContain('torfl');
-    expect(
-      prompts.prompts!.filter((p) => p.tags?.some((t) => t.startsWith('torfl:'))),
-    ).toHaveLength(3);
+  it('UT16b exam fixture stories are the listening, reading and example texts, fully annotated', () => {
+    const exam = loadPack('a1-ukrexam-fixture');
+    expect(exam.stories.map((st) => st.id).sort()).toEqual(['ex-01', 'ls-01', 'rd-01']);
+    for (const story of exam.stories) {
+      expect(story.sentences.length, story.id).toBeGreaterThan(0);
+      for (const sentence of story.sentences) {
+        for (const token of sentence.tokens) {
+          if (!token.isPunct) expect(token.lemma, `${story.id}/${sentence.id}`).toBeDefined();
+        }
+      }
+    }
   });
 
-  it('T75 A2 exam fixture validates (category torfl-a2, level A2)', () => {
-    const exam = loadPack('a2-exam-fixture');
-    expect(exam.type).toBe('exam');
-    expect(exam.category).toBe('torfl-a2');
-    expect(exam.level).toBe('A2');
-    expect(exam.exams!.every((e) => e.level === 'A2')).toBe(true);
+  it('UT16b exam fixture is a single-level exam pack: every exam item has a stable id', () => {
+    const exam = loadPack('a1-ukrexam-fixture');
+    expect(exam.level).toBe('A1');
+    for (const e of exam.exams!) {
+      const ids = e.subtests.flatMap((st) => st.parts.flatMap((pt) => pt.items.map((i) => i.id)));
+      expect(new Set(ids).size, e.id).toBe(ids.length);
+    }
   });
 
-  it('T75 A2 prompts fixture validates (2 prompts, all tagged torfl, level A2, category torfl-a2)', () => {
-    const prompts = loadPack('a2-torfl-prompts-fixture');
-    expect(prompts.type).toBe('prompts');
-    expect(prompts.category).toBe('torfl-a2');
-    expect(prompts.level).toBe('A2');
-    expect(prompts.prompts).toHaveLength(2);
-    for (const p of prompts.prompts ?? []) {
-      expect(p.level).toBe('A2');
-      expect(p.tags).toContain('torfl');
+  it('UT16b the retired Russian TORFL fixture packs are gone from the schema fixtures', () => {
+    for (const id of [
+      'a1-exam-fixture',
+      'a2-exam-fixture',
+      'a1-torfl-lexicon-fixture',
+      'a1-torfl-prompts-fixture',
+      'a2-torfl-prompts-fixture',
+    ]) {
+      expect(existsSync(packDir(id)), id).toBe(false);
     }
   });
 

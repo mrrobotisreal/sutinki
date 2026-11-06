@@ -2,7 +2,7 @@ import { repos } from '@/db';
 import type { Grade } from '@/db/repositories/reviews';
 import { SETTING_KEYS } from '@/db/repositories/settings';
 import { localDateKey } from '@/db/repositories/stats';
-import { TORFL_PROFILES, type TorflLevel } from '@/features/torfl/level-profile';
+import { achievementIdsFor, EXAM_LEVELS, type TorflLevel } from '@/features/torfl/level-profile';
 import {
   examAchievements,
   examXp,
@@ -147,9 +147,12 @@ export async function sweepAchievements(): Promise<void> {
   if (dialogueStats.anyDialogueAllEndingsSeen) await unlock('all-endings-one-dialogue');
   // M17 scenario unlocks ride the same sweep (backfill for free, like T27's).
   await unlockScenarioAchievements();
-  // M18 (T70): `torfl-deck-100` rides the sweep too (counts the exam deck's Review-state cards).
-  // cross-level by design (A2-11): counts both decks — countCardsInReview takes no level.
-  if ((await repos.exams.countCardsInReview()) >= EXAM_DECK_TARGET) await unlock('torfl-deck-100');
+  // M18 (T70) / UT16b: `exam-<level>-deck-100` rides the sweep too (that level's Review-state exam cards).
+  for (const examLevel of EXAM_LEVELS) {
+    if ((await repos.exams.countCardsInReview(examLevel)) >= EXAM_DECK_TARGET) {
+      await unlock(achievementIdsFor(examLevel).deck100);
+    }
+  }
   const { level } = levelForXp(totalXp);
   for (const { id, level: threshold } of LEVEL_ACHIEVEMENTS) {
     if (level >= threshold) await unlock(id);
@@ -298,10 +301,10 @@ export async function recordExamDeckSession(): Promise<number> {
 }
 
 /**
- * A TORFL mock finished (T71, §7.5): 15 XP per scored subtest, +60 for a
+ * An exam mock finished (T71, §7.5): 15 XP per scored section, +60 for a
  * full mock, +100 the first time a verdict is pass / pass-borderline; the
- * achievements `torfl-first-mock` / `torfl-lexgram-90` and — when all five
- * subtests are scored — `torfl-would-pass` / `torfl-margin`. XP lands in ONE
+ * achievements `exam-<l>-first-mock` and — when a verdict exists —
+ * `exam-<l>-would-pass` / `exam-<l>-margin`. XP lands in ONE
  * `bumpDailyActivity` (the caller invokes this once per attempt and stores
  * the returned XP on the attempt). T72/T73 call {@link recordExamVerdictUnlocks}
  * (and this) once the first five-subtest verdict exists.
@@ -337,7 +340,7 @@ export async function recordExamFinished(
 }
 
 /**
- * The verdict-gated unlocks only (`torfl-would-pass`, `torfl-margin`) — for
+ * The verdict-gated unlocks only (`exam-<l>-would-pass`, `exam-<l>-margin`) — for
  * the T72/T73 completion path, where the first five-subtest verdict can
  * appear on an attempt that already paid its XP. Idempotent. T75: the
  * verdict-gated ids of `level` (absent = A1) only.
@@ -355,7 +358,7 @@ export async function recordExamVerdictUnlocks(
     firstPass: false,
     level,
   });
-  const { wouldPass, margin } = TORFL_PROFILES[level].achievements;
+  const { wouldPass, margin } = achievementIdsFor(level);
   for (const id of ids) {
     if (id === wouldPass || id === margin) await unlock(id);
   }

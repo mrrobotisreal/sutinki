@@ -2,7 +2,7 @@ import type { Ionicons } from '@expo/vector-icons';
 import type * as React from 'react';
 
 import type { PackRow } from '@/db/repositories/content';
-import { profileFor, TORFL_PROFILES } from '@/features/torfl/level-profile';
+import { profileFor, UKR_PROFILES } from '@/features/torfl/level-profile';
 
 /**
  * Library categories, fiction genres and narration registers (M14, T44 —
@@ -24,18 +24,41 @@ export interface SlugLabel {
 }
 
 export type CategorySlug =
-  'stories' | 'news' | 'education' | 'podcast' | 'documentary' | 'travel' | 'torfl' | 'torfl-a2';
+  | 'stories'
+  | 'news'
+  | 'education'
+  | 'podcast'
+  | 'documentary'
+  | 'travel'
+  | 'ukr-exam-a1'
+  | 'ukr-exam-a2'
+  | 'ukr-exam-b1'
+  | 'ukr-exam-b2'
+  | 'ukr-exam-c1';
 
-/** Chip order — always all eight visible (§3; «ТРКИ-А1» appended by M18/T69, «ТРКИ-А2» by M19/T75). */
-export const CATEGORY_ORDER: readonly CategorySlug[] = [
+/** The six always-visible chips (§3). */
+export const BASE_CATEGORY_ORDER: readonly CategorySlug[] = [
   'stories',
   'news',
   'education',
   'podcast',
   'documentary',
   'travel',
-  'torfl',
-  'torfl-a2',
+];
+
+/** The five «Іспит · A1…C1» shelves (UT16b): a chip shows only for levels with ≥ 1 installed pack. */
+export const EXAM_CATEGORY_ORDER: readonly CategorySlug[] = [
+  'ukr-exam-a1',
+  'ukr-exam-a2',
+  'ukr-exam-b1',
+  'ukr-exam-b2',
+  'ukr-exam-c1',
+];
+
+/** Chip order — the six base chips, then the exam shelves. */
+export const CATEGORY_ORDER: readonly CategorySlug[] = [
+  ...BASE_CATEGORY_ORDER,
+  ...EXAM_CATEGORY_ORDER,
 ];
 
 export const CATEGORIES: Record<CategorySlug, SlugLabel> = {
@@ -45,8 +68,11 @@ export const CATEGORIES: Record<CategorySlug, SlugLabel> = {
   podcast: { uk: 'Подкасти', en: 'Podcasts', icon: 'mic-outline' },
   documentary: { uk: 'Документалки', en: 'Documentaries', icon: 'film-outline' },
   travel: { uk: 'Подорожі', en: 'Travel', icon: 'airplane-outline' },
-  torfl: { uk: TORFL_PROFILES.A1.chipLabel, en: 'TORFL A1', icon: 'ribbon-outline' },
-  'torfl-a2': { uk: TORFL_PROFILES.A2.chipLabel, en: 'TORFL A2', icon: 'ribbon-outline' },
+  'ukr-exam-a1': { uk: UKR_PROFILES.A1.chipLabel, en: 'Exam · A1', icon: 'ribbon-outline' },
+  'ukr-exam-a2': { uk: UKR_PROFILES.A2.chipLabel, en: 'Exam · A2', icon: 'ribbon-outline' },
+  'ukr-exam-b1': { uk: UKR_PROFILES.B1.chipLabel, en: 'Exam · B1', icon: 'ribbon-outline' },
+  'ukr-exam-b2': { uk: UKR_PROFILES.B2.chipLabel, en: 'Exam · B2', icon: 'ribbon-outline' },
+  'ukr-exam-c1': { uk: UKR_PROFILES.C1.chipLabel, en: 'Exam · C1', icon: 'ribbon-outline' },
 };
 
 /** Genre chip order inside «Історії» (only installed genres are shown, §3). */
@@ -113,7 +139,7 @@ export interface Classified {
  * | explicit `category` / `genre`          | as authored | as authored (or null) |
  * | none; type `stories` or `course-unit`  | `stories`   | `horror`              |
  * | none; type `dialogue`                  | `stories`   | none                  |
- * | none; type `exam` (M18 T69, M19 T75)   | `torfl` (A1 / unknown level) · `torfl-a2` (A2) | none |
+ * | none; type `exam` (M18 T69, UT16b)     | `ukr-exam-<level>` (unknown level → A1) | none |
  *
  * `origin: 'local'` packs never go through the chip filter (always the
  * «Імпортовано» shelf) — they still classify as `stories/null` so badges
@@ -129,7 +155,7 @@ export function classifyPack(
   if (p.category) return { category: p.category, genre };
   if (p.origin === 'local') return { category: 'stories', genre };
   if (p.type === 'dialogue') return { category: 'stories', genre }; // genre-less unless authored
-  // M18 (T69): an exam pack only ever shelves under its level's «ТРКИ-А1» / «ТРКИ-А2» shelf.
+  // UT16b: an exam pack only ever shelves under its level's «Іспит · A1…C1» shelf.
   if (p.type === 'exam') return { category: profileFor(p.level).category, genre };
   return { category: 'stories', genre: genre ?? 'horror' }; // stories, course-unit (and anything else)
 }

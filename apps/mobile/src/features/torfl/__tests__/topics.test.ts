@@ -11,74 +11,117 @@ import {
   topicLabel,
 } from '../topics';
 
-describe('topics (TORFL §3.4)', () => {
-  it('covers the 27 §3.4 slugs + the 11 A2 additions with their subtest kind', () => {
-    expect(TOPIC_ORDER).toHaveLength(38);
-    expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'lexgram')).toHaveLength(21);
-    expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'reading')).toHaveLength(5);
-    expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'listening')).toHaveLength(7);
-    expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'writing')).toHaveLength(2);
-    expect(topicLabel('case-prep')).toEqual({
-      uk: 'Предложный',
-      en: 'Prepositional case',
-      subtestKind: 'lexgram',
-    });
-    expect(topicLabel('speak-monologue').uk).toBe('Монолог');
+const GRAMMAR_SLUGS: readonly string[] = Array.from(
+  { length: 38 },
+  (_, i) => `g${String(i + 1).padStart(2, '0')}`,
+);
+// Copied from packages/pipeline/src/exam-topics.ts (the app does not import the pipeline).
+const PIPELINE_TOPICS = {
+  lexgram: GRAMMAR_SLUGS,
+  reading: ['rd-heading', 'rd-tf', 'rd-qa', 'rd-gap-word', 'rd-gap-form', 'rd-detail'],
+  listening: ['ls-mc3', 'ls-tf'],
+  writing: ['wr-message', 'wr-text'],
+  speaking: ['sp-photo', 'sp-monologue', 'sp-dialogue'],
+} as const;
+const THEME_SLUGS = [
+  'liudyna',
+  'dim',
+  'misto',
+  'pobut',
+  'diialnist',
+  'dozvillia',
+  'podorozhi',
+  'kupivlia',
+  'iidalnia',
+  'zdorovia',
+  'pryroda',
+  'sviata',
+];
+
+describe('topics (Іспит taxonomy, UT16b)', () => {
+  it('every pipeline skill / grammar slug has a Ukrainian label, an English gloss and its kind', () => {
+    for (const [kind, slugs] of Object.entries(PIPELINE_TOPICS)) {
+      for (const slug of slugs) {
+        expect(isKnownTopic(slug), slug).toBe(true);
+        const l = topicLabel(slug);
+        expect(l.uk.length, slug).toBeGreaterThan(0);
+        expect(l.en.length, slug).toBeGreaterThan(0);
+        expect(l.uk, slug).not.toBe(slug);
+        expect(l.subtestKind, slug).toBe(kind);
+      }
+    }
   });
 
-  it('the 11 A2 slugs carry their T75 RU labels and sort after their A1 neighbours', () => {
-    expect(topicLabel('lex-phrases')).toEqual({
-      uk: 'Речевой этикет',
-      en: 'Speech etiquette',
-      subtestKind: 'lexgram',
+  it('the 12 themes exist, belong to no section, and are labelled', () => {
+    for (const slug of THEME_SLUGS) {
+      expect(isKnownTopic(slug), slug).toBe(true);
+      const l = topicLabel(slug);
+      expect(l.subtestKind).toBeNull();
+      expect(l.uk).not.toBe(slug);
+      expect(l.en).not.toBe(slug);
+    }
+    expect(topicLabel('misto').uk).toBe('Місто');
+    expect(topicLabel('iidalnia').en).toBe('Food');
+  });
+
+  it('g01…g38 are present, lexgram, and nothing else is', () => {
+    expect(GRAMMAR_SLUGS).toHaveLength(38);
+    for (const g of GRAMMAR_SLUGS) expect(topicLabel(g).subtestKind).toBe('lexgram');
+    expect(isKnownTopic('g39')).toBe(false);
+    expect(TOPIC_ORDER).toHaveLength(13 + 12 + 38);
+    expect(topicLabel('ls-mc3')).toEqual({
+      uk: 'Слухання: оберіть відповідь',
+      en: 'Listening: pick the answer',
+      subtestKind: 'listening',
     });
-    expect(topicLabel('case-plural').uk).toBe('Падежи во мн. числе');
-    expect(topicLabel('case-time').uk).toBe('Время и даты');
-    expect(topicLabel('numerals').uk).toBe('Числительные');
-    expect(topicLabel('comparative').uk).toBe('Сравнение');
-    expect(topicLabel('verb-motion-prefix').uk).toBe('Приставочные глаголы движения');
-    expect(topicLabel('clauses').uk).toBe('Сложное предложение');
-    expect(topicLabel('read-match').uk).toBe('Какой фильм?');
-    expect(topicLabel('listen-goal').uk).toBe('Цель диалога');
-    expect(topicLabel('listen-monologue').uk).toBe('Монолог');
-    expect(topicLabel('write-note').uk).toBe('Записка / сообщение');
-    expect(compareTopics('conj', 'lex-phrases')).toBeLessThan(0);
-    expect(compareTopics('write-letter', 'write-note')).toBeLessThan(0);
+    expect(topicLabel('sp-monologue').uk).toBe('Монолог');
+  });
+
+  it('no authored label carries Russian-only letters', () => {
+    for (const slug of TOPIC_ORDER) {
+      const l = topicLabel(slug);
+      expect(l.uk, slug).not.toMatch(/[ёыэъ]/i);
+    }
   });
 
   it('an unknown slug renders raw (never dropped)', () => {
     expect(topicLabel('case-voc')).toEqual({ uk: 'case-voc', en: 'case-voc', subtestKind: null });
+    expect(topicLabel('case-prep').uk).toBe('case-prep'); // an old TORFL slug is unknown now
     expect(isKnownTopic('constructor')).toBe(false);
   });
 
-  it('compareTopics: §3.4 order first, unknown slugs last alphabetically', () => {
-    expect(['conj', 'zz-new', 'case-gen', 'aa-new', 'lex-verbs'].sort(compareTopics)).toEqual([
-      'lex-verbs',
-      'case-gen',
-      'conj',
+  it('compareTopics: table order first, unknown slugs last alphabetically', () => {
+    expect(['g02', 'zz-new', 'rd-tf', 'aa-new', 'ls-mc3', 'misto'].sort(compareTopics)).toEqual([
+      'ls-mc3',
+      'rd-tf',
+      'misto',
+      'g02',
       'aa-new',
       'zz-new',
     ]);
   });
 
-  it('SUBTEST_LABELS: the five official titles in SPbU order', () => {
-    expect(SUBTEST_ORDER).toEqual(EXAM_SUBTEST_KINDS);
+  it('SUBTEST_LABELS: Ukrainian titles for the four sections and the grammar drills', () => {
+    expect(SUBTEST_ORDER).toEqual(['listening', 'reading', 'writing', 'speaking', 'lexgram']);
     expect(SUBTEST_ORDER.map((k) => SUBTEST_LABELS[k].uk)).toEqual([
+      'Слухання',
+      'Читання',
       'Письмо',
-      'Лексика. Грамматика',
-      'Чтение',
-      'Аудирование',
-      'Говорение',
+      'Говоріння',
+      'Граматика (тренування)',
     ]);
+    expect(Object.keys(SUBTEST_LABELS).sort()).toEqual([...EXAM_SUBTEST_KINDS].sort());
   });
 });
 
 describe('bank a topic (pure)', () => {
-  it('gated to category torfl + tag torfl:lexicon', async () => {
+  it('gated to an Іспит shelf + tag ukr-exam:lexicon', async () => {
     const { canBankTopic } = await import('../bank-topic');
-    expect(canBankTopic({ category: 'torfl', tags: ['torfl', 'torfl:lexicon'] })).toBe(true);
-    expect(canBankTopic({ category: 'torfl', tags: ['torfl'] })).toBe(false);
-    expect(canBankTopic({ category: null, tags: ['torfl:lexicon'] })).toBe(false);
+    expect(canBankTopic({ category: 'ukr-exam-a1', tags: ['ukr-exam', 'ukr-exam:lexicon'] })).toBe(
+      true,
+    );
+    expect(canBankTopic({ category: 'ukr-exam-b1', tags: ['ukr-exam'] })).toBe(false);
+    expect(canBankTopic({ category: null, tags: ['ukr-exam:lexicon'] })).toBe(false);
     expect(canBankTopic({ category: 'stories', tags: ['family:tall-dog'] })).toBe(false);
   });
 

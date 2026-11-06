@@ -1,6 +1,6 @@
 import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import a2PackJson from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import { a2TorflPack as a2PackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestDb } from '@/db/__tests__/helpers';

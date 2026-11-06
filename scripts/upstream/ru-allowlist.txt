@@ -53,29 +53,16 @@ apps/mobile/src/features/scenario/use-scenario-run.ts # UT14 — Russian-engine 
 apps/mobile/src/db/repositories/scenarios.ts # UT14 — ScenarioGlossaryHit.ru / packTitleRu view-model keys; removed when UT14 merges
 apps/mobile/src/db/schema/content.ts # UT14 — scenario_glossary comment (ё preserved); removed when UT14 merges
 apps/mobile/src/features/torfl/* # UT16/UT17 — Russian TORFL A1 engine copy/labels (hidden by UK_PENDING.exam); removed when UT16/UT17 delete or rewrite the file
-apps/mobile/src/features/torfl/**/* # UT16/UT17 — Russian TORFL A1 engine copy/labels (hidden by UK_PENDING.exam); removed when UT16/UT17 delete or rewrite the file
 apps/mobile/src/app/torfl/* # UT16/UT17 — hidden TORFL routes (Russian doc comments); removed when UT16/UT17 delete or rewrite the file
 apps/mobile/src/app/exam/* # UT16/UT17 — hidden exam routes (Russian alerts); removed when UT16/UT17 delete or rewrite the file
 apps/mobile/src/app/exam/**/* # UT16/UT17 — hidden exam routes (Russian alerts); removed when UT16/UT17 delete or rewrite the file
 apps/mobile/src/features/ai/prompts/exam-* # UT16/UT17 — Russian-examiner grading prompts; removed when UT16/UT17 rewrite them
-apps/mobile/src/features/ai/exam-grading-preset-section.tsx # UT16/UT17 — hidden Settings section; removed when UT17 deletes the flag
 apps/mobile/src/features/ai/__tests__/exam-* # UT16/UT17 — pins the Russian exam prompts; removed when UT16/UT17 rewrite them
-packages/schema/fixtures/packs/a1-exam-fixture/* # UT16/UT17 — Russian TORFL engine fixture; removed when UT16/UT17 re-target
-packages/schema/fixtures/packs/a1-torfl-*/* # UT16/UT17 — Russian TORFL engine fixtures; removed when UT16/UT17 re-target
-apps/mobile/src/features/review/daily/daily-settings-section.tsx # UT16/UT17 — hidden «ТРКИ» daily-deck row copy; removed when UT17 deletes the flag
 apps/mobile/src/features/motivation/__tests__/torfl-mock-xp.test.ts # UT16/UT17 — pins the Russian TORFL achievement titles; removed when UT16/UT17 rewrite them
-apps/mobile/src/db/repositories/stats.ts # UT16/UT17 — TORFL doc comment («Мои ответы»); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/content.ts # UT16/UT17 — TORFL doc comment («Тексты»); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/bank.ts # UT16/UT17 — bankLemmasFromStory comment (ё/е); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/journal.ts # UT16/UT17 — TORFL answers comment; removed when UT16/UT17 rewrite it
 apps/mobile/src/features/review/games/cloze/stem-split.ts # UT20 (already on main, found by UP04 sweep) — language-parameterised ru branch intentionally kept; removed when the ru branch is dropped
 apps/mobile/src/features/review/games/__tests__/stem-split.test.ts # UT20 (already on main) — ru-branch tests; removed with the ru branch
 apps/mobile/src/features/word-forms/lessons-screen.tsx # UT13 (already on main) — renders profile `ru` section title; removed when the profile contract renames
 apps/mobile/src/features/ai/dev/exam-a2-cases.ts # UT16/UT17 (UP06) — Russian A2 grading capture cases (dev only); removed when UT16/UT17 rewrite them
-apps/mobile/src/app/dev-exam-capture.tsx # UT16/UT17 (UP06) — dev-only A2 capture screen; removed when UT16/UT17 rewrite it
-apps/mobile/src/features/ai/__tests__/__fixtures__/a1-prompts.golden.json # UT16/UT17 (UP06) — Russian exam prompt golden; removed when UT16/UT17 rewrite the prompts
-packages/schema/fixtures/packs/a2-exam-fixture/* # UT16/UT17 (UP06) — Russian TORFL A2 engine fixture; removed when UT16/UT17 re-target it
-packages/schema/fixtures/packs/a2-torfl-* # UT16/UT17 (UP06) — Russian TORFL A2 prompts fixture; removed when UT16/UT17 re-target it
 packages/pipeline/tools/forced_align.py # UT15 (UP07) — Russian CTC aligner (model constant + letter filter); UT15 replaces it with a Ukrainian aligner
 packages/pipeline/tools/stamp-truth/** # UT15 (UP07) — Sumrak's frozen Russian stamp truth set + dev tooling; UT15 builds a Ukrainian one
 packages/pipeline/src/stamp-audit.ts # UT15 (UP07) — Russian CTC stamp-audit engine (Cyrillic letter class, ё fold, Russian lemmaLint); UT15 adds Ukrainian

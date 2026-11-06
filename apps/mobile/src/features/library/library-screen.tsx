@@ -885,7 +885,7 @@ function EmptyCategory({ category }: { category: string }) {
       <Text className="font-reading-bold text-xl">Поки порожньо</Text>
       <Text variant="muted" className="text-center">
         {isTorflCategory(category)
-          ? 'Матеріали ТРКИ з’являться після синхронізації — підготовка до іспиту вже відкрита вище.'
+          ? 'Матеріали «Іспиту» з’являться після синхронізації — підготовка до іспиту вже відкрита вище.'
           : 'Матеріали для цієї полиці з’являться після синхронізації.'}
       </Text>
     </View>

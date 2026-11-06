@@ -37,7 +37,13 @@ export function ExplainCard({
       <View className="flex-row items-center gap-2">
         <Ionicons name={icon} size={22} color={color} />
         <Text className="font-ui-bold text-base">
-          {ok ? 'Верно' : half ? 'Почти' : outcome === 'blank' ? 'Без ответа' : 'Неверно'}
+          {ok
+            ? 'Правильно'
+            : half
+              ? 'Майже'
+              : outcome === 'blank'
+                ? 'Без відповіді'
+                : 'Неправильно'}
         </Text>
       </View>
       {explain ? (
@@ -51,7 +57,7 @@ export function ExplainCard({
         testID="explain-next"
         className="items-center rounded-xl bg-accent py-3.5 active:opacity-80"
       >
-        <Text className="font-ui-medium text-bg">{last ? 'Завершить' : 'Дальше'}</Text>
+        <Text className="font-ui-medium text-bg">{last ? 'Завершити' : 'Далі'}</Text>
       </Pressable>
     </Animated.View>
   );

@@ -1,13 +1,14 @@
 import type { ExamSubtestKind } from '@sutinki/schema';
 
-import type { ExamResults, ExamVerdict } from './model';
-import type { TorflLevel } from './level-profile';
-import { BORDERLINE_PCT, PASS_PCT, predictVerdict } from './verdict';
-import { SUBTEST_LABELS, SUBTEST_ORDER } from './topics';
+import { pluralUk } from '@/lib/uk-plural';
+
+import { profileFor, sectionKindsOf, type ExamLevel } from './level-profile';
+import type { ExamResults } from './model';
+import { SUBTEST_ORDER } from './topics';
 
 /**
- * Readiness (T70, TORFL_EXAM_PREP §7.4) — PURE: what the hub's «Готовность»
- * bars, the Library hub card's mini-bars and «Сегодня» are computed from.
+ * Readiness (T70, re-targeted by UT16b) — PURE: what the hub's «Готовність»
+ * bars, the Library hub card's mini-bars and «Сьогодні» are computed from.
  *
  * Per subtest kind, in this order:
  *  1. a finished full / single-subtest MOCK of that kind within the last
@@ -17,7 +18,8 @@ import { SUBTEST_LABELS, SUBTEST_ORDER } from './topics';
  *     kind, shrunk toward 50 % when there are few: `(correct + 15) / (n + 30)
  *     × 100` (n = 0 → 50, so the estimate only exists once n ≥ 1);
  *  3. else unknown. Writing / speaking have no objective responses, so only
- *     a mock (T71–T73) ever fills them.
+ *     a mock (UT17) ever fills them. Rows come from the level's shape
+ *     sections (never a fixed five-kind list).
  */
 
 export const MOCK_WINDOW_DAYS = 21;
@@ -27,18 +29,16 @@ export const SHRINK_CORRECT = 15;
 export const SHRINK_N = 30;
 const DAY_MS = 86_400_000;
 
-/** The SPbU lines (§6.3) live in `verdict.ts`; re-exported for the T70 importers. */
-export { BORDERLINE_PCT, PASS_PCT };
-/** «с запасом»: gold band. */
-export const MARGIN_PCT = 80;
+/** Bands are relative to the level's threshold: «borderline» = within this many points below it, «margin» = this many above. */
+export const BAND_SPAN = 10;
 
-/** § 7.4 bands: < 60 red · 60–66 amber · 66–80 green · ≥ 80 gold. */
+/** Bands around the level's pass threshold: red < t − 10 · amber [t − 10, t) · green [t, t + 10) · gold ≥ t + 10. */
 export type ReadinessBand = 'fail' | 'borderline' | 'pass' | 'margin';
 
-export function bandFor(pct: number): ReadinessBand {
-  if (pct >= MARGIN_PCT) return 'margin';
-  if (pct >= PASS_PCT) return 'pass';
-  if (pct >= BORDERLINE_PCT) return 'borderline';
+export function bandFor(pct: number, passPct: number = profileFor('B1').passPct): ReadinessBand {
+  if (pct >= passPct + BAND_SPAN) return 'margin';
+  if (pct >= passPct) return 'pass';
+  if (pct >= passPct - BAND_SPAN) return 'borderline';
   return 'fail';
 }
 
@@ -97,6 +97,8 @@ export interface MockAttemptLike {
 }
 
 const KIND_SET = new Set<string>(SUBTEST_ORDER);
+/** Section kinds that have objective responses (a drill estimate can exist). */
+const OBJECTIVE_KINDS: ReadonlySet<ExamSubtestKind> = new Set(['reading', 'listening', 'lexgram']);
 
 /**
  * Latest finished mock pct per subtest kind. The kind of a results entry
@@ -134,19 +136,23 @@ export function drillEstimate(acc: DrillAccuracy | undefined): number | null {
 }
 
 function daysAgoLabel(days: number): string {
-  if (days <= 0) return 'пробный экзамен сегодня';
-  if (days === 1) return 'пробный экзамен вчера';
-  return `пробный экзамен ${days} дн. назад`;
+  if (days <= 0) return 'пробний іспит сьогодні';
+  if (days === 1) return 'пробний іспит учора';
+  return `пробний іспит ${days} дн. тому`;
 }
 
 export interface ReadinessInput {
+  /** The level whose sections give the rows and whose threshold colours them (default B1). */
+  level?: ExamLevel;
   now: number;
   mocks: Partial<Record<ExamSubtestKind, MockPct>>;
   drills: Partial<Record<ExamSubtestKind, DrillAccuracy>>;
 }
 
 export function computeReadiness(input: ReadinessInput): ReadinessRow[] {
-  return SUBTEST_ORDER.map((kind): ReadinessRow => {
+  const level = input.level ?? 'B1';
+  const passPct = profileFor(level).passPct;
+  return sectionKindsOf(level).map((kind): ReadinessRow => {
     const mock = input.mocks[kind];
     if (mock) {
       const days = Math.floor((input.now - mock.finishedAt) / DAY_MS);
@@ -154,12 +160,12 @@ export function computeReadiness(input: ReadinessInput): ReadinessRow[] {
         return {
           kind,
           pct: mock.pct,
-          band: bandFor(mock.pct),
+          band: bandFor(mock.pct, passPct),
           source: 'mock',
           provisional: mock.provisional,
           mockDaysAgo: Math.max(0, days),
           answered: 0,
-          label: `${daysAgoLabel(days)}${mock.provisional ? ' · предварительно' : ''}`,
+          label: `${daysAgoLabel(days)}${mock.provisional ? ' · попередньо' : ''}`,
         };
       }
     }
@@ -169,12 +175,12 @@ export function computeReadiness(input: ReadinessInput): ReadinessRow[] {
       return {
         kind,
         pct: est,
-        band: bandFor(est),
+        band: bandFor(est, passPct),
         source: 'estimate',
         provisional: false,
         mockDaysAgo: null,
         answered: acc!.answered,
-        label: `оценка по тренировкам · ${acc!.answered} ${acc!.answered === 1 ? 'ответ' : 'отв.'}`,
+        label: `оцінка за тренуваннями · ${acc!.answered} ${pluralUk(acc!.answered, ['відповідь', 'відповіді', 'відповідей'])}`,
       };
     }
     return {
@@ -185,42 +191,14 @@ export function computeReadiness(input: ReadinessInput): ReadinessRow[] {
       provisional: false,
       mockDaysAgo: null,
       answered: 0,
-      label:
-        kind === 'writing' || kind === 'speaking'
-          ? 'появится после пробного экзамена'
-          : 'появится после первой тренировки',
+      label: OBJECTIVE_KINDS.has(kind)
+        ? 'зʼявиться після першого тренування'
+        : 'зʼявиться після пробного іспиту',
     };
   });
 }
 
-// --- predicted verdict (T71: the rule lives in verdict.ts; re-exported here) ----------
-
-export { predictVerdict };
-
-export interface PredictedLine {
-  verdict: ExamVerdict;
-  /** «Сейчас: сдал бы» / «Сейчас: почти» / «Сейчас: пока нет — подтяни: Аудирование». */
-  text: string;
-  retake: ExamSubtestKind[];
-}
-
-/** The hub's one-line predicted verdict (§5.3), from the five readiness rows. */
-export function predictedLine(
-  rows: readonly ReadinessRow[],
-  level: TorflLevel = 'A1',
-): PredictedLine {
-  const pcts: Partial<Record<ExamSubtestKind, number | null>> = {};
-  for (const r of rows) pcts[r.kind] = r.pct;
-  const { verdict, retake } = predictVerdict(pcts, level);
-  if (verdict === 'pass') return { verdict, text: 'Сейчас: сдал бы', retake };
-  if (verdict === 'pass-borderline') {
-    return { verdict, text: 'Сейчас: почти — один субтест на грани', retake };
-  }
-  const names = retake.slice(0, 3).map((k) => SUBTEST_LABELS[k].short);
-  return { verdict, text: `Сейчас: пока нет — подтяни: ${names.join(', ')}`, retake };
-}
-
-// --- «Сегодня» --------------------------------------------------------------------
+// --- «Сьогодні» --------------------------------------------------------------------
 
 export interface TopicAccuracy {
   topic: string;
@@ -261,23 +239,26 @@ export interface TodayInput {
   now: number;
   /** Is a mock exam installed (the «time for a mock» step needs somewhere to go)? */
   mockInstalled: boolean;
+  /** The level's pass threshold, % (default B1's 70). */
+  passPct?: number;
 }
 
 /**
- * The recommended next step (TORFL §5.3). Order:
- *  1. the weakest topic of the weakest subtest whose readiness is under the
- *     66 % line (needs ≥ 3 answers in that topic);
+ * The recommended next step. Order:
+ *  1. the weakest topic of the weakest objective section whose readiness is
+ *     under the level's threshold (needs ≥ 3 answers in that topic);
  *  2. due deck items;
- *  3. «time for a mock»: no mock in 7 days and the three objective subtests
- *     all known and ≥ 60 %;
+ *  3. «time for a mock»: no mock in 7 days and the objective sections all
+ *     known and within 10 points of the threshold;
  *  4. otherwise the practisable topic with the lowest accuracy anywhere, else
  *     the first drill of the first subtest that has one; null with no drills.
  */
 export function recommendToday(input: TodayInput): TodayStep | null {
   const { rows } = input;
-  const objective = rows.filter((r) => r.kind !== 'writing' && r.kind !== 'speaking');
+  const passPct = input.passPct ?? profileFor('B1').passPct;
+  const objective = rows.filter((r) => OBJECTIVE_KINDS.has(r.kind));
   const weakRows = [...objective]
-    .filter((r) => r.pct !== null && r.pct < PASS_PCT)
+    .filter((r) => r.pct !== null && r.pct < passPct)
     .sort((a, b) => a.pct! - b.pct!);
   for (const row of weakRows) {
     const topics = input.topicsByKind[row.kind];
@@ -300,7 +281,7 @@ export function recommendToday(input: TodayInput): TodayStep | null {
     input.mockInstalled &&
     noRecentMock &&
     objectiveAllKnown &&
-    objective.every((r) => r.pct! >= BORDERLINE_PCT)
+    objective.every((r) => r.pct! >= passPct - BAND_SPAN)
   ) {
     return { kind: 'mock' };
   }

@@ -464,7 +464,7 @@ async function seedSource(db: SutinkiDB) {
   await db.insert(examAttempts).values([
     {
       id: 'eatt-1',
-      packId: 'a1-exam-fixture',
+      packId: 'a1-torfl-inline',
       examId: 'a1-mock-fx',
       scope: 'full',
       subtestIds: JSON.stringify(['writing', 'lexgram', 'reading', 'listening', 'speaking']),
@@ -482,7 +482,7 @@ async function seedSource(db: SutinkiDB) {
     },
     {
       id: 'eatt-2',
-      packId: 'a1-exam-fixture',
+      packId: 'a1-torfl-inline',
       examId: 'a1-drill-fx',
       scope: 'drill',
       subtestIds: JSON.stringify(['lexgram']),
@@ -529,8 +529,8 @@ async function seedSource(db: SutinkiDB) {
   ]);
   await db.insert(examItemCards).values([
     {
-      itemKey: 'a1-exam-fixture:a1-mock-fx:lg01',
-      packId: 'a1-exam-fixture',
+      itemKey: 'a1-torfl-inline:a1-mock-fx:lg01',
+      packId: 'a1-torfl-inline',
       examId: 'a1-mock-fx',
       itemId: 'lg01',
       subtestKind: 'lexgram',
@@ -543,8 +543,8 @@ async function seedSource(db: SutinkiDB) {
       updatedAt: NOW - 5000,
     },
     {
-      itemKey: 'a1-exam-fixture:a1-drill-fx:dr01',
-      packId: 'a1-exam-fixture',
+      itemKey: 'a1-torfl-inline:a1-drill-fx:dr01',
+      packId: 'a1-torfl-inline',
       examId: 'a1-drill-fx',
       itemId: 'dr01',
       subtestKind: 'lexgram',

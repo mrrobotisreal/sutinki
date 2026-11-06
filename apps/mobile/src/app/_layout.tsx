@@ -185,7 +185,7 @@ export default function RootLayout() {
                   name="hotel/[packId]/exam"
                   options={{ headerShown: true, animation: 'fade', gestureEnabled: false }}
                 />
-                <Stack.Screen name="torfl/index" options={{ title: 'ТРКИ' }} />
+                                <Stack.Screen name="torfl/index" options={{ title: 'Іспит' }} />
                 <Stack.Screen name="torfl/texts" options={{ title: 'Тексти' }} />
                 {/* upstream-ok: hidden TORFL route (UT16/UT17) */}
                 <Stack.Screen
