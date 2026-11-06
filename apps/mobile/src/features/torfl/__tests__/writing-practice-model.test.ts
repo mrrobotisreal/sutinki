@@ -1,8 +1,8 @@
 import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { describe, expect, it } from 'vitest';
 
-import a2Pack from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { a2TorflPack as a2Pack } from '@/features/torfl/__tests__/helpers/inline-exam';
 import {
   writingPracticeEntries,
   writingPracticeGroups,
@@ -84,7 +84,7 @@ describe('writingPracticeGroups (T76)', () => {
   });
   it('A2: Письмо then Записка', () => {
     const a2 = (a2Pack as unknown as Pack).exams!.map((e) => ({
-      packId: 'a2-exam-fixture',
+      packId: 'a2-torfl-inline',
       examId: e.id,
       mode: e.mode,
       titleUk: e.title.uk,

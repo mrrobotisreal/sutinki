@@ -165,6 +165,11 @@ export const ChoiceAnswerSchema = z.object({
   index: nonNegInt.nullable(),
 });
 export const TypedAnswerSchema = z.object({ kind: z.literal('typed'), text: z.string() });
+/** UT16b: a `matching` item's picks — `picks[i]` = the chosen `right` index for `left[i]`, null = not picked. */
+export const MatchingAnswerSchema = z.object({
+  kind: z.literal('matching'),
+  picks: z.array(nonNegInt.nullable()),
+});
 export const WritingAnswerSchema = z.object({ kind: z.literal('writing'), text: z.string() });
 /** T73: one ASR word with its stamps (ms from the recording start) — the sentence estimate's input. */
 export const SpeakingWordStampSchema = z.object({ w: z.string(), s: nonNegInt, e: nonNegInt });
@@ -186,6 +191,7 @@ export type SpeakingAnswer = z.infer<typeof SpeakingAnswerSchema>;
 export const ExamAnswerSchema = z.discriminatedUnion('kind', [
   ChoiceAnswerSchema,
   TypedAnswerSchema,
+  MatchingAnswerSchema,
   WritingAnswerSchema,
   SpeakingAnswerSchema,
 ]);
@@ -196,6 +202,8 @@ export function isAnswered(answer: ExamAnswer): boolean {
   switch (answer.kind) {
     case 'choice':
       return answer.index !== null;
+    case 'matching':
+      return answer.picks.some((p) => p !== null);
     case 'typed':
     case 'writing':
       return answer.text.trim().length > 0;

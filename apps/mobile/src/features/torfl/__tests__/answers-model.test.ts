@@ -18,7 +18,7 @@ import {
 function prompt(
   id: string,
   tags: string[] | null,
-  packId = 'a1-torfl-prompts-fixture',
+  packId = 'a1-torfl-prompts-inline',
 ): AnswerPrompt {
   return { packId, id, promptUk: `Вопрос ${id}`, promptEn: `Prompt ${id}`, tags };
 }
@@ -43,15 +43,15 @@ function entry(
 
 describe('promptTopic / isTorflPrompt', () => {
   it('reads the torfl:<topic> slug and falls back to other', () => {
-    expect(promptTopic(['torfl', 'torfl:speak-monologue'])).toBe('speak-monologue');
+    expect(promptTopic(['torfl', 'torfl:sp-monologue'])).toBe('sp-monologue');
     expect(promptTopic(['torfl'])).toBe('other');
     expect(promptTopic(null)).toBe('other');
     expect(promptTopic(['torfl:'])).toBe('other');
   });
 
   it('a prompt is in the bank only with the torfl tag', () => {
-    expect(isTorflPrompt(prompt('a', ['torfl', 'torfl:write-letter']))).toBe(true);
-    expect(isTorflPrompt(prompt('b', ['torfl:write-letter']))).toBe(false);
+    expect(isTorflPrompt(prompt('a', ['torfl', 'torfl:wr-text']))).toBe(true);
+    expect(isTorflPrompt(prompt('b', ['torfl:wr-text']))).toBe(false);
     expect(isTorflPrompt(prompt('c', ['daily-life']))).toBe(false);
     expect(isTorflPrompt(prompt('d', null))).toBe(false);
   });
@@ -60,22 +60,22 @@ describe('promptTopic / isTorflPrompt', () => {
 describe('groupAnswers', () => {
   const prompts = [
     prompt('tf-other-01', ['torfl']),
-    prompt('tf-mono-01', ['torfl', 'torfl:speak-monologue']),
-    prompt('tf-letter-01', ['torfl', 'torfl:write-letter']),
-    prompt('tf-letter-02', ['torfl', 'torfl:write-letter']),
+    prompt('tf-mono-01', ['torfl', 'torfl:sp-monologue']),
+    prompt('tf-letter-01', ['torfl', 'torfl:wr-text']),
+    prompt('tf-letter-02', ['torfl', 'torfl:wr-text']),
     prompt('tf-coined-01', ['torfl', 'torfl:zzz-new-topic']),
     prompt('moy-den', ['daily-life']),
   ];
 
-  it('groups torfl prompts by topic in §3.4 order, unknown slugs after, other last; non-torfl dropped', () => {
+  it('groups torfl prompts by topic in taxonomy order, unknown slugs after, other last; non-torfl dropped', () => {
     const groups = groupAnswers(prompts, []);
     expect(groups.map((g) => g.topic)).toEqual([
-      'write-letter',
-      'speak-monologue',
+      'wr-text',
+      'sp-monologue',
       'zzz-new-topic',
       'other',
     ]);
-    expect(groups[0]!.labelUk).toBe('Письмо');
+    expect(groups[0]!.labelUk).toBe('Розгорнутий текст');
     expect(groups[2]!.labelUk).toBe('zzz-new-topic');
     expect(groups[3]!.labelUk).toBe('Другие темы');
     expect(groups[0]!.prompts.map((p) => p.prompt.id)).toEqual(['tf-letter-01', 'tf-letter-02']);
@@ -91,11 +91,11 @@ describe('groupAnswers', () => {
       entry('e6', 'unknown-prompt', 600),
     ];
     const groups = groupAnswers(prompts, entries);
-    const letter = groups.find((g) => g.topic === 'write-letter')!;
+    const letter = groups.find((g) => g.topic === 'wr-text')!;
     expect(letter.entryCount).toBe(3);
     expect(letter.prompts[0]!.entries.map((e) => e.id)).toEqual(['e2', 'e1']);
     expect(letter.prompts[1]!.entries.map((e) => e.id)).toEqual(['e3']);
-    expect(groups.find((g) => g.topic === 'speak-monologue')!.entryCount).toBe(0);
+    expect(groups.find((g) => g.topic === 'sp-monologue')!.entryCount).toBe(0);
   });
 
   it('no torfl prompts → empty', () => {
@@ -178,9 +178,9 @@ describe('summarizeRehearsal', () => {
 
 describe('rehearseHref', () => {
   it('carries the entry id and topic slug only — never text', () => {
-    expect(rehearseHref('abc', 'write-letter')).toEqual({
+    expect(rehearseHref('abc', 'wr-text')).toEqual({
       pathname: '/torfl/rehearse',
-      params: { entryId: 'abc', topic: 'write-letter' },
+      params: { entryId: 'abc', topic: 'wr-text' },
     });
   });
 });
@@ -191,7 +191,9 @@ describe('the level rule for prompts (T75)', () => {
     expect(promptLevel({ packLevel: 'A1' })).toBe('A1');
     expect(promptLevel({ packLevel: undefined })).toBe('A1');
     expect(promptLevel({ packLevel: null })).toBe('A1');
-    expect(promptLevel({ packLevel: 'B1' })).toBe('A1');
+    expect(promptLevel({ packLevel: 'B1' })).toBe('B1');
+    expect(promptLevel({ packLevel: 'C1' })).toBe('C1');
+    expect(promptLevel({ packLevel: 'B3' })).toBe('A1');
   });
 
   it('promptsForLevel keeps only torfl-tagged prompts of that level', () => {
@@ -200,10 +202,20 @@ describe('the level rule for prompts (T75)', () => {
       { ...prompt('a2-t', ['torfl']), packLevel: 'A2' },
       { ...prompt('a1-plain', ['journal']), packLevel: 'A1' },
       { ...prompt('a2-plain', null), packLevel: 'A2' },
-      { ...prompt('legacy-t', ['torfl', 'torfl:write-letter']), packLevel: undefined },
+      { ...prompt('legacy-t', ['torfl', 'torfl:wr-text']), packLevel: undefined },
     ];
     expect(promptsForLevel(prompts, 'A1').map((p) => p.id)).toEqual(['a1-t', 'legacy-t']);
     expect(promptsForLevel(prompts, 'A2').map((p) => p.id)).toEqual(['a2-t']);
+  });
+
+  it('B1 and C1 prompts are filtered by their own level', () => {
+    const b1 = { ...prompt('b1', ['torfl']), packLevel: 'B1' };
+    const c1 = { ...prompt('c1', ['torfl']), packLevel: 'C1' };
+    const a1 = { ...prompt('a1', ['torfl']), packLevel: null };
+    expect(promptsForLevel([a1, b1, c1], 'B1')).toEqual([b1]);
+    expect(promptsForLevel([a1, b1, c1], 'C1')).toEqual([c1]);
+    expect(promptsForLevel([a1, b1, c1], 'A1')).toEqual([a1]);
+    expect(promptsForLevel([a1, b1, c1], 'B2')).toEqual([]);
   });
 
   it('A1 and A2 are isolated in both directions', () => {

@@ -1,6 +1,8 @@
 import { ExamSchema, type Exam } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { describe, expect, it } from 'vitest';
+
+import { pluralUk } from '@/lib/uk-plural';
 
 import {
   bestLabel,
@@ -16,7 +18,6 @@ import {
   mockRules,
   overallPct,
   placeholderReadiness,
-  ruPlural,
   type AttemptLike,
   type ExamSummaryLike,
 } from '../hub-model';
@@ -59,14 +60,14 @@ describe('countdown (pure daysUntil)', () => {
   });
 
   it('labels', () => {
-    expect(countdownLabel(null, '2026-10-06')).toBe('Назначь дату экзамена');
-    expect(countdownLabel('2026-10-06', '2026-10-06')).toBe('Экзамен сегодня');
-    expect(countdownLabel('2026-10-07', '2026-10-06')).toBe('Экзамен завтра');
-    expect(countdownLabel('2026-10-29', '2026-10-06')).toBe('До экзамена: 23 дня');
-    expect(countdownLabel('2026-10-27', '2026-10-06')).toBe('До экзамена: 21 день');
-    expect(countdownLabel('2026-10-17', '2026-10-06')).toBe('До экзамена: 11 дней');
-    expect(countdownLabel('2026-10-01', '2026-10-06')).toBe('Дата экзамена прошла');
-    expect(countdownLabel('not-a-date', '2026-10-06')).toBe('Назначь дату экзамена');
+    expect(countdownLabel(null, '2026-10-06')).toBe('Призначте дату іспиту');
+    expect(countdownLabel('2026-10-06', '2026-10-06')).toBe('Іспит сьогодні');
+    expect(countdownLabel('2026-10-07', '2026-10-06')).toBe('Іспит завтра');
+    expect(countdownLabel('2026-10-29', '2026-10-06')).toBe('До іспиту: 23 дні');
+    expect(countdownLabel('2026-10-27', '2026-10-06')).toBe('До іспиту: 21 день');
+    expect(countdownLabel('2026-10-17', '2026-10-06')).toBe('До іспиту: 11 днів');
+    expect(countdownLabel('2026-10-01', '2026-10-06')).toBe('Дата іспиту минула');
+    expect(countdownLabel('not-a-date', '2026-10-06')).toBe('Призначте дату іспиту');
   });
 
   it('daysOutProp: cleared = -1, past clamps to 0', () => {
@@ -75,40 +76,50 @@ describe('countdown (pure daysUntil)', () => {
     expect(daysOutProp('2026-10-16', '2026-10-06')).toBe(10);
   });
 
-  it('ruPlural', () => {
-    const f = ['день', 'дня', 'дней'] as const;
-    expect([1, 2, 5, 11, 12, 14, 21, 22, 25, 101, 111].map((n) => ruPlural(n, f))).toEqual([
+  it('pluralUk (the shared Ukrainian plural, replaces the Russian ruPlural)', () => {
+    const f = ['день', 'дні', 'днів'] as const;
+    expect([1, 2, 5, 11, 12, 14, 21, 22, 25, 101, 111].map((n) => pluralUk(n, f))).toEqual([
       'день',
-      'дня',
-      'дней',
-      'дней',
-      'дней',
-      'дней',
+      'дні',
+      'днів',
+      'днів',
+      'днів',
+      'днів',
       'день',
-      'дня',
-      'дней',
+      'дні',
+      'днів',
       'день',
-      'дней',
+      'днів',
     ]);
   });
 });
 
 describe('readiness placeholder', () => {
-  it('five rows in SPbU order, all «—»', () => {
+  it('one row per section of the level (shape order), all empty', () => {
     const rows = placeholderReadiness();
-    expect(rows.map((r) => r.kind)).toEqual([
-      'writing',
-      'lexgram',
-      'reading',
+    expect(rows.map((r) => r.kind)).toEqual(['listening', 'reading', 'writing', 'speaking']);
+    expect(rows.every((r) => r.pct === null && r.band === null)).toBe(true);
+    expect(placeholderReadiness('A1').map((r) => r.kind)).toEqual([
       'listening',
+      'reading',
+      'writing',
       'speaking',
     ]);
-    expect(rows.every((r) => r.pct === null && r.band === null)).toBe(true);
+    expect(placeholderReadiness('B2').map((r) => r.kind)).toEqual([
+      'reading',
+      'writing',
+      'speaking',
+    ]);
+    expect(placeholderReadiness('C1').map((r) => r.kind)).toEqual([
+      'reading',
+      'writing',
+      'speaking',
+    ]);
   });
 });
 
 describe('exam rows', () => {
-  it('one row per readable exam; unreadable JSON skipped; never-attempted = «не пройден»', () => {
+  it('one row per readable exam; unreadable JSON skipped; never-attempted = «не пройдено»', () => {
     const rows = buildExamListItems(
       [summary(mock), summary(drill), { ...summary(drill), examId: 'broken', exam: null }],
       [],
@@ -119,6 +130,7 @@ describe('exam rows', () => {
       subtestKinds: ['writing', 'lexgram', 'reading', 'listening', 'speaking'],
       itemCount: 16,
       totalMin: 160,
+      modelled: false, // the fixture is a TORFL-format exam, not a ukr-state mock
       best: null,
     });
     expect(rows[1]).toMatchObject({
@@ -127,7 +139,7 @@ describe('exam rows', () => {
       itemCount: 6,
       totalMin: 10,
     });
-    expect(bestLabel(rows[0]!.best)).toBe('не пройден');
+    expect(bestLabel(rows[0]!.best)).toBe('не пройдено');
   });
 
   it('best = best verdict first, then best %; only finished attempts of the same exam count', () => {
@@ -172,7 +184,7 @@ describe('exam rows', () => {
     ];
     const [m, d] = buildExamListItems([summary(mock), summary(drill)], attempts);
     expect(m!.best).toEqual({ pct: 70, verdict: 'pass' });
-    expect(bestLabel(m!.best)).toBe('лучший: 70 % · сдал');
+    expect(bestLabel(m!.best)).toBe('найкращий: 70 %'); // no verdict wording until UT17
     expect(d!.best).toEqual({ pct: 83.3, verdict: null });
   });
 
@@ -187,9 +199,9 @@ describe('exam rows', () => {
   });
 
   it('formatMinutes', () => {
-    expect(formatMinutes(40)).toBe('40 мин');
-    expect(formatMinutes(160)).toBe('2 ч 40 мин');
-    expect(formatMinutes(60)).toBe('1 ч');
+    expect(formatMinutes(40)).toBe('40 хв');
+    expect(formatMinutes(160)).toBe('2 год 40 хв');
+    expect(formatMinutes(60)).toBe('1 год');
   });
 });
 
@@ -199,25 +211,25 @@ describe('topic tiles', () => {
     expect(tiles.lexgram).toEqual([
       {
         subtestKind: 'lexgram',
-        topic: 'case-prep',
+        topic: 'case-prep', // an unknown (legacy) slug: kept raw, never dropped
         itemCount: 6,
         packId: PACK.id,
         examId: 'a1-drill-fx',
       },
     ]);
     expect(tiles.reading).toEqual([]);
-    expect(Object.keys(tiles)).toEqual(['writing', 'lexgram', 'reading', 'listening', 'speaking']);
+    expect(Object.keys(tiles)).toEqual(['listening', 'reading', 'writing', 'speaking', 'lexgram']);
   });
 
-  it('a topic over two drill exams points at the one holding more of it; §3.4 order', () => {
+  it('a topic over two drill exams points at the one holding more of it; taxonomy order, unknown slugs last', () => {
     const two = structuredClone(drill);
     two.id = 'second';
     two.subtests[0]!.parts[0]!.items = two.subtests[0]!.parts[0]!.items.map((i, n) =>
-      n < 2 ? { ...i, topic: 'lex-verbs' } : i,
+      n < 2 ? { ...i, topic: 'g06' } : i,
     );
     const tiles = buildTopicTiles([summary(drill), summary(two)]);
     expect(tiles.lexgram.map((t) => [t.topic, t.itemCount, t.examId])).toEqual([
-      ['lex-verbs', 2, 'second'],
+      ['g06', 2, 'second'],
       ['case-prep', 10, 'a1-drill-fx'],
     ]);
   });
@@ -279,29 +291,33 @@ describe('intro', () => {
     ]);
   });
 
-  it('mock rules name the dictionary subtests and the listening rule', () => {
+  it('mock rules name the dictionary sections and the listening rule', () => {
     const rules = mockRules(mock);
-    expect(rules.some((r) => r.includes('звучит два раза'))).toBe(true);
-    expect(rules).toContain('Словарь (поиск слова) можно: Письмо, Чтение.');
-    expect(rules.some((r) => r.startsWith('Без словаря:') && r.includes('Аудирование'))).toBe(true);
-    expect(rules.some((r) => r.includes('задание 3'))).toBe(true);
+    expect(rules.some((r) => r.includes('звучить двічі'))).toBe(true);
+    expect(rules).toContain('Словник (пошук слова) дозволено: Письмо, Чтение.');
+    expect(rules.some((r) => r.startsWith('Без словника:') && r.includes('Аудирование'))).toBe(
+      true,
+    );
+    expect(rules.some((r) => r.includes('монолог'))).toBe(true);
+    expect(rules[0]).toContain('Під час іспиту');
   });
 
   it('drill: topic list with counts', () => {
     expect(examTopics(drill)).toEqual([{ topic: 'case-prep', itemCount: 6 }]);
+    // the fixture still carries legacy TORFL slugs: unknown slugs sort alphabetically, never dropped
     expect(examTopics(mock).map((t) => t.topic)).toEqual([
-      'lex-verbs',
-      'case-prep',
       'case-gen',
-      'verb-motion',
+      'case-prep',
       'conj',
-      'read-detail',
-      'listen-who',
+      'lex-verbs',
       'listen-detail',
-      'write-letter',
+      'listen-who',
+      'read-detail',
+      'speak-monologue',
       'speak-reply',
       'speak-situation',
-      'speak-monologue',
+      'verb-motion',
+      'write-letter',
     ]);
   });
 });

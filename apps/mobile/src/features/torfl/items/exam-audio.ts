@@ -146,7 +146,10 @@ export async function loadItemAssets(
   fileExists: (uri: string) => boolean,
 ): Promise<ItemAssets> {
   let passage: ExamPassage | null = null;
-  if ((item.kind === 'choice' || item.kind === 'typed') && item.passage) {
+  if (
+    (item.kind === 'choice' || item.kind === 'typed' || item.kind === 'matching') &&
+    item.passage
+  ) {
     const detail = await content.getStoryDetail(packId, item.passage.storyId);
     if (detail) {
       const ids = new Set(

@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -141,11 +141,11 @@ describe('summarizeDrill', () => {
   });
   it('accuracy, half credit, deck count, per-topic table (weakest first)', () => {
     const s = summarizeDrill([
-      r('case-gen', 'full'),
-      r('case-gen', 'wrong'),
-      r('case-prep', 'full'),
-      r('case-prep', 'half'),
-      r('conj', 'blank'),
+      r('g20', 'full'),
+      r('g20', 'wrong'),
+      r('g27', 'full'),
+      r('g27', 'half'),
+      r('g18', 'blank'),
     ]);
     expect(s).toMatchObject({
       answered: 5,
@@ -156,11 +156,11 @@ describe('summarizeDrill', () => {
       totalMs: 5000,
     });
     expect(s.perTopic.map((t) => [t.topic, t.pct])).toEqual([
-      ['conj', 0],
-      ['case-gen', 50],
-      ['case-prep', 50],
+      ['g18', 0],
+      ['g20', 50],
+      ['g27', 50],
     ]);
-    expect(s.perTopic[1]!.uk).toBe('Родительный');
+    expect(s.perTopic[1]!.uk).toBe('Знахідний відмінок');
   });
   it('an empty session is all zeros', () => {
     expect(summarizeDrill([])).toMatchObject({
@@ -176,12 +176,12 @@ describe('drillIdentity (analytics slugs only)', () => {
   it('set → the exam ids + topic; deck / lightning → mixed ids, kind when single', () => {
     const q = drillEntriesFromExam(drill, PACK.id);
     expect(
-      drillIdentity('set', q.entries, { packId: PACK.id, examId: drill.id, topic: 'case-prep' }),
+      drillIdentity('set', q.entries, { packId: PACK.id, examId: drill.id, topic: 'g27' }),
     ).toEqual({
       packId: PACK.id,
       examId: drill.id,
       subtestKind: 'lexgram',
-      topic: 'case-prep',
+      topic: 'g27',
       source: 'set',
     });
     const mixed = drillEntriesFromExam(mock, PACK.id).entries;

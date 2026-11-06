@@ -49,7 +49,7 @@ export function fmtMinutes(lang: Lang, min: number): string {
 
 /** The locale for numbers (decimal comma in RU). */
 export function numLocale(lang: Lang): string {
-  return lang === 'uk' ? 'ru-RU' : 'en-US';
+  return lang === 'uk' ? 'uk-UA' : 'en-US';
 }
 
 export const instructionCopy = defineCopy<{
@@ -139,6 +139,8 @@ export const instructionCopy = defineCopy<{
   startPrep: (min: number) => string;
   returnToDeck: string;
   sentencesNotes: (min: number, max: number) => string;
+  /** UT16b: a photo item shows its description until the picture can be displayed (UT16c). */
+  photoAlt: (alt: string) => string;
   anotherTicket: string;
   // debrief
   debriefTitle: string;
@@ -393,6 +395,10 @@ export const instructionCopy = defineCopy<{
   sentencesNotes: {
     uk: (a: number, b: number) => `${a}–${b} предложений. Заметки не оцениваются.`,
     en: (a: number, b: number) => `${a}–${b} sentences. Notes are not graded.`,
+  },
+  photoAlt: {
+    uk: (alt: string) => `Фото: ${alt}`,
+    en: (alt: string) => `Photo: ${alt}`,
   },
   anotherTicket: { uk: 'Ещё билет', en: 'Another ticket' },
 

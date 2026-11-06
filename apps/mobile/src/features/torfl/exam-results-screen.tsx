@@ -14,7 +14,8 @@ import { useAppTheme } from '@/theme/use-app-theme';
 import { drillHref } from './drill/drill-model';
 import { useGradingQueue } from './grading/queue';
 import { MODE_LABELS } from './hub-model';
-import { BAND_BAR_CLASS, BAND_TEXT_CLASS, BORDERLINE_PCT, PASS_PCT, bandFor } from './readiness';
+import { BAND_BAR_CLASS, BAND_TEXT_CLASS, bandFor } from './readiness';
+import { BORDERLINE_PCT, PASS_PCT } from './verdict';
 import {
   buildResultRows,
   formatUsed,
@@ -112,7 +113,7 @@ function ResultsBody({
     (r) => r.answer && 'recordingPath' in r.answer && r.answer.recordingPath !== undefined,
   );
 
-  const when = new Date(attempt.finishedAt ?? attempt.startedAt).toLocaleDateString('ru-RU', {
+  const when = new Date(attempt.finishedAt ?? attempt.startedAt).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'long',
     hour: '2-digit',
@@ -351,7 +352,7 @@ function SubtestRow({
   failed?: boolean;
 }) {
   const { tokens } = useAppTheme();
-  const band = row.pct !== null ? bandFor(row.pct) : null;
+  const band = row.pct !== null ? bandFor(row.pct, PASS_PCT) : null;
   const used = row.status === 'scored' ? formatUsed(row.timeUsedSec) : '';
   const Wrap = onOpen ? Pressable : View;
   return (
@@ -373,7 +374,7 @@ function SubtestRow({
         </Text>
         {row.status === 'scored' && row.pct !== null ? (
           <Text className={cn('font-ui-bold', band && BAND_TEXT_CLASS[band])}>
-            {row.pct.toLocaleString('ru-RU')} %
+            {row.pct.toLocaleString('uk-UA')} %
           </Text>
         ) : (
           <Text variant="caption" testID={`result-${row.kind}-skipped`}>

@@ -6,8 +6,8 @@ import { XP_TABLE } from '../xp';
 
 /**
  * T70: drill XP (10 per drill / «Молния» session, 5 per deck session — one
- * `bumpDailyActivity` each) and the `torfl-deck-100` unlock predicate
- * (≥ 100 exam cards in the FSRS Review state), over a mocked repo layer.
+ * `bumpDailyActivity` each) and the `exam-<l>-deck-100` unlock predicate
+ * (≥ 100 exam cards of that level in the FSRS Review state), over a mocked repo layer.
  */
 
 const bumpDailyActivity = vi.hoisted(() => vi.fn());
@@ -75,19 +75,39 @@ describe('exam drill XP', () => {
   });
 });
 
-describe('torfl-deck-100', () => {
-  it('is a defined achievement with the spec title', () => {
-    expect(ACHIEVEMENTS_BY_ID.get('torfl-deck-100')?.title).toBe('Работа над ошибками');
+describe('exam-<level>-deck-100', () => {
+  it('is a defined achievement for each of the five levels', () => {
+    expect(ACHIEVEMENTS_BY_ID.get('exam-a1-deck-100')?.title).toBe('A1: робота над помилками');
+    for (const l of ['a1', 'a2', 'b1', 'b2', 'c1']) {
+      expect(ACHIEVEMENTS_BY_ID.has(`exam-${l}-deck-100`)).toBe(true);
+    }
+    expect(ACHIEVEMENTS_BY_ID.has('torfl-deck-100')).toBe(false);
     expect(EXAM_DECK_TARGET).toBe(100);
   });
   it('does not unlock at 99 Review-state cards', async () => {
     countCardsInReview.mockResolvedValue(99);
     await sweepAchievements();
-    expect(unlockedIds()).not.toContain('torfl-deck-100');
+    expect(unlockedIds().filter((id) => id.endsWith('-deck-100'))).toEqual([]);
   });
-  it("unlocks at exactly 100 (idempotency is the stats repo's unlock)", async () => {
+  it("unlocks every level at 100 (idempotency is the stats repo's unlock); the count is per level", async () => {
     countCardsInReview.mockResolvedValue(100);
     await sweepAchievements();
-    expect(unlockedIds()).toContain('torfl-deck-100');
+    expect(
+      unlockedIds()
+        .filter((id) => id.endsWith('-deck-100'))
+        .sort(),
+    ).toEqual([
+      'exam-a1-deck-100',
+      'exam-a2-deck-100',
+      'exam-b1-deck-100',
+      'exam-b2-deck-100',
+      'exam-c1-deck-100',
+    ]);
+    expect(countCardsInReview.mock.calls.map((c) => c[0])).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
+  });
+  it('only the levels at 100 unlock', async () => {
+    countCardsInReview.mockImplementation(async (level?: string) => (level === 'B1' ? 120 : 3));
+    await sweepAchievements();
+    expect(unlockedIds().filter((id) => id.endsWith('-deck-100'))).toEqual(['exam-b1-deck-100']);
   });
 });

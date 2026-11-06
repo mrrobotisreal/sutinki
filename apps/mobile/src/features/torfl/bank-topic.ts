@@ -2,17 +2,17 @@ import { bulkBankToast, NEW_PER_DAY_DEFAULT } from '@/features/review/due-core';
 import { isTorflCategory } from './level-profile';
 
 /**
- * «Добавить все слова в Словарь» (T69, TORFL §5.4) — the pure parts: which
+ * «Додати всі слова до словника» (T69, UT16b) — the pure parts: which
  * stories offer the action, the toast copy, and the analytics topic slug.
- * Generic code gated to the `torfl:lexicon` tag so it never appears on a
+ * Generic code gated to the `ukr-exam:lexicon` tag so it never appears on a
  * creepypasta. The write itself is `repos.bank.bankLemmasFromStory`.
  */
 
-export const LEXICON_TAG = 'torfl:lexicon';
+export const LEXICON_TAG = 'ukr-exam:lexicon';
 
 /**
- * The reader shows the action only on a TORFL shelf pack tagged `torfl:lexicon`
- * (the A1 lexicon is `torfl`; the A2 lexicon (CT037, `torfl-a2`) banks too).
+ * The reader shows the action only on an «Іспит» shelf pack (`ukr-exam-<level>`) tagged
+ * `ukr-exam:lexicon`.
  */
 export function canBankTopic(pack: { category: string | null; tags: readonly string[] }): boolean {
   return isTorflCategory(pack.category) && pack.tags.includes(LEXICON_TAG);

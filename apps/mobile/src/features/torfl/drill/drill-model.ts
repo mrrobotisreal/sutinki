@@ -8,7 +8,7 @@ import type { ItemOutcome } from '../scoring';
 
 /**
  * Drill-runner pure core (T70, TORFL §7.1–§7.3): which items a session
- * serves (a drill set, due deck cards, a «Молния» draw), and what its
+ * serves (a drill set, due deck cards, a quick-round draw), and what its
  * summary says. No DB / React — the screens and the recorder call these.
  */
 
@@ -22,14 +22,14 @@ export interface DrillEntry {
   part: ExamPart;
   partIdx: number;
   itemIdx: number;
-  item: Extract<ExamItem, { kind: 'choice' | 'typed' }>;
+  item: Extract<ExamItem, { kind: 'choice' | 'typed' | 'matching' }>;
   itemKey: string;
   /** T75: the exam's TORFL level (THE LEVEL RULE) — pace + analytics read it. */
   level: TorflLevel;
 }
 
 export const isObjective = (item: ExamItem): item is DrillEntry['item'] =>
-  item.kind === 'choice' || item.kind === 'typed';
+  item.kind === 'choice' || item.kind === 'typed' || item.kind === 'matching';
 
 function entryOf(
   packId: string,
@@ -117,7 +117,7 @@ export function weakestTopics(stats: readonly TopicAccuracyLike[], n = 3): strin
 export const WEAK_TOPIC_WEIGHT = 3;
 
 /**
- * «Молния» draw (§7.3): `count` distinct lexgram items, weighted toward the
+ * quick round draw (§7.3): `count` distinct lexgram items, weighted toward the
  * 3 weakest topics (weight 3 vs 1), sampled without replacement. `rng` is
  * injected (0 ≤ r < 1) so tests are deterministic; the result is in draw order.
  */
@@ -247,7 +247,7 @@ export function drillHref(opts: {
   packId?: string;
   examId?: string;
   topic?: string;
-  /** T75: the deck / «Молния» sources are level-scoped; absent = A1 (back-compat). */
+  /** T75: the deck / quick round sources are level-scoped; absent = A1 (back-compat). */
   level?: TorflLevel;
 }): { pathname: '/torfl/drill'; params: Record<string, string> } {
   const params: Record<string, string> = { source: opts.source };

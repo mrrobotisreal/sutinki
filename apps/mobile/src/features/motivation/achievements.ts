@@ -19,6 +19,39 @@ export interface AchievementDef {
   kicker?: string;
 }
 
+/** UT16b: the four level-scoped «Іспит» achievements of each level (hidden while `UK_PENDING.exam`). */
+const EXAM_LEVEL_ACHIEVEMENTS: AchievementDef[] = (['A1', 'A2', 'B1', 'B2', 'C1'] as const).flatMap(
+  (level) => {
+    const l = level.toLowerCase();
+    return [
+      {
+        id: `exam-${l}-first-mock`,
+        title: `Перший пробний іспит ${level}`,
+        description: `Finish your first ${level} state-exam mock`,
+        icon: 'document-text-outline' as const,
+      },
+      {
+        id: `exam-${l}-would-pass`,
+        title: `${level}: склав би!`,
+        description: `A full ${level} mock whose verdict is a pass`,
+        icon: 'ribbon-outline' as const,
+      },
+      {
+        id: `exam-${l}-margin`,
+        title: `${level}: із запасом`,
+        description: `Every ${level} section at 80 % or better in one mock`,
+        icon: 'trophy-outline' as const,
+      },
+      {
+        id: `exam-${l}-deck-100`,
+        title: `${level}: робота над помилками`,
+        description: `Bring 100 ${level} exam-deck items to the FSRS Review state`,
+        icon: 'ribbon-outline' as const,
+      },
+    ];
+  },
+);
+
 export const ACHIEVEMENTS: AchievementDef[] = [
   {
     id: 'first-word',
@@ -110,60 +143,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: 'Finish every installed level of one scenario',
     icon: 'layers-outline',
   },
-  {
-    id: 'torfl-deck-100',
-    title: 'Работа над ошибками',
-    description: 'Bring 100 TORFL exam-deck items (A1 + A2) to the FSRS Review state',
-    icon: 'ribbon-outline',
-  },
-  {
-    id: 'torfl-first-mock',
-    title: 'Первый вариант',
-    description: 'Finish your first TORFL A1 mock exam',
-    icon: 'document-text-outline',
-  },
-  {
-    id: 'torfl-would-pass',
-    title: 'Сдал бы!',
-    description: 'A full TORFL A1 mock whose verdict is a pass',
-    icon: 'ribbon-outline',
-  },
-  {
-    id: 'torfl-margin',
-    title: 'С запасом',
-    description: 'All five TORFL A1 subtests at 80 % or better in one mock',
-    icon: 'trophy-outline',
-  },
-  {
-    id: 'torfl-lexgram-90',
-    title: 'Без словаря',
-    description: 'Score 90 % or more on the A1 Лексика. Грамматика (no dictionary allowed)',
-    icon: 'extension-puzzle-outline',
-  },
-  {
-    id: 'torfl-a2-first-mock',
-    title: 'Первый вариант ТБУ',
-    description: 'Finish your first TORFL A2 (ТБУ) mock exam',
-    icon: 'document-text-outline',
-  },
-  {
-    id: 'torfl-a2-would-pass',
-    title: 'Базовый — сдал бы!',
-    description: 'A full TORFL A2 mock whose verdict is a pass',
-    icon: 'ribbon-outline',
-  },
-  {
-    id: 'torfl-a2-margin',
-    title: 'Базовый с запасом',
-    description: 'All five TORFL A2 subtests at 80 % or better in one mock',
-    icon: 'trophy-outline',
-  },
-  {
-    id: 'torfl-a2-lexgram-90',
-    title: 'Без словаря · А2',
-    description: 'Score 90 % or more on the A2 Лексика. Грамматика (no dictionary allowed)',
-    icon: 'extension-puzzle-outline',
-  },
+  ...EXAM_LEVEL_ACHIEVEMENTS,
   {
     id: 'pron-perfect',
     title: 'Чиста вимова',
@@ -202,5 +182,5 @@ export const LEVEL_ACHIEVEMENTS: { id: string; level: number }[] = [
 export const MASTERED_STABILITY_DAYS = STABILITY_MATURE_MIN;
 export const MASTERED_TARGET = 100;
 export const BANK_TARGET = 100;
-/** `torfl-deck-100` (T70): exam-deck cards in the FSRS Review state. */
+/** `exam-<level>-deck-100` (T70, UT16b): exam-deck cards of a level in the FSRS Review state. */
 export const EXAM_DECK_TARGET = 100;

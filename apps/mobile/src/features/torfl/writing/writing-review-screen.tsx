@@ -98,7 +98,7 @@ export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
         <View className="flex-1">
           <Text className="font-reading-bold text-xl">Письмо · разбор</Text>
           <Text variant="caption" testID="writing-review-total">
-            {pct !== null ? `${pct.toLocaleString('ru-RU')} %` : '—'}
+            {pct !== null ? `${pct.toLocaleString('uk-UA')} %` : '—'}
             {provisional
               ? ' · предварительно'
               : gradedBy === 'ai'
@@ -276,7 +276,7 @@ function TaskReview({
               <View className="flex-row items-center gap-2">
                 <Text className="flex-1 font-ui-medium">{criterionLabel(c.id, item.topic).uk}</Text>
                 <Text className={cn('font-ui-bold', c.pending && 'text-text-muted')}>
-                  {c.pending ? '—' : c.score.toLocaleString('ru-RU')} / {c.max}
+                  {c.pending ? '—' : c.score.toLocaleString('uk-UA')} / {c.max}
                 </Text>
               </View>
               <Text variant="caption">

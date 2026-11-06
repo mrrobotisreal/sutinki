@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam } from '@sutinki/schema';
-import a2Pack from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { a2TorflPack as a2Pack } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -15,12 +15,12 @@ describe('passage scroll memory (T76)', () => {
   beforeEach(() => clearPassageOffsets());
 
   it('is keyed by pack + story: item 11 → 12 → 25 of one passage share an offset', () => {
-    const k = passageKey('a2-exam-fixture', 'rd-films');
+    const k = passageKey('a2-torfl-inline', 'rd-films');
     rememberPassageOffset(k, 612.4);
     // item 12 mounts a fresh panel of the same story
-    expect(recallPassageOffset(passageKey('a2-exam-fixture', 'rd-films'))).toBe(612);
+    expect(recallPassageOffset(passageKey('a2-torfl-inline', 'rd-films'))).toBe(612);
     // item 25 too; another story / pack is independent
-    expect(recallPassageOffset(passageKey('a2-exam-fixture', 'rd-article'))).toBe(0);
+    expect(recallPassageOffset(passageKey('a2-torfl-inline', 'rd-article'))).toBe(0);
     expect(recallPassageOffset(passageKey('other', 'rd-films'))).toBe(0);
   });
 

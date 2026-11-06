@@ -435,6 +435,11 @@ export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
           <>
             <View className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4">
               <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
+              {phase.ticket.item.image ? (
+                <Text variant="muted" testID="photo-alt">
+                  {c.photoAlt(phase.ticket.item.image.alt)}
+                </Text>
+              ) : null}
               {phase.ticket.item.questions.map((q, i) => (
                 <Text key={i} className="font-reading text-lg leading-7">
                   {i + 1}. {q.uk}
@@ -494,6 +499,11 @@ export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
           <>
             <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
               <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
+              {phase.ticket.item.image ? (
+                <Text variant="muted" testID="photo-alt">
+                  {c.photoAlt(phase.ticket.item.image.alt)}
+                </Text>
+              ) : null}
               {phase.ticket.item.questions.map((q, i) => (
                 <Text key={i} variant="muted" className="font-reading leading-6">
                   {i + 1}. {q.uk}

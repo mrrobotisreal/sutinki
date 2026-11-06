@@ -3,7 +3,7 @@ import type { Grade } from 'ts-fsrs';
 import type { Repositories } from '@/db/repositories';
 import { initialAttemptState, type ExamResults } from '../model';
 import { ratingForDrillAnswer } from '../pace';
-import type { ItemScore } from '../scoring';
+import type { AnswerArg, ItemScore } from '../scoring';
 import { subtestPercent } from '../scoring';
 import type { DrillEntry } from './drill-model';
 
@@ -68,7 +68,7 @@ export function createDrillRecorder(exams: ExamsRepo, now: () => number = Date.n
      */
     async answer(
       entry: DrillEntry,
-      answer: { index: number | null } | { text: string },
+      answer: AnswerArg,
       score: ItemScore,
       ms: number,
     ): Promise<RecordedAnswer> {
@@ -81,7 +81,9 @@ export function createDrillRecorder(exams: ExamsRepo, now: () => number = Date.n
         answer:
           'index' in answer
             ? { kind: 'choice', index: answer.index }
-            : { kind: 'typed', text: answer.text },
+            : 'picks' in answer
+              ? { kind: 'matching', picks: answer.picks }
+              : { kind: 'typed', text: answer.text },
         points: score.points,
         maxPoints: score.maxPoints,
         gradingStatus: 'scored',

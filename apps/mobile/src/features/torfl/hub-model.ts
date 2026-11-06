@@ -8,14 +8,16 @@ import {
 
 import { diffDayKeys, isDayKey } from '@/lib/dates';
 
-import { ruleLine, torflLevelOf, type TorflLevel } from './level-profile';
+import { pluralUk } from '@/lib/uk-plural';
+
+import { profileFor, sectionKindsOf, torflLevelOf, type TorflLevel } from './level-profile';
 import type { ExamMode, ExamResults, ExamVerdict } from './model';
 import type { ReadinessBand } from './readiness';
 import { compareTopics, SUBTEST_ORDER } from './topics';
 
 /**
  * «ТРКИ» hub + shelf derivations (T69, TORFL_EXAM_PREP §5) — pure, no DB or
- * React, so the countdown, the exam rows, the topic tiles and the «Тексты»
+ * React, so the countdown, the exam rows, the topic tiles and the «Тексти»
  * grouping are unit-tested without a device. Screens read hooks and pass
  * their data through these functions; nothing re-derives elsewhere.
  */
@@ -31,26 +33,16 @@ export function daysUntil(examDate: string, todayKey: string): number {
   return diffDayKeys(examDate, todayKey);
 }
 
-/** Russian plural picker: `ruPlural(n, ['день', 'дня', 'дней'])`. */
-export function ruPlural(n: number, forms: readonly [string, string, string]): string {
-  const abs = Math.abs(n);
-  const mod10 = abs % 10;
-  const mod100 = abs % 100;
-  if (mod10 === 1 && mod100 !== 11) return forms[0];
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return forms[1];
-  return forms[2];
-}
-
-const DAYS: readonly [string, string, string] = ['день', 'дня', 'дней'];
+const DAYS: readonly [string, string, string] = ['день', 'дні', 'днів'];
 
 /** The countdown line on the hub card and the hub header. */
 export function countdownLabel(examDate: string | null, todayKey: string): string {
-  if (examDate === null || !isDayKey(examDate)) return 'Назначь дату экзамена';
+  if (examDate === null || !isDayKey(examDate)) return 'Призначте дату іспиту';
   const n = daysUntil(examDate, todayKey);
-  if (n === 0) return 'Экзамен сегодня';
-  if (n === 1) return 'Экзамен завтра';
-  if (n < 0) return 'Дата экзамена прошла';
-  return `До экзамена: ${n} ${ruPlural(n, DAYS)}`;
+  if (n === 0) return 'Іспит сьогодні';
+  if (n === 1) return 'Іспит завтра';
+  if (n < 0) return 'Дата іспиту минула';
+  return `До іспиту: ${n} ${pluralUk(n, DAYS)}`;
 }
 
 /** `torfl_exam_date_set {daysOut}` — negative clamps to 0; cleared = -1. */
@@ -58,9 +50,6 @@ export function daysOutProp(examDate: string | null, todayKey: string): number {
   if (examDate === null) return -1;
   return Math.max(0, daysUntil(examDate, todayKey));
 }
-
-/** The SPbU rule in one line (§6.3, the hub header). */
-export const SPBU_RULE_LINE = ruleLine('A1');
 
 // --- readiness (placeholder shape; T70 fills it) -------------------------------
 
@@ -73,16 +62,16 @@ export interface ReadinessView {
   kind: ExamSubtestKind;
   pct: number | null;
   band: ReadinessBand | null;
-  /** Source line («пробный экзамен 3 дн. назад» / «оценка по тренировкам»), or the empty-state hint. */
+  /** Source line («пробний іспит 3 дн. тому» / «оцінка за тренуваннями»), or the empty-state hint. */
   label: string;
 }
 
-export function placeholderReadiness(): ReadinessView[] {
-  return SUBTEST_ORDER.map((kind) => ({
+export function placeholderReadiness(level: TorflLevel = 'B1'): ReadinessView[] {
+  return sectionKindsOf(level).map((kind) => ({
     kind,
     pct: null,
     band: null,
-    label: 'появится после первой тренировки',
+    label: 'зʼявиться після першого тренування',
   }));
 }
 
@@ -99,7 +88,9 @@ export interface ExamListItem {
   itemCount: number;
   /** Σ durationMin of every subtest. */
   totalMin: number;
-  /** Best finished attempt, or null = «не пройден». */
+  /** True for a `ukr-state` mock at a modelled level (A1/A2): the row carries «за зразком державного іспиту». */
+  modelled: boolean;
+  /** Best finished attempt, or null = «не пройдено». */
   best: { pct: number; verdict: ExamVerdict | null } | null;
 }
 
@@ -175,34 +166,34 @@ export function buildExamListItems(
         0,
       ),
       totalMin: s.exam.subtests.reduce((n, st) => n + st.durationMin, 0),
+      modelled:
+        s.mode === 'mock' && s.exam.format === 'ukr-state' && profileFor(s.exam.level).modelled,
       best,
     });
   }
   return out;
 }
 
-/** «2 ч 40 мин» / «40 мин» / «1 ч». */
+/** «2 год 40 хв» / «40 хв» / «1 год». */
 export function formatMinutes(min: number): string {
   const h = Math.floor(min / 60);
   const m = min % 60;
-  if (h === 0) return `${m} мин`;
-  if (m === 0) return `${h} ч`;
-  return `${h} ч ${m} мин`;
+  if (h === 0) return `${m} хв`;
+  if (m === 0) return `${h} год`;
+  return `${h} год ${m} хв`;
 }
 
-/** The row's status line: best result or «не пройден». */
+/** The row's status line: best result or «не пройдено». */
 export function bestLabel(best: ExamListItem['best']): string {
-  if (!best) return 'не пройден';
-  const pct = `${best.pct.toLocaleString('ru-RU')} %`;
-  if (best.verdict === 'pass') return `лучший: ${pct} · сдал`;
-  if (best.verdict === 'pass-borderline') return `лучший: ${pct} · сдал (на грани)`;
-  if (best.verdict === 'fail') return `лучший: ${pct} · не сдал`;
-  return `лучший: ${pct}`;
+  if (!best) return 'не пройдено';
+  const pct = `${best.pct.toLocaleString('uk-UA')} %`;
+  // The state-exam verdict (pass ≥ threshold) is UT17; until then only the best percentage is shown.
+  return `найкращий: ${pct}`;
 }
 
 export const MODE_LABELS: Record<ExamMode, string> = {
-  mock: 'Пробный экзамен',
-  drill: 'Тренировка',
+  mock: 'Пробний іспит',
+  drill: 'Тренування',
 };
 
 // --- «Тренировки» topic tiles ---------------------------------------------------
@@ -274,7 +265,7 @@ export function buildTopicTiles(
   return out;
 }
 
-// --- «Тексты» ---------------------------------------------------------------------
+// --- «Тексти» ---------------------------------------------------------------------
 
 export interface TextStoryLike {
   packId: string;
@@ -304,7 +295,7 @@ export interface TextGroup {
 }
 
 /**
- * Which subtest group a story belongs to (§5.3 «Тексты», ticket item 6):
+ * Which subtest group a story belongs to (§5.3 «Тексти», ticket item 6):
  * the subtest of the FIRST item that references it, in exam order — so a
  * listening script goes under Аудирование, a passage under Чтение, an
  * examiner prompt or a monologue model under Говорение, a model letter
@@ -385,7 +376,9 @@ export interface IntroSubtestRow {
 export function introSubtestRows(exam: Exam): IntroSubtestRow[] {
   return exam.subtests.map((st) => {
     const items = st.parts.flatMap((p) => p.items);
-    const objective = items.every((i) => i.kind === 'choice' || i.kind === 'typed');
+    const objective = items.every(
+      (i) => i.kind === 'choice' || i.kind === 'typed' || i.kind === 'matching',
+    );
     return {
       id: st.id,
       kind: st.kind,
@@ -419,24 +412,24 @@ export function examTopics(exam: Exam): { topic: string; itemCount: number }[] {
  */
 export function mockRules(exam: Exam): string[] {
   const rules = [
-    'Во время экзамена нет подсказок и проверки ответов — результат после сдачи.',
-    'Таймер идёт с начала субтеста; когда время выходит, ответы сдаются автоматически.',
+    'Під час іспиту немає підказок і перевірки відповідей — результат після завершення.',
+    'Таймер іде від початку розділу; коли час спливає, відповіді здаються автоматично.',
   ];
   if (exam.subtests.some((st) => st.kind === 'listening')) {
     const plays = exam.subtests.find((st) => st.kind === 'listening')?.audioPlays ?? 2;
     rules.push(
-      `Аудирование: каждый текст звучит ${plays === 2 ? 'два раза' : `${plays} ${ruPlural(plays, ['раз', 'раза', 'раз'])}`}, без паузы и перемотки.`,
+      `Слухання: кожен запис звучить ${plays === 2 ? 'двічі' : `${plays} ${pluralUk(plays, ['раз', 'рази', 'разів'])}`}, без паузи й перемотування.`,
     );
   }
   const withDict = exam.subtests.filter((st) => st.dictionary).map((st) => st.title.uk);
   const without = exam.subtests.filter((st) => !st.dictionary).map((st) => st.title.uk);
-  if (withDict.length > 0) rules.push(`Словарь (поиск слова) можно: ${withDict.join(', ')}.`);
-  if (without.length > 0) rules.push(`Без словаря: ${without.join(', ')}.`);
+  if (withDict.length > 0) rules.push(`Словник (пошук слова) дозволено: ${withDict.join(', ')}.`);
+  if (without.length > 0) rules.push(`Без словника: ${without.join(', ')}.`);
   const monologue = exam.subtests.some(
     (st) =>
       st.kind === 'speaking' &&
       st.parts.some((p) => p.items.some((i) => i.kind === 'speaking-monologue')),
   );
-  if (monologue) rules.push('Говорение, задание 3: словарь можно только во время подготовки.');
+  if (monologue) rules.push('Говоріння, монолог: словник дозволено лише під час підготовки.');
   return rules;
 }

@@ -6,8 +6,6 @@ import {
   computeReadiness,
   drillEstimate,
   latestMockPcts,
-  predictVerdict,
-  predictedLine,
   recommendToday,
   weakestTopic,
   type MockAttemptLike,
@@ -28,15 +26,23 @@ const rowsOf = (pcts: Record<string, number | null>): ReadinessRow[] =>
     drills: {},
   });
 
-describe('bands (§7.4)', () => {
-  it('< 60 red · 60–66 amber · 66–80 green · ≥ 80 gold, inclusive at the lower edge', () => {
+describe('bands (relative to the level threshold)', () => {
+  it('default B1 (70): < 60 red · 60–70 amber · 70–80 green · ≥ 80 gold, inclusive at the lower edge', () => {
     expect(bandFor(59.9)).toBe('fail');
     expect(bandFor(60)).toBe('borderline');
-    expect(bandFor(65.9)).toBe('borderline');
-    expect(bandFor(66)).toBe('pass');
+    expect(bandFor(69.9)).toBe('borderline');
+    expect(bandFor(70)).toBe('pass');
     expect(bandFor(79.9)).toBe('pass');
     expect(bandFor(80)).toBe('margin');
     expect(bandFor(100)).toBe('margin');
+  });
+  it('an explicit threshold moves every edge (B2: 60)', () => {
+    expect(bandFor(49.9, 60)).toBe('fail');
+    expect(bandFor(50, 60)).toBe('borderline');
+    expect(bandFor(59.9, 60)).toBe('borderline');
+    expect(bandFor(60, 60)).toBe('pass');
+    expect(bandFor(69.9, 60)).toBe('pass');
+    expect(bandFor(70, 60)).toBe('margin');
   });
   it('every band maps to a theme token class (no raw colours)', () => {
     expect(Object.values(BAND_BAR_CLASS).sort()).toEqual([
@@ -59,8 +65,8 @@ describe('drill estimate with shrinkage', () => {
     expect(drillEstimate(undefined)).toBeNull();
     expect(drillEstimate({ answered: 0, correct: 0 })).toBeNull();
   });
-  it('a perfect streak needs many answers to cross the 66 line (shrinkage works)', () => {
-    expect(drillEstimate({ answered: 5, correct: 5 })!).toBeLessThan(66);
+  it('a perfect streak needs many answers to cross the 70 line (shrinkage works)', () => {
+    expect(drillEstimate({ answered: 5, correct: 5 })!).toBeLessThan(70);
     expect(drillEstimate({ answered: 30, correct: 30 })!).toBe(75);
   });
 });
@@ -69,24 +75,24 @@ describe('computeReadiness', () => {
   it('prefers a mock within 21 days over drills, labelled with its age', () => {
     const rows = computeReadiness({
       now: NOW,
-      mocks: { lexgram: { pct: 71.4, finishedAt: NOW - 3 * DAY, provisional: false } },
-      drills: { lexgram: { answered: 50, correct: 10 } },
+      mocks: { reading: { pct: 74.4, finishedAt: NOW - 3 * DAY, provisional: false } },
+      drills: { reading: { answered: 50, correct: 10 } },
     });
-    const lex = rows.find((r) => r.kind === 'lexgram')!;
-    expect(lex).toMatchObject({ pct: 71.4, band: 'pass', source: 'mock', mockDaysAgo: 3 });
-    expect(lex.label).toBe('пробный экзамен 3 дн. назад');
+    const row = rows.find((r) => r.kind === 'reading')!;
+    expect(row).toMatchObject({ pct: 74.4, band: 'pass', source: 'mock', mockDaysAgo: 3 });
+    expect(row.label).toBe('пробний іспит 3 дн. тому');
   });
   it('a mock older than 21 days falls back to the drill estimate', () => {
     const rows = computeReadiness({
       now: NOW,
-      mocks: { lexgram: { pct: 90, finishedAt: NOW - 22 * DAY, provisional: false } },
-      drills: { lexgram: { answered: 30, correct: 24 } },
+      mocks: { reading: { pct: 90, finishedAt: NOW - 22 * DAY, provisional: false } },
+      drills: { reading: { answered: 30, correct: 24 } },
     });
-    const lex = rows.find((r) => r.kind === 'lexgram')!;
-    expect(lex.source).toBe('estimate');
-    expect(lex.pct).toBe(65);
-    expect(lex.band).toBe('borderline');
-    expect(lex.label).toContain('оценка по тренировкам');
+    const row = rows.find((r) => r.kind === 'reading')!;
+    expect(row.source).toBe('estimate');
+    expect(row.pct).toBe(65);
+    expect(row.band).toBe('borderline');
+    expect(row.label).toBe('оцінка за тренуваннями · 30 відповідей');
   });
   it('exactly 21 days still counts; a provisional mock is labelled', () => {
     const rows = computeReadiness({
@@ -97,28 +103,55 @@ describe('computeReadiness', () => {
     const w = rows.find((r) => r.kind === 'writing')!;
     expect(w.source).toBe('mock');
     expect(w.provisional).toBe(true);
-    expect(w.label).toContain('предварительно');
+    expect(w.label).toContain('попередньо');
   });
-  it('unknown with no mock and no responses; writing / speaking say «после пробного»', () => {
+  it('unknown with no mock and no responses; one row per section of the level, in shape order', () => {
     const rows = computeReadiness({ now: NOW, mocks: {}, drills: {} });
-    expect(rows.map((r) => r.kind)).toEqual([
-      'writing',
-      'lexgram',
-      'reading',
-      'listening',
-      'speaking',
-    ]);
+    expect(rows.map((r) => r.kind)).toEqual(['listening', 'reading', 'writing', 'speaking']);
     expect(rows.every((r) => r.pct === null && r.band === null && r.source === 'none')).toBe(true);
-    expect(rows[0]!.label).toBe('появится после пробного экзамена');
-    expect(rows[1]!.label).toBe('появится после первой тренировки');
+    expect(rows[0]!.label).toBe('зʼявиться після першого тренування');
+    expect(rows[2]!.label).toBe('зʼявиться після пробного іспиту');
+    expect(rows[3]!.label).toBe('зʼявиться після пробного іспиту');
   });
-  it('same-day mock reads «сегодня»', () => {
+  it('B2 / C1 have no listening row; A1 has the four; rows use the level threshold', () => {
+    const kinds = (level: 'A1' | 'B1' | 'B2' | 'C1') =>
+      computeReadiness({ level, now: NOW, mocks: {}, drills: {} }).map((r) => r.kind);
+    expect(kinds('A1')).toEqual(['listening', 'reading', 'writing', 'speaking']);
+    expect(kinds('B1')).toEqual(['listening', 'reading', 'writing', 'speaking']);
+    expect(kinds('B2')).toEqual(['reading', 'writing', 'speaking']);
+    expect(kinds('C1')).toEqual(['reading', 'writing', 'speaking']);
+    const mocks = { reading: { pct: 65, finishedAt: NOW - DAY, provisional: false } };
+    const at = (level: 'B1' | 'B2') =>
+      computeReadiness({ level, now: NOW, mocks, drills: {} }).find((r) => r.kind === 'reading')!;
+    expect(at('B1').band).toBe('borderline'); // B1 threshold 70
+    expect(at('B2').band).toBe('pass'); // B2 threshold 60
+  });
+  it('labels: yesterday and the Ukrainian plural of the answers', () => {
+    const one = computeReadiness({
+      now: NOW,
+      mocks: { reading: { pct: 80, finishedAt: NOW - DAY, provisional: false } },
+      drills: { listening: { answered: 1, correct: 1 } },
+    });
+    expect(one.find((r) => r.kind === 'reading')!.label).toBe('пробний іспит учора');
+    expect(one.find((r) => r.kind === 'listening')!.label).toBe(
+      'оцінка за тренуваннями · 1 відповідь',
+    );
+    const two = computeReadiness({
+      now: NOW,
+      mocks: {},
+      drills: { listening: { answered: 3, correct: 1 } },
+    });
+    expect(two.find((r) => r.kind === 'listening')!.label).toBe(
+      'оцінка за тренуваннями · 3 відповіді',
+    );
+  });
+  it('same-day mock reads «сьогодні»', () => {
     const rows = computeReadiness({
       now: NOW,
       mocks: { reading: { pct: 80, finishedAt: NOW - 1000, provisional: false } },
       drills: {},
     });
-    expect(rows.find((r) => r.kind === 'reading')!.label).toBe('пробный экзамен сегодня');
+    expect(rows.find((r) => r.kind === 'reading')!.label).toBe('пробний іспит сьогодні');
   });
 });
 
@@ -163,88 +196,30 @@ describe('latestMockPcts', () => {
   });
 });
 
-describe('predictVerdict (local §6.3 copy)', () => {
-  const all = (v: number) => ({ writing: v, lexgram: v, reading: v, listening: v, speaking: v });
-  it('every ≥ 66 → pass; boundary 66 passes, 65.9 does not', () => {
-    expect(predictVerdict(all(66))).toEqual({ verdict: 'pass', retake: [] });
-    expect(predictVerdict({ ...all(70), reading: 65.9 }).verdict).toBe('pass-borderline');
-  });
-  it('exactly one in [60, 66) and four ≥ 66 → pass-borderline', () => {
-    expect(predictVerdict({ ...all(75), listening: 60 })).toEqual({
-      verdict: 'pass-borderline',
-      retake: [],
-    });
-  });
-  it('one under 60 → fail, retake lists it', () => {
-    expect(predictVerdict({ ...all(75), listening: 59.9 })).toEqual({
-      verdict: 'fail',
-      retake: ['listening'],
-    });
-  });
-  it('two borderlines → fail, only one borderline is «spent»', () => {
-    const r = predictVerdict({ ...all(75), listening: 62, reading: 64 });
-    expect(r.verdict).toBe('fail');
-    expect(r.retake).toEqual(['listening']); // reading (64) is the spent one
-  });
-  it('unknown counts as fail and is always in the retake list', () => {
-    const r = predictVerdict({ lexgram: 80, reading: 80, listening: 80 });
-    expect(r.verdict).toBe('fail');
-    expect(r.retake).toEqual(['writing', 'speaking']);
-    expect(predictVerdict({}).retake).toHaveLength(5);
-  });
-});
-
-describe('predictedLine', () => {
-  it('words the three outcomes', () => {
-    expect(
-      predictedLine(rowsOf({ writing: 70, lexgram: 70, reading: 70, listening: 70, speaking: 70 }))
-        .text,
-    ).toBe('Сейчас: сдал бы');
-    expect(
-      predictedLine(rowsOf({ writing: 70, lexgram: 70, reading: 70, listening: 62, speaking: 70 }))
-        .text,
-    ).toContain('почти');
-    const fail = predictedLine(
-      rowsOf({ writing: 70, lexgram: 70, reading: 70, listening: 40, speaking: 70 }),
-    );
-    expect(fail.verdict).toBe('fail');
-    expect(fail.text).toBe('Сейчас: пока нет — подтяни: Аудирование');
-  });
-  it('with nothing known it names up to three subtests', () => {
-    const line = predictedLine(rowsOf({}));
-    expect(line.verdict).toBe('fail');
-    expect(line.text.split(',').length).toBeLessThanOrEqual(3);
-  });
-  it('T75: the A2 level gives the same line as the A1 default (shared 66/60)', () => {
-    const rows = rowsOf({ writing: 70, lexgram: 70, reading: 70, listening: 62, speaking: 70 });
-    expect(predictedLine(rows, 'A2')).toEqual(predictedLine(rows));
-  });
-});
-
 describe('weakestTopic + recommendToday', () => {
   const stats = [
     { topic: 'case-gen', answered: 10, correct: 4 },
     { topic: 'case-prep', answered: 10, correct: 9 },
     { topic: 'conj', answered: 2, correct: 0 }, // too few answers to judge
   ];
-  const lexTopics = new Set(['case-gen', 'case-prep', 'conj']);
+  const readTopics = new Set(['case-gen', 'case-prep', 'conj']);
   it('weakest = lowest accuracy among topics with ≥ 3 answers', () => {
-    expect(weakestTopic(stats, lexTopics)?.topic).toBe('case-gen');
+    expect(weakestTopic(stats, readTopics)?.topic).toBe('case-gen');
     expect(weakestTopic(stats, new Set(['conj']))).toBeNull();
   });
   const base = {
-    rows: rowsOf({ lexgram: 50, reading: 70, listening: 70 }),
-    topicsByKind: { lexgram: lexTopics },
+    rows: rowsOf({ reading: 50, listening: 75 }),
+    topicsByKind: { reading: readTopics },
     topicStats: stats,
     deckDue: 0,
     lastMockAt: null,
     now: NOW,
     mockInstalled: true,
   };
-  it('1. weakest topic of the weakest objective subtest under 66', () => {
+  it('1. weakest topic of the weakest objective subtest under the threshold', () => {
     expect(recommendToday(base)).toEqual({
       kind: 'topic',
-      subtestKind: 'lexgram',
+      subtestKind: 'reading',
       topic: 'case-gen',
       accuracy: 40,
     });
@@ -255,26 +230,32 @@ describe('weakestTopic + recommendToday', () => {
       due: 7,
     });
   });
-  it('3. «time for a mock» when none in 7 days and every objective subtest ≥ 60', () => {
-    const rows = rowsOf({ lexgram: 70, reading: 70, listening: 70 });
+  it('3. «time for a mock» when none in 7 days and every objective subtest within 10 points of the threshold', () => {
+    const rows = rowsOf({ reading: 75, listening: 75 });
     expect(recommendToday({ ...base, rows })).toEqual({ kind: 'mock' });
     expect(recommendToday({ ...base, rows, lastMockAt: NOW - 2 * DAY })?.kind).not.toBe('mock');
     expect(recommendToday({ ...base, rows, mockInstalled: false })?.kind).not.toBe('mock');
     // an unknown objective subtest blocks it
-    expect(recommendToday({ ...base, rows: rowsOf({ lexgram: 70, reading: 70 }) })?.kind).not.toBe(
-      'mock',
-    );
+    expect(recommendToday({ ...base, rows: rowsOf({ reading: 75 }) })?.kind).not.toBe('mock');
   });
   it('4. falls back to the weakest topic anywhere, then the first drill', () => {
-    const rows = rowsOf({ lexgram: 70, reading: 70, listening: 70 });
+    const rows = rowsOf({ reading: 75, listening: 75 });
     expect(recommendToday({ ...base, rows, lastMockAt: NOW })).toMatchObject({
       kind: 'topic',
       topic: 'case-gen',
     });
     expect(recommendToday({ ...base, rows, lastMockAt: NOW, topicStats: [] })).toEqual({
       kind: 'start',
-      subtestKind: 'lexgram',
+      subtestKind: 'reading',
     });
     expect(recommendToday({ ...base, topicsByKind: {}, topicStats: [] })).toBeNull();
+  });
+  it('passPct moves the weak / mock edges (B2: 60)', () => {
+    const rows = rowsOf({ reading: 65, listening: 65 });
+    // at the default 70 both are weak → a topic step; at 60 neither is
+    expect(recommendToday({ ...base, rows })?.kind).toBe('topic');
+    expect(recommendToday({ ...base, rows, passPct: 60, topicStats: [], deckDue: 0 })).toEqual({
+      kind: 'mock',
+    });
   });
 });

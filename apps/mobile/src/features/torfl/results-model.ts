@@ -6,7 +6,13 @@ import {
   type ExamSubtestKind,
 } from '@sutinki/schema';
 
-import { OPTION_LETTERS, acceptedDisplay, scoreItem, type ItemOutcome } from './scoring';
+import {
+  OPTION_LETTERS,
+  acceptedDisplay,
+  scoreItem,
+  type AnswerArg,
+  type ItemOutcome,
+} from './scoring';
 import { isAnswered, type ExamAnswer, type ExamResults } from './model';
 
 /**
@@ -104,11 +110,11 @@ export function missingVerdictLine(missing: readonly ExamSubtestKind[]): string 
 
 // --- answers → scoring helpers -----------------------------------------------------------------
 
-export function answerArgFor(
-  item: ExamItem,
-  answer: ExamAnswer | undefined,
-): { index: number | null } | { text: string } {
+export function answerArgFor(item: ExamItem, answer: ExamAnswer | undefined): AnswerArg {
   const given = answer && isAnswered(answer) ? answer : undefined;
+  if (item.kind === 'matching') {
+    return { picks: given?.kind === 'matching' ? given.picks : [] };
+  }
   if (item.kind === 'typed') return { text: given?.kind === 'typed' ? given.text : '' };
   return { index: given?.kind === 'choice' ? given.index : null };
 }
@@ -187,11 +193,14 @@ export function reviewEntries(
       number += 1;
       const answer = answers[item.id];
       const score = scoreItem(item, answerArgFor(item, answer), subtest);
-      if (!score || (item.kind !== 'choice' && item.kind !== 'typed')) continue;
+      if (!score || (item.kind !== 'choice' && item.kind !== 'typed' && item.kind !== 'matching')) {
+        continue;
+      }
       const first = part.items[0];
       const inheritedAudio =
         first && (first.kind === 'choice' || first.kind === 'typed') ? first.audio : undefined;
-      const audioStoryId = (item.audio ?? (itemIdx > 0 ? inheritedAudio : undefined))?.storyId;
+      const ownAudio = item.kind === 'matching' ? undefined : item.audio;
+      const audioStoryId = (ownAudio ?? (itemIdx > 0 ? inheritedAudio : undefined))?.storyId;
       const base = {
         number,
         item,
@@ -211,6 +220,19 @@ export function reviewEntries(
             text,
             chosen: chosen === idx,
             correct: item.answer === idx,
+          })),
+          typed: null,
+        });
+      } else if (item.kind === 'matching') {
+        const picks = answer?.kind === 'matching' ? answer.picks : [];
+        out.push({
+          ...base,
+          stem: item.stem,
+          options: item.left.map((text, i) => ({
+            letter: String(i + 1),
+            text: `${text} → ${picks[i] == null ? '—' : (OPTION_LETTERS[picks[i]!] ?? picks[i]! + 1)} (${OPTION_LETTERS[item.key[i]!] ?? item.key[i]! + 1}: ${item.right[item.key[i]!]})`,
+            chosen: picks[i] != null,
+            correct: picks[i] === item.key[i],
           })),
           typed: null,
         });

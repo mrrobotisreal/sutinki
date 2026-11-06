@@ -3,9 +3,12 @@ import {
   type ChoiceItem,
   type ExamItem,
   type ExamSubtest,
+  type MatchingItem,
   type StoryRef,
   type TypedItem,
 } from '@sutinki/schema';
+
+import { normalizeUk } from '@/db/normalize';
 
 /**
  * The objective scoring core (T70, TORFL_EXAM_PREP §6.1) — PURE (no DB, no
@@ -14,29 +17,26 @@ import {
  * construction.
  *
  * - `choice`: full `points` iff `index === answer`; a blank (null) is 0.
- * - `typed`: normalize (NFC, lower-case, ё→е, stress marks and punctuation
+ * - `matching` (UT16b): one share per correct pair (partial credit).
+ * - `typed`: normalize (NFC, lower-case, stress marks and punctuation
  *   stripped, spaces collapsed); full if it matches any `accept` (exact or a
  *   trailing-`*` stem glob), half if it matches `half` (demo v1's 2.5 of 5:
  *   right meaning, wrong grammatical form), else 0.
  * - Unanswered = 0; a subtest's % = Σ points / `maxPoints` × 100, one decimal.
  */
 
-/** Combining acute / grave — Russian stress marks a learner may paste. */
+/** Combining acute / grave — stress marks a learner may paste. */
 const STRESS_MARKS = /[̀́]/g;
 /** Everything that is not a letter, digit, space or in-word hyphen. */
 const NON_WORD = /[^\p{L}\p{N}\s-]/gu;
 
 /**
- * NFC → lower-case → ё→е → strip stress marks and punctuation → collapse
- * whitespace → trim. Hyphens inside a word survive («кто-то»); a stray
+ * NFC → strip stress marks → `normalizeUk` (lower-case, every apostrophe variant → U+02BC,
+ * ґ→г; ADR-0004) → strip punctuation → collapse whitespace → trim. Hyphens inside a word survive («десь-то»); a stray
  * leading/trailing hyphen does not. Idempotent.
  */
 export function normalizeAnswer(text: string): string {
-  return text
-    .normalize('NFC')
-    .replace(STRESS_MARKS, '')
-    .toLowerCase()
-    .replaceAll('ё', 'е')
+  return normalizeUk(text.normalize('NFC').replace(STRESS_MARKS, ''))
     .replace(NON_WORD, ' ')
     .replace(/(^|\s)-+|-+(?=\s|$)/g, ' ')
     .replace(/\s+/g, ' ')
@@ -45,7 +45,7 @@ export function normalizeAnswer(text: string): string {
 
 /**
  * `pattern` is normalized like an answer; a trailing `*` makes it a PREFIX
- * match on the (normalized) answer — «рабоч*» accepts «рабочий», «рабочая».
+ * match on the (normalized) answer — «робіт*» accepts «робота», «роботу».
  * Without the star it is an exact match.
  */
 export function matchesPattern(pattern: string, normalizedAnswer: string): boolean {
@@ -92,23 +92,50 @@ export function scoreTyped(item: TypedItem, text: string, maxPoints: number): It
 }
 
 /**
+ * Score a matching answer (UT16b): one share per pair — `maxPoints / pairs` each — so a
+ * partial match earns partial credit (outcome `half`; every pair right = `full`). `picks[i]`
+ * is the `right` index chosen for `left[i]`, null = not picked; nothing picked = `blank`.
+ */
+export function scoreMatching(
+  item: MatchingItem,
+  picks: readonly (number | null)[],
+  maxPoints: number,
+): ItemScore {
+  const pairs = item.left.length;
+  if (!picks.some((p) => p !== null)) return { points: 0, maxPoints, outcome: 'blank' };
+  const right = item.key.reduce((n, k, i) => n + (picks[i] === k ? 1 : 0), 0);
+  const points = Math.round((maxPoints * right * 1000) / pairs) / 1000;
+  const outcome: ItemOutcome = right === pairs ? 'full' : right === 0 ? 'wrong' : 'half';
+  return { points, maxPoints, outcome };
+}
+
+/** Indices of the pairs of a matching item answered correctly (the feedback colouring). */
+export function matchingCorrect(item: MatchingItem, picks: readonly (number | null)[]): boolean[] {
+  return item.key.map((k, i) => picks[i] === k);
+}
+
+/** The answer payload a scorer takes: a choice index, typed text or a matching pick list. */
+export type AnswerArg = { index: number | null } | { text: string } | { picks: (number | null)[] };
+
+/**
  * The form to SHOW as the accepted answer (typed feedback): the first
- * `accept` entry with a trailing glob star dropped — «рабоч*» reads «рабоч…».
+ * `accept` entry with a trailing glob star dropped — «робіт*» reads «робіт…».
  */
 export function acceptedDisplay(item: TypedItem): string {
   const first = item.accept[0] ?? '';
   return first.endsWith('*') ? `${first.slice(0, -1)}…` : first;
 }
 
-/** Score any objective item (choice / typed); null for kinds scored by rubric (writing/speaking). */
+/** Score any objective item (choice / typed / matching); null for kinds scored by rubric (writing/speaking). */
 export function scoreItem(
   item: ExamItem,
-  answer: { index: number | null } | { text: string },
+  answer: AnswerArg,
   subtest: Pick<ExamSubtest, 'pointsPerItem'>,
 ): ItemScore | null {
   const max = itemMaxPoints(item, subtest);
   if (item.kind === 'choice' && 'index' in answer) return scoreChoice(item, answer.index, max);
   if (item.kind === 'typed' && 'text' in answer) return scoreTyped(item, answer.text, max);
+  if (item.kind === 'matching' && 'picks' in answer) return scoreMatching(item, answer.picks, max);
   return null;
 }
 
@@ -150,8 +177,8 @@ export function splitStemAtGap(stem: string): {
   };
 }
 
-/** The option letters of a choice item (А–Г): the official A, B, V, G in Cyrillic. */
-export const OPTION_LETTERS = ['А', 'Б', 'В', 'Г'] as const;
+/** The option letters of a choice item (А–Г) and of a matching item's right-hand list (А–М): Cyrillic, as on the paper. */
+export const OPTION_LETTERS = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М'] as const;
 
 /**
  * The sentences a ref covers, in story order. `sentenceIds` absent = the

@@ -335,7 +335,7 @@ export type GameSessionMode =
   // match blitz «Молния» (60 s sprint; score in detail). Both FSRS-free.
   | 'numbers'
   | 'match-blitz'
-  // M18 (declared in T68): the TORFL drill runner (T70) and «Мои ответы» rehearsal (T74).
+  // M18 (declared in T68): the TORFL drill runner (T70) and «Мої відповіді» rehearsal (T74).
   | 'exam-drill'
   | 'torfl-rehearsal';
 

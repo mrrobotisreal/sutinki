@@ -14,9 +14,9 @@ import { ACHIEVEMENTS as ALL_ACHIEVEMENTS } from './achievements';
 
 import { useAchievements } from './use-motivation';
 
-/** UP04: the `torfl-*` achievements stay out of the gallery while `UK_PENDING.exam` hides the exam. */
+/** UP04 / UT16b: the `torfl-*` and `exam-*` achievements stay out of the gallery while `UK_PENDING.exam` hides the exam. */
 const ACHIEVEMENTS = ukPending('exam')
-  ? ALL_ACHIEVEMENTS.filter((a) => !a.id.startsWith('torfl-'))
+  ? ALL_ACHIEVEMENTS.filter((a) => !a.id.startsWith('torfl-') && !a.id.startsWith('exam-'))
   : ALL_ACHIEVEMENTS;
 
 /**

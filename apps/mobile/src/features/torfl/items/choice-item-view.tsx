@@ -5,12 +5,21 @@ import { Pressable, Text as RNText, Vibration, View } from 'react-native';
 import { Text } from '@/components/ui/text';
 
 import { OPTION_LETTERS } from '../scoring';
+import { Badge } from './stem-text';
 import { StemText } from './stem-text';
 
 export type ItemFeedback = 'instant' | 'none';
 
+/** The task-type hint above a `variant` choice (true/false, cloze) — display only, no scoring change. */
+const VARIANT_HINTS: Record<NonNullable<ChoiceItem['variant']>, string> = {
+  'true-false': 'Правда чи неправда?',
+  'true-false-ns': 'Правда, неправда чи не сказано?',
+  'gap-word': 'Оберіть слово для пропуску',
+  'gap-form': 'Оберіть форму слова для пропуску',
+};
+
 /**
- * А–Г single choice (T70). `feedback: 'instant'` (drills): the correct option
+ * А–Г single choice (T70; UT16b adds the variant hint for true/false and cloze). `feedback: 'instant'` (drills): the correct option
  * glows green, a wrong pick is marked red, the buttons lock and
  * `onAnswer` fires once. `feedback: 'none'` (T71's mocks): the pick is only
  * highlighted, stays changeable, and `onAnswer` fires on every change — no
@@ -47,8 +56,10 @@ export function ChoiceItemView({
         ? item.options[picked]
         : null;
 
+  const hint = item.variant ? VARIANT_HINTS[item.variant] : null;
   return (
     <View className="gap-5">
+      {hint ? <Badge label={hint} /> : null}
       <View className="gap-2 rounded-2xl border border-border bg-surface px-5 py-6">
         <StemText stem={item.stem} fill={fill} fillTone={locked ? 'success' : 'accent'} />
         {showStemEn && item.stemEn ? (
@@ -73,7 +84,7 @@ export function ChoiceItemView({
               onPress={() => pick(idx)}
               disabled={locked}
               accessibilityRole="button"
-              accessibilityLabel={`Answer: ${option}`}
+              accessibilityLabel={`Відповідь: ${option}`}
               accessibilityState={{ selected: picked === idx, disabled: locked }}
               testID={`choice-option-${idx}`}
               className={`flex-row items-center gap-3 rounded-xl border px-4 py-3.5 ${frame}`}

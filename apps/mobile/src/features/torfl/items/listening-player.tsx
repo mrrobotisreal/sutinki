@@ -99,12 +99,12 @@ export function ListeningPlayer({
   if (exam) {
     const label =
       examPhase === 'playing'
-        ? `Звучит ${examPlayNo === 1 ? '1-й' : `${examPlayNo}-й`} раз`
+        ? `Звучить ${examPlayNo === 1 ? 'перший' : 'другий'} раз`
         : examPhase === 'gap'
-          ? 'Пауза — сейчас прозвучит ещё раз'
+          ? 'Пауза — зараз прозвучить ще раз'
           : examPhase === 'done'
-            ? 'Прослушано'
-            : 'Приготовься слушать';
+            ? 'Прослухано'
+            : 'Приготуйся слухати';
     return (
       <View
         className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4"
@@ -124,7 +124,7 @@ export function ListeningPlayer({
               {label}
             </Text>
             <Text variant="caption">
-              {Math.min(examPlayNo, maxPlays ?? 2)} из {maxPlays ?? 2}
+              {Math.min(examPlayNo, maxPlays ?? 2)} з {maxPlays ?? 2}
             </Text>
           </View>
           {audio.synthetic && <Badge label="синтез" />}
@@ -161,8 +161,8 @@ export function ListeningPlayer({
         </Pressable>
         <View className="flex-1 gap-1">
           <Text className="font-ui-medium">
-            {controls.playCount === 0 ? 'Нажми и слушай' : `Прослушано: ${controls.playCount}`}
-            {exam && maxPlays !== undefined ? ` из ${maxPlays}` : ''}
+            {controls.playCount === 0 ? 'Натисни й слухай' : `Прослухано: ${controls.playCount}`}
+            {exam && maxPlays !== undefined ? ` з ${maxPlays}` : ''}
           </Text>
           {audio.synthetic && <Badge label="синтез" />}
         </View>
@@ -191,7 +191,7 @@ export function ListeningPlayer({
             color={tokens.accent}
           />
           <Text className="font-ui-medium text-sm text-accent">
-            {showText ? 'Скрыть текст' : 'Показать текст'}
+            {showText ? 'Сховати текст' : 'Показати текст'}
           </Text>
         </Pressable>
       )}

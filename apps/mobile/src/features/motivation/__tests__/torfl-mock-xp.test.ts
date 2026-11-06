@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TORFL_PROFILES } from '@/features/torfl/level-profile';
+import { EXAM_LEVELS, UKR_PROFILES } from '@/features/torfl/level-profile';
 
 import { ACHIEVEMENTS_BY_ID } from '../achievements';
 import { recordExamFinished, recordExamVerdictUnlocks } from '../service';
@@ -8,7 +8,7 @@ import { XP_TABLE } from '../xp';
 
 /**
  * T71: mock XP (15 per scored subtest, 60 per full mock, 100 first pass — ONE
- * `bumpDailyActivity` per attempt) and the four mock achievements, over a
+ * `bumpDailyActivity` per attempt) and the three mock achievements per level, over a
  * mocked repo layer. The verdict-gated unlocks also fire from the T72/T73
  * path via `recordExamVerdictUnlocks`.
  */
@@ -81,11 +81,11 @@ describe('recordExamFinished', () => {
     });
     expect(r.xp).toBe(105);
     expect(bumpDailyActivity).toHaveBeenCalledWith({ xp: 105 });
-    expect(unlockedIds()).toEqual(['torfl-first-mock']);
+    expect(unlockedIds()).toEqual(['exam-a1-first-mock']);
     expect(listAttempts).not.toHaveBeenCalled();
   });
 
-  it('a single subtest: 15 XP; lexgram ≥ 90 adds «Без словаря»', async () => {
+  it('a single subtest: 15 XP; a high lexgram score unlocks nothing extra (no lexgram-90 any more)', async () => {
     const r = await recordExamFinished({
       scope: 'subtest',
       scoredSubtests: 1,
@@ -93,7 +93,7 @@ describe('recordExamFinished', () => {
       verdict: null,
     });
     expect(r.xp).toBe(15);
-    expect(unlockedIds()).toEqual(['torfl-first-mock', 'torfl-lexgram-90']);
+    expect(unlockedIds()).toEqual(['exam-a1-first-mock']);
   });
 
   it('the first pass pays +100; a later pass does not (earlier finished pass in history)', async () => {
@@ -106,7 +106,7 @@ describe('recordExamFinished', () => {
     const first = await recordExamFinished(pass, { excludeAttemptId: 'me' });
     expect(first.xp).toBe(5 * 15 + 60 + 100);
     expect(unlockedIds()).toEqual(
-      expect.arrayContaining(['torfl-first-mock', 'torfl-would-pass', 'torfl-margin']),
+      expect.arrayContaining(['exam-a1-first-mock', 'exam-a1-would-pass', 'exam-a1-margin']),
     );
     listAttempts.mockResolvedValue([
       { id: 'old', mode: 'mock', status: 'finished', verdict: 'pass-borderline' },
@@ -124,17 +124,17 @@ describe('recordExamFinished', () => {
       verdict: 'fail',
     });
     expect(r.xp).toBe(5 * 15 + 60);
-    expect(unlockedIds()).toEqual(['torfl-first-mock']);
+    expect(unlockedIds()).toEqual(['exam-a1-first-mock']);
   });
 });
 
 describe('recordExamVerdictUnlocks (T72/T73 path)', () => {
   it('fires only the verdict-gated pair', async () => {
     await recordExamVerdictUnlocks(five(90), 'pass');
-    expect(unlockedIds().sort()).toEqual(['torfl-margin', 'torfl-would-pass']);
+    expect(unlockedIds().sort()).toEqual(['exam-a1-margin', 'exam-a1-would-pass']);
     unlockAchievement.mockClear();
     await recordExamVerdictUnlocks(five(70), 'pass');
-    expect(unlockedIds()).toEqual(['torfl-would-pass']);
+    expect(unlockedIds()).toEqual(['exam-a1-would-pass']);
     unlockAchievement.mockClear();
     await recordExamVerdictUnlocks(five(40), 'fail');
     expect(unlockedIds()).toEqual([]);
@@ -142,17 +142,17 @@ describe('recordExamVerdictUnlocks (T72/T73 path)', () => {
 
   it("'recordExamVerdictUnlocks A2 → only A2 ids'", async () => {
     await recordExamVerdictUnlocks(five(90), 'pass', 'A2');
-    expect(unlockedIds().sort()).toEqual(['torfl-a2-margin', 'torfl-a2-would-pass']);
-    expect(unlockedIds().some((id) => !id.startsWith('torfl-a2-'))).toBe(false);
+    expect(unlockedIds().sort()).toEqual(['exam-a2-margin', 'exam-a2-would-pass']);
+    expect(unlockedIds().some((id) => !id.startsWith('exam-a2-'))).toBe(false);
   });
 
   it('an A1 call unlocks only A1 ids', async () => {
     await recordExamVerdictUnlocks(five(90), 'pass', 'A1');
-    expect(unlockedIds().sort()).toEqual(['torfl-margin', 'torfl-would-pass']);
+    expect(unlockedIds().sort()).toEqual(['exam-a1-margin', 'exam-a1-would-pass']);
   });
 });
 
-describe('recordExamFinished per level (T75)', () => {
+describe('recordExamFinished per level', () => {
   it("'recordExamFinished with level A2 unlocks A2 ids only + first pass per level'", async () => {
     // The repo filters by level, so the A2 query sees no earlier A2 pass.
     listAttempts.mockResolvedValue([]);
@@ -169,40 +169,61 @@ describe('recordExamFinished per level (T75)', () => {
     expect(listAttempts).toHaveBeenCalledWith(expect.objectContaining({ level: 'A2' }));
     expect(r.xp).toBe(5 * 15 + 60 + 100);
     expect(unlockedIds().sort()).toEqual(
-      [
-        'torfl-a2-first-mock',
-        'torfl-a2-lexgram-90',
-        'torfl-a2-would-pass',
-        'torfl-a2-margin',
-      ].sort(),
+      ['exam-a2-first-mock', 'exam-a2-would-pass', 'exam-a2-margin'].sort(),
     );
-    expect(unlockedIds().some((id) => !id.startsWith('torfl-a2-'))).toBe(false);
+    expect(unlockedIds().some((id) => !id.startsWith('exam-a2-'))).toBe(false);
   });
 });
 
 describe('definitions', () => {
-  it('the four A1 titles are unchanged', () => {
-    const t = (id: string) => ACHIEVEMENTS_BY_ID.get(id)?.title;
-    expect(t('torfl-first-mock')).toBe('Первый вариант');
-    expect(t('torfl-would-pass')).toBe('Сдал бы!');
-    expect(t('torfl-margin')).toBe('С запасом');
-    expect(t('torfl-lexgram-90')).toBe('Без словаря');
+  const t = (id: string) => ACHIEVEMENTS_BY_ID.get(id)?.title;
+
+  it('the level titles are Ukrainian and carry the level letter', () => {
+    expect(t('exam-a1-first-mock')).toBe('Перший пробний іспит A1');
+    expect(t('exam-a1-would-pass')).toBe('A1: склав би!');
+    expect(t('exam-b1-margin')).toBe('B1: із запасом');
+    expect(t('exam-c1-deck-100')).toBe('C1: робота над помилками');
+    for (const level of EXAM_LEVELS) {
+      for (const id of Object.values(UKR_PROFILES[level].achievements)) {
+        expect(t(id), id).toContain(level);
+        expect(t(id), id).not.toMatch(/[ёыэъ]/i);
+      }
+    }
   });
 
-  it('the four A2 titles', () => {
-    const t = (id: string) => ACHIEVEMENTS_BY_ID.get(id)?.title;
-    expect(t('torfl-a2-first-mock')).toBe('Первый вариант ТБУ');
-    expect(t('torfl-a2-would-pass')).toBe('Базовый — сдал бы!');
-    expect(t('torfl-a2-margin')).toBe('Базовый с запасом');
-    expect(t('torfl-a2-lexgram-90')).toBe('Без словаря · А2');
-  });
-
-  it('every profile achievement id exists for both levels; torfl-deck-100 stays', () => {
-    for (const level of ['A1', 'A2'] as const) {
-      for (const id of Object.values(TORFL_PROFILES[level].achievements)) {
+  it('every profile achievement id exists for all five levels; no torfl-* id survives', () => {
+    for (const level of EXAM_LEVELS) {
+      for (const id of Object.values(UKR_PROFILES[level].achievements)) {
         expect(ACHIEVEMENTS_BY_ID.has(id)).toBe(true);
       }
     }
-    expect(ACHIEVEMENTS_BY_ID.has('torfl-deck-100')).toBe(true);
+    expect([...ACHIEVEMENTS_BY_ID.keys()].filter((id) => id.startsWith('torfl-'))).toEqual([]);
+    expect([...ACHIEVEMENTS_BY_ID.keys()].filter((id) => id.startsWith('exam-'))).toHaveLength(20);
+  });
+});
+
+describe('recordExamFinished at the new levels', () => {
+  it('B1 (four sections) unlocks the B1 trio only', async () => {
+    listAttempts.mockResolvedValue([]);
+    const r = await recordExamFinished(
+      {
+        scope: 'full',
+        scoredSubtests: 4,
+        pcts: { listening: 85, reading: 85, writing: 85, speaking: 85 },
+        verdict: 'pass',
+        level: 'B1',
+      },
+      { excludeAttemptId: 'me' },
+    );
+    expect(listAttempts).toHaveBeenCalledWith(expect.objectContaining({ level: 'B1' }));
+    expect(r.xp).toBe(4 * 15 + 60 + 100);
+    expect(unlockedIds().sort()).toEqual(
+      ['exam-b1-first-mock', 'exam-b1-margin', 'exam-b1-would-pass'].sort(),
+    );
+  });
+
+  it('B2 margin needs only reading / writing / speaking', async () => {
+    await recordExamVerdictUnlocks({ reading: 90, writing: 90, speaking: 90 }, 'pass', 'B2');
+    expect(unlockedIds().sort()).toEqual(['exam-b2-margin', 'exam-b2-would-pass']);
   });
 });

@@ -597,7 +597,7 @@ function SummaryCard({
   onDone: () => void;
 }) {
   const { tokens } = useAppTheme();
-  const fmt = (v: number | null) => (v === null ? '—' : `${v.toLocaleString('ru-RU')} %`);
+  const fmt = (v: number | null) => (v === null ? '—' : `${v.toLocaleString('uk-UA')} %`);
   return (
     <ScrollView
       className="flex-1"

@@ -10,6 +10,7 @@ import { Text } from '@/components/ui/text';
 import { useActiveExamAttempt, useExamAttempts, useExams } from '@/db/hooks';
 import type { ExamAttempt } from '@/db/repositories/exams';
 import { useStudyAmbience } from '@/features/ambient-audio/activity';
+import { pluralUk } from '@/lib/uk-plural';
 import { cn } from '@/lib/cn';
 import { trackTorfl } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
@@ -17,27 +18,35 @@ import { useAppTheme } from '@/theme/use-app-theme';
 import { useAnswers } from './answers/use-answers';
 import { ExamDateSheet } from './exam-date-sheet';
 import {
+  EXAM_LEVELS,
+  RELATIVE_NOTE,
   hubSubtitle,
   lightningCaption,
   profileFor,
-  ruleLine,
+  sectionKindsOf,
+  thresholdLine,
   type TorflLevel,
 } from './level-profile';
 import { ExamRow } from './exam-row';
-import { useExamDate, useExamListItems, useExamTexts, useTorflToday } from './hooks';
+import {
+  useExamDate,
+  useExamListItems,
+  useExamTexts,
+  useStoredLevel,
+  useTorflToday,
+} from './hooks';
 import {
   MODE_LABELS,
   countdownLabel,
   overallPct,
   placeholderReadiness,
-  ruPlural,
   type ReadinessView,
 } from './hub-model';
 import { drillHref } from './drill/drill-model';
 import { ReadinessBars } from './readiness-bars';
 import { describeStep } from './today';
 import { TextRow } from './text-row';
-import { SUBTEST_LABELS, SUBTEST_ORDER, topicLabel } from './topics';
+import { SUBTEST_LABELS, topicLabel } from './topics';
 import {
   monologueTickets,
   speakingPracticeEntries,
@@ -49,32 +58,143 @@ import {
   writingPracticeGroups,
   writingPracticeHref,
 } from './writing/writing-practice-model';
-import { minutesUk } from './minutes-ru';
+import { minutesUk } from './minutes-uk';
 
 export type HubOpenedFrom = 'library' | 'today' | 'deeplink';
 
-const ITEMS = ['задание', 'задания', 'заданий'] as const;
-/** «Тексты» preview length on the hub (the full list is `/torfl/texts`). */
+const ITEMS = ['завдання', 'завдання', 'завдань'] as const;
+/** «Тексти» preview length on the hub (the full list is `/torfl/texts`). */
 const TEXTS_PREVIEW = 5;
 
 /**
- * The «ТРКИ» hub (T69, TORFL_EXAM_PREP §5.3) — a calm study desk, top to
- * bottom: the header (title, countdown → date sheet, the SPbU rule),
- * «Готовность» (T70: live bars + the predicted verdict), «Сегодня» (T70: the
- * recommended next step), «Работа над ошибками» + «Молния» rows (T70),
- * «Пробные экзамены», «Тренировки» (a five-tab strip of topic tiles from
- * drill exams), «Тексты» (a five-row preview → the full browser),
- * «История» (attempts). Works with zero packs installed: every section
- * has an empty state saying what sync brings. `readiness` is T70's seam.
+ * The «Іспит» hub (T69, re-targeted by UT16b) — a calm study desk, top to
+ * bottom: the LEVEL TAB ROW A1 · A2 · B1 · B2 · C1, the header (title,
+ * countdown → date sheet), «Готовність» (live bars per section of the level +
+ * the pass threshold), «Сьогодні» (the recommended next step), «Робота над
+ * помилками» + quick-round rows, «Пробні іспити», «Тренування» (a tab strip
+ * built from the LEVEL'S sections, topic tiles from drill exams), «Тексти»,
+ * «Історія». A level with no installed pack shows a designed empty state.
+ * `readiness` is T70's seam.
+ */
+/**
+ * The hub (route `/torfl`): the LEVEL TAB ROW on top, then the chosen level's
+ * desk. Default level = an explicit `?level=` route param, else the last used
+ * (`torfl.level`), else the lowest level with an installed pack, else B1 —
+ * Mitch's target.
  */
 export function TorflHubScreen({
   from,
   readiness,
-  level = 'A1',
+  level: routeLevel,
 }: {
   from: HubOpenedFrom;
   readiness?: readonly ReadinessView[];
+  /** The `?level=` route param, already parsed; undefined = no param. */
   level?: TorflLevel;
+}) {
+  const { tokens } = useAppTheme();
+  const allExams = useExams({});
+  const stored = useStoredLevel();
+  const [picked, setPicked] = React.useState<TorflLevel | null>(null);
+  const withPacks = React.useMemo(() => {
+    const set = new Set<string>();
+    for (const e of allExams.data ?? []) if (e.exam) set.add(e.exam.level);
+    return set;
+  }, [allExams.data]);
+  if (allExams.isPending || stored.isPending) {
+    return (
+      <View className="flex-1 items-center justify-center bg-bg">
+        <ActivityIndicator color={tokens.accent} />
+      </View>
+    );
+  }
+  const level: TorflLevel =
+    picked ?? routeLevel ?? stored.level ?? EXAM_LEVELS.find((l) => withPacks.has(l)) ?? 'B1';
+  return (
+    <View className="flex-1 bg-bg">
+      <View className="flex-row gap-2 px-4 pb-1 pt-3" accessibilityRole="tablist">
+        {EXAM_LEVELS.map((l) => {
+          const selected = l === level;
+          return (
+            <Pressable
+              key={l}
+              onPress={() => {
+                setPicked(l);
+                void stored.set(l);
+              }}
+              accessibilityRole="tab"
+              accessibilityState={{ selected }}
+              accessibilityLabel={`Рівень ${l}`}
+              testID={`torfl-level-tab-${l}`}
+              className={cn(
+                'flex-1 items-center rounded-full border py-2',
+                selected ? 'border-accent bg-accent-soft' : 'border-border active:bg-surface-2',
+              )}
+            >
+              <Text
+                className={cn(
+                  'font-ui-bold text-sm',
+                  selected ? 'text-accent' : withPacks.has(l) ? 'text-text' : 'text-text-muted',
+                )}
+              >
+                {l}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      <LevelHub key={level} from={from} readiness={readiness} level={level} />
+    </View>
+  );
+}
+
+/** The designed empty state of a level with no installed pack (B2/C1 permanently). */
+function LevelEmptyState({ level }: { level: TorflLevel }) {
+  const router = useRouter();
+  const { tokens } = useAppTheme();
+  const permanent = level === 'B2' || level === 'C1';
+  return (
+    <View
+      className="items-center gap-3 rounded-2xl border border-dashed border-border px-6 py-8"
+      testID={`torfl-empty-${level}`}
+    >
+      <Ionicons
+        name={permanent ? 'hourglass-outline' : 'cloud-download-outline'}
+        size={32}
+        color={tokens.textMuted}
+      />
+      <Text className="text-center font-ui-medium">
+        {permanent
+          ? 'Для цього рівня ще немає матеріалів'
+          : 'Матеріали зʼявляться після синхронізації'}
+      </Text>
+      <Text variant="muted" className="text-center">
+        {permanent
+          ? 'Тут будуть пробні іспити, тренування за темами й тексти — коли вони зʼявляться.'
+          : 'Пробні іспити, тренування за темами та тексти для читання й слухання.'}
+      </Text>
+      {!permanent && (
+        <Pressable
+          onPress={() => router.push('/settings')}
+          accessibilityRole="button"
+          testID="torfl-empty-sync"
+          className="rounded-full bg-accent px-5 py-2.5 active:opacity-80"
+        >
+          <Text className="font-ui-medium text-bg">Налаштування → Синхронізація контенту</Text>
+        </Pressable>
+      )}
+    </View>
+  );
+}
+
+function LevelHub({
+  from,
+  readiness,
+  level,
+}: {
+  from: HubOpenedFrom;
+  readiness?: readonly ReadinessView[];
+  level: TorflLevel;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -91,7 +211,7 @@ export function TorflHubScreen({
   const answers = useAnswers(level);
   const { date, today, setDate } = useExamDate(level);
   const [dateOpen, setDateOpen] = React.useState(false);
-  const [tab, setTab] = React.useState<ExamSubtestKind>('lexgram');
+  const [tab, setTab] = React.useState<ExamSubtestKind>(sectionKindsOf(level)[0] ?? 'listening');
 
   // Fresh data on every focus (an attempt finished in T70/T71 comes back here).
   useFocusEffect(
@@ -129,10 +249,15 @@ export function TorflHubScreen({
   }
 
   const nothingInstalled = (exams.data ?? []).length === 0;
+  // Tabs come from the LEVEL'S sections (never a fixed list); study-only grammar drills join when present.
+  const tabKinds: ExamSubtestKind[] = [
+    ...sectionKindsOf(level),
+    ...(tiles.lexgram.length > 0 ? (['lexgram'] as const) : []),
+  ];
   const tabTiles = tiles[tab];
   // T72: the Письмо tab lists letter tasks (drill sets first, then mocks) as untimed practice.
   const writingEntries = tab === 'writing' ? writingPracticeEntries(exams.data ?? []) : [];
-  // T73: the Говорение tab lists task-1 / task-2 items for one-by-one practice; «Билеты» = task 3.
+  // T73: the Говоріння tab lists task-1 / task-2 items for one-by-one practice; «Білети» = task 3.
   const speakingEntries = tab === 'speaking' ? speakingPracticeEntries(exams.data ?? []) : [];
   const ticketCount = monologueTickets(exams.data ?? []).length;
   const preview = texts.groups.flatMap((g) => g.texts).slice(0, TEXTS_PREVIEW);
@@ -157,7 +282,7 @@ export function TorflHubScreen({
         <Pressable
           onPress={() => setDateOpen(true)}
           accessibilityRole="button"
-          accessibilityLabel={`${countdownLabel(date, today)}. Изменить дату экзамена`}
+          accessibilityLabel={`${countdownLabel(date, today)}. Змінити дату іспиту`}
           testID="torfl-exam-date"
           className="flex-row items-center gap-2 self-start rounded-full border border-border px-3 py-1.5 active:bg-surface-2"
         >
@@ -170,40 +295,26 @@ export function TorflHubScreen({
             {countdownLabel(date, today)}
           </Text>
         </Pressable>
-        <Text variant="caption">{ruleLine(level)}</Text>
+        <Text variant="caption">{thresholdLine(level)}</Text>
       </View>
 
-      {nothingInstalled && (
-        <View className="flex-row items-start gap-3 rounded-xl border border-border bg-surface px-4 py-3">
-          <Ionicons name="cloud-download-outline" size={18} color={tokens.textMuted} />
-          <Text variant="muted" className="flex-1">
-            {`Материалы ${level === 'A1' ? 'ТРКИ' : profile.chipLabel} появятся после синхронизации: пробные экзамены, тренировки по темам и тексты для чтения и аудирования.`}
-          </Text>
-        </View>
-      )}
+      {nothingInstalled && <LevelEmptyState level={level} />}
 
       {/* ---- readiness ---- */}
-      <Section title="Готовность">
+      <Section title="Готовність">
         <View className="rounded-xl border border-border bg-surface px-4 py-4">
           <ReadinessBars
-            rows={readiness ?? (torfl.isPending ? placeholderReadiness() : torfl.readiness)}
+            passPct={profile.passPct}
+            rows={readiness ?? (torfl.isPending ? placeholderReadiness(level) : torfl.readiness)}
           />
-          {!torfl.isPending && torfl.readiness.some((r) => r.pct !== null) && (
-            <Text
-              className={cn(
-                'mt-3 font-ui-medium text-sm',
-                torfl.predicted.verdict === 'fail' ? 'text-text-muted' : 'text-success',
-              )}
-              testID="torfl-predicted"
-            >
-              {torfl.predicted.text}
-            </Text>
-          )}
+          <Text variant="caption" className="mt-3" testID="torfl-threshold">
+            {thresholdLine(level)} · {RELATIVE_NOTE}
+          </Text>
         </View>
       </Section>
 
       {/* ---- today ---- */}
-      <Section title="Сегодня">
+      <Section title="Сьогодні">
         {torfl.step ? (
           <Pressable
             onPress={() => {
@@ -239,15 +350,15 @@ export function TorflHubScreen({
           <View className="flex-row items-center gap-3 rounded-xl border border-dashed border-border px-4 py-3">
             <Ionicons name="compass-outline" size={18} color={tokens.textMuted} />
             <Text variant="muted" className="flex-1">
-              Решай тренировки — здесь появится следующий шаг: самая слабая тема, карточки «Работы
-              над ошибками» или пробный экзамен.
+              Розвʼязуй тренування — тут зʼявиться наступний крок: найслабша тема, картки «Роботи
+              над помилками» або пробний іспит.
             </Text>
           </View>
         )}
       </Section>
 
       {/* ---- mocks ---- */}
-      <Section title="Пробные экзамены">
+      <Section title="Пробні іспити">
         {activeAttempt.data?.status === 'active' && activeAttempt.data.mode === 'mock' && (
           <Pressable
             onPress={() =>
@@ -262,18 +373,18 @@ export function TorflHubScreen({
           >
             <Ionicons name="play-circle" size={22} color={tokens.accent} />
             <View className="flex-1 gap-0.5">
-              <Text className="font-ui-medium">Продолжить пробный экзамен</Text>
+              <Text className="font-ui-medium">Продовжити пробний іспит</Text>
               <Text variant="caption">
                 {titleOf.get(`${activeAttempt.data.packId}/${activeAttempt.data.examId}`) ??
                   activeAttempt.data.examId}{' '}
-                · таймер идёт по часам
+                · таймер іде за годинником
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
           </Pressable>
         )}
         {mocks.items.length === 0 ? (
-          <EmptyLine text="Пробных экзаменов пока нет — они придут с синхронизацией." />
+          <EmptyLine text="Пробних іспитів поки немає — вони зʼявляться після синхронізації." />
         ) : (
           mocks.items.map((item) => (
             <ExamRow
@@ -286,7 +397,7 @@ export function TorflHubScreen({
       </Section>
 
       {/* ---- drills ---- */}
-      <Section title="Тренировки">
+      <Section title="Тренування">
         <View className="mb-3 gap-2">
           <Pressable
             onPress={() => router.push(drillHref({ source: 'deck', level }))}
@@ -297,13 +408,13 @@ export function TorflHubScreen({
           >
             <Ionicons name="albums-outline" size={20} color={tokens.accent} />
             <View className="flex-1 gap-0.5">
-              <Text className="font-ui-medium">Работа над ошибками · {torfl.deckDue}</Text>
+              <Text className="font-ui-medium">Робота над помилками · {torfl.deckDue}</Text>
               <Text variant="caption">
                 {torfl.deckDue > 0
-                  ? 'Карточки с твоими ошибками — пора повторить'
+                  ? 'Картки з твоїми помилками — час повторити'
                   : torfl.deckTotal > 0
-                    ? `Сегодня повторять нечего · в колоде ${torfl.deckTotal}`
-                    : 'Появится после первой тренировки'}
+                    ? `Сьогодні повторювати нічого · у колоді ${torfl.deckTotal}`
+                    : 'Зʼявиться після першого тренування'}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -317,7 +428,7 @@ export function TorflHubScreen({
             >
               <Ionicons name="flash-outline" size={20} color={tokens.accent} />
               <View className="flex-1 gap-0.5">
-                <Text className="font-ui-medium">Молния</Text>
+                <Text className="font-ui-medium">Швидкий раунд</Text>
                 <Text variant="caption">{lightningCaption(level)}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -332,9 +443,9 @@ export function TorflHubScreen({
             >
               <Ionicons name="mic-outline" size={20} color={tokens.accent} />
               <View className="flex-1 gap-0.5">
-                <Text className="font-ui-medium">Билеты · {ticketCount}</Text>
+                <Text className="font-ui-medium">Білети · {ticketCount}</Text>
                 <Text variant="caption">
-                  {`Тянешь тему монолога — ${minutesUk(profile.monologueDefaults.prepSec)} подготовки, ${minutesUk(profile.monologueDefaults.answerSec)} ответа, запись`}
+                  {`Тягнеш тему монологу — ${minutesUk(profile.monologueDefaults.prepSec)} підготовки, ${minutesUk(profile.monologueDefaults.answerSec)} відповіді, запис`}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -348,7 +459,7 @@ export function TorflHubScreen({
           className="-mx-4 mb-3"
           contentContainerStyle={{ paddingHorizontal: 16 }}
         >
-          {SUBTEST_ORDER.map((kind) => {
+          {tabKinds.map((kind) => {
             const selected = kind === tab;
             const n =
               kind === 'writing'
@@ -388,7 +499,7 @@ export function TorflHubScreen({
         </ScrollView>
         {tab === 'writing' ? (
           writingEntries.length === 0 ? (
-            <EmptyLine text="Задания на письмо появятся вместе с экзаменами." />
+            <EmptyLine text="Завдання з письма зʼявляться разом з іспитами." />
           ) : (
             <View className="gap-2">
               {writingPracticeGroups(writingEntries).map((group) => (
@@ -415,7 +526,9 @@ export function TorflHubScreen({
                           {e.item.task.uk}
                         </Text>
                         <Text variant="caption" numberOfLines={1}>
-                          {e.examTitleUk} · {e.item.bullets.length} пункт(ов) · без таймера
+                          {e.examTitleUk} · {e.item.bullets.length}{' '}
+                          {pluralUk(e.item.bullets.length, ['пункт', 'пункти', 'пунктів'])} · без
+                          таймера
                         </Text>
                       </View>
                       <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -427,7 +540,7 @@ export function TorflHubScreen({
           )
         ) : tab === 'speaking' ? (
           speakingEntries.length === 0 ? (
-            <EmptyLine text="Задания на говорение появятся вместе с экзаменами." />
+            <EmptyLine text="Завдання з говоріння зʼявляться разом з іспитами." />
           ) : (
             <View className="gap-2">
               {speakingEntries.map((e) => (
@@ -448,8 +561,8 @@ export function TorflHubScreen({
                     <Text variant="caption" numberOfLines={1}>
                       {e.examTitleUk} ·{' '}
                       {e.item.kind === 'speaking-reply'
-                        ? 'задание 1 · ответ'
-                        : 'задание 2 · ситуация'}{' '}
+                        ? 'завдання 1 · відповідь'
+                        : 'завдання 2 · ситуація'}{' '}
                       · без таймера
                     </Text>
                   </View>
@@ -459,7 +572,7 @@ export function TorflHubScreen({
             </View>
           )
         ) : tabTiles.length === 0 ? (
-          <EmptyLine text={`Тренировок по разделу «${SUBTEST_LABELS[tab].uk}» пока нет.`} />
+          <EmptyLine text={`Тренувань із розділу «${SUBTEST_LABELS[tab].uk}» поки немає.`} />
         ) : (
           <View className="flex-row flex-wrap gap-2">
             {tabTiles.map((tile) => (
@@ -478,8 +591,8 @@ export function TorflHubScreen({
                 }
                 onLongPress={() => openIntro(tile.packId, tile.examId)}
                 accessibilityRole="button"
-                accessibilityHint="Long press for the whole drill set"
-                accessibilityLabel={`${topicLabel(tile.topic).uk}: ${tile.itemCount} ${ruPlural(tile.itemCount, ITEMS)}`}
+                accessibilityHint="Довге натискання — увесь набір тренувань"
+                accessibilityLabel={`${topicLabel(tile.topic).uk}: ${tile.itemCount} ${pluralUk(tile.itemCount, ITEMS)}`}
                 testID={`torfl-topic-${tile.topic}`}
                 className="w-[48.5%] gap-1 rounded-xl border border-border bg-surface px-3 py-3 active:bg-surface-2"
               >
@@ -491,7 +604,7 @@ export function TorflHubScreen({
                 </Text>
                 <View className="mt-1 flex-row items-center justify-between">
                   <Text variant="caption">
-                    {tile.itemCount} {ruPlural(tile.itemCount, ITEMS)}
+                    {tile.itemCount} {pluralUk(tile.itemCount, ITEMS)}
                   </Text>
                   <Text variant="caption" testID={`torfl-topic-acc-${tile.topic}`}>
                     {torfl.accuracyByTopic.has(tile.topic)
@@ -507,9 +620,9 @@ export function TorflHubScreen({
 
       {/* ---- my answers (T74) ---- */}
       <Section
-        title="Мои ответы"
+        title="Мої відповіді"
         action={{
-          label: 'Все',
+          label: 'Усі',
           onPress: () => router.push({ pathname: '/torfl/answers', params: { level } }),
         }}
       >
@@ -523,13 +636,13 @@ export function TorflHubScreen({
           <View className="flex-1 gap-0.5">
             <Text className="font-ui-medium">
               {answers.data && answers.data.entryCount > 0
-                ? `Мои ответы · ${answers.data.entryCount}`
-                : 'Мои ответы'}
+                ? `Мої відповіді · ${answers.data.entryCount}`
+                : 'Мої відповіді'}
             </Text>
             <Text variant="caption">
               {answers.data && answers.data.promptCount > 0
-                ? `Твои ответы на ${answers.data.promptCount} ${ruPlural(answers.data.promptCount, ['тему', 'темы', 'тем'])} экзамена — напиши и отрепетируй вслух`
-                : 'Свои ответы на темы экзамена: написать, получить правку, отрепетировать вслух'}
+                ? `Твої відповіді на ${answers.data.promptCount} ${pluralUk(answers.data.promptCount, ['тему', 'теми', 'тем'])} іспиту — напиши й відрепетируй вголос`
+                : 'Власні відповіді на теми іспиту: написати, отримати правки, відрепетирувати вголос'}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -538,18 +651,18 @@ export function TorflHubScreen({
 
       {/* ---- texts ---- */}
       <Section
-        title="Тексты"
+        title="Тексти"
         action={
           texts.total > 0
             ? {
-                label: `Все · ${texts.total}`,
+                label: `Усі · ${texts.total}`,
                 onPress: () => router.push({ pathname: '/torfl/texts', params: { level } }),
               }
             : undefined
         }
       >
         {preview.length === 0 ? (
-          <EmptyLine text="Тексты для чтения и аудирования появятся вместе с экзаменами." />
+          <EmptyLine text="Тексти для читання й слухання зʼявляться разом з іспитами." />
         ) : (
           preview.map((text) => (
             <TextRow key={`${text.packId}/${text.storyId}`} text={text} from="texts" />
@@ -558,9 +671,9 @@ export function TorflHubScreen({
       </Section>
 
       {/* ---- history ---- */}
-      <Section title="История">
+      <Section title="Історія">
         {(attempts.data ?? []).length === 0 ? (
-          <EmptyLine text="Попыток пока нет. Здесь будут пробные экзамены и тренировки." />
+          <EmptyLine text="Спроб поки немає. Тут будуть пробні іспити й тренування." />
         ) : (
           (attempts.data ?? []).map((a) => (
             <AttemptRow
@@ -639,9 +752,9 @@ function EmptyLine({ text }: { text: string }) {
 }
 
 const STATUS_LABELS: Record<ExamAttempt['status'], string> = {
-  active: 'идёт',
-  finished: 'завершён',
-  abandoned: 'прерван',
+  active: 'триває',
+  finished: 'завершено',
+  abandoned: 'перервано',
 };
 
 function AttemptRow({
@@ -654,24 +767,20 @@ function AttemptRow({
   onOpen?: () => void;
 }) {
   const pct = overallPct(attempt.results);
-  const when = new Date(attempt.startedAt).toLocaleDateString('ru-RU', {
+  const when = new Date(attempt.startedAt).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'short',
   });
   const verdictText =
     attempt.verdict === 'pass'
-      ? 'сдал бы'
+      ? 'склав би'
       : attempt.verdict === 'pass-borderline'
-        ? 'сдал бы (на грани)'
+        ? 'склав би (на межі)'
         : attempt.verdict === 'fail'
-          ? 'не сдал'
+          ? 'не склав би'
           : null;
   const scope =
-    attempt.mode === 'mock'
-      ? attempt.scope === 'full'
-        ? ' · весь экзамен'
-        : ' · один субтест'
-      : '';
+    attempt.mode === 'mock' ? (attempt.scope === 'full' ? ' · увесь іспит' : ' · один розділ') : '';
   const Row = onOpen ? Pressable : View;
   return (
     <Row
@@ -689,7 +798,7 @@ function AttemptRow({
           {verdictText ? ` · ${verdictText}` : ''}
         </Text>
       </View>
-      <Text variant="caption">{pct === null ? '—' : `${pct.toLocaleString('ru-RU')} %`}</Text>
+      <Text variant="caption">{pct === null ? '—' : `${pct.toLocaleString('uk-UA')} %`}</Text>
       {onOpen ? <Ionicons name="chevron-forward" size={14} color="#888" /> : null}
     </Row>
   );

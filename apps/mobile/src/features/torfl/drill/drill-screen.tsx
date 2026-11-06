@@ -22,9 +22,9 @@ const SOURCES: readonly DrillSource[] = ['set', 'deck', 'lightning'];
 /**
  * The drill runner (T70, TORFL §7.1) — route `/torfl/drill?packId&examId&
  * topic?&source=set|deck|lightning`. One runner for a `drill` exam set, the
- * exam deck («Работа над ошибками») and «Молния»: SessionShell chrome with
+ * exam deck («Робота над помилками») and the quick round: SessionShell chrome with
  * the education ambient, instant feedback + explain card per item, a pace
- * bar in «Молния» (visual only), then the summary.
+ * bar in the quick round (visual only), then the summary.
  */
 export function DrillScreen() {
   // T76: per-passage scroll memory lives for one drill session.
@@ -59,7 +59,7 @@ export function DrillScreen() {
   if (session.phase === 'error') {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <QueryError message="Не удалось собрать тренировку." onRetry={session.retry} />
+        <QueryError message="Не вдалося зібрати тренування." onRetry={session.retry} />
         <Pressable
           onPress={() => session.router.back()}
           accessibilityRole="button"
@@ -74,12 +74,12 @@ export function DrillScreen() {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8" testID="drill-empty">
         <Text className="font-reading text-xl">
-          {params.source === 'deck' ? 'Колода пуста' : 'Заданий нет'}
+          {params.source === 'deck' ? 'Колода порожня' : 'Завдань немає'}
         </Text>
         <Text variant="muted" className="text-center">
           {params.source === 'deck'
-            ? 'Сейчас нет карточек к повторению. Решай тренировки — ошибки вернутся сюда.'
-            : 'В этой тренировке нет заданий, которые можно решить здесь.'}
+            ? 'Зараз немає карток до повторення. Розвʼязуй тренування — помилки повернуться сюди.'
+            : 'У цьому тренуванні немає завдань, які можна розвʼязати тут.'}
         </Text>
         <Pressable
           onPress={() => session.router.back()}

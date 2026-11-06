@@ -111,7 +111,7 @@ export function PassagePanel({
       >
         <Ionicons name="reader-outline" size={16} color={theme.textMuted} />
         <Text className="flex-1 font-ui-medium text-sm">Текст</Text>
-        {lookup && open && <Text variant="caption">нажми на слово</Text>}
+        {lookup && open && <Text variant="caption">натисни на слово</Text>}
         <Ionicons name={open ? 'chevron-up' : 'chevron-down'} size={16} color={theme.textMuted} />
       </Pressable>
       {open && (
@@ -145,12 +145,12 @@ export function PassagePanel({
                 setOffset(0);
               }}
               accessibilityRole="button"
-              accessibilityLabel="К началу текста"
+              accessibilityLabel="До початку тексту"
               testID="passage-to-top"
               className="absolute bottom-2 right-3 flex-row items-center gap-1 rounded-full border border-border bg-surface-2 px-3 py-1.5 active:opacity-80"
             >
               <Ionicons name="arrow-up" size={13} color={theme.accent} />
-              <Text className="font-ui-medium text-xs text-accent">к началу</Text>
+              <Text className="font-ui-medium text-xs text-accent">до початку</Text>
             </Pressable>
           )}
         </View>
