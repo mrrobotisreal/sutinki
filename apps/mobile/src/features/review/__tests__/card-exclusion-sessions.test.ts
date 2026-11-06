@@ -29,9 +29,9 @@ async function setup() {
     storyId: 'st1',
     sentences: WORDS.map((w, i) => ({
       id: `s${i}`,
-      ru: `Вот ${w} здесь`,
+      uk: `Ось ${w} тут`,
       en: `Here is ${w}`,
-      lemmas: ['вот', w, 'здесь'],
+      lemmas: ["ось", w, "тут"],
     })),
   });
   await repos.reading.markFinished('p1', 'st1');

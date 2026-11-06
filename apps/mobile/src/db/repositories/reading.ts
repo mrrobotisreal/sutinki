@@ -74,7 +74,7 @@ export function createReadingRepo(db: SutinkiDB) {
         .select({
           packId: storyProgress.packId,
           storyId: storyProgress.storyId,
-          title: stories.titleRu,
+          title: stories.titleUk,
         })
         .from(storyProgress)
         .innerJoin(
