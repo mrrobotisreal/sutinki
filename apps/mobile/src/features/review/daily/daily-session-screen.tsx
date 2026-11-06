@@ -88,7 +88,13 @@ export function DailySessionScreen() {
   const recorderRef = React.useRef<DrillRecorder | null>(null);
   const torflAnsweredRef = React.useRef(0);
   /** T75: answered deck items per level — `exam_deck_reviewed` reports the level with most of them. */
-  const torflAnsweredByLevelRef = React.useRef<Record<TorflLevel, number>>({ A1: 0, A2: 0 });
+  const torflAnsweredByLevelRef = React.useRef<Record<TorflLevel, number>>({
+    A1: 0,
+    A2: 0,
+    B1: 0,
+    B2: 0,
+    C1: 0,
+  });
   const torflClosedRef = React.useRef(false);
   const getRecorder = () => (recorderRef.current ??= createDrillRecorder(repos.exams));
 

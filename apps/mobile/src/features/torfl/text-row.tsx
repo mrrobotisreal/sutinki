@@ -7,19 +7,21 @@ import { Text } from '@/components/ui/text';
 import { trackTorfl } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { ruPlural, type TextEntry } from './hub-model';
+import { pluralUk } from '@/lib/uk-plural';
 
-const SENTENCES = ['предложение', 'предложения', 'предложений'] as const;
+import type { TextEntry } from './hub-model';
+
+const SENTENCES = ['речення', 'речення', 'речень'] as const;
 
 const ROLE_LABELS: Record<TextEntry['roles'][number], string> = {
   passage: 'текст',
-  audio: 'аудио',
-  prompt: 'реплика',
-  model: 'образец',
+  audio: 'аудіо',
+  prompt: 'репліка',
+  model: 'зразок',
 };
 
 /**
- * One «Тексты» row (T69, TORFL §5.3): title, sentence count, the roles the
+ * One «Тексти» row (T69, UT16b): title, sentence count, the roles the
  * story plays in its exams, an audio icon; tap → the ordinary reader (lookup,
  * karaoke, bank) and `torfl_text_opened {packId, storyId, from}`.
  */
@@ -42,7 +44,7 @@ export function TextRow({ text, from }: { text: TextEntry; from: 'texts' | 'revi
     <Pressable
       onPress={open}
       accessibilityRole="button"
-      accessibilityLabel={`Открыть текст: ${text.titleUk}`}
+      accessibilityLabel={`Відкрити текст: ${text.titleUk}`}
       testID={`torfl-text-${text.storyId}`}
       className="mb-2 flex-row items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 active:bg-surface-2"
     >
@@ -51,7 +53,7 @@ export function TextRow({ text, from }: { text: TextEntry; from: 'texts' | 'revi
           {text.titleUk}
         </Text>
         <Text variant="caption" numberOfLines={1}>
-          {text.sentenceCount} {ruPlural(text.sentenceCount, SENTENCES)}
+          {text.sentenceCount} {pluralUk(text.sentenceCount, SENTENCES)}
           {text.roles.length > 0 ? ` · ${text.roles.map((r) => ROLE_LABELS[r]).join(', ')}` : ''}
         </Text>
       </View>
@@ -60,7 +62,7 @@ export function TextRow({ text, from }: { text: TextEntry; from: 'texts' | 'revi
           name="volume-medium-outline"
           size={16}
           color={tokens.textMuted}
-          accessibilityLabel="С аудио"
+          accessibilityLabel="З аудіо"
         />
       )}
       <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />

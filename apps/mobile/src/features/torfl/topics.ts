@@ -1,127 +1,168 @@
-import { TORFL_SUBTEST_ORDER, type ExamSubtestKind } from '@sutinki/schema';
+import { UKR_STATE_SUBTEST_ORDER, type ExamSubtestKind } from '@sutinki/schema';
 
 import type { IoniconName } from '@/features/library/categories';
 
 /**
- * «ТРКИ» labels the app owns (T69, TORFL_EXAM_PREP §3.4): packs carry topic
+ * «Іспит» labels the app owns (UT16b, UKR_EXAM_PREP §4): packs carry topic
  * SLUGS only and the app renders them. Like the M14 category sets, an
- * unknown slug renders raw and is never dropped, so a CT session can coin a
- * topic before the app learns its label. Pure module, unit-tested.
+ * unknown slug renders raw and is never dropped, so a content session can coin
+ * a topic before the app learns its label. Three families: per-section SKILL
+ * slugs, the 12 THEME slugs (valid under any section) and the grammar slugs
+ * `g01…g38` of the study-only grammar drills. Pure module, unit-tested.
  */
 
 export interface TopicLabel {
   uk: string;
   en: string;
-  subtestKind: ExamSubtestKind;
+  /** The section a skill/grammar slug belongs to; null for the cross-section themes. */
+  subtestKind: ExamSubtestKind | null;
 }
 
-/**
- * §3.4, in table order (the hub's tile order inside a subtest tab), then the
- * TORFL_A2_EXAM_PREP §4 additions (T75): each A2 slug sits right after the
- * last A1 slug of its subtest kind, so the tile order is the A1 table then A2.
- */
-export const TOPICS = {
-  'lex-verbs': { uk: 'Глаголы-близнецы', en: 'Look-alike verbs', subtestKind: 'lexgram' },
-  'lex-family': { uk: 'Однокоренные слова', en: 'Word families', subtestKind: 'lexgram' },
-  'lex-negation': { uk: 'Не / нет', en: 'Negation', subtestKind: 'lexgram' },
-  agr: { uk: 'Согласование', en: 'Agreement', subtestKind: 'lexgram' },
-  pron: { uk: 'Местоимения', en: 'Pronouns', subtestKind: 'lexgram' },
-  'case-prep': { uk: 'Предложный', en: 'Prepositional case', subtestKind: 'lexgram' },
-  'case-acc': { uk: 'Винительный', en: 'Accusative case', subtestKind: 'lexgram' },
-  'case-gen': { uk: 'Родительный', en: 'Genitive case', subtestKind: 'lexgram' },
-  'case-dat': { uk: 'Дательный', en: 'Dative case', subtestKind: 'lexgram' },
-  'case-instr': { uk: 'Творительный', en: 'Instrumental case', subtestKind: 'lexgram' },
-  'verb-forms': {
-    uk: 'Спряжение и императив',
-    en: 'Conjugation & imperative',
-    subtestKind: 'lexgram',
-  },
-  'verb-aspect': { uk: 'Вид и время', en: 'Aspect & tense', subtestKind: 'lexgram' },
-  'verb-motion': { uk: 'Глаголы движения', en: 'Verbs of motion', subtestKind: 'lexgram' },
-  conj: { uk: 'Союзы и вопросы', en: 'Conjunctions & questions', subtestKind: 'lexgram' },
-  'lex-phrases': { uk: 'Речевой этикет', en: 'Speech etiquette', subtestKind: 'lexgram' },
-  'case-plural': { uk: 'Падежи во мн. числе', en: 'Plural cases', subtestKind: 'lexgram' },
-  'case-time': { uk: 'Время и даты', en: 'Time & dates', subtestKind: 'lexgram' },
-  numerals: { uk: 'Числительные', en: 'Numerals', subtestKind: 'lexgram' },
-  comparative: { uk: 'Сравнение', en: 'Comparison', subtestKind: 'lexgram' },
-  'verb-motion-prefix': {
-    uk: 'Приставочные глаголы движения',
-    en: 'Prefixed verbs of motion',
-    subtestKind: 'lexgram',
-  },
-  clauses: { uk: 'Сложное предложение', en: 'Complex sentences', subtestKind: 'lexgram' },
-  'read-continue': { uk: 'Продолжите фразу', en: 'Continue the line', subtestKind: 'reading' },
-  'read-signs': { uk: 'Объявления', en: 'Signs & notices', subtestKind: 'reading' },
-  'read-topic': { uk: 'О чём статья?', en: 'What is it about?', subtestKind: 'reading' },
-  'read-detail': { uk: 'Текст и вопросы', en: 'Text & questions', subtestKind: 'reading' },
-  'read-match': { uk: 'Какой фильм?', en: 'Which film?', subtestKind: 'reading' },
-  'listen-where': { uk: 'Где они?', en: 'Where are they?', subtestKind: 'listening' },
-  'listen-who': { uk: 'Кто говорит?', en: 'Who is speaking?', subtestKind: 'listening' },
-  'listen-phrase': { uk: 'Фраза-синоним', en: 'Same meaning', subtestKind: 'listening' },
-  'listen-detail': { uk: 'Детали диалога', en: 'Dialogue details', subtestKind: 'listening' },
-  'listen-info': { uk: 'Запишите информацию', en: 'Info capture', subtestKind: 'listening' },
-  'listen-goal': { uk: 'Цель диалога', en: 'Purpose of the dialogue', subtestKind: 'listening' },
-  'listen-monologue': { uk: 'Монолог', en: 'Monologue', subtestKind: 'listening' },
-  'write-letter': { uk: 'Письмо', en: 'The letter', subtestKind: 'writing' },
-  'write-note': { uk: 'Записка / сообщение', en: 'Note / message', subtestKind: 'writing' },
-  'speak-reply': { uk: 'Ответьте', en: 'Reply', subtestKind: 'speaking' },
-  'speak-situation': { uk: 'Начните диалог', en: 'Start the dialogue', subtestKind: 'speaking' },
-  'speak-monologue': { uk: 'Монолог', en: 'Monologue', subtestKind: 'speaking' },
+const skill = (uk: string, en: string, subtestKind: ExamSubtestKind): TopicLabel => ({
+  uk,
+  en,
+  subtestKind,
+});
+const theme = (uk: string, en: string): TopicLabel => ({ uk, en, subtestKind: null });
+
+/** Skill slugs, in tile order inside a section tab. */
+const SKILLS = {
+  'ls-mc3': skill('Слухання: оберіть відповідь', 'Listening: pick the answer', 'listening'),
+  'ls-tf': skill('Слухання: правда чи ні', 'Listening: true or false', 'listening'),
+  'rd-heading': skill('Заголовки до текстів', 'Match the headings', 'reading'),
+  'rd-tf': skill('Правда / неправда', 'True / false', 'reading'),
+  'rd-qa': skill('Питання й відповіді', 'Questions and answers', 'reading'),
+  'rd-gap-word': skill('Пропуск: слово', 'Gap: the word', 'reading'),
+  'rd-gap-form': skill('Пропуск: форма слова', 'Gap: the word form', 'reading'),
+  'rd-detail': skill('Текст і запитання', 'Text and questions', 'reading'),
+  'wr-message': skill('Записка, повідомлення', 'A note or message', 'writing'),
+  'wr-text': skill('Розгорнутий текст', 'A longer text', 'writing'),
+  'sp-photo': skill('Опис фото', 'Describe a photo', 'speaking'),
+  'sp-monologue': skill('Монолог', 'Monologue', 'speaking'),
+  'sp-dialogue': skill('Діалог', 'Dialogue', 'speaking'),
 } as const satisfies Record<string, TopicLabel>;
 
-export type TopicSlug = keyof typeof TOPICS;
-export const TOPIC_ORDER = Object.keys(TOPICS) as TopicSlug[];
+/** The 12 themes (Standard Catalogue Б, A1 3.1–3.12). */
+const THEMES = {
+  liudyna: theme('Людина', 'The person'),
+  dim: theme('Дім', 'Home'),
+  misto: theme('Місто', 'The city'),
+  pobut: theme('Побут', 'Daily life'),
+  diialnist: theme('Діяльність', 'Activities'),
+  dozvillia: theme('Дозвілля', 'Free time'),
+  podorozhi: theme('Подорожі', 'Travel'),
+  kupivlia: theme('Купівля', 'Shopping'),
+  iidalnia: theme('Їжа', 'Food'),
+  zdorovia: theme('Здоров’я', 'Health'),
+  pryroda: theme('Природа', 'Nature'),
+  sviata: theme('Свята', 'Holidays'),
+} as const satisfies Record<string, TopicLabel>;
 
-export function isKnownTopic(slug: string): slug is TopicSlug {
+/** Grammar slugs g01…g38 = the grammar ids of the A1 grammar list (study-only drills). */
+const GRAMMAR_ROWS: readonly (readonly [string, string])[] = [
+  ['Абетка, великі літери', 'Alphabet and capitals'],
+  ['Апостроф, м’який знак', 'Apostrophe and soft sign'],
+  ['Голосні й приголосні, наголос', 'Vowels, consonants, stress'],
+  ['Інтонація', 'Intonation'],
+  ['Милозвучність: в/у, і/й, з/із/зі', 'Euphony: в/у, і/й, з/із/зі'],
+  ['Рід іменників', 'Noun gender'],
+  ['Називний відмінок множини', 'Nominative plural'],
+  ['Особові займенники, ти/ви/Ви', 'Personal pronouns, ти/ви/Ви'],
+  ['Присвійні й вказівні займенники', 'Possessives and demonstratives'],
+  ['Узгодження прикметників', 'Adjective agreement'],
+  ['Це …, Мене звати …', 'Identification: Це …, Мене звати …'],
+  ['Кличний відмінок', 'Vocative case'],
+  ['Теперішній час, дієвідміни, -ся', 'Present tense and conjugations'],
+  ['Неправильні дієслова', 'Irregular verbs'],
+  ['Є / нема(є)', 'Є / нема(є)'],
+  ['Заперечення, так / ні', 'Negation, yes / no'],
+  ['Питання', 'Questions'],
+  ['Сполучники: і, а, але, бо', 'Conjunctions: і, а, але, бо'],
+  ['Місцевий відмінок', 'Locative case'],
+  ['Знахідний відмінок', 'Accusative case'],
+  ['Знахідний із прийменниками', 'Accusative with prepositions'],
+  ['Займенники в непрямих відмінках', 'Pronoun case forms'],
+  ['Минулий час', 'Past tense'],
+  ['Майбутній час', 'Future tense'],
+  ['Слова на позначення часу', 'Time words'],
+  ['Наказовий спосіб', 'Imperative'],
+  ['Родовий відмінок', 'Genitive case'],
+  ['Числівники', 'Numerals'],
+  ['Давальний відмінок', 'Dative case'],
+  ['Орудний відмінок', 'Instrumental case'],
+  ['Дієслова руху', 'Verbs of motion'],
+  ['Час, дати, ціни', 'Time, dates, prices'],
+  ['Короткі письмові тексти', 'Short written texts'],
+  ['Стратегії читання, форма слова', 'Reading strategies, word form'],
+  ['Стратегії слухання', 'Listening strategies'],
+  ['Завдання з говоріння', 'Speaking tasks'],
+  ['Складнопідрядні речення', 'Subordinate clauses'],
+  ['Пастки слів', 'Word traps'],
+];
+const GRAMMAR: Record<string, TopicLabel> = Object.fromEntries(
+  GRAMMAR_ROWS.map(([uk, en], i) => [
+    `g${String(i + 1).padStart(2, '0')}`,
+    skill(uk, en, 'lexgram'),
+  ]),
+);
+
+export const TOPICS: Readonly<Record<string, TopicLabel>> = {
+  ...SKILLS,
+  ...THEMES,
+  ...GRAMMAR,
+};
+
+export type TopicSlug = string;
+export const TOPIC_ORDER: readonly string[] = Object.keys(TOPICS);
+const ORDER_INDEX = new Map(TOPIC_ORDER.map((slug, i) => [slug, i]));
+
+export function isKnownTopic(slug: string): boolean {
   return Object.prototype.hasOwnProperty.call(TOPICS, slug);
 }
 
-/** Known → its §3.4 label; unknown → the raw slug (subtest kind unknown → null). */
-export function topicLabel(slug: string): {
-  uk: string;
-  en: string;
-  subtestKind: ExamSubtestKind | null;
-} {
-  return isKnownTopic(slug) ? TOPICS[slug] : { uk: slug, en: slug, subtestKind: null };
+/** Known → its label; unknown → the raw slug (section unknown → null). */
+export function topicLabel(slug: string): TopicLabel {
+  return isKnownTopic(slug) ? TOPICS[slug]! : { uk: slug, en: slug, subtestKind: null };
 }
 
-/**
- * Sort key for topic slugs: §3.4 table order first, unknown slugs after,
- * alphabetically. Stable across renders (the hub's tile order).
- */
+/** Sort key for topic slugs: table order first, unknown slugs after, alphabetically. Stable across renders. */
 export function compareTopics(a: string, b: string): number {
-  const ia = TOPIC_ORDER.indexOf(a as TopicSlug);
-  const ib = TOPIC_ORDER.indexOf(b as TopicSlug);
-  if (ia !== -1 || ib !== -1) {
-    if (ia === -1) return 1;
-    if (ib === -1) return -1;
+  const ia = ORDER_INDEX.get(a);
+  const ib = ORDER_INDEX.get(b);
+  if (ia !== undefined || ib !== undefined) {
+    if (ia === undefined) return 1;
+    if (ib === undefined) return -1;
     return ia - ib;
   }
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
 export interface SubtestLabel {
-  /** Official title («Лексика. Грамматика»). */
+  /** Full title. */
   uk: string;
-  /** Short form for tabs and readiness rows («Лексика»). */
+  /** Short form for tabs and readiness rows. */
   short: string;
   en: string;
   icon: IoniconName;
 }
 
-/** The five subtests (TORFL §2), keyed by kind. */
+/** The four sections of the state exam plus the study-only grammar drills, keyed by kind. */
 export const SUBTEST_LABELS: Record<ExamSubtestKind, SubtestLabel> = {
+  listening: { uk: 'Слухання', short: 'Слухання', en: 'Listening', icon: 'headset-outline' },
+  reading: { uk: 'Читання', short: 'Читання', en: 'Reading', icon: 'reader-outline' },
   writing: { uk: 'Письмо', short: 'Письмо', en: 'Writing', icon: 'create-outline' },
+  speaking: { uk: 'Говоріння', short: 'Говоріння', en: 'Speaking', icon: 'mic-outline' },
   lexgram: {
-    uk: 'Лексика. Грамматика',
-    short: 'Лексика',
-    en: 'Vocabulary & grammar',
+    uk: 'Граматика (тренування)',
+    short: 'Граматика',
+    en: 'Grammar (study only)',
     icon: 'extension-puzzle-outline',
   },
-  reading: { uk: 'Чтение', short: 'Чтение', en: 'Reading', icon: 'reader-outline' },
-  listening: { uk: 'Аудирование', short: 'Аудирование', en: 'Listening', icon: 'headset-outline' },
-  speaking: { uk: 'Говорение', short: 'Говорение', en: 'Speaking', icon: 'mic-outline' },
 };
 
-/** Official SPbU order (§1.3 decision 7): Письмо → Лексика → Чтение → Аудирование → Говорение. */
-export const SUBTEST_ORDER: readonly ExamSubtestKind[] = TORFL_SUBTEST_ORDER;
+/**
+ * Every kind the shelf can show, in order: the four state-exam sections, then the
+ * study-only grammar drills. A level's own list comes from its shape sections
+ * (`sectionKindsOf`) — never from this constant.
+ */
+export const SUBTEST_ORDER: readonly ExamSubtestKind[] = [...UKR_STATE_SUBTEST_ORDER, 'lexgram'];

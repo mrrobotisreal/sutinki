@@ -1,4 +1,10 @@
-import type { ChoiceItem, TypedItem } from '@sutinki/schema';
+import {
+  examItemTasks,
+  itemPoints,
+  type ChoiceItem,
+  type MatchingItem,
+  type TypedItem,
+} from '@sutinki/schema';
 import { File } from 'expo-file-system';
 import * as React from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
@@ -11,15 +17,17 @@ import { ChoiceItemView } from '../items/choice-item-view';
 import { ExplainCard } from '../items/explain-card';
 import { loadItemAssets, type ItemAssets } from '../items/exam-audio';
 import { ListeningPlayer } from '../items/listening-player';
+import { MatchingItemView } from '../items/matching-item-view';
 import { PassagePanel } from '../items/passage-panel';
 import { TypedItemView } from '../items/typed-item-view';
-import { scoreChoice, scoreTyped, type ItemScore } from '../scoring';
+import { scoreChoice, scoreMatching, scoreTyped, type ItemScore } from '../scoring';
 import { Badge } from '../items/stem-text';
 import type { DrillEntry } from './drill-model';
 import type { ExamScoreArgs } from './types';
 import { topicLabel } from '../topics';
 
-export type DrillAnswerPayload = { index: number | null } | { text: string };
+export type DrillAnswerPayload =
+  { index: number | null } | { text: string } | { picks: (number | null)[] };
 
 /** Local-file existence for audio tracks (drills fall back to TTS when a file is gone). */
 export function fileExists(uri: string): boolean {
@@ -103,7 +111,8 @@ export function DrillItem({
   }
 
   const { item, subtest } = entry;
-  const max = subtest.pointsPerItem ?? 1;
+  // Points the whole item is worth: its own `points`, else pointsPerItem × tasks (a matching item = one per pair).
+  const max = itemPoints(subtest, item) || (subtest.pointsPerItem ?? 1) * examItemTasks(item);
   const answered = score !== null;
   const needsAudio = entry.subtest.kind === 'listening';
 
@@ -136,9 +145,16 @@ export function DrillItem({
             autoPlay
           />
         ) : (
-          <Text variant="caption">Аудио для этого задания не найдено.</Text>
+          <Text variant="caption">Аудіо для цього завдання не знайдено.</Text>
         ))}
-      {item.kind === 'choice' ? (
+      {item.kind === 'matching' ? (
+        <MatchingItemView
+          item={item as MatchingItem}
+          feedback="instant"
+          showStemEn
+          onSubmit={(picks) => finish({ picks }, scoreMatching(item as MatchingItem, picks, max))}
+        />
+      ) : item.kind === 'choice' ? (
         <ChoiceItemView
           item={item as ChoiceItem}
           feedback="instant"

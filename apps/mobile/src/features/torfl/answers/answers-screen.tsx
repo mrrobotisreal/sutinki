@@ -12,7 +12,7 @@ import { FeedbackBadge } from '@/features/journal/feedback-badge';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { ruPlural } from '../hub-model';
+import { pluralUk } from '@/lib/uk-plural';
 import type { TorflLevel } from '../level-profile';
 import {
   rehearsalText,
@@ -94,8 +94,8 @@ export function AnswersScreen({ level = 'A1' }: { level?: TorflLevel }) {
         </Text>
         {promptCount > 0 ? (
           <Text variant="caption" className="mt-1">
-            {promptCount} {ruPlural(promptCount, ['тема', 'темы', 'тем'])} · {entryCount}{' '}
-            {ruPlural(entryCount, ANSWERS)}
+            {promptCount} {pluralUk(promptCount, ['тема', 'темы', 'тем'])} · {entryCount}{' '}
+            {pluralUk(entryCount, ANSWERS)}
           </Text>
         ) : null}
       </View>
@@ -140,7 +140,7 @@ function TopicSection({
           {group.labelUk}
         </Text>
         <Text variant="caption">
-          {group.entryCount} {ruPlural(group.entryCount, ANSWERS)}
+          {group.entryCount} {pluralUk(group.entryCount, ANSWERS)}
         </Text>
       </View>
       <View className="gap-2">
@@ -217,7 +217,7 @@ function EntryRow({
 }) {
   const { tokens } = useAppTheme();
   const text = rehearsalText(entry);
-  const when = new Date(entry.createdAt).toLocaleDateString('ru-RU', {
+  const when = new Date(entry.createdAt).toLocaleDateString('uk-UA', {
     day: 'numeric',
     month: 'short',
   });
@@ -233,7 +233,7 @@ function EntryRow({
         </Text>
         <View className="mt-1.5 flex-row flex-wrap items-center gap-2">
           <Text variant="caption">
-            {when} · {n} {ruPlural(n, SENTENCES)}
+            {when} · {n} {pluralUk(n, SENTENCES)}
             {text.corrected ? ' · исправленный текст' : ''}
           </Text>
           <FeedbackBadge status={entry.feedbackStatus as FeedbackStatus} />

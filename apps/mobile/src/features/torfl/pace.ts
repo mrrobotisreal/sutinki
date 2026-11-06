@@ -1,30 +1,29 @@
 import type { ExamSubtestKind } from '@sutinki/schema';
 import { Rating, type Grade } from 'ts-fsrs';
 
-import { TORFL_PROFILES, type TorflLevel } from './level-profile';
+import { UKR_PROFILES, type TorflLevel } from './level-profile';
 
 /**
- * The real-exam pace (T70, TORFL_EXAM_PREP §7.3, ticket «Technical notes»):
- * seconds per item = the subtest's minutes × 60 ÷ its item count on the exam
- * demo. A1 (demo v1): lexgram 40 min / 70 = 34 s · reading 40 / 25 = 96 s ·
- * listening 30 / 20 = 90 s. A2 (demo v2, TORFL_A2 §5.1): 30 / 100 / 72 s.
- * The numbers live on the level profile; drill grading, «Молния»'s pace bar
- * and (T71) the timer warning copy read them from there — never re-derive.
+ * The real-exam pace (T70, re-targeted by UT16b): seconds per item = the
+ * section's minutes × 60 ÷ its item count in the level's state-exam shape
+ * (`UKR_STATE_SHAPES`). The numbers live on the level profile; drill grading,
+ * the quick round's pace bar and the timer warning copy read them from there —
+ * never re-derive.
  */
-export const PACE_SEC = TORFL_PROFILES.A1.pace;
+export const PACE_SEC = UKR_PROFILES.A1.pace;
 
 /** The pace row of one level (default A1). */
 export function paceFor(level: TorflLevel = 'A1') {
-  return TORFL_PROFILES[level].pace;
+  return UKR_PROFILES[level].pace;
 }
 
-/** «Молния» draws this many lexgram items and shows a bar this long per item. */
+/** The quick round draws this many lexgram items and shows a bar this long per item. */
 export const LIGHTNING_ITEMS = 20;
 export const LIGHTNING_PACE_SEC = PACE_SEC.lexgram;
 
-/** «Молния»'s per-item pace for one level (default A1 = {@link LIGHTNING_PACE_SEC}). */
+/** The quick round's per-item pace for one level (default A1 = {@link LIGHTNING_PACE_SEC}). */
 export function lightningPaceSec(level: TorflLevel = 'A1'): number {
-  return TORFL_PROFILES[level].pace.lexgram;
+  return UKR_PROFILES[level].pace.lexgram;
 }
 
 /** A correct answer slower than this × the exam pace is graded Hard instead of Good. */
@@ -66,7 +65,7 @@ export function paceFraction(ms: number, paceSec: number): number {
   return paceSec > 0 ? Math.max(0, ms) / (paceSec * 1000) : 0;
 }
 
-/** «Ваш темп» line numbers for the Молния end screen: average seconds per item, one decimal. */
+/** pace line numbers for the quick-round end screen: average seconds per item, one decimal. */
 export function averageSeconds(totalMs: number, items: number): number {
   return items > 0 ? Math.round(totalMs / items / 100) / 10 : 0;
 }

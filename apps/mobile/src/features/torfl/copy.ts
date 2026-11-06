@@ -49,7 +49,7 @@ export function fmtMinutes(lang: Lang, min: number): string {
 
 /** The locale for numbers (decimal comma in RU). */
 export function numLocale(lang: Lang): string {
-  return lang === 'uk' ? 'ru-RU' : 'en-US';
+  return lang === 'uk' ? 'uk-UA' : 'en-US';
 }
 
 export const instructionCopy = defineCopy<{

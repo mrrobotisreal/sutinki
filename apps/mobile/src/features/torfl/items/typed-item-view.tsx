@@ -90,7 +90,7 @@ export function TypedItemView({
           autoComplete="off"
           spellCheck={false}
           keyboardType="default"
-          placeholder="Напиши ответ…"
+          placeholder="Напиши відповідь…"
           placeholderTextColor={tokens.textMuted}
           onSubmitEditing={submit}
           returnKeyType="done"
@@ -99,7 +99,8 @@ export function TypedItemView({
           className="rounded-xl border border-border bg-surface px-4 py-3.5 font-reading text-xl text-text"
         />
         <Text variant="caption">
-          Включи русскую клавиатуру (ё и е считаются одинаково). / Switch to the Cyrillic keyboard.
+          Увімкни українську клавіатуру (апостроф будь-якого виду приймається). / Switch to the
+          Ukrainian keyboard.
         </Text>
       </View>
       {!submitted && !mock && (
@@ -115,7 +116,7 @@ export function TypedItemView({
           <Text
             className={`font-ui-medium ${text.trim().length === 0 ? 'text-text-muted' : 'text-bg'}`}
           >
-            Проверить
+            Перевірити
           </Text>
         </Pressable>
       )}
@@ -123,10 +124,10 @@ export function TypedItemView({
         <View className={`gap-1 rounded-xl border px-4 py-3 ${tone}`} testID="typed-verdict">
           <Text className="font-ui-bold">
             {result.outcome === 'full'
-              ? 'Верно!'
+              ? 'Правильно!'
               : result.outcome === 'half'
-                ? `Почти: ${result.points} из ${result.maxPoints} — смысл верный, форма не та`
-                : 'Неверно'}
+                ? `Майже: ${result.points} з ${result.maxPoints} — зміст правильний, форма не та`
+                : 'Неправильно'}
           </Text>
           {result.outcome !== 'full' && (
             <Text>

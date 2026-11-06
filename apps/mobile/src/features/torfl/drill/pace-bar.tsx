@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { paceFraction } from '../pace';
 
 /**
- * «Молния»'s per-item pace bar (T70, §7.3): fills over `paceSec` seconds and
+ * The quick round's per-item pace bar (T70, §7.3): fills over `paceSec` seconds and
  * turns danger-coloured past 100 %. VISUAL ONLY — it never auto-skips. It
  * restarts when `resetKey` changes and freezes while `running` is false.
  */
@@ -43,7 +43,7 @@ export function PaceBar({
         />
       </View>
       <Text variant="caption" className="text-right text-xs">
-        {Math.round(elapsed / 1000)} с · темп экзамена {paceSec} с
+        {Math.round(elapsed / 1000)} с · темп іспиту {paceSec} с
       </Text>
     </View>
   );

@@ -1,6 +1,7 @@
 import {
   ALL_GENRES,
   CATEGORIES,
+  BASE_CATEGORY_ORDER,
   CATEGORY_ORDER,
   GENRE_ORDER,
   classifyPack,
@@ -98,7 +99,7 @@ export function categoryCounts(packs: readonly FilterablePack[]): Record<string,
 }
 
 /**
- * Category chip items: always all eight known shelves in CATEGORY_ORDER with
+ * Category chip items: the six base shelves always, an exam shelf only when installed, in CATEGORY_ORDER with
  * their counts (0 when empty). Recorded T45 decision for an UNKNOWN installed
  * category (a pack authored with a slug the app doesn't know yet, e.g.
  * `recipes`): append a chip with the raw slug + generic icon after the eight,
@@ -107,7 +108,14 @@ export function categoryCounts(packs: readonly FilterablePack[]): Record<string,
  * selected chip is never invisible.
  */
 export function categoryChipItems(counts: Record<string, number>, selected?: string): ChipItem[] {
-  const items: ChipItem[] = CATEGORY_ORDER.map((key) => ({
+  // Six base chips always; an «Іспит · <level>» chip only when that level has ≥ 1 installed pack
+  // (or is the persisted selection, so the selected chip is never invisible).
+  const items: ChipItem[] = CATEGORY_ORDER.filter(
+    (key) =>
+      (BASE_CATEGORY_ORDER as readonly string[]).includes(key) ||
+      (counts[key] ?? 0) > 0 ||
+      key === selected,
+  ).map((key) => ({
     key,
     label: CATEGORIES[key].uk,
     icon: CATEGORIES[key].icon,

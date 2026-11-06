@@ -25,21 +25,19 @@ import {
 import {
   computeReadiness,
   latestMockPcts,
-  predictedLine,
   recommendToday,
-  type PredictedLine,
   type ReadinessRow,
   type TodayStep,
 } from './readiness';
 import { stepAction, type TodayAction, type TopicTarget } from './today';
 import { SUBTEST_ORDER } from './topics';
 import type { ExamSubtestKind } from '@sutinki/schema';
-import type { TorflLevel } from './level-profile';
+import { profileFor, type TorflLevel } from './level-profile';
 import type { ExamMode } from './model';
-import { getExamDate, setExamDate } from './settings';
+import { getExamDate, getStoredLevel, setExamDate, setStoredLevel } from './settings';
 
 /**
- * «ТРКИ» screen hooks (T69): composition over the T68 `db/hooks` exam
+ * «Іспит» screen hooks (T69): composition over the T68 `db/hooks` exam
  * queries — no DB access of their own beyond the settings accessors.
  */
 
@@ -92,16 +90,33 @@ export function useExamDate(level: TorflLevel = 'A1') {
   return { date: query.data ?? null, today: localDateKey(), setDate, isPending: query.isPending };
 }
 
-/** Both levels' exam dates side by side (T75). */
-export function useExamDates(): {
-  A1: ReturnType<typeof useExamDate>;
-  A2: ReturnType<typeof useExamDate>;
-} {
-  return { A1: useExamDate('A1'), A2: useExamDate('A2') };
+/** Every level's exam date side by side. Fixed call order, so the hook rules hold. */
+export function useExamDates(): Record<TorflLevel, ReturnType<typeof useExamDate>> {
+  return {
+    A1: useExamDate('A1'),
+    A2: useExamDate('A2'),
+    B1: useExamDate('B1'),
+    B2: useExamDate('B2'),
+    C1: useExamDate('C1'),
+  };
+}
+
+/** The last-used hub level (`torfl.level`); null = none stored (a first visit). */
+export function useStoredLevel() {
+  const queryClient = useQueryClient();
+  const query = useQuery({ queryKey: ['torfl', 'level'] as const, queryFn: getStoredLevel });
+  const set = React.useCallback(
+    async (level: TorflLevel) => {
+      queryClient.setQueryData(['torfl', 'level'], level);
+      await setStoredLevel(level);
+    },
+    [queryClient],
+  );
+  return { level: query.data ?? null, isPending: query.isPending, set };
 }
 
 /**
- * «Тексты» (TORFL §5.3): every story of the installed exam packs, grouped by
+ * «Тексти»: every story of the installed exam packs, grouped by
  * the subtest that references it, with an audio flag per story. `level`
  * (T75) limits the texts to packs that have exams of that level.
  */
@@ -132,7 +147,7 @@ export function useExamTexts(level: TorflLevel = 'A1'): {
   };
 }
 
-// --- T70: readiness, deck and «Сегодня» ----------------------------------------------
+// --- T70: readiness, deck and «Сьогодні» ----------------------------------------------
 
 /** Per-kind accuracy over the last 200 objective responses (the readiness drill estimate). */
 export function useExamRecentAccuracy(level: TorflLevel = 'A1') {
@@ -143,12 +158,11 @@ export function useExamRecentAccuracy(level: TorflLevel = 'A1') {
 }
 
 export interface TorflToday {
-  /** The level this «Сегодня» / hub view is for (T75). */
+  /** The level this «Сьогодні» / hub view is for (T75). */
   level: TorflLevel;
   isPending: boolean;
-  /** Five readiness rows in official order (also the hub card's mini-bars). */
+  /** One readiness row per section of the level's shape, in exam order (also the hub card's mini-bars). */
   readiness: ReadinessRow[];
-  predicted: PredictedLine;
   deckDue: number;
   deckTotal: number;
   step: TodayStep | null;
@@ -162,7 +176,7 @@ export interface TorflToday {
 }
 
 /**
- * Everything the hub, its Library card and the Today «ТРКИ» card show,
+ * Everything the hub, its Library card and the Today «Іспит» card show,
  * computed once from the T68 queries through the pure `readiness.ts` /
  * `today.ts` (no screen re-derives any of it).
  */
@@ -184,6 +198,7 @@ export function useTorflToday(level: TorflLevel = 'A1'): TorflToday {
   return React.useMemo(() => {
     const now = asOf > 0 ? asOf : 0;
     const readiness = computeReadiness({
+      level,
       now,
       mocks: latestMockPcts(attempts.data ?? []),
       drills: recent.data ?? {},
@@ -215,6 +230,7 @@ export function useTorflToday(level: TorflLevel = 'A1'): TorflToday {
       lastMockAt,
       now,
       mockInstalled: (exams.data ?? []).some((e) => e.mode === 'mock'),
+      passPct: profileFor(level).passPct,
     });
     const accuracyByTopic = new Map(
       stats
@@ -225,7 +241,6 @@ export function useTorflToday(level: TorflLevel = 'A1'): TorflToday {
       level,
       isPending: exams.isPending || attempts.isPending,
       readiness,
-      predicted: predictedLine(readiness, level),
       deckDue,
       deckTotal: deck.data?.total ?? 0,
       step,
@@ -249,9 +264,15 @@ export function useTorflToday(level: TorflLevel = 'A1'): TorflToday {
 }
 
 /**
- * Both levels' «Сегодня» side by side (T75). Fixed call order, so the hook
- * rules hold: A1's hooks always run before A2's.
+ * Every level's «Сьогодні» side by side. Fixed call order, so the hook rules
+ * hold; the queries are keyed per level and cached.
  */
-export function useTorflLevelsToday(): { A1: TorflToday; A2: TorflToday } {
-  return { A1: useTorflToday('A1'), A2: useTorflToday('A2') };
+export function useTorflLevelsToday(): Record<TorflLevel, TorflToday> {
+  return {
+    A1: useTorflToday('A1'),
+    A2: useTorflToday('A2'),
+    B1: useTorflToday('B1'),
+    B2: useTorflToday('B2'),
+    C1: useTorflToday('C1'),
+  };
 }

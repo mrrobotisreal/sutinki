@@ -30,7 +30,14 @@ export const speakingGrader: KindGrader = {
     const hit = findExamItem(exam, job.itemId, job.subtestId);
     if (!hit) return null;
     const a = job.answer;
-    if (!a || a.kind === 'choice' || a.kind === 'typed' || a.kind === 'writing') return null;
+    if (
+      !a ||
+      a.kind === 'choice' ||
+      a.kind === 'typed' ||
+      a.kind === 'matching' ||
+      a.kind === 'writing'
+    )
+      return null;
     const hasText = a.transcript.trim().length > 0 || (a.assistTranscript ?? '').trim().length > 0;
     if (!hasText) return null;
     const level = torflLevelOf(exam.level);

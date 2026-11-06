@@ -619,6 +619,11 @@ function MonologueBody({
         </View>
         <View className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4">
           <Text className="font-reading-bold text-2xl">{item.topicTitle.uk}</Text>
+          {item.image ? (
+            <Text variant="muted" testID="photo-alt">
+              Фото: {item.image.alt}
+            </Text>
+          ) : null}
           <View className="gap-1">
             {item.questions.map((q, i) => (
               <Text key={i} variant="muted" className="font-reading leading-6">

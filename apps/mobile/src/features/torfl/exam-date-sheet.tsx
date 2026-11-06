@@ -10,13 +10,20 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { monthGrid, monthTitle, shiftMonth } from './calendar';
 
-const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+import { UK_MONTHS_GENITIVE } from '@/lib/uk-numbers';
+
+/** «5 листопада 2026» for the screen reader. */
+function dayLabel(day: string): string {
+  return `${Number(day.slice(8))} ${UK_MONTHS_GENITIVE[Number(day.slice(5, 7)) - 1]} ${day.slice(0, 4)}`;
+}
+
+const WEEKDAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
 
 /**
  * Exam-date picker sheet (T69, TORFL §5.3 header) — a bottom sheet with a
  * Monday-first month grid (no native picker dependency: no dev-client
- * rebuild, dark tokens throughout). Past days are disabled. «Сохранить»
- * persists the picked day; «Убрать дату» clears `torfl.examDate`.
+ * rebuild, dark tokens throughout). Past days are disabled. «Зберегти»
+ * persists the picked day; «Прибрати дату» clears the level's exam date key.
  */
 export function ExamDateSheet({
   open,
@@ -44,14 +51,14 @@ export function ExamDateSheet({
   const insets = useSafeAreaInsets();
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View
         className="rounded-t-2xl border-t border-border bg-surface px-5 pt-4"
         style={{ paddingBottom: insets.bottom + 24 }}
       >
         <View className="mb-3 flex-row items-center justify-between">
-          <Text className="font-ui-medium text-lg">Дата экзамена</Text>
-          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрыть">
+          <Text className="font-ui-medium text-lg">Дата іспиту</Text>
+          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрити">
             <Ionicons name="close" size={22} color={tokens.textMuted} />
           </Pressable>
         </View>
@@ -62,7 +69,7 @@ export function ExamDateSheet({
             disabled={month <= today.slice(0, 7)}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Предыдущий месяц"
+            accessibilityLabel="Попередній місяць"
             className="h-9 w-9 items-center justify-center rounded-full active:bg-surface-2"
           >
             <Ionicons
@@ -76,7 +83,7 @@ export function ExamDateSheet({
             onPress={() => setMonth((m) => shiftMonth(m, 1))}
             hitSlop={8}
             accessibilityRole="button"
-            accessibilityLabel="Следующий месяц"
+            accessibilityLabel="Наступний місяць"
             className="h-9 w-9 items-center justify-center rounded-full active:bg-surface-2"
           >
             <Ionicons name="chevron-forward" size={18} color={tokens.text} />
@@ -105,7 +112,7 @@ export function ExamDateSheet({
                       onPress={() => setPicked(day)}
                       disabled={past}
                       accessibilityRole="button"
-                      accessibilityLabel={day}
+                      accessibilityLabel={dayLabel(day)}
                       accessibilityState={{ selected, disabled: past }}
                       className={cn(
                         'h-9 w-9 items-center justify-center rounded-full',
@@ -137,7 +144,7 @@ export function ExamDateSheet({
               accessibilityRole="button"
               className="flex-1 items-center rounded-full border border-border px-4 py-3 active:bg-surface-2"
             >
-              <Text className="text-text-muted">Убрать дату</Text>
+              <Text className="text-text-muted">Прибрати дату</Text>
             </Pressable>
           )}
           <Pressable
@@ -155,7 +162,7 @@ export function ExamDateSheet({
                 !picked || picked === current ? 'text-text-muted' : 'text-bg',
               )}
             >
-              Сохранить
+              Зберегти
             </Text>
           </Pressable>
         </View>

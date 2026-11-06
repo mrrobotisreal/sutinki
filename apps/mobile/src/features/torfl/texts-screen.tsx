@@ -12,8 +12,8 @@ import { TextRow } from './text-row';
 import { SUBTEST_LABELS } from './topics';
 
 /**
- * «Тексты» (T69, TORFL §5.3): every passage / listening script / examiner
- * line / model answer across the installed exam packs, grouped by subtest
+ * «Тексти» (T69, UT16b): every passage / listening script / examiner
+ * line / model answer across the installed exam packs, grouped by section
  * (the subtest of the first item that references the story). Each row
  * opens the ordinary reader — lookup, karaoke and bank work as anywhere.
  */
@@ -33,9 +33,9 @@ export function TorflTextsScreen({ level = 'A1' }: { level?: TorflLevel }) {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-10">
         <Ionicons name="documents-outline" size={40} color={tokens.textMuted} />
-        <Text className="font-reading-bold text-xl">Пока пусто</Text>
+        <Text className="font-reading-bold text-xl">Поки порожньо</Text>
         <Text variant="muted" className="text-center">
-          Тексты для чтения и аудирования появятся вместе с экзаменами после синхронизации.
+          Тексти для читання й слухання зʼявляться разом з іспитами після синхронізації.
         </Text>
       </View>
     );

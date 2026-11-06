@@ -20,10 +20,10 @@ function mmss(ms: number): string {
 }
 
 /**
- * Drill summary (T70, TORFL §7.1): accuracy, XP, time, the per-topic table,
- * «в колоду ошибок: N», the answered items (LONG-PRESS an item → suspend its
- * deck card), a «практика — в разделе Письмо/Говорение» row for skipped
- * rubric items, and — for «Молния» — the pace readout (your average vs 34 s).
+ * Drill summary (T70, UT16b): accuracy, XP, time, the per-topic table,
+ * «до колоди помилок: N», the answered items (LONG-PRESS an item → suspend its
+ * deck card), a «практика — у розділі Письмо/Говоріння» row for skipped
+ * rubric items, and — for the quick round — the pace readout.
  */
 export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDone: () => void }) {
   const { tokens } = useAppTheme();
@@ -34,10 +34,10 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
   const onPace = avgSec <= lightningPaceSec(outcome.level);
 
   const suspend = (itemKey: string) => {
-    Alert.alert('Убрать из колоды?', 'Карточка перестанет возвращаться (можно вернуть позже).', [
-      { text: 'Отмена', style: 'cancel' },
+    Alert.alert('Прибрати з колоди?', 'Картка перестане повертатися (можна повернути пізніше).', [
+      { text: 'Скасувати', style: 'cancel' },
       {
-        text: 'Убрать',
+        text: 'Прибрати',
         style: 'destructive',
         onPress: () => {
           void repos.exams
@@ -61,24 +61,24 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
       <View className="items-center gap-1" testID="drill-summary">
         <Text variant="caption" className="uppercase tracking-wider">
           {lightning
-            ? 'Молния · готово'
+            ? 'Швидкий раунд · готово'
             : source === 'deck'
-              ? 'Работа над ошибками · готово'
-              : 'Тренировка завершена'}
+              ? 'Робота над помилками · готово'
+              : 'Тренування завершено'}
         </Text>
         <RNText className="font-ui-bold text-6xl text-text" testID="drill-accuracy">
           {summary.accuracyPct}%
         </RNText>
         <Text variant="muted">
-          Верно {summary.correct} из {summary.answered}
-          {summary.half > 0 ? ` · почти ${summary.half}` : ''}
+          Правильно {summary.correct} з {summary.answered}
+          {summary.half > 0 ? ` · майже ${summary.half}` : ''}
         </Text>
       </View>
 
       <View className="flex-row justify-center gap-8">
-        <Stat value={mmss(summary.totalMs)} label="время" />
+        <Stat value={mmss(summary.totalMs)} label="час" />
         <Stat value={`+${xp}`} label="XP" accent />
-        <Stat value={String(summary.toDeck)} label="в колоду ошибок" testID="drill-to-deck" />
+        <Stat value={String(summary.toDeck)} label="до колоди помилок" testID="drill-to-deck" />
       </View>
 
       {lightning && (
@@ -90,11 +90,11 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
           testID="lightning-pace"
         >
           <Text className="font-ui-bold">
-            Твой темп: {avgSec.toLocaleString('ru-RU')} с на задание
+            Твій темп: {avgSec.toLocaleString('uk-UA')} с на завдання
           </Text>
           <Text variant="caption">
             {lightningPaceNote(outcome.level)}{' '}
-            {onPace ? 'Ты укладываешься!' : 'Нужно быстрее — тренируй «Молнию» чаще.'}
+            {onPace ? 'Ти вкладаєшся!' : 'Треба швидше — частіше тренуй швидкий раунд.'}
           </Text>
         </View>
       )}
@@ -102,7 +102,7 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
       {summary.perTopic.length > 0 && (
         <View className="gap-2">
           <Text variant="caption" className="px-1 font-ui-medium uppercase tracking-wider">
-            По темам
+            За темами
           </Text>
           <View className="overflow-hidden rounded-xl border border-border bg-surface">
             {summary.perTopic.map((t, i) => (
@@ -134,7 +134,7 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
 
       <View className="gap-2">
         <Text variant="caption" className="px-1 font-ui-medium uppercase tracking-wider">
-          Задания · долгое нажатие — убрать из колоды
+          Завдання · довге натискання — прибрати з колоди
         </Text>
         <View className="overflow-hidden rounded-xl border border-border bg-surface">
           {results.map((r, i) => {
@@ -169,7 +169,7 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
                 <Text className="flex-1 text-sm" numberOfLines={1}>
                   {r.label ?? r.itemId}
                 </Text>
-                {off && <Text variant="caption">убрана</Text>}
+                {off && <Text variant="caption">прибрано</Text>}
               </Pressable>
             );
           })}
@@ -180,14 +180,14 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
         <View className="flex-row items-start gap-3 rounded-xl border border-dashed border-border px-4 py-3">
           <Ionicons name="information-circle-outline" size={18} color={tokens.textMuted} />
           <Text variant="muted" className="flex-1 text-sm">
-            Задания на{' '}
+            Завдання з{' '}
             {[
               skipped.writing > 0 ? SUBTEST_LABELS.writing.uk : null,
               skipped.speaking > 0 ? SUBTEST_LABELS.speaking.uk : null,
             ]
               .filter(Boolean)
-              .join(' и ')}{' '}
-            пропущены: практика — в разделе «Письмо» / «Говорение».
+              .join(' і ')}{' '}
+            пропущено: практика — у розділі «Письмо» / «Говоріння».
           </Text>
         </View>
       )}

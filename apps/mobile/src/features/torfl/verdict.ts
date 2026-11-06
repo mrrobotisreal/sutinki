@@ -1,8 +1,11 @@
-import type { ExamSubtestKind } from '@sutinki/schema';
+import { TORFL_SUBTEST_ORDER, type ExamSubtestKind } from '@sutinki/schema';
 
 import type { ExamVerdict } from './model';
-import { TORFL_PROFILES, type TorflLevel } from './level-profile';
-import { SUBTEST_ORDER } from './topics';
+import { TORFL_PROFILES } from './legacy-torfl-profile';
+import type { TorflLevel } from './level-profile';
+
+const SUBTEST_ORDER = TORFL_SUBTEST_ORDER;
+const legacyOf = (level: TorflLevel) => TORFL_PROFILES[level === 'A2' ? 'A2' : 'A1'];
 
 /**
  * The SPbU verdict (T71, TORFL_EXAM_PREP §6.3) — PURE. One rule, three
@@ -37,7 +40,7 @@ export interface VerdictOutcome {
  * readiness estimate: «unknown» can never predict a pass).
  */
 export function predictVerdict(pcts: VerdictPcts, level: TorflLevel = 'A1'): VerdictOutcome {
-  const { passPct, borderlinePct } = TORFL_PROFILES[level];
+  const { passPct, borderlinePct } = legacyOf(level);
   const values = SUBTEST_ORDER.map((kind) => ({ kind, pct: pcts[kind] ?? null }));
   const below66 = values.filter((v) => v.pct === null || v.pct < passPct);
   if (below66.length === 0) return { verdict: 'pass', retake: [] };

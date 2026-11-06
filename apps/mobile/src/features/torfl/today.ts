@@ -1,13 +1,14 @@
 import type { ExamSubtestKind } from '@sutinki/schema';
 
-import { ruPlural } from './hub-model';
+import { pluralUk } from '@/lib/uk-plural';
+
 import type { TodayStep } from './readiness';
 import { SUBTEST_LABELS, topicLabel } from './topics';
 
 /**
- * «Сегодня» / «Тренировка дня» presentation (T70, TORFL §5.3) — pure: turns
- * the recommender's `TodayStep` into copy and a navigation target. The hub
- * section, the Today «ТРКИ» card and the daily segment share it.
+ * «Сьогодні» / «Тренування дня» presentation (T70, UT16b) — pure: turns
+ * the recommender's `TodayStep` into Ukrainian copy and a navigation target.
+ * The hub section, the Today «Іспит» card and the daily segment share it.
  */
 
 export interface TopicTarget {
@@ -20,29 +21,29 @@ export type TodayAction =
   | { kind: 'drill'; source: 'deck' }
   | { kind: 'hub' };
 
-const CARDS = ['карточка', 'карточки', 'карточек'] as const;
+const CARDS = ['картка', 'картки', 'карток'] as const;
 
 export function describeStep(step: TodayStep): { title: string; caption: string } {
   switch (step.kind) {
     case 'topic':
       return {
-        title: `Подтяни: ${topicLabel(step.topic).uk}`,
-        caption: `${SUBTEST_LABELS[step.subtestKind].short} · сейчас ${step.accuracy}% верных — самая слабая тема`,
+        title: `Підтягни: ${topicLabel(step.topic).uk}`,
+        caption: `${SUBTEST_LABELS[step.subtestKind].short} · зараз ${step.accuracy}% правильних — найслабша тема`,
       };
     case 'deck':
       return {
-        title: `Работа над ошибками · ${step.due}`,
-        caption: `${step.due} ${ruPlural(step.due, CARDS)} к повторению сегодня`,
+        title: `Робота над помилками · ${step.due}`,
+        caption: `${step.due} ${pluralUk(step.due, CARDS)} до повторення сьогодні`,
       };
     case 'mock':
       return {
-        title: 'Пора на пробный экзамен',
-        caption: 'Больше недели без варианта, а все разделы выше 60% — проверь себя целиком',
+        title: 'Час на пробний іспит',
+        caption: 'Понад тиждень без варіанта, а всі розділи близько порога — перевір себе повністю',
       };
     case 'start':
       return {
-        title: 'Начни с тренировки',
-        caption: `${SUBTEST_LABELS[step.subtestKind].short}: первые задания помогут оценить уровень`,
+        title: 'Почни з тренування',
+        caption: `${SUBTEST_LABELS[step.subtestKind].short}: перші завдання допоможуть оцінити рівень`,
       };
   }
 }
