@@ -42,10 +42,11 @@ describe('canBankTopic (T69, UT16b)', () => {
 describe('bank toast (UT16b)', () => {
   it('Ukrainian plural, no leading Russian forms', async () => {
     const { bankTopicToast, topicSlugOfStory } = await import('../bank-topic');
-    expect(bankTopicToast(1)).toBe('+1 слово у словнику');
-    expect(bankTopicToast(23)).toBe('+23 слова у словнику');
-    expect(bankTopicToast(67)).toBe('+67 слів у словнику');
-    expect(bankTopicToast(0)).toBe('+0 слів — усі слова вже у словнику');
+    // T82 (UP07): the toast also says how the words arrive (the daily new-word budget).
+    expect(bankTopicToast(1)).toBe('+1 слово у Словнику · по 10 на день');
+    expect(bankTopicToast(23, 5)).toBe('+23 слова у Словнику · по 5 на день');
+    expect(bankTopicToast(67)).toBe('+67 слів у Словнику · по 10 на день');
+    expect(bankTopicToast(0)).toBe('+0 слів — усі слова вже в Словнику');
     expect(topicSlugOfStory('lx-o-sebe')).toBe('o-sebe');
   });
 });
