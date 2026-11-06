@@ -126,7 +126,8 @@ describe('course pack import (T89)', () => {
 
   it('a non-course pack writes no course rows (courseItems count is zero)', async () => {
     const db = createTestDb();
-    const exam = (await import('@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json')).default;
+    const exam = (await import('@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json'))
+      .default;
     const result = await importPack(db, exam as unknown as Pack);
     expect(result.counts.courseItems).toBe(0);
     expect(await db.select().from(courseFloors)).toEqual([]);

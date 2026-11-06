@@ -1,6 +1,6 @@
 import type { Pack } from '@sutinki/schema';
 import dialogueJson from '@sutinki/schema/fixtures/packs/a2-dialogue-001/pack.json';
-import examJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import examJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import listenJson from '@sutinki/schema/fixtures/packs/a1-listen-fixture/pack.json';
 import pack1Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-001/pack.json';
 import { describe, expect, it } from 'vitest';
@@ -61,7 +61,7 @@ describe('listen repository (T95)', () => {
     await importPack(db, multi);
     await importPack(db, dialogueJson as unknown as Pack);
     await importPack(db, examJson as unknown as Pack);
-    const ids = ['a1-multi-nofull', 'a2-dialogue-001', 'a1-exam-fixture', 'nope'];
+    const ids = ['a1-multi-nofull', 'a2-dialogue-001', 'a1-ukrexam-fixture', 'nope'];
     for (const id of ids) expect(await listen.getListenSource(id)).toBeNull();
     const avail = await listen.listListenAvailability(ids);
     for (const id of ids) expect(avail.get(id)!.state).toBe('none');
