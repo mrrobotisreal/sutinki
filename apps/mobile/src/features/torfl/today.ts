@@ -38,7 +38,7 @@ export function describeStep(step: TodayStep): { title: string; caption: string 
     case 'mock':
       return {
         title: 'Час на пробний іспит',
-        caption: 'Понад тиждень без варіанта, а всі розділи близько порога — перевір себе повністю',
+        caption: 'Понад тиждень без варіанта, а всі розділи близько порогу — перевір себе повністю',
       };
     case 'start':
       return {

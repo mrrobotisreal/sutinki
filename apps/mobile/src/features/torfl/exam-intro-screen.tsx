@@ -182,15 +182,15 @@ export function ExamIntroScreen({
                   <Text className="font-ui-medium">{r.titleUk}</Text>
                   <Text variant="caption">
                     {r.itemCount} {pluralUk(r.itemCount, ITEMS)} ·{' '}
-                    {r.points === null ? 'оценка по критериям' : `${r.points} б.`}
-                    {r.audioPlays ? ` · аудио ×${r.audioPlays}` : ''}
+                    {r.points === null ? 'оцінка за критеріями' : `${r.points} б.`}
+                    {r.audioPlays ? ` · аудіо ×${r.audioPlays}` : ''}
                   </Text>
                 </View>
                 <View className="items-end gap-0.5">
                   <Text className="font-ui-medium">{formatMinutes(r.durationMin)}</Text>
                   <View
                     className="flex-row items-center gap-1"
-                    accessibilityLabel={r.dictionary ? 'Словарь можно' : 'Без словаря'}
+                    accessibilityLabel={r.dictionary ? 'Зі словником' : 'Без словника'}
                     accessible
                   >
                     <Ionicons
@@ -199,7 +199,7 @@ export function ExamIntroScreen({
                       color={tokens.textMuted}
                     />
                     <Text variant="caption" className="text-xs">
-                      {r.dictionary ? 'словарь' : 'без словаря'}
+                      {r.dictionary ? 'словник' : 'без словника'}
                     </Text>
                   </View>
                 </View>

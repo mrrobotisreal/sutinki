@@ -105,8 +105,8 @@ export function ExamInstructionScreen({
               <Fact icon="hand-left-outline" text={c.micFact} />
             </>
           )}
-          {(extraFacts ?? []).map((f) => (
-            <Fact key={f} icon="chevron-forward-outline" text={f} />
+          {(extraFacts ?? []).map((f, i) => (
+            <Fact key={`${i}-${f}`} icon="chevron-forward-outline" text={f} />
           ))}
           <Fact icon="eye-off-outline" text={c.noCheckFact} />
         </View>

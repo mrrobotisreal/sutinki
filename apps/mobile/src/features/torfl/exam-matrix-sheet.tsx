@@ -54,7 +54,7 @@ export function ExamMatrixSheet({
           <View>
             <Text className="font-ui-medium text-lg">Матриця відповідей</Text>
             <Text variant="caption" testID="matrix-counts">
-              Отвечено {counts.answered} из {counts.total}
+              Відповідей: {counts.answered} з {counts.total}
               {counts.flagged > 0 ? ` · флажков ${counts.flagged}` : ''}
             </Text>
           </View>
@@ -97,8 +97,8 @@ export function ExamMatrixSheet({
         <View className="mb-3 flex-row flex-wrap gap-x-4 gap-y-1">
           <Legend filled label="є відповідь" />
           <Legend label="без відповіді" />
-          <Legend flag label="флажок" />
-          {linear && <Text variant="caption">Назад нельзя: текст звучит один раз подряд.</Text>}
+          <Legend flag label="позначка" />
+          {linear && <Text variant="caption">Назад не можна: запис звучить за порядком.</Text>}
         </View>
         <Pressable
           onPress={confirmSubmit}

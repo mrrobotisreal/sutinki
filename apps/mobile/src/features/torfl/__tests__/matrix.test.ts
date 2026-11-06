@@ -51,10 +51,10 @@ describe('counts + confirm copy', () => {
     const counts = matrixCounts(matrixCells(sub('lexgram'), 0, { lg01: ch(1) }, ['lg02', 'lg03']));
     expect(counts).toEqual({ answered: 1, unanswered: 4, flagged: 2, total: 5 });
     expect(submitConfirmCopy(counts).body).toBe(
-      'Без ответа: 4. С флажком: 2. После сдачи вернуться к субтесту нельзя.',
+      'Без відповіді: 4. З позначкою: 2. Після здачі повернутися до розділу не можна.',
     );
     expect(submitConfirmCopy({ answered: 5, unanswered: 0, flagged: 0, total: 5 }).body).toBe(
-      'После сдачи вернуться к субтесту нельзя.',
+      'Після здачі повернутися до розділу не можна.',
     );
   });
 });
