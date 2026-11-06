@@ -26,8 +26,8 @@ import { parseSeriesTags } from '@/features/library/series';
 import { GoalRingCard } from '@/features/motivation/goal-ring-card';
 import { NotificationPromptCard } from '@/features/motivation/notification-prompt-card';
 import { QuestCard } from '@/features/motivation/quest-card';
-import type { PathNode } from '@/features/path/path-model';
-import { isUnit, nextStepInfo, usePathState } from '@/features/path/use-path';
+import { hotelCardLine, type HotelNextAction } from '@/features/hotel/gate-model';
+import { useHotelState } from '@/features/hotel/hotel-hooks';
 import { isResumable, pickTodayScenario } from '@/features/scenario/hub-selection';
 import { drillHref } from '@/features/torfl/drill/drill-model';
 import { useExamDates, useTorflLevelsToday } from '@/features/torfl/hooks';
@@ -55,7 +55,7 @@ export function TodayScreen() {
   const productionDue = useProductionDueCount();
   const progressList = useStoryProgressList();
   const stories = useStories();
-  const path = usePathState();
+  const hotel = useHotelState();
   const dialogues = useDialogues();
   const scenarios = useScenarios();
   const torflLevels = useTorflLevelsToday();
@@ -81,7 +81,7 @@ export function TodayScreen() {
       void queryClient.invalidateQueries({ queryKey: ['daily-activity'] });
       void queryClient.invalidateQueries({ queryKey: ['motivation'] });
       void queryClient.invalidateQueries({ queryKey: ['story-progress'] });
-      void queryClient.invalidateQueries({ queryKey: ['path'] });
+      void queryClient.invalidateQueries({ queryKey: ['hotel'] });
       void queryClient.invalidateQueries({ queryKey: ['dialogues'] });
       void queryClient.invalidateQueries({ queryKey: ['scenarios'] });
       void queryClient.invalidateQueries({ queryKey: ['exams'] });
@@ -134,7 +134,7 @@ export function TodayScreen() {
     [scenarios.data],
   );
 
-  const coreQueries = [due, productionDue, progressList, stories, path, dialogues, scenarios];
+  const coreQueries = [due, productionDue, progressList, stories, dialogues, scenarios];
   const loading = coreQueries.some((q) => q.isPending);
   const anyError = coreQueries.some((q) => q.isError);
 
@@ -396,7 +396,7 @@ export function TodayScreen() {
       )}
 
       {/* continue on the path (T17) — current node's next uncompleted step */}
-      {path.data?.current && <PathContinueCard node={path.data.current} />}
+      {!ukPending('hotel') && hotel.action && <HotelContinueCard action={hotel.action} />}
 
       {/* where I left off */}
       {continueTarget && (
@@ -434,41 +434,36 @@ export function TodayScreen() {
   );
 }
 
-function PathContinueCard({ node }: { node: PathNode }) {
+function HotelContinueCard({ action }: { action: HotelNextAction }) {
   const router = useRouter();
   const { tokens } = useAppTheme();
-  const step = nextStepInfo(node);
-  const subtitle = isUnit(node)
-    ? `${node.pack.titleUk} · ${node.stepsDone}/${node.stepsTotal}`
-    : node.pack.titleUk;
+  const line = hotelCardLine(action);
   return (
     <Pressable
       onPress={() => {
-        track('path_continue_tapped', { packId: node.pack.id, kind: node.kind });
-        router.push(step.route as never);
+        track('hotel_card_viewed', {
+          packId: 'hotel',
+          unitId: '',
+          cardId: 'today',
+          kind: action.kind,
+        });
+        router.push(
+          action.kind === 'done-all' ? ('/(tabs)/path' as never) : (action.route as never),
+        );
       }}
       accessibilityRole="button"
-      accessibilityLabel={`Continue the path: ${step.label}`}
+      accessibilityLabel={`Готель «Сутінки»: ${line}`}
       className="rounded-xl border border-border bg-surface p-4 active:bg-surface-2"
     >
       <Text variant="caption" className="uppercase tracking-wider">
-        Шлях
+        Готель «Сутінки»
       </Text>
       <View className="mt-2 flex-row items-center justify-between gap-3">
-        <View className="flex-1 gap-0.5">
-          <RNText className="font-ui-medium text-base text-text" numberOfLines={1}>
-            {step.label}
-          </RNText>
-          <Text variant="caption" numberOfLines={1}>
-            {subtitle}
-          </Text>
-        </View>
+        <RNText className="flex-1 font-ui-medium text-base text-text" numberOfLines={2}>
+          {line}
+        </RNText>
         <View className="h-10 w-10 items-center justify-center rounded-full bg-surface-2">
-          <Ionicons
-            name={node.kind === 'checkpoint' ? 'flag-outline' : 'trail-sign-outline'}
-            size={18}
-            color={tokens.accent}
-          />
+          <Ionicons name="business-outline" size={18} color={tokens.accent} />
         </View>
       </View>
     </Pressable>

@@ -24,6 +24,8 @@
     --text: 26 26 31; /* #1A1A1F */
     --text-muted: 107 104 112; /* #6B6870 */
     --accent: 133 102 0; /* #856600 */
+    --karaoke: 184 146 10; /* #B8920A Sutinki gold — karaoke word wash (alpha --karaoke-alpha) */
+    --karaoke-alpha: 0.35;
     --accent-2: 31 86 200; /* #1F56C8 */
     --on-accent: 255 255 255; /* #FFFFFF */
     --success: 88 114 70; /* #587246 */
@@ -38,6 +40,11 @@
     --level-b1: 81 94 115; /* #515E73 */
     --level-b2: 110 91 16; /* #6E5B10 */
     --level-c1: 116 89 0; /* #745900 */
+    /* M25 hotel lift (T91): indicator plate and glow. Mitch has no light mode, so light mirrors dark. */
+    --hotel-glow: 242 211 91; /* #F2D35B moonlit-gold indicator glow */
+    --hotel-glow-dim: 156 126 37; /* #9C7E25 dim gold (unlit digits, pulse trough) */
+    --hotel-brass: 185 161 106; /* #B9A16A brass ring and button rim */
+    --hotel-plate: 14 19 32; /* #0E1320 deep-navy plate behind the indicator */
   }
 
   /* Dark — navy night (default identity) */
@@ -48,6 +55,8 @@
     --text: 232 230 227; /* #E8E6E3 */
     --text-muted: 152 160 179; /* #98A0B3 */
     --accent: 233 192 50; /* #E9C032 */
+    --karaoke: 233 192 50; /* #E9C032 Sutinki gold — karaoke word wash (alpha --karaoke-alpha) */
+    --karaoke-alpha: 0.42;
     --accent-2: 75 133 255; /* #4B85FF */
     --on-accent: 10 14 22; /* #0A0E16 */
     --success: 117 147 94; /* #75935E */
@@ -62,5 +71,10 @@
     --level-b1: 140 159 192; /* #8C9FC0 */
     --level-b2: 194 164 67; /* #C2A443 */
     --level-c1: 233 192 50; /* #E9C032 */
+    /* M25 hotel lift (T91) */
+    --hotel-glow: 242 211 91; /* #F2D35B */
+    --hotel-glow-dim: 156 126 37; /* #9C7E25 */
+    --hotel-brass: 185 161 106; /* #B9A16A */
+    --hotel-plate: 14 19 32; /* #0E1320 */
   }
 }

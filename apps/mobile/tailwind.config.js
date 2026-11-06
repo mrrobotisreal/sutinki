@@ -15,13 +15,15 @@ module.exports = {
         text: 'rgb(var(--text) / <alpha-value>)',
         'text-muted': 'rgb(var(--text-muted) / <alpha-value>)',
         accent: 'rgb(var(--accent) / <alpha-value>)',
-        // accent at 15% — selection washes, highlight, karaoke word bg
+        // accent at 15% — selection washes, highlight
         'accent-soft': 'rgb(var(--accent) / 0.15)',
         // sea blue (ADR-0009) — links, focus rings, listen/speak surfaces
         'accent-2': 'rgb(var(--accent-2) / <alpha-value>)',
         'accent-2-soft': 'rgb(var(--accent-2) / 0.15)',
         // label colour on accent / accent-2 fills (near-black dark, white light)
         'on-accent': 'rgb(var(--on-accent) / <alpha-value>)',
+        // karaoke word bg — Sutinki gold, alpha is a CSS var (0.42 dark / 0.35 light)
+        karaoke: 'rgb(var(--karaoke) / var(--karaoke-alpha))',
         success: 'rgb(var(--success) / <alpha-value>)',
         danger: 'rgb(var(--danger) / <alpha-value>)',
         border: 'rgb(var(--border) / <alpha-value>)',
@@ -41,6 +43,11 @@ module.exports = {
         'level-b1': 'rgb(var(--level-b1) / <alpha-value>)',
         'level-b2': 'rgb(var(--level-b2) / <alpha-value>)',
         'level-c1': 'rgb(var(--level-c1) / <alpha-value>)',
+        // M25 hotel lift (T91): indicator glow, dim glow, brass rim, plate.
+        'hotel-glow': 'rgb(var(--hotel-glow) / <alpha-value>)',
+        'hotel-glow-dim': 'rgb(var(--hotel-glow-dim) / <alpha-value>)',
+        'hotel-brass': 'rgb(var(--hotel-brass) / <alpha-value>)',
+        'hotel-plate': 'rgb(var(--hotel-plate) / <alpha-value>)',
       },
       fontFamily: {
         // UI chrome: Golos Text (Cyrillic-friendly, used for the Ukrainian tab titles)
