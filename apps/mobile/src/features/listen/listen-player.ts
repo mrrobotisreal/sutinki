@@ -192,9 +192,9 @@ export function createListenPlayer(deps: ListenDeps): ListenPlayer {
   function lockMeta(source: ListenSource, partIndex: number) {
     const seg = source.segments[partIndex];
     return {
-      title: source.titleRu,
-      artist: `Часть ${partIndex + 1}${seg ? ` · ${seg.titleRu}` : ''}`,
-      albumTitle: 'Сумрак',
+      title: source.titleUk,
+      artist: `Частина ${partIndex + 1}${seg ? ` · ${seg.titleUk}` : ''}`,
+      albumTitle: 'Сутінки',
       artworkUrl: source.coverUri ?? artwork,
     };
   }
@@ -304,7 +304,7 @@ export function createListenPlayer(deps: ListenDeps): ListenPlayer {
           rate: get().rate,
           volume: get().volume,
           muted: get().muted,
-          error: 'Не удалось открыть аудио',
+          error: 'Не вдалося відкрити аудіо',
         });
         return;
       }
@@ -323,7 +323,7 @@ export function createListenPlayer(deps: ListenDeps): ListenPlayer {
       }
       if (token !== openToken) return;
       if (!source.uri) {
-        set({ session: { source, status: 'error' }, error: 'Не удалось открыть аудио' });
+        set({ session: { source, status: 'error' }, error: 'Не вдалося відкрити аудіо' });
         return;
       }
       const resumeMs = resumePositionFor(prog, packId);
@@ -344,7 +344,7 @@ export function createListenPlayer(deps: ListenDeps): ListenPlayer {
         if (token !== openToken) return;
         set({
           session: { source, status: 'error' },
-          error: e instanceof Error ? e.message : 'Не удалось открыть аудио',
+          error: e instanceof Error ? e.message : 'Не вдалося відкрити аудіо',
         });
         return;
       }

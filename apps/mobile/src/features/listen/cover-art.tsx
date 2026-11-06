@@ -26,7 +26,7 @@ export function CoverArt({ coverUri, size, rounded = 16 }: CoverArtProps) {
         style={{ width: size, height: size }}
         contentFit="cover"
         accessibilityIgnoresInvertColors
-        accessibilityLabel="Обложка"
+        accessibilityLabel="Обкладинка"
       />
     </View>
   );

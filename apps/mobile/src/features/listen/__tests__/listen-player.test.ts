@@ -73,7 +73,7 @@ function source(id: string, over: Partial<ListenSource> = {}): ListenSource {
   return {
     kind: 'full',
     packId: id,
-    titleRu: `T-${id}`,
+    titleUk: `T-${id}`,
     titleEn: id,
     level: 'A1',
     voice: 'v',
@@ -81,11 +81,11 @@ function source(id: string, over: Partial<ListenSource> = {}): ListenSource {
     durationMs: 100_000,
     coverUri: null,
     segments: [
-      { storyId: 's1', trackId: 't1', titleRu: 'Раз', orderIdx: 0, startMs: 0, endMs: 40_000 },
+      { storyId: 's1', trackId: 't1', titleUk: 'Раз', orderIdx: 0, startMs: 0, endMs: 40_000 },
       {
         storyId: 's2',
         trackId: 't2',
-        titleRu: 'Два',
+        titleUk: 'Два',
         orderIdx: 1,
         startMs: 41_200,
         endMs: 100_000,
@@ -202,7 +202,7 @@ describe('listen player', () => {
     const p = players[0]!;
     expect(p.setActiveForLockScreen).toHaveBeenCalledWith(
       true,
-      expect.objectContaining({ albumTitle: 'Сумрак', artworkUrl: 'file:///icon.png' }),
+      expect.objectContaining({ albumTitle: 'Сутінки', artworkUrl: 'file:///icon.png' }),
       { showSeekForward: true, showSeekBackward: true },
     );
     await lp.skip(-15_000);

@@ -1,7 +1,7 @@
 import { asc, eq, inArray, sql } from 'drizzle-orm';
 
 import { audioTracks, packFullAudio, packs, stories } from '../schema';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 /**
  * Listen-to-the-whole-story source (T95, FULL_STORY_LISTEN §4.2).
@@ -11,7 +11,7 @@ import type { SumrakDB } from '../types';
 export interface ListenSegment {
   storyId: string;
   trackId: string;
-  titleRu: string;
+  titleUk: string;
   orderIdx: number;
   startMs: number;
   endMs: number;
@@ -20,7 +20,7 @@ export interface ListenSegment {
 export interface ListenSource {
   kind: 'full' | 'single';
   packId: string;
-  titleRu: string;
+  titleUk: string;
   titleEn: string;
   level: 'A1' | 'A2' | 'B1' | 'B2' | 'C1';
   voice: string;
@@ -40,7 +40,7 @@ export interface ListenAvailability {
 
 const NONE: ListenAvailability = { state: 'none', parts: 0, durationMs: 0, voice: '' };
 
-export function createListenRepo(db: SumrakDB) {
+export function createListenRepo(db: SutinkiDB) {
   /** Pack ids (of `stories` packs) with exactly one story having >= 1 track. */
   async function singleStoryPackIds(packIds: string[]): Promise<Set<string>> {
     if (packIds.length === 0) return new Set();
@@ -71,7 +71,7 @@ export function createListenRepo(db: SumrakDB) {
       if (!pack || pack.type !== 'stories') return null;
       const base = {
         packId,
-        titleRu: pack.titleRu,
+        titleUk: pack.titleUk,
         titleEn: pack.titleEn,
         level: pack.level,
         coverUri: pack.coverLocalUri,
@@ -82,7 +82,7 @@ export function createListenRepo(db: SumrakDB) {
       )[0];
       if (full) {
         const storyRows = await db
-          .select({ id: stories.id, titleRu: stories.titleRu, orderIdx: stories.orderIdx })
+          .select({ id: stories.id, titleUk: stories.titleUk, orderIdx: stories.orderIdx })
           .from(stories)
           .where(eq(stories.packId, packId));
         const byId = new Map(storyRows.map((s) => [s.id, s]));
@@ -92,7 +92,7 @@ export function createListenRepo(db: SumrakDB) {
             return {
               storyId: seg.storyId,
               trackId: seg.trackId,
-              titleRu: st?.titleRu ?? '',
+              titleUk: st?.titleUk ?? '',
               orderIdx: st?.orderIdx ?? 0,
               startMs: seg.startMs,
               endMs: seg.endMs,
@@ -135,7 +135,7 @@ export function createListenRepo(db: SumrakDB) {
           {
             storyId: story.id,
             trackId: track.id,
-            titleRu: story.titleRu,
+            titleUk: story.titleUk,
             orderIdx: story.orderIdx,
             startMs: 0,
             endMs: track.durationMs,

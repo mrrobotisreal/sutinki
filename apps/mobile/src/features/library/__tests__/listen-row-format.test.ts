@@ -11,24 +11,25 @@ vi.mock('@/features/listen/listen-service', () => ({ useListenStore: () => null 
 
 describe('partsLabel', () => {
   it.each([
-    [1, '1 часть'],
-    [2, '2 части'],
-    [4, '4 части'],
-    [5, '5 частей'],
-    [8, '8 частей'],
-    [11, '11 частей'],
-    [12, '12 частей'],
-    [14, '14 частей'],
-    [21, '21 часть'],
-    [22, '22 части'],
+    [1, '1 частина'],
+    [2, '2 частини'],
+    [4, '4 частини'],
+    [5, '5 частин'],
+    [8, '8 частин'],
+    [11, '11 частин'],
+    [12, '12 частин'],
+    [14, '14 частин'],
+    [21, '21 частина'],
+    [22, '22 частини'],
+    [25, '25 частин'],
   ])('%i', (n, s) => expect(partsLabel(n)).toBe(s));
 });
 
 describe('minutesLabel / voiceLabel / caption', () => {
   it('rounds and floors under a minute', () => {
-    expect(minutesLabel(59_999)).toBe('< 1 мин');
-    expect(minutesLabel(60_000)).toBe('1 мин');
-    expect(minutesLabel(17 * 60_000 + 20_000)).toBe('17 мин');
+    expect(minutesLabel(59_999)).toBe('< 1 хв');
+    expect(minutesLabel(60_000)).toBe('1 хв');
+    expect(minutesLabel(17 * 60_000 + 20_000)).toBe('17 хв');
   });
   it('strips the provider prefix', () => {
     expect(voiceLabel('elevenlabs:Mr. Wintrow')).toBe('Mr. Wintrow');
@@ -37,7 +38,7 @@ describe('minutesLabel / voiceLabel / caption', () => {
   it('formats the caption', () => {
     expect(
       listenCaption({ parts: 8, durationMs: 17 * 60_000, voice: 'elevenlabs:Mr. Wintrow' }),
-    ).toBe('8 частей · 17 мин · Mr. Wintrow');
+    ).toBe('8 частин · 17 хв · Mr. Wintrow');
   });
 });
 

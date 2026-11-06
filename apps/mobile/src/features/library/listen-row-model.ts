@@ -7,7 +7,7 @@ export interface ListenRowItem {
 }
 
 /**
- * Prepend the «Прослушать всю историю» row to a `stories` pack's rows when
+ * Prepend the «Прослухати всю історію» row to a `stories` pack's rows when
  * its availability is not `none` (T97 decision 1). Other pack types untouched.
  */
 export function withListenRow<R extends { kind: string }>(

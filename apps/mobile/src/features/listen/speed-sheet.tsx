@@ -23,9 +23,9 @@ export function SpeedSheet({ open, rate, onSelect, onClose }: SpeedSheetProps) {
   if (!open) return null;
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View className="rounded-t-2xl border-t border-border bg-surface px-5 pb-9 pt-4">
-        <Text className="font-ui-medium pb-2">Скорость</Text>
+        <Text className="font-ui-medium pb-2">Швидкість</Text>
         {LISTEN_RATES.map((r) => {
           const selected = r === rate;
           return (
@@ -45,7 +45,7 @@ export function SpeedSheet({ open, rate, onSelect, onClose }: SpeedSheetProps) {
                 color={selected ? tokens.accent : tokens.border}
               />
               <Text className="flex-1">{rateLabel(r)}</Text>
-              {r === 1 ? <Text variant="caption">Обычная</Text> : null}
+              {r === 1 ? <Text variant="caption">Звичайна</Text> : null}
             </Pressable>
           );
         })}

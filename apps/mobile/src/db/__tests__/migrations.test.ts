@@ -815,7 +815,7 @@ describe('0012_full-story', () => {
     const { sqlite, db } = createDbUpTo('0011_hotel');
     sqlite
       .prepare(
-        `INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at, origin)
+        `INSERT INTO packs (id, version, type, title_uk, title_en, level, tags, imported_at, origin)
          VALUES ('p1', 1, 'stories', 'Т', 'T', 'A1', '[]', 1, 'remote')`,
       )
       .run();
@@ -830,7 +830,7 @@ describe('0012_full-story', () => {
     const { sqlite } = createDbUpTo('0012_full-story');
     sqlite
       .prepare(
-        `INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at, origin)
+        `INSERT INTO packs (id, version, type, title_uk, title_en, level, tags, imported_at, origin)
          VALUES ('p1', 1, 'stories', 'Т', 'T', 'A1', '[]', 1, 'remote')`,
       )
       .run();

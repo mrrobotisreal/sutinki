@@ -3,7 +3,7 @@
   "version": 1,
   "type": "stories",
   "title": {
-    "ru": "Тестовая история",
+    "uk": "Тестовая история",
     "en": "Listen fixture"
   },
   "level": "A1",
@@ -15,14 +15,14 @@
     {
       "id": "part-1",
       "title": {
-        "ru": "Часть 1",
+        "uk": "Часть 1",
         "en": "Part 1"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "lf1-s01",
-          "ru": "Я дома.",
+          "uk": "Я дома.",
           "en": "I am home.",
           "tokens": [
             {
@@ -61,14 +61,14 @@
     {
       "id": "part-2",
       "title": {
-        "ru": "Часть 2",
+        "uk": "Часть 2",
         "en": "Part 2"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "lf2-s01",
-          "ru": "Здесь тихо.",
+          "uk": "Здесь тихо.",
           "en": "It is quiet here.",
           "tokens": [
             {
@@ -106,14 +106,14 @@
     {
       "id": "part-3",
       "title": {
-        "ru": "Часть 3",
+        "uk": "Часть 3",
         "en": "Part 3"
       },
       "level": "A1",
       "sentences": [
         {
           "id": "lf3-s01",
-          "ru": "Ночь.",
+          "uk": "Ночь.",
           "en": "Night.",
           "tokens": [
             {

@@ -86,3 +86,4 @@ apps/mobile/src/features/hotel/* # UT18 — hotel logic comments/tests still use
 apps/mobile/src/features/hotel/**/* # UT18 — same (runner/lesson/lift sub-folders)
 apps/mobile/src/app/hotel/* # UT18 — route doc comments; removed when UT18 re-targets
 apps/mobile/src/app/hotel/**/* # UT18 — same
+packages/schema/fixtures/packs/a1-listen-fixture/* # UT18/UCT063 — Russian-content listen fixture (keys renamed to uk); replaced by a Ukrainian fixture when UCT063 stitches real packs

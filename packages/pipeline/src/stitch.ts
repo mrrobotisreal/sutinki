@@ -15,7 +15,7 @@ import {
   type FullStory,
   type Pack,
   type Story,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import { encodeOpus, probeDurationMs, run } from './opus.ts';
 
 /**
@@ -218,7 +218,7 @@ export function runStitch(packDir: string, opts: StitchOptions = {}): StitchResu
     }
   }
 
-  const work = mkdtempSync(join(tmpdir(), 'sumrak-stitch-'));
+  const work = mkdtempSync(join(tmpdir(), 'sutinki-stitch-'));
   try {
     const wavs = chosen.map(({ track }, i) => {
       const wav = join(work, `part-${i}.wav`);

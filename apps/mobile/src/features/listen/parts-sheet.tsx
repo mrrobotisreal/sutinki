@@ -21,9 +21,9 @@ export function PartsSheet({ open, segments, currentIndex, onSelect, onClose }: 
   if (!open) return null;
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View className="max-h-[70%] rounded-t-2xl border-t border-border bg-surface px-5 pb-9 pt-4">
-        <Text className="font-ui-medium pb-2">Части</Text>
+        <Text className="font-ui-medium pb-2">Частини</Text>
         <ScrollView>
           {segments.map((seg, i) => {
             const selected = i === currentIndex;
@@ -44,7 +44,7 @@ export function PartsSheet({ open, segments, currentIndex, onSelect, onClose }: 
                   color={selected ? tokens.accent : tokens.border}
                 />
                 <View className="flex-1">
-                  <Text numberOfLines={1}>{`${i + 1}. ${seg.titleRu}`}</Text>
+                  <Text numberOfLines={1}>{`${i + 1}. ${seg.titleUk}`}</Text>
                 </View>
                 <Text variant="caption" style={{ fontVariant: ['tabular-nums'] }}>
                   {formatTime(seg.endMs - seg.startMs)}

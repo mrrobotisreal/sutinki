@@ -84,13 +84,13 @@ export function ListenScreen() {
         className="flex-1 items-center justify-center gap-4 bg-bg px-8"
         style={{ paddingTop: insets.top }}
       >
-        <Text className="text-center">Не удалось открыть аудио</Text>
+        <Text className="text-center">Не вдалося відкрити аудіо</Text>
         <Pressable
           onPress={load}
           accessibilityRole="button"
           className="rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
         >
-          <Text className="text-accent">Повторить</Text>
+          <Text className="text-accent">Повторити</Text>
         </Pressable>
         <Pressable onPress={() => safeBack(router)} accessibilityRole="button" hitSlop={8}>
           <Text variant="caption">Назад</Text>
@@ -121,7 +121,7 @@ export function ListenScreen() {
           disabled={!ready}
           hitSlop={12}
           accessibilityRole="button"
-          accessibilityLabel="Открыть в читалке"
+          accessibilityLabel="Відкрити в читалці"
         >
           <Ionicons name="book-outline" size={24} color={ready ? tokens.text : tokens.textMuted} />
         </Pressable>
@@ -130,7 +130,7 @@ export function ListenScreen() {
       <View className="flex-1 items-center justify-center gap-5">
         <View className="items-center gap-1 px-2">
           <Text variant="title" className="text-center" numberOfLines={2}>
-            {source?.titleRu ?? ''}
+            {source?.titleUk ?? ''}
           </Text>
           {source ? (
             <Text variant="caption" className="text-center">
@@ -145,17 +145,17 @@ export function ListenScreen() {
           onPress={() => ready && setPartsOpen(true)}
           disabled={!ready}
           accessibilityRole="button"
-          accessibilityLabel="Список частей"
+          accessibilityLabel="Список частин"
           className="items-center gap-0.5 px-2"
         >
           <Text numberOfLines={1} className="text-center">
             {ready
-              ? `Часть ${partIndex + 1} из ${total}${segment ? ` · ${segment.titleRu}` : ''}`
-              : 'Загрузка…'}
+              ? `Частина ${partIndex + 1} з ${total}${segment ? ` · ${segment.titleUk}` : ''}`
+              : 'Завантаження…'}
           </Text>
           {finished ? (
             <Text variant="caption" className="text-accent">
-              ✓ Прослушано
+              ✓ Прослухано
             </Text>
           ) : null}
         </Pressable>
@@ -182,7 +182,7 @@ export function ListenScreen() {
           minimumTrackTintColor={tokens.accent}
           maximumTrackTintColor={tokens.textMuted}
           thumbTintColor={tokens.text}
-          accessibilityLabel="Позиция"
+          accessibilityLabel="Позиція"
           accessibilityValue={{
             min: 0,
             max: durationMs,
@@ -205,7 +205,7 @@ export function ListenScreen() {
           onPress={() => setSpeedOpen(true)}
           disabled={!ready}
           accessibilityRole="button"
-          accessibilityLabel="Скорость"
+          accessibilityLabel="Швидкість"
           className="min-w-[56px] items-center rounded-full border border-border bg-surface px-3 py-1.5 active:bg-surface-2"
         >
           <Text className="font-ui-medium text-sm">{rateLabel(rate)}</Text>
@@ -226,7 +226,7 @@ export function ListenScreen() {
           onPress={() => listenPlayer.toggle()}
           disabled={!ready}
           accessibilityRole="button"
-          accessibilityLabel={playing ? 'Пауза' : 'Играть'}
+          accessibilityLabel={playing ? 'Пауза' : 'Грати'}
           className="h-[72px] w-[72px] items-center justify-center rounded-full bg-accent active:opacity-80"
         >
           <Ionicons
@@ -241,7 +241,7 @@ export function ListenScreen() {
           disabled={!ready}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Вперёд на 30 секунд"
+          accessibilityLabel="Вперед на 30 секунд"
         >
           <View className="items-center">
             <Ionicons name="play-forward" size={28} color={tokens.text} />
@@ -253,7 +253,7 @@ export function ListenScreen() {
           disabled={!ready}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel={muted ? 'Включить звук' : 'Выключить звук'}
+          accessibilityLabel={muted ? 'Увімкнути звук' : 'Вимкнути звук'}
           className="min-w-[56px] items-center"
         >
           <Ionicons name={muted ? 'volume-mute' : 'volume-high'} size={26} color={tokens.text} />
@@ -276,7 +276,7 @@ export function ListenScreen() {
           minimumTrackTintColor={tokens.accent}
           maximumTrackTintColor={tokens.textMuted}
           thumbTintColor={tokens.text}
-          accessibilityLabel="Громкость"
+          accessibilityLabel="Гучність"
           accessibilityValue={{ min: 0, max: 100, now: Math.round(volume * 100) }}
         />
         <Ionicons name="volume-high" size={18} color={tokens.textMuted} />

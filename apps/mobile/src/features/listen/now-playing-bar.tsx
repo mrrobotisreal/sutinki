@@ -33,19 +33,19 @@ export function NowPlayingBar() {
           })
         }
         accessibilityRole="button"
-        accessibilityLabel="Открыть плеер"
+        accessibilityLabel="Відкрити плеєр"
         className="flex-1 flex-row items-center gap-3"
       >
         <CoverArt coverUri={source.coverUri} size={32} rounded={6} />
         <Text numberOfLines={1} className="flex-1 text-sm">
-          {source.titleRu}
+          {source.titleUk}
         </Text>
       </Pressable>
       <Pressable
         onPress={() => listenPlayer.toggle()}
         hitSlop={8}
         accessibilityRole="button"
-        accessibilityLabel={playing ? 'Пауза' : 'Играть'}
+        accessibilityLabel={playing ? 'Пауза' : 'Грати'}
       >
         <Ionicons name={playing ? 'pause' : 'play'} size={24} color={tokens.text} />
       </Pressable>
@@ -53,7 +53,7 @@ export function NowPlayingBar() {
         onPress={() => listenPlayer.stop('user')}
         hitSlop={8}
         accessibilityRole="button"
-        accessibilityLabel="Остановить"
+        accessibilityLabel="Зупинити"
       >
         <Ionicons name="close" size={22} color={tokens.textMuted} />
       </Pressable>

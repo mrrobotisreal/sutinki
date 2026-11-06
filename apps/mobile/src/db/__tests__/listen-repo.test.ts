@@ -1,8 +1,8 @@
-import type { Pack } from '@sumrak/schema';
-import dialogueJson from '@sumrak/schema/fixtures/packs/a2-dialogue-001/pack.json';
-import examJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import listenJson from '@sumrak/schema/fixtures/packs/a1-listen-fixture/pack.json';
-import pack1Json from '@sumrak/schema/fixtures/packs/a1-creepypasta-001/pack.json';
+import type { Pack } from '@sutinki/schema';
+import dialogueJson from '@sutinki/schema/fixtures/packs/a2-dialogue-001/pack.json';
+import examJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import listenJson from '@sutinki/schema/fixtures/packs/a1-listen-fixture/pack.json';
+import pack1Json from '@sutinki/schema/fixtures/packs/a1-creepypasta-001/pack.json';
 import { describe, expect, it } from 'vitest';
 
 import { importPack } from '../importer';
@@ -24,7 +24,7 @@ describe('listen repository (T95)', () => {
       ['part-2', 1],
       ['part-3', 2],
     ]);
-    expect(src!.segments.every((s) => s.titleRu.length > 0)).toBe(true);
+    expect(src!.segments.every((s) => s.titleUk.length > 0)).toBe(true);
     expect(
       (await listen.listListenAvailability(['a1-listen-fixture'])).get('a1-listen-fixture'),
     ).toMatchObject({ state: 'pending', parts: 3, durationMs: 5906 });

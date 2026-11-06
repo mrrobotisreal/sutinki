@@ -360,7 +360,7 @@ describe('PackSchema fullStory + cover (T94)', () => {
   it('1: fullStory on a non-stories pack fails at fullStory', () => {
     const pack = makeStitchedPack();
     pack.type = 'prompts';
-    pack.prompts = [{ id: 'p', level: 'A1', prompt: { ru: 'x', en: 'x' } }];
+    pack.prompts = [{ id: 'p', level: 'A1', prompt: { uk: 'x', en: 'x' } }];
     expectIssue(pack, 'fullStory', 'allowed only on "stories"');
   });
 

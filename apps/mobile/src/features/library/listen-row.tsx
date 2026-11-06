@@ -10,11 +10,11 @@ import { useAppTheme } from '@/theme/use-app-theme';
 import { listenCaption } from './listen-row-format';
 import { listenRowTrailing } from './listen-row-model';
 
-export const LISTEN_ROW_LABEL = 'Прослушать всю историю';
-export const LISTEN_PENDING_CAPTION = 'Аудио скачается по Wi-Fi';
+export const LISTEN_ROW_LABEL = 'Прослухати всю історію';
+export const LISTEN_PENDING_CAPTION = 'Аудіо завантажиться через Wi-Fi';
 
 /**
- * «Прослушать всю историю» (T97, FULL_STORY_LISTEN §2.1) — first row of every
+ * «Прослухати всю історію» (T97, FULL_STORY_LISTEN §2.1) — first row of every
  * expanded story section. `pending` (audio not downloaded yet) is muted and
  * disabled.
  */
@@ -74,7 +74,7 @@ export function ListenRow({
       )}
       {trailing.kind === 'playing' && (
         <View className="rounded-full bg-accent-soft px-2 py-0.5">
-          <Text className="font-ui-medium text-xs text-accent">▶ Сейчас играет</Text>
+          <Text className="font-ui-medium text-xs text-accent">▶ Зараз грає</Text>
         </View>
       )}
     </Pressable>
