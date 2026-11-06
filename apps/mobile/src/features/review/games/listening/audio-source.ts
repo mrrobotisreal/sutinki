@@ -1,4 +1,5 @@
 import { normalizeUk } from '@/db/normalize';
+import { foldForAnswer } from '@/lib/text';
 
 import type { BankItemRow } from '@/db/repositories/bank';
 import type { Repositories } from '@/db/repositories';
@@ -7,55 +8,37 @@ import { headword } from '../../session';
 import { sentenceEligible } from '../sentence-source';
 
 /**
- * T22: the T02 fixture pack ships a deliberately SILENT narration track
- * («Стук у стіні» — fabricated word stamps over silence, built for karaoke
- * plumbing tests before real audio existed). A listening-quiz segment
- * sliced from it plays nothing, which reads as a broken question. Skip it
- * here (TTS fallback takes over); the reader's narration bar still plays
- * it, where the silence is at least attributable.
+ * Listening-quiz audio (T14 → T85). The quiz never plays story audio: T85 retired
+ * the word slices cut from the narration track, because neighbour words bled into
+ * them and stamp errors chopped the target. Every item now speaks its BANKED
+ * surface through the SpeechService (Piper when installed, system voice otherwise).
+ *
+ * The source sentence is still resolved, but only to highlight the target token
+ * in the post-answer context line, so the answer reveal shows where the word came
+ * from. `keySource` records which rule picked that token (kept for analytics).
  */
-const SILENT_FIXTURE_TRACKS = new Set(['a1-creepypasta-001:knock-anton-creepy']);
-
-/**
- * Audio-source selection for the listening quiz (T14 work item 4; the same
- * "pack segment with valid timestamps → use it; else → TTS" rule the reader
- * popup speaker applies via T10's WordSegmentPlayer). This standalone
- * resolver works outside the reader: given only a bank item, it walks
- * source sentence → downloaded audio track → word stamp, and falls back to
- * on-device TTS (Piper via the SpeechService, which itself degrades to the
- * system voice) whenever any link is missing. It never fails — every bank
- * item is speakable.
- */
-export type ListeningAudio =
-  | {
-      kind: 'segment';
-      /** Local file uri of the narration track (audio_tracks.localUri). */
-      uri: string;
-      startMs: number;
-      endMs: number;
-      /** The surface form the narrator actually says in this slice. */
-      spokenText: string;
-    }
-  | {
-      kind: 'tts';
-      /** What the TTS engine should say (word headword / phrase surface). */
-      text: string;
-    };
+export type ListeningAudio = {
+  kind: 'tts';
+  /** Which rule picked the highlighted token; `'tts'` when there is no sentence context. */
+  keySource: 'encounter' | 'surface' | 'lemma' | 'tts';
+  /** What the TTS engine says and the answer key: the banked surface, never the lemma. */
+  text: string;
+  /** Post-answer sentence highlight; null when the sentence is not eligible or no token resolves. */
+  context: {
+    tokens: { text: string; spaceBefore: boolean; isPunct: boolean; isTarget: boolean }[];
+  } | null;
+};
 
 /** The Ukrainian a listener is expected to hear — the quiz answer key. */
 export function spokenText(audio: ListeningAudio): string {
-  return audio.kind === 'segment' ? audio.spokenText : audio.text;
+  return audio.text;
 }
 
 /**
- * Resolve the best audio source for a bank item. Segment path requires:
- * a word item with a source sentence the T13 sentence-sourcing rules allow
- * (read story / scrolled-past sentence, unless `unseenAllowed`), a
- * downloaded track for that story, and a word stamp covering the lemma's
- * token in that sentence. Phrases go straight to TTS (bank phrases don't
- * record a token span, so a reliable multi-word slice can't be
- * reconstructed — recorded T14 deviation). Ineligible/unstamped sources
- * fall back to TTS — the item always stays playable.
+ * Resolve the audio for a bank item. The spoken text is always
+ * `item.surface.trim() || headword(item)`. Context is resolved only for words:
+ * source sentence → T13 eligibility (unless `unseenAllowed`) → sentence tokens →
+ * `pickTargetToken`. Phrases and items without a sentence get `context: null`.
  */
 export async function resolveListeningAudio(
   repos: Repositories,
@@ -63,11 +46,12 @@ export async function resolveListeningAudio(
   opts: { unseenAllowed?: boolean } = {},
 ): Promise<ListeningAudio> {
   const { unseenAllowed = false } = opts;
-  const fallback: ListeningAudio = { kind: 'tts', text: headword(item) };
-  if (item.kind !== 'word' || !item.lemma || !item.sourceSentenceId) return fallback;
+  const text = item.surface.trim() || headword(item);
+  const none: ListeningAudio = { kind: 'tts', keySource: 'tts', text, context: null };
+  if (item.kind !== 'word' || !item.lemma || !item.sourceSentenceId) return none;
 
   const resolved = await repos.content.resolveSentence(item.sourceSentenceId);
-  if (!resolved) return fallback;
+  if (!resolved) return none;
   const { packId, storyId, id: sentenceId } = resolved.sentence;
 
   // T14 ticket: listening items sourced from stories respect the T13
@@ -78,36 +62,67 @@ export async function resolveListeningAudio(
       progress: new Map(progress ? [[`${packId}:${storyId}`, progress]] : []),
       storyLevel: new Map(),
     };
-    if (!sentenceEligible(resolved.sentence, index, false)) return fallback;
+    if (!sentenceEligible(resolved.sentence, index, false)) return none;
   }
-
-  const tracks = (await repos.content.listAudioTracksForPack(packId)).filter(
-    (t) =>
-      t.storyId === storyId &&
-      t.localUri != null &&
-      !SILENT_FIXTURE_TRACKS.has(`${packId}:${t.id}`),
-  );
-  if (tracks.length === 0) return fallback;
 
   const tokens = await repos.content.getSentenceTokens(packId, sentenceId);
   const norm = normalizeUk(item.lemma);
-  const target = tokens.find((t) => !t.isPunct && t.lemmaNorm === norm);
-  if (!target) return fallback;
+  const picked = await pickTargetToken(repos, item, sentenceId, tokens, norm);
+  if (!picked) return none;
+  const { target, keySource } = picked;
 
-  for (const track of tracks) {
-    const stamps = await repos.content.getWordStamps(packId, storyId, track.id);
-    const stamp = stamps.find(
-      (s) => s.sentenceId === sentenceId && s.tokenIndex === target.tokenIndex,
-    );
-    if (stamp && stamp.endMs > stamp.startMs) {
-      return {
-        kind: 'segment',
-        uri: track.localUri!,
-        startMs: stamp.startMs,
-        endMs: stamp.endMs,
-        spokenText: target.text,
-      };
+  return {
+    kind: 'tts',
+    keySource,
+    text,
+    context: {
+      tokens: tokens.map((t) => ({
+        text: t.text,
+        spaceBefore: t.spaceBefore,
+        isPunct: t.isPunct,
+        isTarget: t.tokenIndex === target.tokenIndex,
+      })),
+    },
+  };
+}
+
+type SentenceToken = Awaited<ReturnType<Repositories['content']['getSentenceTokens']>>[number];
+
+/**
+ * T81 resolver order — the key must be the form Mitch banked:
+ * 1. the source encounter's `(sentenceId, tokenIndex)` (the oldest one in the
+ *    item's source sentence), if that token still reads as this word;
+ * 2. a token whose surface folds equal to `item.surface` (backfill for items
+ *    banked before `token_index` existed);
+ * 3. the first token with the item's lemma (the pre-T81 behaviour).
+ */
+export async function pickTargetToken(
+  repos: Repositories,
+  item: BankItemRow,
+  sentenceId: string,
+  tokens: SentenceToken[],
+  lemmaNorm: string,
+): Promise<{ target: SentenceToken; keySource: 'encounter' | 'surface' | 'lemma' } | null> {
+  const words = tokens.filter((t) => !t.isPunct);
+  const surfaceFold = foldForAnswer(item.surface);
+
+  const withEnc = await repos.bank.getItemWithEncounters(item.id);
+  const source = (withEnc?.encounters ?? [])
+    .filter((e) => e.sentenceId === sentenceId && e.tokenIndex != null)
+    .sort((a, b) => a.createdAt - b.createdAt)[0];
+  if (source) {
+    const t = words.find((w) => w.tokenIndex === source.tokenIndex);
+    if (
+      t &&
+      (t.lemmaNorm === lemmaNorm || foldForAnswer(t.text) === foldForAnswer(source.surface))
+    ) {
+      return { target: t, keySource: 'encounter' };
     }
   }
-  return fallback;
+  const bySurface = words.find(
+    (t) => foldForAnswer(t.text) === surfaceFold && (t.lemmaNorm === lemmaNorm || !t.lemmaNorm),
+  );
+  if (bySurface) return { target: bySurface, keySource: 'surface' };
+  const byLemma = words.find((t) => t.lemmaNorm === lemmaNorm);
+  return byLemma ? { target: byLemma, keySource: 'lemma' } : null;
 }

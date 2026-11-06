@@ -71,6 +71,13 @@
       "when": 1793929059142,
       "tag": "0009_daily-quests",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1793935872899,
+      "tag": "0010_encounter-token-index",
+      "breakpoints": true
     }
   ]
 }
