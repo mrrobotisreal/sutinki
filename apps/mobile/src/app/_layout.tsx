@@ -49,7 +49,7 @@ installGlobalErrorLogging();
 
 /**
  * T84: every deep link (widget, notification) lands with the tabs UNDER it.
- * Without the anchor a cold `sumrak://reader/…` mounted the reader as the only
+ * Without the anchor a cold `sutinki://reader/…` mounted the reader as the only
  * route, so back did nothing (Mitch had to force-close the app).
  */
 export const unstable_settings = { anchor: '(tabs)' };

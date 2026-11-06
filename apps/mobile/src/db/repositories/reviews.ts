@@ -131,7 +131,7 @@ export function getQueuePrefs(): QueuePrefs {
 }
 
 /** Order a never-reviewed word's directions are introduced in (bury on = first only). */
-export const NEW_DIRECTION_ORDER = ['ru-en', 'en-ru', 'listening', 'production'] as const;
+export const NEW_DIRECTION_ORDER = ['uk-en', 'en-uk', 'listening', 'production'] as const;
 
 function localDayKeyOf(now: number): string {
   const d = new Date(now);

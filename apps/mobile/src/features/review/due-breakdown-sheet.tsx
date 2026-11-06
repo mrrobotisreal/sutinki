@@ -23,8 +23,8 @@ const STATE_LABEL: [keyof DuePlan['byState'], string][] = [
   ['relearning', 'Заново'],
 ];
 const DIRECTION_LABEL: Record<string, string> = {
-  'ru-en': 'RU → EN',
-  'en-ru': 'EN → RU',
+  'uk-en': 'RU → EN',
+  'en-uk': 'EN → RU',
   listening: 'Аудирование',
   production: 'Произношение',
 };

@@ -14,7 +14,7 @@ const NOON = (() => {
   const d = new Date(Date.now() + 2 * DAY);
   return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0).getTime();
 })();
-const DIRS = ['ru-en', 'en-ru', 'listening'] as const;
+const DIRS = ['uk-en', 'en-uk', 'listening'] as const;
 const P = (over: Partial<QueuePrefs> = {}): QueuePrefs => ({ ...DEFAULT_QUEUE_PREFS, ...over });
 
 function setup() {
@@ -98,7 +98,7 @@ describe('queue order, budget use and the day boundary', () => {
   it('serves reviews before new words', async () => {
     const repos = setup();
     const [a] = await bank(repos, 1, 'old');
-    const card = (await repos.reviews.listCardsForItem(a!)).find((c) => c.direction === 'ru-en')!;
+    const card = (await repos.reviews.listCardsForItem(a!)).find((c) => c.direction === 'uk-en')!;
     await repos.reviews.gradeCard(card.id, Rating.Good, { now: NOON - 5 * DAY });
     await bank(repos, 5, 'fresh');
     const q = await repos.reviews.listSessionCards({
@@ -116,7 +116,7 @@ describe('queue order, budget use and the day boundary', () => {
     const ids = await bank(repos, 25);
     // Introduce 10 words at noon (first review today).
     for (const id of ids.slice(0, 10)) {
-      const c = (await repos.reviews.listCardsForItem(id)).find((x) => x.direction === 'ru-en')!;
+      const c = (await repos.reviews.listCardsForItem(id)).find((x) => x.direction === 'uk-en')!;
       await repos.reviews.gradeCard(c.id, Rating.Good, { now: NOON });
     }
     const sameDay = await repos.reviews.countDueBreakdown({
@@ -148,7 +148,7 @@ describe('queue order, budget use and the day boundary', () => {
     const repos = setup();
     const [id] = await bank(repos, 1);
     const cards = await repos.reviews.listCardsForItem(id!);
-    const ruen = cards.find((c) => c.direction === 'ru-en')!;
+    const ruen = cards.find((c) => c.direction === 'uk-en')!;
     await repos.reviews.gradeCard(ruen.id, Rating.Again, { now: NOON });
     // Again → relearn soon; later the same day the ru-en card may be due again, siblings are not served.
     const later = NOON + 3_600_000;
@@ -157,13 +157,13 @@ describe('queue order, budget use and the day boundary', () => {
       directions: [...DIRS],
       prefs: P(),
     });
-    expect(withBury.every((c) => c.direction === 'ru-en')).toBe(true);
+    expect(withBury.every((c) => c.direction === 'uk-en')).toBe(true);
     const noBury = await repos.reviews.listSessionCards({
       now: later,
       directions: [...DIRS],
       prefs: P({ buryRelated: false }),
     });
-    expect(noBury.some((c) => c.direction !== 'ru-en')).toBe(true);
+    expect(noBury.some((c) => c.direction !== 'uk-en')).toBe(true);
     // Next local day the siblings return.
     const tomorrow = NOON + DAY;
     const back = await repos.reviews.listSessionCards({
@@ -178,14 +178,14 @@ describe('queue order, budget use and the day boundary', () => {
     const repos = setup();
     const ids = await bank(repos, 3);
     const ruen = async (id: string) =>
-      (await repos.reviews.listCardsForItem(id)).find((x) => x.direction === 'ru-en')!;
+      (await repos.reviews.listCardsForItem(id)).find((x) => x.direction === 'uk-en')!;
     const c0 = await ruen(ids[0]!);
     const c1 = await ruen(ids[1]!);
     await repos.reviews.suspendCard(c0.id);
     await repos.reviews.buryUntilTomorrow(c1.id, NOON);
     const p = await repos.reviews.countDueBreakdown({
       now: NOON,
-      directions: ['ru-en'],
+      directions: ['uk-en'],
       prefs: P(),
     });
     expect(p.total).toBe(1);
@@ -205,7 +205,7 @@ describe('breakdown fields', () => {
   it('splits by state, direction, source and overdue age; exam deck is not in cards', async () => {
     const repos = setup();
     const ids = await bank(repos, 4);
-    const c = (await repos.reviews.listCardsForItem(ids[0]!)).find((x) => x.direction === 'ru-en')!;
+    const c = (await repos.reviews.listCardsForItem(ids[0]!)).find((x) => x.direction === 'uk-en')!;
     await repos.reviews.gradeCard(c.id, Rating.Good, { now: NOON - 40 * DAY });
     const p = await repos.reviews.countDueBreakdown({
       now: NOON,

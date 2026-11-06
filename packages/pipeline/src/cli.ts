@@ -439,7 +439,7 @@ async function audioCommand(args: string[]): Promise<void> {
     } else {
       const summary = await runFinalize(drafts, out, client, {
         restamp: restampFlag
-          ? pythonAligner({ device: process.env.SUMRAK_ALIGN_DEVICE })
+          ? pythonAligner({ device: process.env.SUTINKI_ALIGN_DEVICE })
           : undefined,
         seeds,
         defaultSeed,

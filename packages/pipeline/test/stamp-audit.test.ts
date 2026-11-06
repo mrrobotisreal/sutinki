@@ -3,7 +3,7 @@ import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
-import type { Pack, Sentence } from '@sumrak/schema';
+import type { Pack, Sentence } from '@sutinki/schema';
 import {
   assertOnlyTimestampsChanged,
   auditPack,

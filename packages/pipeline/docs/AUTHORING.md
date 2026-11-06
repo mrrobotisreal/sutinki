@@ -161,7 +161,7 @@ pnpm pipeline stamp-audit <pack-dir|pack.json>… [--track id] [--json out.json]
 pnpm pipeline restamp <pack-dir|pack.json> [--track id] [-o out.json]
 pnpm pipeline audio drafts… -o <pack-dir> --seed …      # re-stamps by default
 pnpm pipeline audio drafts… -o <pack-dir> --no-restamp  # keep provider stamps
-pnpm pipeline publish <pack-dir> --content ../sumrak-content [--allow-stamp-risk]
+pnpm pipeline publish <pack-dir> --content ../sutinki-content [--allow-stamp-risk]
 ```
 
 - `stamp-audit` reports per track: median / p95 |offset| (published start vs the
@@ -184,10 +184,10 @@ pnpm pipeline publish <pack-dir> --content ../sumrak-content [--allow-stamp-risk
   now also warns when the stamped tail ends > 1 s before the audio does.
 
 **Runtime.** Python 3.12 venv with `torch torchaudio transformers numpy`
-(`/opt/homebrew/bin/python3.12 -m venv ~/.venvs/sumrak-align && ~/.venvs/sumrak-align/bin/pip install torch torchaudio transformers numpy`).
-Point the pipeline at it with `SUMRAK_ALIGN_PYTHON=~/.venvs/sumrak-align/bin/python`
-(optional `SUMRAK_ALIGN_DEVICE=mps` — about 10× faster on Apple silicon; cache
-dir `SUMRAK_ALIGN_CACHE`, default `~/.cache/sumrak-align`, keyed by
+(`/opt/homebrew/bin/python3.12 -m venv ~/.venvs/sutinki-align && ~/.venvs/sutinki-align/bin/pip install torch torchaudio transformers numpy`).
+Point the pipeline at it with `SUTINKI_ALIGN_PYTHON=~/.venvs/sutinki-align/bin/python`
+(optional `SUTINKI_ALIGN_DEVICE=mps` — about 10× faster on Apple silicon; cache
+dir `SUTINKI_ALIGN_CACHE`, default `~/.cache/sutinki-align`, keyed by
 sha256(audio + words)). The first run downloads the 1.2 GB model into the
 Hugging Face cache (`HF_HOME`; set `HF_HUB_OFFLINE=1` afterwards). A full sweep
 of all 493 published tracks (11.1 h of audio) took ≈ 75 min on MPS; one
