@@ -23,7 +23,7 @@ import {
 
 /**
  * T67: the `*.exam.md` draft format, its assembly with story drafts, the
- * four exam reports, the a1-exam-fixture round-trip, the broken fixtures and
+ * four exam reports, the a1-ukrexam-fixture round-trip, the broken fixtures and
  * a scratch publish (TORFL_EXAM_PREP §3.3).
  */
 

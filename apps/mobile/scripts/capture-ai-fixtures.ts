@@ -292,7 +292,7 @@ const RESCUE_EXTRAS = {
 
 /**
  * T72 exam-writing fixtures (TORFL_EXAM_PREP §6.2): the fixture mock's letter
- * task (`a1-exam-fixture` / `wr01`) graded for one good and one weak letter,
+ * task (the retired inline TORFL A1 mock, `wr01`) graded for one good and one weak letter,
  * on BOTH providers of the run-profile table at the «Exam grading» default
  * notch — Anthropic normal (Opus 5.5) at effort HIGH, and the GPT-class
  * normal (GPT-6 Sol Pro) at effort high — so the Session log can compare

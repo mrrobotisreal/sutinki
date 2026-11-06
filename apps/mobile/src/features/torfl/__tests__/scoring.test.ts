@@ -1,5 +1,5 @@
 import { ExamSchema, type ChoiceItem, type Exam, type TypedItem } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { Rating } from 'ts-fsrs';
 import { describe, expect, it } from 'vitest';
 

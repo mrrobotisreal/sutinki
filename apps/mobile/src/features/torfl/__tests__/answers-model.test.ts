@@ -18,7 +18,7 @@ import {
 function prompt(
   id: string,
   tags: string[] | null,
-  packId = 'a1-torfl-prompts-fixture',
+  packId = 'a1-torfl-prompts-inline',
 ): AnswerPrompt {
   return { packId, id, promptUk: `Вопрос ${id}`, promptEn: `Prompt ${id}`, tags };
 }

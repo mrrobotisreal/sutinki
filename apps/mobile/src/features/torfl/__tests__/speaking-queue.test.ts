@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam, type Pack, type SpeakingMonologueItem } from '@sutinki/schema';
-import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

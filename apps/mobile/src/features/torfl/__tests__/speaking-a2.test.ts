@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam } from '@sutinki/schema';
-import a2Pack from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { a2TorflPack as a2Pack } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { describe, expect, it } from 'vitest';
 
 import {
