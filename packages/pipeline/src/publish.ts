@@ -91,6 +91,18 @@ export function packFileList(pack: Pack, packDir?: string): string[] {
       if (turn.expect?.coachAudio) files.push(turn.expect.coachAudio.file);
     }
   }
+  // Exam item pictures (UT16: photo-description items) — pack-relative image files.
+  for (const exam of pack.exams ?? []) {
+    for (const subtest of exam.subtests) {
+      for (const part of subtest.parts) {
+        for (const item of part.items) {
+          if ('image' in item && item.image !== undefined && !files.includes(item.image.file)) {
+            files.push(item.image.file);
+          }
+        }
+      }
+    }
+  }
   // scene/** — PNG layers referenced by portraits/backdrop; shipped wholesale
   // (the pack dir is the source of truth for what art exists).
   if (packDir !== undefined && (pack.scenarios?.length ?? 0) > 0) {

@@ -97,6 +97,17 @@ describe('sample pack fixtures', () => {
     }
   });
 
+  it('UT16 Ukrainian exam fixture validates (category ukr-exam-a1, format ukr-state, Piper audio + a photo)', () => {
+    const exam = loadPack('a1-ukrexam-fixture');
+    expect(exam.type).toBe('exam');
+    expect(exam.category).toBe('ukr-exam-a1');
+    expect(exam.level).toBe('A1');
+    expect(exam.tags).toEqual(['ukr-exam', 'ukr-exam:fixture']);
+    expect(exam.exams!.every((e) => e.format === 'ukr-state' && e.level === 'A1')).toBe(true);
+    const files = ['audio/ls-01.opus', 'audio/ex-01.opus', 'images/photo-01.png'];
+    for (const f of files) expect(existsSync(join(packDir('a1-ukrexam-fixture'), f)), f).toBe(true);
+  });
+
   it('M14 fixtures validate, carrying category/genre/subtitle/source exactly as authored', () => {
     const news = loadPack('a2-news-090');
     expect(news.category).toBe('news');

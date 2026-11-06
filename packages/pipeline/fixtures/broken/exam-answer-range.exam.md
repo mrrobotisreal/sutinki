@@ -1,18 +1,18 @@
 ---
 pack:
-  id: a1-exam-fixture
+  id: a1-ukrexam-fixture
   version: 1
   type: exam
-  title: { uk: "ТРКИ: тестовый пакет", en: "TORFL: fixture pack" }
+  title: { uk: "Іспит A1: тестовий пакет", en: "Exam A1: fixture pack" }
   level: A1
-  tags: ["torfl", "torfl:fixture"]
-  category: torfl
+  tags: ["ukr-exam", "ukr-exam:fixture"]
+  category: ukr-exam-a1
 exam:
   id: x-answer
-  format: torfl
+  format: ukr-state
   level: A1
   mode: drill
-  title: { uk: 'Сломано', en: 'Broken' }
+  title: { uk: 'Зламано', en: 'Broken' }
   subtests:
     - id: s1
       kind: lexgram
@@ -27,8 +27,8 @@ exam:
         - id: p1
           instructions: { uk: 'Тест.', en: 'Test.' }
           items:
-            - { id: lg01, kind: choice, topic: case-prep, stem: 'Я живу … Москве.', options: ['в', 'на'], answer: 2 }
+            - { id: lg01, kind: choice, topic: g19, stem: 'Я живу … Києві.', options: ['в', 'на'], answer: 2 }
 ---
 
-T67 broken fixture — annotate together with ../exam-fixture/rd-01.draft.md and
-ls-01.draft.md (see test/exam.test.ts).
+Зламана фікстура UT16 — анотувати разом з ../ukr-exam-fixture/rd-01.draft.md і
+ls-01.draft.md (див. test/exam.test.ts).

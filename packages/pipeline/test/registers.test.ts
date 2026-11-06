@@ -51,6 +51,11 @@ describe('REGISTERS table', () => {
       travel: 'guide',
       torfl: 'lecturer',
       'torfl-a2': 'lecturer',
+      'ukr-exam-a1': 'lecturer',
+      'ukr-exam-a2': 'lecturer',
+      'ukr-exam-b1': 'lecturer',
+      'ukr-exam-b2': 'lecturer',
+      'ukr-exam-c1': 'lecturer',
     });
     expect(DEFAULT_VOICE).toBe('elevenlabs:id:HQ4Xi3gPf8Q6bJUlao6z');
   });
@@ -127,6 +132,12 @@ describe('applyRegister', () => {
     expect(r.style).toBe('guest-host');
     expect(r.stylePrompt).toBe('Привет.');
     expect(r.settings).toEqual(REGISTERS.host.settings);
+  });
+
+  it('the «Іспит» categories (UT16) default to the lecturer register', () => {
+    for (const level of ['a1', 'a2', 'b1', 'b2', 'c1']) {
+      expect(resolveRegisterSlug({}, `ukr-exam-${level}`)).toBe('lecturer');
+    }
   });
 
   it('the «ТРКИ» category (M18, T67) defaults to the lecturer register', () => {

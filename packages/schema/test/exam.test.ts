@@ -179,9 +179,9 @@ describe('exam invariant 3 — choice items', () => {
     expectIssue(pack, 'items[0].answer', 'answer 2 is out of range for 2 options');
   });
 
-  it('rejects options that collide after normalization (case, ё/е, spaces)', () => {
+  it('rejects options that collide after normalization (case, spaces)', () => {
     const pack = makeValidExamPack() as any;
-    items(pack, 'reading')[0].options = ['Ёлка', 'елка', 'Сочи'];
+    items(pack, 'reading')[0].options = ['Ялинка', '  ялинка', 'Київ'];
     expectIssue(pack, 'items[0].options[1]', 'duplicates option 0');
   });
 

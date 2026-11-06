@@ -219,7 +219,13 @@ export {
   renderRefTable,
   renderTopicCensus,
 } from './exam-report.ts';
-export { EXAM_TOPICS, EXAM_TOPIC_KIND } from './exam-topics.ts';
+export {
+  EXAM_GRAMMAR_SLUGS,
+  EXAM_THEME_SET,
+  EXAM_THEME_SLUGS,
+  EXAM_TOPICS,
+  EXAM_TOPIC_KIND,
+} from './exam-topics.ts';
 export { ExtrasFrontmatterSchema, loadExtras, parseExtras, type PackExtras } from './extras.ts';
 export {
   FrontmatterSchema,
