@@ -234,7 +234,9 @@ export function ForecastSection({
  * validated with the dataviz ordinal check (one hue, monotone lightness)
  * AND the T22 contrast bar: every active step ≥ 3:1 vs the card surface
  * (WCAG 1.4.11 non-text) — recorded in the T38 notes:
- * Measured for the Sutinki accent by science/__tests__/heat-ramp.test.ts: HEAT_NUMBERS
+ * Measured for the Sutinki accent (science/__tests__/heat-ramp.test.ts, UP05):
+ * dark  #E9C032 10.1 · #e9c855 10.8 · #e9cf79 11.5 · #e8d8a0 12.4 (on #121926)
+ * light #a48c40 3.3 · #856600 5.4 · #654f09 7.8 · #453813 11.5 (on #FFFFFF)
  * Level 0 (no activity) is the near-neutral track, so "nothing" never
  * reads as "a little".
  */
