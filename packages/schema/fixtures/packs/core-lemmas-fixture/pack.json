@@ -1,0 +1,53 @@
+{
+  "id": "core-lemmas-fixture",
+  "version": 1,
+  "type": "reference",
+  "title": { "uk": "Базова лексика (тест)", "en": "Core vocabulary (fixture)" },
+  "level": "A1",
+  "tags": ["reference", "core-lemmas", "fixture"],
+  "stories": [],
+  "lemmaLists": [
+    {
+      "id": "uk-a1-core",
+      "level": "A1",
+      "title": { "uk": "Ядро A1", "en": "Core A1" },
+      "lemmas": [
+        { "lemma": "хліб", "pos": "noun", "translation": "bread" },
+        { "lemma": "вода", "pos": "noun", "translation": "water" },
+        { "lemma": "дім", "pos": "noun", "translation": "house, home" },
+        { "lemma": "ґанок", "pos": "noun", "translation": "porch" },
+        { "lemma": "п'ять", "pos": "num", "translation": "five" },
+        { "lemma": "мати", "pos": "verb", "translation": "to have" },
+        { "lemma": "ніч", "pos": "noun", "translation": "night" },
+        { "lemma": "я", "pos": "pron", "translation": "I" },
+        { "lemma": "жити", "pos": "verb", "translation": "to live" },
+        { "lemma": "один", "pos": "num", "translation": "one" },
+        { "lemma": "десь-небудь", "pos": "adv", "translation": "somewhere" },
+        { "lemma": "чорний", "pos": "adj", "translation": "black" },
+        { "lemma": "вікно", "pos": "noun", "translation": "window" },
+        { "lemma": "їжа", "pos": "noun", "translation": "food" },
+        { "lemma": "євро", "pos": "noun", "translation": "euro" },
+        { "lemma": "пʼятниця", "pos": "noun", "translation": "Friday" },
+        { "lemma": "стіна", "pos": "noun", "translation": "wall" },
+        { "lemma": "мʼясо", "pos": "noun", "translation": "meat" },
+        { "lemma": "сім'я", "pos": "noun", "translation": "family" },
+        { "lemma": "ґудзик", "pos": "noun", "translation": "button" }
+      ]
+    },
+    {
+      "id": "uk-a2-core",
+      "level": "A2",
+      "title": { "uk": "Ядро A2 (понад A1)", "en": "Core A2 (beyond A1)" },
+      "lemmas": [
+        { "lemma": "тиша", "pos": "noun", "translation": "silence" },
+        { "lemma": "шепіт", "pos": "noun", "translation": "whisper" },
+        { "lemma": "раптом", "pos": "adv", "translation": "suddenly" },
+        { "lemma": "стукати", "pos": "verb", "translation": "to knock" },
+        { "lemma": "страшний", "pos": "adj", "translation": "scary" },
+        { "lemma": "ґрунт", "pos": "noun", "translation": "soil" },
+        { "lemma": "об'єкт", "pos": "noun", "translation": "object" },
+        { "lemma": "бур'ян", "pos": "noun", "translation": "weed" }
+      ]
+    }
+  ]
+}

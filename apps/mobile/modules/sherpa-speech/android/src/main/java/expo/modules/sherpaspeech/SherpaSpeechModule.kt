@@ -42,7 +42,7 @@ import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
- * Sumrak's sherpa-onnx speech module (T11 TTS + T12 ASR, design §6).
+ * Sutinki's sherpa-onnx speech module (T11 TTS + T12 ASR, design §6).
  *
  * TTS: Piper Ukrainian VITS voices (UT05), one loaded at a time; `speak`
  * streams synthesis chunks to an AudioTrack as they are generated,

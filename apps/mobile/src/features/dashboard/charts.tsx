@@ -4,6 +4,8 @@ import { View } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { mixHex } from './mix-hex';
+
 /**
  * View-based chart primitives for the dashboard (T18). No SVG dependency —
  * everything is flexbox bars/columns/dots, which covers the dataviz
@@ -19,13 +21,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
  * each band ships a labeled count beside a color dot.
  */
 
-/** Mix `fg` toward `bg` (both #RRGGBB) — poor man's alpha compositing. */
-export function mixHex(fg: string, bg: string, t: number): string {
-  const f = [1, 3, 5].map((i) => parseInt(fg.slice(i, i + 2), 16));
-  const b = [1, 3, 5].map((i) => parseInt(bg.slice(i, i + 2), 16));
-  const mixed = f.map((c, i) => Math.round(c * t + b[i]! * (1 - t)));
-  return `#${mixed.map((c) => c.toString(16).padStart(2, '0')).join('')}`;
-}
+export { mixHex };
 
 /** The sequential mastery ramp + structural colors, derived from tokens. */
 export function useMasteryRamp() {

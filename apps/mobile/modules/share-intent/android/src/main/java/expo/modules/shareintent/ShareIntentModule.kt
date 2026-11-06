@@ -5,7 +5,7 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
 /**
- * Sumrak's share-target receiver (T28, design V2 §4.1).
+ * Sutinki's share-target receiver (T28, design V2 §4.1).
  *
  * The `android.intentFilters` entry in app.json puts a text/plain SEND
  * filter on MainActivity; this module is the JS-visible half that actually

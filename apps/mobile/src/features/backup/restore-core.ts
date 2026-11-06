@@ -15,6 +15,7 @@ import {
   encounters,
   examAttempts,
   examItemCards,
+  leechDismissals,
   examResponses,
   frozenDays,
   gameSessions,
@@ -85,6 +86,8 @@ const INSERT_ORDER: [UserTableKey, SQLiteTable][] = [
   ['examAttempts', examAttempts],
   ['examResponses', examResponses],
   ['examItemCards', examItemCards],
+  // T38: after cards (FK → cards).
+  ['leechDismissals', leechDismissals],
   ['settings', settings],
   ['syncState', syncState],
   ['analyticsEvents', analyticsEvents],
@@ -130,6 +133,20 @@ export async function restoreUserData(db: SutinkiDB, raw: unknown): Promise<Rest
           db,
           table,
           tables.scenarioRuns.map((r) => ({ ...r, mediaLocal: false })),
+        );
+        continue;
+      }
+      if (key === 'cards') {
+        // T39: pre-T39 snapshots lack suspendedAt/buriedUntil — normalise to
+        // null so every row has the same column set (insertAll keys off row 0).
+        await insertAll(
+          db,
+          table,
+          tables.cards.map((r) => ({
+            ...r,
+            suspendedAt: r.suspendedAt ?? null,
+            buriedUntil: r.buriedUntil ?? null,
+          })),
         );
         continue;
       }

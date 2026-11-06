@@ -17,6 +17,7 @@ import {
   encounters,
   examAttempts,
   examItemCards,
+  leechDismissals,
   examResponses,
   frozenDays,
   gameSessions,
@@ -141,6 +142,8 @@ async function seedSource(db: SutinkiDB) {
       createdAt: NOW - 5000,
     },
   ]);
+  // T38: one acknowledged leech.
+  await db.insert(leechDismissals).values({ cardId: 'card-1', dismissedAt: NOW - 1000 });
   await db.insert(reviewLog).values({
     id: 'rl-1',
     cardId: 'card-1',
@@ -609,6 +612,7 @@ async function selectAllUserTables(db: SutinkiDB) {
     examAttempts: await db.select().from(examAttempts),
     examResponses: await db.select().from(examResponses),
     examItemCards: await db.select().from(examItemCards),
+    leechDismissals: await db.select().from(leechDismissals),
     settings: await db.select().from(settings),
     syncState: await db.select().from(syncState),
     analyticsEvents: await db.select().from(analyticsEvents),
@@ -766,6 +770,41 @@ describe('restore-core (full pipeline: export → encrypt → decrypt → restor
     expect(result.rowCounts.reviewLog).toBe(1);
     const rows = await target.select().from(reviewLog);
     expect(rows[0]).toMatchObject({ id: 'rl-1', source: null });
+  });
+
+  it('a pre-T39 payload (cards without suspendedAt/buriedUntil) restores both as null', async () => {
+    const source = createTestDb();
+    await seedSource(source);
+    const { payload } = await exportUserData(source);
+    const legacy = JSON.parse(JSON.stringify(payload)) as {
+      tables: { cards: Record<string, unknown>[] };
+    };
+    for (const row of legacy.tables.cards) {
+      delete row.suspendedAt;
+      delete row.buriedUntil;
+    }
+
+    const target = createTestDb();
+    const result = await restoreUserData(target, legacy);
+    expect(result.rowCounts.cards).toBeGreaterThan(0);
+    const rows = await target.select().from(cards);
+    expect(rows.length).toBeGreaterThan(0);
+    for (const row of rows) {
+      expect(row.suspendedAt).toBeNull();
+      expect(row.buriedUntil).toBeNull();
+    }
+  });
+
+  it('cards.suspendedAt + buriedUntil round-trip through export → restore (T39)', async () => {
+    const source = createTestDb();
+    await seedSource(source);
+    await source.update(cards).set({ suspendedAt: NOW - 5, buriedUntil: NOW + 99 });
+    const { payload } = await exportUserData(source);
+
+    const target = createTestDb();
+    await restoreUserData(target, JSON.parse(JSON.stringify(payload)));
+    const rows = await target.select().from(cards);
+    expect(rows.every((r) => r.suspendedAt === NOW - 5 && r.buriedUntil === NOW + 99)).toBe(true);
   });
 
   it('review_log.source round-trips through export → restore (T50)', async () => {
@@ -1014,6 +1053,8 @@ describe('user-table drift guard', () => {
       'scenario_assets',
       // T68 exam content table (rebuilt from packs, never backed up).
       'exams',
+      // T38 reference lemma lists (rebuilt from packs, never backed up).
+      'core_lemmas',
     ]);
     const isInfra = (n: string) =>
       n.startsWith('sqlite_') || n.startsWith('__drizzle') || n.includes('_fts');

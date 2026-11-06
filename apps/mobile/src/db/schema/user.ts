@@ -110,6 +110,18 @@ export const cards = sqliteTable(
     /** ts-fsrs State enum: 0 New · 1 Learning · 2 Review · 3 Relearning. */
     state: integer('state').notNull(),
     lastReviewAt: integer('last_review_at'),
+    /**
+     * T39: suspended cards are never served by any queue, count, or forecast
+     * and are never graded (`getGradableCard`). Non-null = epoch ms of the
+     * suspension; null = active. A scheduling state, not knowledge.
+     */
+    suspendedAt: integer('suspended_at'),
+    /**
+     * T39: bury until the start of the next local day. Hidden from queues
+     * while `buried_until > now`; graded normally if answered elsewhere.
+     * Null = not buried.
+     */
+    buriedUntil: integer('buried_until'),
     createdAt: integer('created_at').notNull(),
   },
   (t) => [
@@ -670,6 +682,19 @@ export const examItemCards = sqliteTable(
     index('exam_item_cards_topic_idx').on(t.topic),
   ],
 );
+
+/**
+ * Acknowledged leeches (T38). A card whose recent history trips the leech
+ * rule (features/dashboard/leeches.ts) can be dismissed from the inbox; it
+ * stays suppressed until it earns an `Again` reviewed AFTER `dismissedAt`
+ * (re-dismissing overwrites the stamp). Cascades with its card.
+ */
+export const leechDismissals = sqliteTable('leech_dismissals', {
+  cardId: text('card_id')
+    .primaryKey()
+    .references(() => cards.id, { onDelete: 'cascade' }),
+  dismissedAt: integer('dismissed_at').notNull(),
+});
 
 /** Key-value settings (JSON-encoded values), incl. theme mode and path position. */
 export const settings = sqliteTable('settings', {

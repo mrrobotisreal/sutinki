@@ -126,6 +126,14 @@ export {
   type WritingItem,
 } from './exam';
 export {
+  LemmaListSchema,
+  ReferenceLemmaSchema,
+  normalizeLemmaUk,
+  referenceLemmaKey,
+  type LemmaList,
+  type ReferenceLemma,
+} from './reference';
+export {
   AudioTrackSchema,
   ExerciseSpecSchema,
   JournalPromptSchema,
