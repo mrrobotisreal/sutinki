@@ -22,7 +22,12 @@ describe('the pass rule is data from the level shape (UKR_EXAM_PREP §2, ADR-001
   it('A1/A2/B1: four sections × 25 %, pass at 70, no per-section floor', () => {
     for (const level of CITIZENSHIP) {
       const r = ruleOf(level);
-      expect(r.sections.map((s) => s.kind)).toEqual(['listening', 'reading', 'writing', 'speaking']);
+      expect(r.sections.map((s) => s.kind)).toEqual([
+        'listening',
+        'reading',
+        'writing',
+        'speaking',
+      ]);
       expect(r.sections.map((s) => s.weightPct)).toEqual([25, 25, 25, 25]);
       expect(r.passPct).toBe(70);
       expect(r.perSectionMinPct).toBeNull();
@@ -46,7 +51,13 @@ describe('boundary tables — every level (pass = weighted total ≥ threshold, 
     describe(`${level} (threshold ${t})`, () => {
       it(`exactly ${t} everywhere → pass, margin 0`, () => {
         const v = verdict(all(level, t), {}, level);
-        expect(v).toMatchObject({ verdict: 'pass', margin: 0, passPct: t, retake: [], missing: [] });
+        expect(v).toMatchObject({
+          verdict: 'pass',
+          margin: 0,
+          passPct: t,
+          retake: [],
+          missing: [],
+        });
       });
       it(`${t - 0.1} everywhere → fail (no rounding up: stricter reading)`, () => {
         expect(verdict(all(level, t - 0.1), {}, level).verdict).toBe('fail');
@@ -71,24 +82,24 @@ describe('no per-section floor: a zero section can still pass when the total rea
     expect(v.retake).toEqual([]);
   });
   it('A2: 100 / 100 / 60 / 40 → total 75 → pass; 100 / 100 / 40 / 40 → 70 → pass; 100 / 100 / 40 / 39 → fail', () => {
-    expect(verdict({ listening: 100, reading: 100, writing: 60, speaking: 40 }, {}, 'A2').verdict).toBe(
-      'pass',
-    );
-    expect(verdict({ listening: 100, reading: 100, writing: 40, speaking: 40 }, {}, 'A2').verdict).toBe(
-      'pass',
-    );
-    expect(verdict({ listening: 100, reading: 100, writing: 40, speaking: 39 }, {}, 'A2').verdict).toBe(
-      'fail',
-    );
+    expect(
+      verdict({ listening: 100, reading: 100, writing: 60, speaking: 40 }, {}, 'A2').verdict,
+    ).toBe('pass');
+    expect(
+      verdict({ listening: 100, reading: 100, writing: 40, speaking: 40 }, {}, 'A2').verdict,
+    ).toBe('pass');
+    expect(
+      verdict({ listening: 100, reading: 100, writing: 40, speaking: 39 }, {}, 'A2').verdict,
+    ).toBe('fail');
   });
   it('B1 weighted: one-section shortfalls are summed, not gated', () => {
     expect(weightedTotal({ listening: 80, reading: 80, writing: 60, speaking: 60 }, 'B1')).toBe(70);
-    expect(verdict({ listening: 80, reading: 80, writing: 60, speaking: 60 }, {}, 'B1').verdict).toBe(
-      'pass',
-    );
-    expect(verdict({ listening: 80, reading: 80, writing: 60, speaking: 59.9 }, {}, 'B1').verdict).toBe(
-      'fail',
-    );
+    expect(
+      verdict({ listening: 80, reading: 80, writing: 60, speaking: 60 }, {}, 'B1').verdict,
+    ).toBe('pass');
+    expect(
+      verdict({ listening: 80, reading: 80, writing: 60, speaking: 59.9 }, {}, 'B1').verdict,
+    ).toBe('fail');
   });
   it('B2 uses the 40/30/30 weights (60 band floor)', () => {
     expect(weightedTotal({ reading: 50, writing: 70, speaking: 70 }, 'B2')).toBe(62);
@@ -104,9 +115,9 @@ describe('rounding rule (stricter reading, written in the names)', () => {
     expect(v.verdict).toBe('fail');
   });
   it('float noise at exactly 70 does not fail it (0.1 + 0.2 style sums)', () => {
-    expect(verdict({ listening: 70.1, reading: 69.9, writing: 70.2, speaking: 69.8 }, {}, 'A1').verdict).toBe(
-      'pass',
-    );
+    expect(
+      verdict({ listening: 70.1, reading: 69.9, writing: 70.2, speaking: 69.8 }, {}, 'A1').verdict,
+    ).toBe('pass');
   });
 });
 
@@ -153,7 +164,8 @@ describe('predictVerdict (readiness line: unknown = fail)', () => {
 describe('per-section floor stays data-only (if the Commission adds one)', () => {
   it('retake names sections under perSectionMinPct only when the shape carries one', () => {
     // No shape has a floor today → retake is always [].
-    for (const level of EXAM_LEVELS) expect(predictVerdict(all(level, 0), level).retake).toEqual([]);
+    for (const level of EXAM_LEVELS)
+      expect(predictVerdict(all(level, 0), level).retake).toEqual([]);
   });
 });
 

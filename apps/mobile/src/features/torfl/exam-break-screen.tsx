@@ -34,13 +34,13 @@ export function ExamBreakScreen({
     >
       <Ionicons name="cafe-outline" size={44} color={tokens.accent} />
       <View className="items-center gap-1">
-        <Text className="font-reading-bold text-2xl">Перерыв</Text>
+        <Text className="font-reading-bold text-2xl">Перерва</Text>
         <Text variant="muted" className="text-center">
-          Время не идёт. Отдохни, когда будешь готов — продолжай.
+          Час не йде. Відпочинь і продовжуй, коли будеш готовий.
         </Text>
       </View>
       <View className="items-center gap-1 rounded-2xl border border-border bg-surface px-5 py-4">
-        <Text variant="caption">Следующий субтест</Text>
+        <Text variant="caption">Наступний розділ</Text>
         <View className="flex-row items-center gap-2">
           <Ionicons name={SUBTEST_LABELS[nextKind].icon} size={18} color={tokens.textMuted} />
           <Text className="font-ui-bold text-lg">
@@ -54,16 +54,16 @@ export function ExamBreakScreen({
         testID="break-continue"
         className="w-full items-center rounded-full bg-accent px-5 py-3.5 active:opacity-80"
       >
-        <Text className="font-ui-bold text-bg">Продолжить</Text>
+        <Text className="font-ui-bold text-bg">Продовжити</Text>
       </Pressable>
       <Pressable onPress={onQuit} accessibilityRole="button" className="py-2">
-        <Text className="font-ui-medium text-text-muted">Выйти из экзамена</Text>
+        <Text className="font-ui-medium text-text-muted">Вийти з іспиту</Text>
       </Pressable>
     </View>
   );
 }
 
-/** The writing / speaking «скоро» placeholder (T72 / T73 replace it). */
+/** The writing / speaking «незабаром» placeholder (T72 / T73 replace it). */
 export function ExamPlaceholderScreen({
   titleUk,
   kind,
@@ -86,10 +86,10 @@ export function ExamPlaceholderScreen({
       <Ionicons name={SUBTEST_LABELS[kind].icon} size={44} color={tokens.textMuted} />
       <View className="items-center gap-1">
         <Text className="font-reading-bold text-2xl">{titleUk}</Text>
-        <Text className="font-ui-medium text-accent">скоро</Text>
+        <Text className="font-ui-medium text-accent">незабаром</Text>
         <Text variant="muted" className="mt-2 text-center">
-          Этот субтест появится в следующем обновлении. Сейчас он записывается как пропущенный и не
-          входит в проценты.
+          Цей розділ зʼявиться в наступному оновленні. Наразі його записано як пропущений, і він не
+          входить до відсотків.
         </Text>
       </View>
       <Pressable
@@ -98,10 +98,10 @@ export function ExamPlaceholderScreen({
         testID="placeholder-skip"
         className="w-full items-center rounded-full bg-accent px-5 py-3.5 active:opacity-80"
       >
-        <Text className="font-ui-bold text-bg">Дальше</Text>
+        <Text className="font-ui-bold text-bg">Далі</Text>
       </Pressable>
       <Pressable onPress={onQuit} accessibilityRole="button" className="py-2">
-        <Text className="font-ui-medium text-text-muted">Выйти из экзамена</Text>
+        <Text className="font-ui-medium text-text-muted">Вийти з іспиту</Text>
       </Pressable>
     </View>
   );

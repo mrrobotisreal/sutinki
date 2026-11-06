@@ -128,7 +128,7 @@ export function ExamObjectiveScreen({
           onPress={onQuit}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Выйти из экзамена"
+          accessibilityLabel="Вийти з іспиту"
           testID="exam-quit"
           className="h-10 w-10 items-center justify-center rounded-full active:bg-surface-2"
         >
@@ -139,7 +139,7 @@ export function ExamObjectiveScreen({
             {SUBTEST_LABELS[subtest.kind].short}
           </Text>
           <Text variant="caption" className="text-xs">
-            {linear ? `Задание ${flat + 1}–${group.end + 1}` : `Задание ${flat + 1}`} из{' '}
+            {linear ? `Завдання ${flat + 1}–${group.end + 1}` : `Завдання ${flat + 1}`} з{' '}
             {layout.items.length}
           </Text>
         </View>
@@ -229,7 +229,7 @@ export function ExamObjectiveScreen({
           <>
             <NavButton
               icon="chevron-back"
-              label="Предыдущее задание"
+              label="Попереднє завдання"
               disabled={flat === 0}
               onPress={() => onGoto(flat - 1)}
               testID="exam-prev"
@@ -251,7 +251,7 @@ export function ExamObjectiveScreen({
             ) : (
               <NavButton
                 icon="chevron-forward"
-                label="Следующее задание"
+                label="Наступне завдання"
                 onPress={() => onGoto(flat + 1)}
                 testID="exam-forward"
               />
@@ -344,7 +344,7 @@ function MockItem({
   return (
     <View className="gap-3" testID={`mock-item-${item.id}`}>
       <View className="flex-row items-center justify-between px-1">
-        {showHeader ? <Text className="font-ui-bold">Задание {number}</Text> : <View />}
+        {showHeader ? <Text className="font-ui-bold">Завдання {number}</Text> : <View />}
         <Pressable
           onPress={onFlag}
           hitSlop={8}

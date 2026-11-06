@@ -12,7 +12,7 @@ import { matrixCounts, submitConfirmCopy, type MatrixCell } from './engine/matri
 /**
  * The answer matrix sheet (T71, TORFL §8.2): a grid of item numbers — answered
  * filled, unanswered outlined, flagged ⚑, current ringed; tap to jump (cells
- * the engine would refuse — the linear lock — are dimmed); «Сдать субтест»
+ * the engine would refuse — the linear lock — are dimmed); «Здати розділ»
  * confirms with the unanswered count. NEVER shows correctness.
  */
 export function ExamMatrixSheet({
@@ -37,14 +37,14 @@ export function ExamMatrixSheet({
   const confirmSubmit = () => {
     const copy = submitConfirmCopy(counts);
     Alert.alert(copy.title, copy.body, [
-      { text: 'Вернуться', style: 'cancel' },
-      { text: 'Сдать', style: 'destructive', onPress: onSubmit },
+      { text: 'Повернутися', style: 'cancel' },
+      { text: 'Здати', style: 'destructive', onPress: onSubmit },
     ]);
   };
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View
         className="max-h-[80%] rounded-t-2xl border-t border-border bg-surface px-5 pt-4"
         style={{ paddingBottom: insets.bottom + 20 }}
@@ -52,13 +52,13 @@ export function ExamMatrixSheet({
       >
         <View className="mb-3 flex-row items-center justify-between">
           <View>
-            <Text className="font-ui-medium text-lg">Матрица ответов</Text>
+            <Text className="font-ui-medium text-lg">Матриця відповідей</Text>
             <Text variant="caption" testID="matrix-counts">
               Отвечено {counts.answered} из {counts.total}
               {counts.flagged > 0 ? ` · флажков ${counts.flagged}` : ''}
             </Text>
           </View>
-          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрыть">
+          <Pressable onPress={onClose} hitSlop={8} accessibilityLabel="Закрити">
             <Ionicons name="close" size={22} color={tokens.textMuted} />
           </Pressable>
         </View>
@@ -73,7 +73,7 @@ export function ExamMatrixSheet({
                   onClose();
                 }}
                 accessibilityRole="button"
-                accessibilityLabel={`Задание ${c.number}: ${c.answered ? 'есть ответ' : 'без ответа'}${c.flagged ? ', с флажком' : ''}`}
+                accessibilityLabel={`Завдання ${c.number}: ${c.answered ? 'є відповідь' : 'без відповіді'}${c.flagged ? ', з прапорцем' : ''}`}
                 testID={`matrix-cell-${c.number}`}
                 className={cn(
                   'h-11 w-11 items-center justify-center rounded-lg border',
@@ -95,8 +95,8 @@ export function ExamMatrixSheet({
           </View>
         </ScrollView>
         <View className="mb-3 flex-row flex-wrap gap-x-4 gap-y-1">
-          <Legend filled label="есть ответ" />
-          <Legend label="без ответа" />
+          <Legend filled label="є відповідь" />
+          <Legend label="без відповіді" />
           <Legend flag label="флажок" />
           {linear && <Text variant="caption">Назад нельзя: текст звучит один раз подряд.</Text>}
         </View>
@@ -106,7 +106,7 @@ export function ExamMatrixSheet({
           testID="matrix-submit"
           className="items-center rounded-full bg-accent py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-bold text-bg">Сдать субтест</Text>
+          <Text className="font-ui-bold text-bg">Здати розділ</Text>
         </Pressable>
       </View>
     </Modal>

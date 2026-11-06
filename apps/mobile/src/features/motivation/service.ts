@@ -324,10 +324,7 @@ export async function recordExamFinished(
       level: input.level ?? 'A1',
     });
     firstPass = !earlier.some(
-      (a) =>
-        a.id !== opts.excludeAttemptId &&
-        a.mode === 'mock' &&
-        a.verdict === 'pass',
+      (a) => a.id !== opts.excludeAttemptId && a.mode === 'mock' && a.verdict === 'pass',
     );
   }
   const full: ExamRewardInput = { ...input, firstPass };

@@ -18,7 +18,7 @@ import { ukPending } from '@/config/flags';
 /**
  * Exam intro route (T69 + T70 drills + T71 mocks). A mock start creates the
  * attempt (single-active rule) and opens the full-screen runner; an existing
- * active attempt offers «Продолжить» / «Начать заново» (the latter abandons).
+ * active attempt offers «Продовжити» / «Почати спочатку» (the latter abandons).
  */
 function ExamIntroRoute() {
   const router = useRouter();
@@ -49,13 +49,13 @@ function ExamIntroRoute() {
       } catch (err) {
         if (err instanceof ExamAttemptActiveError) {
           Alert.alert(
-            'Есть незаконченная попытка',
-            'Сначала закончи её или начни новую — старая будет прервана.',
+            'Є незавершена спроба',
+            'Спершу заверши її або почни нову — стару буде перервано.',
             [
               { text: 'Отмена', style: 'cancel' },
-              { text: 'Продолжить её', onPress: () => open(err.activeAttemptId) },
+              { text: 'Продовжити її', onPress: () => open(err.activeAttemptId) },
               {
-                text: 'Начать заново',
+                text: 'Почати спочатку',
                 style: 'destructive',
                 onPress: () => void begin(exam, pack, scope, true),
               },
@@ -64,7 +64,7 @@ function ExamIntroRoute() {
           return;
         }
         logError('manual', err);
-        Alert.alert('Не удалось начать экзамен', 'Попробуй ещё раз.');
+        Alert.alert('Не вдалося почати іспит', 'Спробуй ще раз.');
       }
     },
     [open],

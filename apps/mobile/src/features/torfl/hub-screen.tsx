@@ -203,7 +203,7 @@ function LevelHub({
   useStudyAmbience(true, 'education');
   const profile = profileFor(level);
 
-  const exams = useExams({ level });
+  const exams = useExams({ level, scope: 'practice' });
   const mocks = useExamListItems('mock', level);
   const texts = useExamTexts(level);
   const attempts = useExamAttempts({ limit: 20, level });
@@ -772,11 +772,7 @@ function AttemptRow({
     month: 'short',
   });
   const verdictText =
-    attempt.verdict === 'pass'
-      ? 'склав би'
-      : attempt.verdict === 'fail'
-        ? 'не склав би'
-        : null;
+    attempt.verdict === 'pass' ? 'склав би' : attempt.verdict === 'fail' ? 'не склав би' : null;
   const scope =
     attempt.mode === 'mock' ? (attempt.scope === 'full' ? ' · увесь іспит' : ' · один розділ') : '';
   const Row = onOpen ? Pressable : View;

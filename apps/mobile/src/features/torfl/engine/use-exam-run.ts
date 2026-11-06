@@ -498,13 +498,13 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
         const detail = await repos.exams.getAttempt(attemptId);
         if (cancelled) return;
         if (!detail || detail.status !== 'active' || !detail.state) {
-          setLoad({ status: 'error', message: 'Попытка не найдена или уже завершена.' });
+          setLoad({ status: 'error', message: 'Спробу не знайдено або її вже завершено.' });
           return;
         }
         const loadedExam = await repos.exams.getExam(detail.packId, detail.examId);
         if (cancelled) return;
         if (!loadedExam) {
-          setLoad({ status: 'error', message: 'Экзамен не найден — возможно, пакет удалён.' });
+          setLoad({ status: 'error', message: 'Іспит не знайдено — можливо, пакет видалено.' });
           return;
         }
         const loadedPrefs = await getTorflPrefs();
@@ -549,7 +549,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
         }
       } catch (err) {
         logError('manual', err);
-        if (!cancelled) setLoad({ status: 'error', message: 'Не удалось открыть экзамен.' });
+        if (!cancelled) setLoad({ status: 'error', message: 'Не вдалося відкрити іспит.' });
       }
     })();
     return () => {

@@ -91,9 +91,7 @@ export function predictVerdict(pcts: VerdictPcts, level: ExamLevel = 'A1'): Verd
   const retake =
     perSectionMinPct === null
       ? []
-      : sections
-          .filter((s) => (pcts[s.kind] ?? 0) < perSectionMinPct - EPS)
-          .map((s) => s.kind);
+      : sections.filter((s) => (pcts[s.kind] ?? 0) < perSectionMinPct - EPS).map((s) => s.kind);
   const pass = !anyMissing && total + EPS >= passPct && retake.length === 0;
   return { verdict: pass ? 'pass' : 'fail', total, margin: total - passPct, retake };
 }
@@ -177,4 +175,3 @@ export function marginLabel(margin: number): string {
   const up = Math.ceil(Math.abs(margin) * 10 - EPS) / 10;
   return `бракує ${up.toLocaleString('uk-UA', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} п. п.`;
 }
-

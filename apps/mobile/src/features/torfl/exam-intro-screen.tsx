@@ -16,7 +16,7 @@ import { SUBTEST_LABELS, topicLabel } from './topics';
 
 const ITEMS = ['завдання', 'завдання', 'завдань'] as const;
 
-/** What «Начать» starts: the whole mock, one of its subtests, or a drill set. */
+/** What «Почати» starts: the whole mock, one of its subtests, or a drill set. */
 export type ExamStartScope =
   { scope: 'full' } | { scope: 'subtest'; subtestId: string } | { scope: 'drill' };
 
@@ -30,14 +30,14 @@ export interface ExamStartHandlers {
   onStartMock?: (exam: Exam, packId: string, scope: ExamStartScope) => void;
   /** T71: continue the active attempt of this exam («Продолжить»). */
   onResumeMock?: (attemptId: string) => void;
-  /** T71: abandon the active attempt and begin the chosen scope fresh («Начать заново»). */
+  /** T71: abandon the active attempt and begin the chosen scope fresh («Почати спочатку»). */
   onRestartMock?: (exam: Exam, packId: string, scope: ExamStartScope) => void;
 }
 
 /**
  * The exam intro (T69, TORFL §8.2 first bullet): title, mode, the subtests
  * in order with time / items / points / dictionary; a mock offers the scope
- * choice («Весь экзамен · Σ» / one subtest) and the rules (no feedback,
+ * choice («Весь іспит · Σ» / one section) and the rules (no feedback,
  * timer, audio twice, the dictionary rule — decision 8); a drill lists its
  * topics. A resume banner shows when this exam has an active attempt (T71
  * wires the action).
@@ -68,9 +68,9 @@ export function ExamIntroScreen({
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-10">
         <Ionicons name="alert-circle-outline" size={36} color={tokens.textMuted} />
-        <Text className="font-reading-bold text-xl">Экзамен не найден</Text>
+        <Text className="font-reading-bold text-xl">Іспит не знайдено</Text>
         <Text variant="muted" className="text-center">
-          Этот экзамен больше не установлен — возможно, его пакет удалён.
+          Цей іспит більше не встановлено — можливо, його пакет видалено.
         </Text>
       </View>
     );
@@ -123,7 +123,7 @@ export function ExamIntroScreen({
             <View className="flex-row items-center gap-3">
               <Ionicons name="play-circle-outline" size={20} color={tokens.accent} />
               <Text className="flex-1">
-                Есть незаконченная попытка. Таймер идёт по часам — продолжай с того же места.
+                Є незавершена спроба. Таймер іде за годинником — продовжуй з того самого місця.
               </Text>
             </View>
             {onResumeMock && active.data ? (
@@ -134,18 +134,18 @@ export function ExamIntroScreen({
                   testID="exam-resume"
                   className="flex-1 items-center rounded-full bg-accent py-2.5 active:opacity-80"
                 >
-                  <Text className="font-ui-bold text-bg">Продолжить</Text>
+                  <Text className="font-ui-bold text-bg">Продовжити</Text>
                 </Pressable>
                 {onRestartMock && (
                   <Pressable
                     onPress={() =>
                       Alert.alert(
-                        'Начать заново?',
-                        'Незаконченная попытка будет прервана; её ответы останутся в истории.',
+                        'Почати спочатку?',
+                        'Незавершену спробу буде перервано; її відповіді залишаться в історії.',
                         [
                           { text: 'Отмена', style: 'cancel' },
                           {
-                            text: 'Начать заново',
+                            text: 'Почати спочатку',
                             style: 'destructive',
                             onPress: () => onRestartMock(data, packId, scope),
                           },
@@ -156,7 +156,7 @@ export function ExamIntroScreen({
                     testID="exam-restart"
                     className="flex-1 items-center rounded-full border border-border py-2.5 active:bg-surface-2"
                   >
-                    <Text className="font-ui-medium">Начать заново</Text>
+                    <Text className="font-ui-medium">Почати спочатку</Text>
                   </Pressable>
                 )}
               </View>
@@ -166,7 +166,7 @@ export function ExamIntroScreen({
 
         <View className="gap-2">
           <Text variant="caption" className="px-1 font-ui-medium uppercase tracking-wider">
-            {mock ? 'Субтесты' : 'Состав'}
+            {mock ? 'Розділи' : 'Склад'}
           </Text>
           <View className="overflow-hidden rounded-xl border border-border bg-surface">
             {rows.map((r, i) => (
@@ -212,20 +212,20 @@ export function ExamIntroScreen({
           <>
             <View className="gap-2">
               <Text variant="caption" className="px-1 font-ui-medium uppercase tracking-wider">
-                Что сдаём
+                Що складаємо
               </Text>
               <ScopeOption
                 selected={scope.scope === 'full'}
                 onPress={() => setScope({ scope: 'full' })}
-                title={`Весь экзамен · ${formatMinutes(totalMin)}`}
-                caption="Все субтесты по порядку СПбГУ, с перерывами между ними"
+                title={`Весь іспит · ${formatMinutes(totalMin)}`}
+                caption="Усі розділи за порядком державного іспиту, з перервами між ними"
               />
               {rows.map((r) => (
                 <ScopeOption
                   key={r.id}
                   selected={scope.scope === 'subtest' && scope.subtestId === r.id}
                   onPress={() => setScope({ scope: 'subtest', subtestId: r.id })}
-                  title={`Один субтест: ${r.titleUk}`}
+                  title={`Один розділ: ${r.titleUk}`}
                   caption={formatMinutes(r.durationMin)}
                 />
               ))}
@@ -247,7 +247,7 @@ export function ExamIntroScreen({
         ) : (
           <View className="gap-2">
             <Text variant="caption" className="px-1 font-ui-medium uppercase tracking-wider">
-              Темы
+              Теми
             </Text>
             <View className="overflow-hidden rounded-xl border border-border bg-surface">
               {examTopics(data).map((t, i) => (
@@ -269,8 +269,8 @@ export function ExamIntroScreen({
               ))}
             </View>
             <Text variant="caption" className="px-1">
-              Без таймера: после каждого ответа — проверка и объяснение; ошибки уходят в «Работу над
-              ошибками».
+              Без таймера: після кожної відповіді — перевірка й пояснення; помилки потрапляють до
+              колоди «Робота над помилками».
             </Text>
           </View>
         )}
@@ -292,8 +292,8 @@ export function ExamIntroScreen({
           )}
         >
           <Text className={cn('font-ui-bold', startHandler ? 'text-bg' : 'text-text-muted')}>
-            {mock ? 'Начать экзамен' : 'Начать тренировку'}
-            {startHandler ? '' : ' · скоро'}
+            {mock ? 'Почати іспит' : 'Почати тренування'}
+            {startHandler ? '' : ' · незабаром'}
           </Text>
         </Pressable>
       </View>

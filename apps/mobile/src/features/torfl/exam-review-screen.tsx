@@ -74,8 +74,8 @@ export function ExamReviewScreen({ attemptId }: { attemptId: string }) {
         <QueryError
           message={
             attempt.data?.status === 'active'
-              ? 'Разбор откроется после сдачи.'
-              : 'Разбор не найден.'
+              ? 'Розбір відкриється після здачі.'
+              : 'Розбір не знайдено.'
           }
           onRetry={() => router.back()}
         />
@@ -107,7 +107,7 @@ export function ExamReviewScreen({ attemptId }: { attemptId: string }) {
         >
           <Ionicons name="chevron-back" size={22} color={tokens.text} />
         </Pressable>
-        <Text className="flex-1 font-reading-bold text-xl">Разбор</Text>
+        <Text className="flex-1 font-reading-bold text-xl">Розбір</Text>
       </View>
       {scored.length > 1 && (
         <ScrollView
@@ -157,7 +157,7 @@ export function ExamReviewScreen({ attemptId }: { attemptId: string }) {
       ) : (
         <View className="flex-1 items-center justify-center px-8">
           <Text variant="muted" className="text-center">
-            В этой попытке нет заданий для разбора.
+            У цій спробі немає завдань для розбору.
           </Text>
         </View>
       )}
@@ -210,7 +210,7 @@ function ReviewList({
       contentContainerStyle={{ paddingBottom: bottom + 32 }}
     >
       <Text variant="caption" className="px-1" testID="review-counts">
-        Верно {counts.full} · неверно {counts.wrong} · без ответа {counts.blank}
+        Правильно {counts.full} · неправильно {counts.wrong} · без відповіді {counts.blank}
         {counts.half > 0 ? ` · почти ${counts.half}` : ''}
       </Text>
       {entries.map((entry) => (
@@ -268,11 +268,11 @@ function ReviewCard({
           size={20}
           color={ok ? tokens.success : entry.outcome === 'half' ? tokens.trackWarm : tokens.danger}
         />
-        <Text className="font-ui-bold">Задание {entry.number}</Text>
+        <Text className="font-ui-bold">Завдання {entry.number}</Text>
         <Text variant="caption" className="flex-1" numberOfLines={1}>
           {topicLabel(entry.item.topic).uk}
         </Text>
-        {entry.outcome === 'blank' ? <Text variant="caption">без ответа</Text> : null}
+        {entry.outcome === 'blank' ? <Text variant="caption">без відповіді</Text> : null}
       </View>
       <Text className="font-reading text-lg leading-8">{entry.stem}</Text>
       {entry.options.map((o) => (
@@ -290,14 +290,14 @@ function ReviewCard({
         >
           <Text className="w-5 font-ui-bold text-text-muted">{o.letter}</Text>
           <Text className="flex-1 font-reading text-base">{o.text}</Text>
-          {o.chosen ? <Text variant="caption">твой ответ</Text> : null}
+          {o.chosen ? <Text variant="caption">твоя відповідь</Text> : null}
           {o.correct ? <Text variant="caption">верно</Text> : null}
         </View>
       ))}
       {entry.typed ? (
         <View className="gap-1">
           <Text>
-            Твой ответ: <Text className="font-ui-bold">{entry.typed.given.trim() || '—'}</Text>
+            Твоя відповідь: <Text className="font-ui-bold">{entry.typed.given.trim() || '—'}</Text>
           </Text>
           <Text>
             Верно: <Text className="font-ui-bold">{entry.typed.accepted}</Text>

@@ -216,7 +216,8 @@ function ResultsBody({
           ))}
         </View>
         <Text variant="caption" className="px-1">
-          Риска на смузі — {profile.passPct} %: поріг для суми всіх розділів. Окремого мінімуму за розділ немає.
+          Риска на смузі — {profile.passPct} %: поріг для суми всіх розділів. Окремого мінімуму за
+          розділ немає.
         </Text>
       </View>
 
@@ -259,8 +260,7 @@ function ResultsBody({
             ))}
           </View>
           <Text variant="caption" className="px-1">
-            «Тренувати» відкриває завдання цієї теми з тренувальних наборів, якщо вони
-            встановлені.
+            «Тренувати» відкриває завдання цієї теми з тренувальних наборів, якщо вони встановлені.
           </Text>
         </View>
       )}
@@ -315,9 +315,7 @@ function VerdictCard({
             {missingVerdictLine(v.missing)}
           </Text>
         </View>
-        <Text variant="muted">
-          {pendingCountLine(sectionCount, v.missing.length)}
-        </Text>
+        <Text variant="muted">{pendingCountLine(sectionCount, v.missing.length)}</Text>
         {xp > 0 ? <Text className="font-ui-medium text-accent">+{xp} XP</Text> : null}
       </View>
     );
@@ -342,8 +340,8 @@ function VerdictCard({
         </Text>
       </View>
       <Text testID="verdict-total">
-        Сума: {(Math.floor(v.total * 10 + 1e-9) / 10).toLocaleString('uk-UA')} % · поріг{' '}
-        {v.passPct} % · {marginLabel(v.margin)}
+        Сума: {(Math.floor(v.total * 10 + 1e-9) / 10).toLocaleString('uk-UA')} % · поріг {v.passPct}{' '}
+        % · {marginLabel(v.margin)}
       </Text>
       {v.retake.length > 0 ? (
         <Text testID="verdict-retake">
