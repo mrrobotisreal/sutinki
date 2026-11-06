@@ -15,7 +15,11 @@ export interface TopicLabel {
   subtestKind: ExamSubtestKind;
 }
 
-/** §3.4, in table order (the hub's tile order inside a subtest tab). */
+/**
+ * §3.4, in table order (the hub's tile order inside a subtest tab), then the
+ * TORFL_A2_EXAM_PREP §4 additions (T75): each A2 slug sits right after the
+ * last A1 slug of its subtest kind, so the tile order is the A1 table then A2.
+ */
 export const TOPICS = {
   'lex-verbs': { uk: 'Глаголы-близнецы', en: 'Look-alike verbs', subtestKind: 'lexgram' },
   'lex-family': { uk: 'Однокоренные слова', en: 'Word families', subtestKind: 'lexgram' },
@@ -35,16 +39,31 @@ export const TOPICS = {
   'verb-aspect': { uk: 'Вид и время', en: 'Aspect & tense', subtestKind: 'lexgram' },
   'verb-motion': { uk: 'Глаголы движения', en: 'Verbs of motion', subtestKind: 'lexgram' },
   conj: { uk: 'Союзы и вопросы', en: 'Conjunctions & questions', subtestKind: 'lexgram' },
+  'lex-phrases': { uk: 'Речевой этикет', en: 'Speech etiquette', subtestKind: 'lexgram' },
+  'case-plural': { uk: 'Падежи во мн. числе', en: 'Plural cases', subtestKind: 'lexgram' },
+  'case-time': { uk: 'Время и даты', en: 'Time & dates', subtestKind: 'lexgram' },
+  numerals: { uk: 'Числительные', en: 'Numerals', subtestKind: 'lexgram' },
+  comparative: { uk: 'Сравнение', en: 'Comparison', subtestKind: 'lexgram' },
+  'verb-motion-prefix': {
+    uk: 'Приставочные глаголы движения',
+    en: 'Prefixed verbs of motion',
+    subtestKind: 'lexgram',
+  },
+  clauses: { uk: 'Сложное предложение', en: 'Complex sentences', subtestKind: 'lexgram' },
   'read-continue': { uk: 'Продолжите фразу', en: 'Continue the line', subtestKind: 'reading' },
   'read-signs': { uk: 'Объявления', en: 'Signs & notices', subtestKind: 'reading' },
   'read-topic': { uk: 'О чём статья?', en: 'What is it about?', subtestKind: 'reading' },
   'read-detail': { uk: 'Текст и вопросы', en: 'Text & questions', subtestKind: 'reading' },
+  'read-match': { uk: 'Какой фильм?', en: 'Which film?', subtestKind: 'reading' },
   'listen-where': { uk: 'Где они?', en: 'Where are they?', subtestKind: 'listening' },
   'listen-who': { uk: 'Кто говорит?', en: 'Who is speaking?', subtestKind: 'listening' },
   'listen-phrase': { uk: 'Фраза-синоним', en: 'Same meaning', subtestKind: 'listening' },
   'listen-detail': { uk: 'Детали диалога', en: 'Dialogue details', subtestKind: 'listening' },
   'listen-info': { uk: 'Запишите информацию', en: 'Info capture', subtestKind: 'listening' },
+  'listen-goal': { uk: 'Цель диалога', en: 'Purpose of the dialogue', subtestKind: 'listening' },
+  'listen-monologue': { uk: 'Монолог', en: 'Monologue', subtestKind: 'listening' },
   'write-letter': { uk: 'Письмо', en: 'The letter', subtestKind: 'writing' },
+  'write-note': { uk: 'Записка / сообщение', en: 'Note / message', subtestKind: 'writing' },
   'speak-reply': { uk: 'Ответьте', en: 'Reply', subtestKind: 'speaking' },
   'speak-situation': { uk: 'Начните диалог', en: 'Start the dialogue', subtestKind: 'speaking' },
   'speak-monologue': { uk: 'Монолог', en: 'Monologue', subtestKind: 'speaking' },

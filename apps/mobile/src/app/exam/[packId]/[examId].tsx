@@ -8,8 +8,10 @@ import { invalidateExams } from '@/db/hooks';
 import { ExamAttemptActiveError } from '@/db/repositories/exams';
 import { drillHref } from '@/features/torfl/drill/drill-model';
 import { startMockAttempt } from '@/features/torfl/engine/start';
+import { torflLevelOf } from '@/features/torfl/level-profile';
+import { practiceRouteFor } from '@/features/torfl/practice-route';
 import { ExamIntroScreen, type ExamStartScope } from '@/features/torfl/exam-intro-screen';
-import { track } from '@/services/analytics';
+import { trackTorfl } from '@/services/analytics';
 import { logError } from '@/services/error-log';
 import { ukPending } from '@/config/flags';
 
@@ -34,10 +36,11 @@ function ExamIntroRoute() {
       try {
         const attempt = await startMockAttempt(repos.exams, exam, pack, scope, { replace });
         void invalidateExams();
-        track('exam_started', {
+        trackTorfl('exam_started', {
           packId: pack,
           examId: exam.id,
           scope: scope.scope,
+          level: torflLevelOf(exam.level),
           ...(scope.scope === 'subtest'
             ? { subtestKind: exam.subtests.find((s) => s.id === scope.subtestId)?.kind ?? 'none' }
             : {}),
@@ -71,9 +74,12 @@ function ExamIntroRoute() {
     <ExamIntroScreen
       packId={packId}
       examId={examId}
-      onStartDrill={(exam, pack) =>
-        router.push(drillHref({ source: 'set', packId: pack, examId: exam.id }))
-      }
+      onStartDrill={(exam, pack) => {
+        // ISS-004 (T77): speaking / writing-only sets go to their practice surface, not the empty drill runner.
+        const route = practiceRouteFor(exam, pack);
+        if (route) router.push(route);
+        else router.push(drillHref({ source: 'set', packId: pack, examId: exam.id }));
+      }}
       onStartMock={(exam, pack, scope) => void begin(exam, pack, scope, false)}
       onResumeMock={open}
       onRestartMock={(exam, pack, scope) => void begin(exam, pack, scope, true)}

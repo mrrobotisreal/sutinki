@@ -1,3 +1,5 @@
+import type { TorflLevel } from '@/features/torfl/level-profile';
+
 /**
  * Local analytics (workspace requirement: exceptional tracking even though
  * single-user). track() is safe to call from anywhere at any time: events
@@ -482,8 +484,17 @@ export type AnalyticsEvent =
   // source, pct} · exam_grading_failed {kind, code} · exam_recording_saved {task, ms} ·
   // torfl_rehearsal_finished {topic, score} · torfl_ticket_drawn {topic}.
   // ai_request_* gain feature 'exam-writing' | 'exam-speaking' via the AiFeature union.
+  // T77: exam_speaking_rec_started {task, waitMs} (think time before the tap) ·
+  // exam_speaking_rec_stopped {task, reason: 'done'|'cap'|'deadline'|'skip', durationMs} ·
+  // torfl_instruction_lang_toggled {to: 'ru'|'en', screen}; all carry `level`.
   // T74 (§8.5): exam_attempt_pinned {pinned} · exam_debrief_download_failed {code}; the T63
   // recordings_pruned / media_bundle_* events gain `root: 'exam'` for the exam root.
+  // M19 (T75, TORFL_A2 A2-12): EVERY torfl_* / exam_* event above also carries `level` ('A1' |
+  // 'A2', from the exam's / pack's level — THE LEVEL RULE) via `trackTorfl()`;
+  // exam_writing_scored also carries `task` (1 | 2 — the writing item's position; 1 for the
+  // single A1 letter) and `topic` ('write-letter' | 'write-note'). torfl_exam_date_set {daysOut,
+  // level}; daily_torfl_segment gains a1Items / a2Items; exam_deck_reviewed (daily) a1Reviewed /
+  // a2Reviewed.
   | 'torfl_hub_opened'
   | 'torfl_exam_date_set'
   | 'torfl_topic_banked'
@@ -505,6 +516,9 @@ export type AnalyticsEvent =
   | 'exam_speaking_scored'
   | 'exam_grading_failed'
   | 'exam_recording_saved'
+  | 'exam_speaking_rec_started'
+  | 'exam_speaking_rec_stopped'
+  | 'torfl_instruction_lang_toggled'
   | 'torfl_rehearsal_finished'
   | 'torfl_ticket_drawn'
   | 'exam_attempt_pinned'
@@ -524,7 +538,30 @@ export type AnalyticsEvent =
   // T40 typing trainer
   | 'typing_round_started'
   | 'typing_round_finished'
-  | 'typing_round_abandoned';
+  | 'typing_round_abandoned'
+  // T34 numbers drill. numbers_round_started {tier, suggested, mode: manual|suggested|quest};
+  // numbers_item_answered {tier, kind, band, correct, plays, answerMode: choice|typed, ms};
+  // numbers_item_replayed {tier, kind}; numbers_round_finished {tier, correct, total, xp,
+  // replays}; numbers_round_abandoned {tier, answered}.
+  | 'numbers_round_started'
+  | 'numbers_item_answered'
+  | 'numbers_item_replayed'
+  | 'numbers_round_finished'
+  | 'numbers_round_abandoned'
+  // T34 match blitz «Молния». blitz_round_started {poolSize, best}; blitz_match_missed
+  // {elapsedMs}; blitz_round_finished {pairs, misses, penaltyMs, xp, newBest, best};
+  // blitz_round_abandoned {pairs, misses, elapsedMs}.
+  | 'blitz_round_started'
+  | 'blitz_match_missed'
+  | 'blitz_round_finished'
+  | 'blitz_round_abandoned'
+  // T34 daily quest slot. quest_assigned {kind, date, available, target} (once per day);
+  // quest_completed {kind, date, xp, goalMet}; quest_launched {kind, from: today|ring};
+  // quest_progress {kind, done, target} (on each persisted progress change).
+  | 'quest_assigned'
+  | 'quest_completed'
+  | 'quest_launched'
+  | 'quest_progress';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 
@@ -544,6 +581,22 @@ export function track(event: AnalyticsEvent, props?: AnalyticsProps) {
   } else {
     pending.push([event, props]);
   }
+}
+
+/** Every M18/M19 TORFL event (`torfl_*` / `exam_*`). */
+export type TorflAnalyticsEvent = Extract<AnalyticsEvent, `torfl_${string}` | `exam_${string}`>;
+
+/**
+ * THE LEVEL RULE for analytics (T75, TORFL_A2 A2-12): every TORFL event
+ * carries `level` ('A1' | 'A2' — a slug). Call sites use this wrapper, never
+ * a bare `track('torfl_…' | 'exam_…')` — `__tests__/torfl-analytics-level`
+ * scans the source to keep it that way.
+ */
+export function trackTorfl(
+  event: TorflAnalyticsEvent,
+  props: AnalyticsProps & { level: TorflLevel },
+): void {
+  track(event, props);
 }
 
 /** Install the persistence sink (bootstrap) and flush anything queued before it. */

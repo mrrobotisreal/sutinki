@@ -56,6 +56,7 @@ import { SyncStatusLine } from '@/features/sync/sync-status-line';
 import { ExamRow } from '@/features/torfl/exam-row';
 import type { ExamListItem } from '@/features/torfl/hub-model';
 import { useExamListItems } from '@/features/torfl/hooks';
+import { isTorflCategory, levelForCategory } from '@/features/torfl/level-profile';
 import { TorflHubCard } from '@/features/torfl/torfl-hub-card';
 import { runSync } from '@/features/sync/sync-service';
 import { track } from '@/services/analytics';
@@ -115,7 +116,8 @@ export function LibraryScreen() {
   // M14 (T45): the persisted shelf selection — category chips + genre sub-row.
   const storedCategory = useLibraryPrefs((s) => s.category);
   // UP04: «ТРКИ» is hidden while `UK_PENDING.exam`; a persisted torfl shelf falls back to «Історії».
-  const category = ukPending('exam') && storedCategory === 'torfl' ? 'stories' : storedCategory;
+  const category =
+    ukPending('exam') && isTorflCategory(storedCategory) ? 'stories' : storedCategory;
   const genre = useLibraryPrefs((s) => s.genre);
   const setCategory = useLibraryPrefs((s) => s.setCategory);
   const setGenre = useLibraryPrefs((s) => s.setGenre);
@@ -233,7 +235,7 @@ export function LibraryScreen() {
   const categoryItems = React.useMemo(
     () =>
       categoryChipItems(categoryCounts(packs.data ?? []), category).filter(
-        (item) => !(ukPending('exam') && item.key === 'torfl'),
+        (item) => !(ukPending('exam') && isTorflCategory(item.key)),
       ),
     [packs.data, category],
   );
@@ -437,11 +439,12 @@ export function LibraryScreen() {
             testID="library-genre-chips"
           />
         )}
-        {/* M18 (T69): the pinned hub card — under «ТРКИ» only, above the
-            sections AND inside the empty state (the hub works before sync). */}
-        {category === 'torfl' && !ukPending('exam') && (
+        {/* M18 (T69) / M19 (T75): the pinned hub card — under each «ТРКИ» chip
+            (A1 / A2), parameterised by level, above the sections AND inside
+            the empty state (the hub works before sync). */}
+        {isTorflCategory(category) && !ukPending('exam') && (
           <View className="px-4">
-            <TorflHubCard />
+            <TorflHubCard key={category} level={levelForCategory(category) ?? 'A1'} />
           </View>
         )}
         {emptyCategory && <EmptyCategory category={category} />}
@@ -592,7 +595,7 @@ function EmptyCategory({ category }: { category: string }) {
       <Ionicons name={icon} size={40} color={tokens.textMuted} />
       <Text className="font-reading-bold text-xl">Поки порожньо</Text>
       <Text variant="muted" className="text-center">
-        {category === 'torfl'
+        {isTorflCategory(category)
           ? 'Матеріали ТРКИ з’являться після синхронізації — підготовка до іспиту вже відкрита вище.'
           : 'Матеріали для цієї полиці з’являться після синхронізації.'}
       </Text>

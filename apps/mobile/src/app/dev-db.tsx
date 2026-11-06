@@ -36,6 +36,7 @@ import { track } from '@/services/analytics';
 import { requireOptionalNativeModule } from 'expo';
 import { buildWidgetSnapshot } from '@/features/motivation/widget-snapshot';
 import { refreshWidgetSnapshot } from '@/features/motivation/widget-sync';
+import { previewRotation } from '@/features/motivation/quest-runtime';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
@@ -65,6 +66,12 @@ const FIXTURE_PACKS = [
   // T74 (M18): four `torfl`-tagged journal prompts («Мои ответы» on the S25) — never published; // upstream-ok
   // «Delete exam fixture» removes it too (entries written against it are restored with the pre-DB).
   { id: 'a1-torfl-prompts-fixture', note: 'prompts/torfl · 4 prompts · torfl:<topic>' },
+  // T75 (M19): the A2 exam fixture — a2-mock-fx in the A2 shape at reduced counts (2 writing
+  // parts, 10 lexgram, 5 read-match, 3 listening, 5 speaking) + 2 drills; dev import only, and
+  // «Delete exam fixture» removes it with its attempts/cards (T75: the A2 fixtures go too).
+  { id: 'a2-exam-fixture', note: 'exam · A2 · a2-mock-fx 5 subtests / 25 items · 2 drills' },
+  // T75 (M19): two `torfl-a2` prompts («ТРКИ-А2: мои ответы» on the S25) — never published. // upstream-ok
+  { id: 'a2-torfl-prompts-fixture', note: 'prompts/torfl-a2 · 2 prompts · A2' },
   // T38: a 15-lemma `reference` pack (core-a1 10 + core-a2 5) — dev import only. A planted
   // files/packs/core-lemmas-fixture/pack.json (e.g. the real core-lemmas-001 before its
   // push) wins over the bundled copy, like the exam fixture.
@@ -85,6 +92,9 @@ const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
     require('@sutinki/schema/fixtures/packs/a1-torfl-lexicon-fixture/pack.json'),
   'a1-torfl-prompts-fixture': () =>
     require('@sutinki/schema/fixtures/packs/a1-torfl-prompts-fixture/pack.json'),
+  'a2-exam-fixture': () => require('@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json'),
+  'a2-torfl-prompts-fixture': () =>
+    require('@sutinki/schema/fixtures/packs/a2-torfl-prompts-fixture/pack.json'),
   'core-lemmas-fixture': () =>
     require('@sutinki/schema/fixtures/packs/core-lemmas-fixture/pack.json'),
 };
@@ -92,6 +102,9 @@ const FIXTURE_JSON: Record<FixtureId, () => unknown> = {
 const EXAM_FIXTURE_ID = 'a1-exam-fixture';
 const LEXICON_FIXTURE_ID = 'a1-torfl-lexicon-fixture';
 const PROMPTS_FIXTURE_ID = 'a1-torfl-prompts-fixture';
+// T75 (M19): the A2 exam + prompts fixtures.
+const A2_EXAM_FIXTURE_ID = 'a2-exam-fixture';
+const A2_PROMPTS_FIXTURE_ID = 'a2-torfl-prompts-fixture';
 
 /** T68 dev readout: installed exams + the last 5 attempts + response counts + deck counts. */
 interface ExamReadout {
@@ -383,17 +396,28 @@ export default function DevDbScreen() {
    * Device data hygiene (CLAUDE.md, T66): remove the exam fixture COMPLETELY —
    * every attempt (responses cascade) + deck card that references it, the
    * pack + its content rows (cascade) + sync_state, and a staged pack dir.
+   * T75: the A2 exam + A2 prompts fixtures go with it, their user rows too.
    */
   const deleteExamFixture = React.useCallback(async () => {
     if (!__DEV__) return;
     try {
       const user = await repos.exams.deleteUserRowsForPack(EXAM_FIXTURE_ID);
+      const userA2 = await repos.exams.deleteUserRowsForPack(A2_EXAM_FIXTURE_ID);
       await removePack(db, EXAM_FIXTURE_ID);
       // T69: the lexicon fixture goes with it (pack + content + sync_state); T74: the prompts fixture too.
       await removePack(db, LEXICON_FIXTURE_ID);
       await removePack(db, PROMPTS_FIXTURE_ID);
+      // T75: the A2 pair.
+      await removePack(db, A2_EXAM_FIXTURE_ID);
+      await removePack(db, A2_PROMPTS_FIXTURE_ID);
       let hadDir = false;
-      for (const id of [EXAM_FIXTURE_ID, LEXICON_FIXTURE_ID, PROMPTS_FIXTURE_ID]) {
+      for (const id of [
+        EXAM_FIXTURE_ID,
+        LEXICON_FIXTURE_ID,
+        PROMPTS_FIXTURE_ID,
+        A2_EXAM_FIXTURE_ID,
+        A2_PROMPTS_FIXTURE_ID,
+      ]) {
         const dir = packDir(id);
         if (dir.exists) {
           dir.delete();
@@ -401,7 +425,7 @@ export default function DevDbScreen() {
         }
       }
       setExamLog(
-        `deleted fixtures: ${user.attempts} attempts (+ responses) · ${user.cards} deck cards · 3 packs + content + sync_state${hadDir ? ' · staged dir' : ''}`,
+        `deleted fixtures: ${user.attempts + userA2.attempts} attempts (+ responses) · ${user.cards + userA2.cards} deck cards · 5 packs + content + sync_state${hadDir ? ' · staged dir' : ''}`,
       );
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.packs }),
@@ -484,6 +508,19 @@ export default function DevDbScreen() {
   }, [forceUnsupported]);
   // --- T58 backup self-check (dev only): export → restore the same payload.
   const [backupLog, setBackupLog] = React.useState<string | null>(null);
+  // T34 quest: read-only rotation preview over injected day keys (writes nothing).
+  const [questLog, setQuestLog] = React.useState<string | null>(null);
+  const runQuestPreview = React.useCallback(async () => {
+    try {
+      const res = await previewRotation(7);
+      setQuestLog(
+        `available: ${res.available.join(', ') || '(none)'}\n` +
+          res.days.map((d) => `${d.date} → ${d.kind ?? '(no quest)'}`).join('\n'),
+      );
+    } catch (err) {
+      setQuestLog(`failed — ${String(err)}`);
+    }
+  }, []);
   // T40 widget: write the home-screen snapshot directly (demo every state on the device).
   const [widgetLog, setWidgetLog] = React.useState<string | null>(null);
   const writeWidget = React.useCallback((label: string, json: string | null) => {
@@ -785,6 +822,21 @@ export default function DevDbScreen() {
             <Text variant="caption" selectable>
               {plantLog ??
                 'Ten finished runs aged 31–40 days, one 20 KB fake .ogg each, #1 pinned.'}
+            </Text>
+          </Pressable>
+        )}
+        {__DEV__ && <Text className="mt-4 font-ui-medium">Daily quest (T34)</Text>}
+        {__DEV__ && (
+          <Pressable
+            onPress={() => void runQuestPreview()}
+            accessibilityRole="button"
+            accessibilityLabel="Quest rotation preview"
+            className="mt-2 rounded-xl border border-border bg-surface p-3 active:opacity-80"
+          >
+            <Text className="font-ui-medium">Quest rotation preview (7 days)</Text>
+            <Text variant="caption" selectable>
+              {questLog ??
+                "Today's real availability → the next 7 day keys' picks. Read-only: writes no quest rows."}
             </Text>
           </Pressable>
         )}

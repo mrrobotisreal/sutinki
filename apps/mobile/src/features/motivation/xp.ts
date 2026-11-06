@@ -37,7 +37,7 @@ export const XP_TABLE = {
   scenarioCleanBonus: 15,
   /** Per clean turn inside a scenario run (T62). */
   scenarioCleanTurn: 2,
-  /** Finishing a TORFL drill set or «Молния» round (M18/T70, TORFL §7.5) — once per session. */
+  /** Finishing a TORFL drill set or «Блискавка» round (M18/T70, TORFL §7.5) — once per session. */
   examDrillFinished: 10,
   /** Finishing a «Работа над ошибками» deck session, or the daily-session torfl segment (T70) — once per session. */
   examDeckSession: 5,
@@ -59,6 +59,27 @@ export const XP_TABLE = {
     { minWpm: 20, xp: 15 },
     { minWpm: 30, xp: 20 },
   ],
+  /**
+   * T34 numbers drill: per finished 10-item round, base + per correct item
+   * (a perfect round = 5 + 10 = 15). FSRS-free, so this is its only reward.
+   */
+  numbersRound: { base: 5, perCorrect: 1 },
+  /**
+   * T34 match blitz («Блискавка»): XP for a finished 60 s sprint by pairs
+   * matched — the highest bracket whose minPairs ≤ score wins. Sorted
+   * ascending; a 0-pair sprint earns nothing. FSRS-free.
+   */
+  blitzRound: [
+    { minPairs: 1, xp: 5 },
+    { minPairs: 10, xp: 10 },
+    { minPairs: 20, xp: 15 },
+    { minPairs: 30, xp: 20 },
+  ],
+  /**
+   * T34 daily quest: completing the day's quest (once per day). Independent
+   * of the daily goal and the streak — a quest never stamps goal_met_at.
+   */
+  questCompleted: 15,
   /** Bonus for unlocking any achievement. */
   achievementUnlocked: 20,
 } as const;

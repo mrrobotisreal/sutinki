@@ -64,6 +64,13 @@
       "when": 1793926499607,
       "tag": "0008_card-management",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1793929059142,
+      "tag": "0009_daily-quests",
+      "breakpoints": true
     }
   ]
 }

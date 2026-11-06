@@ -9,8 +9,10 @@ import {
   parseTorflPrefs,
   sanitizeExamGradingPreset,
 } from '../settings-core';
+import { TORFL_PROFILES } from '../level-profile';
 import {
   getExamDate,
+  getExamDates,
   getExamGradingPreset,
   getTorflPrefs,
   setExamDate,
@@ -54,7 +56,7 @@ describe('torfl.prefs healing', () => {
   it('defaults match TORFL §4.4', () => {
     expect(DEFAULT_TORFL_PREFS).toEqual({
       v: 1,
-      showEnglishInstructions: true,
+      instructionLang: 'uk',
       drillTimer: 'off',
       breakBetweenSubtests: true,
       allowLookupInMockReading: true,
@@ -69,7 +71,7 @@ describe('torfl.prefs healing', () => {
     expect(
       parseTorflPrefs({
         v: 7,
-        showEnglishInstructions: false,
+        instructionLang: 'en',
         drillTimer: 'turbo',
         breakBetweenSubtests: 'yes',
         allowLookupInMockReading: false,
@@ -77,11 +79,30 @@ describe('torfl.prefs healing', () => {
       }),
     ).toEqual({
       v: 1,
-      showEnglishInstructions: false,
+      instructionLang: 'en',
       drillTimer: 'off',
       breakBetweenSubtests: true,
       allowLookupInMockReading: false,
     });
+  });
+
+  it('T77: a legacy showEnglishInstructions row heals to instructionLang ru (other fields kept)', () => {
+    expect(
+      parseTorflPrefs({
+        v: 1,
+        showEnglishInstructions: true,
+        drillTimer: 'exam-pace',
+        breakBetweenSubtests: false,
+        allowLookupInMockReading: true,
+      }),
+    ).toEqual({
+      v: 1,
+      instructionLang: 'uk',
+      drillTimer: 'exam-pace',
+      breakBetweenSubtests: false,
+      allowLookupInMockReading: true,
+    });
+    expect(parseTorflPrefs({ instructionLang: 'de' }).instructionLang).toBe('uk');
   });
 
   it('a valid value passes through untouched', () => {
@@ -91,13 +112,13 @@ describe('torfl.prefs healing', () => {
 
   it('accessor reads healed and writes merged patches', async () => {
     expect(await getTorflPrefs()).toEqual(DEFAULT_TORFL_PREFS);
-    settingsStore.set('torfl.prefs', { drillTimer: 99, showEnglishInstructions: false });
+    settingsStore.set('torfl.prefs', { drillTimer: 99, instructionLang: 'en' });
     expect(await getTorflPrefs()).toMatchObject({
       drillTimer: 'off',
-      showEnglishInstructions: false,
+      instructionLang: 'en',
     });
     const next = await setTorflPrefs({ drillTimer: 'exam-pace' });
-    expect(next).toMatchObject({ drillTimer: 'exam-pace', showEnglishInstructions: false });
+    expect(next).toMatchObject({ drillTimer: 'exam-pace', instructionLang: 'en' });
     expect(settingsStore.get('torfl.prefs')).toEqual(next);
   });
 });
@@ -124,6 +145,42 @@ describe('torfl.examDate healing', () => {
     expect(await getExamDate()).toBeNull();
     await setExamDate(null);
     expect(settingsStore.has('torfl.examDate')).toBe(false);
+  });
+});
+
+describe('torfl.examDateA2 (T75, TORFL_A2 A2-5)', () => {
+  it('declares the A2 key; A1 keeps torfl.examDate', () => {
+    expect(SETTING_KEYS.torflExamDateA2).toBe('torfl.examDateA2');
+    expect(TORFL_PROFILES.A2.examDateKey).toBe(SETTING_KEYS.torflExamDateA2);
+    expect(TORFL_PROFILES.A1.examDateKey).toBe(SETTING_KEYS.torflExamDate);
+  });
+
+  it('A2 date persists and heals independently of A1', async () => {
+    await setExamDate('2026-12-05', 'A2');
+    expect(await getExamDate('A2')).toBe('2026-12-05');
+    expect(await getExamDate('A1')).toBeNull();
+
+    await setExamDate('2027-01-10', 'A1');
+    expect(await getExamDate('A2')).toBe('2026-12-05');
+    expect(await getExamDate('A1')).toBe('2027-01-10');
+
+    await expect(setExamDate('2026-13-01', 'A2')).rejects.toThrow();
+    settingsStore.set('torfl.examDateA2', 'garbage');
+    expect(await getExamDate('A2')).toBeNull();
+    expect(await getExamDate('A1')).toBe('2027-01-10');
+  });
+
+  it('clearing A2 removes only that key', async () => {
+    await setExamDate('2026-12-05', 'A1');
+    await setExamDate('2026-12-06', 'A2');
+    await setExamDate(null, 'A2');
+    expect(settingsStore.has('torfl.examDateA2')).toBe(false);
+    expect(settingsStore.get('torfl.examDate')).toBe('2026-12-05');
+  });
+
+  it('an old backup without the A2 key restores with A2 = null', async () => {
+    settingsStore.set('torfl.examDate', '2026-12-05');
+    expect(await getExamDates()).toEqual({ A1: '2026-12-05', A2: null });
   });
 });
 

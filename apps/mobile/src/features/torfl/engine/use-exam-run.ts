@@ -10,7 +10,7 @@ import type { ExamAttempt } from '@/db/repositories/exams';
 import { recordExamFinished } from '@/features/motivation/service';
 import { scheduleExamBundle } from '@/features/scenario/recordings/bundle-service';
 import { pruneRecordings } from '@/features/scenario/recordings/prune';
-import { track } from '@/services/analytics';
+import { trackTorfl } from '@/services/analytics';
 import { logError } from '@/services/error-log';
 
 import { hasApiKey } from '@/features/ai/config';
@@ -47,6 +47,8 @@ import {
 } from './exam-machine';
 import { preflightListening, type ListeningPreflight } from './assets';
 import { scoreItem } from '../scoring';
+import { torflLevelOf } from '../level-profile';
+import { writingShare, writingTaskOf } from '../writing/writing-model';
 import { finalizeAttempt } from './finalize';
 import { devDurationOverrideSec } from './rules';
 
@@ -91,7 +93,7 @@ export interface ExamRun {
  *    subtest (T72) gets the offline provisional grade per letter and goes
  *    `pending-ai` (a key exists → the grading queue pumps at once) or stays
  *    `provisional`,
- *  - `START_REC` / `STOP_REC` (T73) → the exam recorder hook (mic → endpoint
+ *  - `START_REC` / `STOP_REC` (T73) → the exam recorder hook (mic, no endpointing
  *    → WAV under `recordings/exam/<attemptId>/` → Opus queue → Zipformer +
  *    Whisper transcripts) whose `onDone` sends `REC_DONE {answer}`; a
  *    SPEAKING `PERSIST_RESPONSE` also queues the transcode once the row
@@ -172,6 +174,8 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
       const ctx = ctxRef.current;
       const a = attemptRef.current;
       if (!ctx || !a) return;
+      // T75 (THE LEVEL RULE): every analytics event of this run carries the exam's level.
+      const level = torflLevelOf(ctx.exam.level);
       for (const e of effects) {
         switch (e.type) {
           case 'PERSIST_RESPONSE': {
@@ -189,7 +193,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                 points: null,
                 maxPoints:
                   item.kind === 'writing'
-                    ? subtest.maxPoints
+                    ? writingShare(subtest)
                     : speakingKind
                       ? responseShare(subtest, item)
                       : (subtest.pointsPerItem ?? item.points ?? 1),
@@ -220,22 +224,23 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
           }
           case 'SUBTEST_STARTED': {
             startedAtBySubtestRef.current.set(e.subtestId, Date.now());
-            track('exam_subtest_started', { subtestKind: e.kind, scope: a.scope });
+            trackTorfl('exam_subtest_started', { subtestKind: e.kind, scope: a.scope, level });
             break;
           }
           case 'PLAY_AUDIO': {
-            track('exam_audio_played', { playNo: e.playNo });
+            trackTorfl('exam_audio_played', { playNo: e.playNo, level });
             break;
           }
           case 'SCORE_SUBTEST': {
             const subtest = ctx.exam.subtests.find((s) => s.id === e.subtestId);
             const answers = stateRef.current?.answers ?? {};
-            track('exam_subtest_submitted', {
+            trackTorfl('exam_subtest_submitted', {
               subtestKind: e.kind,
               answered: e.answered,
               total: e.total,
               autoSubmitted: e.autoSubmitted,
               timeUsedSec: e.timeUsedSec,
+              level,
             });
             if (!subtest) break;
             if (subtest.kind === 'speaking') {
@@ -266,7 +271,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                         : undefined;
                     // An unanswered item (skipped / the unchosen topic) gets no row: it is 0 of its share.
                     if (!answer) continue;
-                    const grade = gradeSpeakingOffline(item, answer);
+                    const grade = gradeSpeakingOffline(item, answer, { level: ctx.exam.level });
                     if (!grade) continue;
                     const share = responseShare(subtest, item);
                     const grading: ExamGrading = {
@@ -288,7 +293,12 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                       grading,
                       durationMs: answer.durationMs,
                     });
-                    track('exam_speaking_scored', { task, source: 'offline', pct: grade.pct });
+                    trackTorfl('exam_speaking_scored', {
+                      task,
+                      source: 'offline',
+                      pct: grade.pct,
+                      level,
+                    });
                   }
                 }
                 if (online) void pumpGradingQueue();
@@ -305,7 +315,8 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                     const given = answers[item.id];
                     const text = given?.kind === 'writing' ? given.text : '';
                     const grade = gradeWritingOffline(item, text);
-                    const score = offlineItemScore(grade, subtest.maxPoints);
+                    const share = writingShare(subtest);
+                    const score = offlineItemScore(grade, share);
                     const grading: ExamGrading = {
                       v: 1,
                       offline: { criteria: grade.criteria, details: { ...grade.details } },
@@ -316,17 +327,19 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                       itemId: item.id,
                       answer: { kind: 'writing', text },
                       points: score.points,
-                      maxPoints: subtest.maxPoints,
+                      maxPoints: share,
                       gradingStatus:
                         online && text.trim().length > 0 ? 'pending-ai' : 'provisional',
                       grading,
                     });
-                    track('exam_writing_scored', {
+                    trackTorfl('exam_writing_scored', {
                       source: 'offline',
                       pct: grade.pct,
                       sentences: grade.details.sentences,
                       questions: grade.details.questions,
                       pointsCovered: grade.details.pointsCovered,
+                      ...writingTaskOf(ctx.exam, subtest.id, item.id),
+                      level,
                     });
                   }
                 }
@@ -392,7 +405,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
               );
               const pct = (k: 'lexgram' | 'reading' | 'listening' | 'writing' | 'speaking') =>
                 out.finish.pcts[k] ?? -1;
-              track('exam_finished', {
+              trackTorfl('exam_finished', {
                 scope: a.scope,
                 verdict: out.verdict ?? 'none',
                 lexgramPct: pct('lexgram'),
@@ -401,6 +414,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                 writingPct: pct('writing'),
                 speakingPct: pct('speaking'),
                 provisional: out.provisional,
+                level,
               });
               void invalidateExams();
               void queryClient.invalidateQueries({ queryKey: ['daily-activity'] });
@@ -423,12 +437,14 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
               capMs: e.capMs,
               fixedWindow: e.fixedWindow,
               attemptId: a.id,
+              level,
+              waitMs: Date.now() - (stateRef.current?.speaking?.readyAt ?? Date.now()),
             });
             break;
           }
           case 'STOP_REC': {
             // Stop whatever is recording; the hook's onDone → REC_DONE. Idle = no-op.
-            recorderRef.current.stop('manual');
+            recorderRef.current.stop(e.reason ?? 'done');
             break;
           }
           case 'ABANDON': {
@@ -437,10 +453,11 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
               const s = stateRef.current;
               const cur = s ? s.subtests[s.current] : undefined;
               const subtest = s ? currentSubtest(ctx, s) : undefined;
-              track('exam_abandoned', {
+              trackTorfl('exam_abandoned', {
                 scope: a.scope,
                 subtestKind: cur?.kind ?? 'none',
                 answered: subtest && s ? answeredCount(subtest, s.answers) : 0,
+                level,
               });
               await repos.exams.abandonAttempt(a.id);
               void invalidateExams();
@@ -519,10 +536,11 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
         if (hydrated.phase === 'running') {
           const cur = hydrated.subtests[hydrated.current];
           const at = Date.now();
-          track('exam_resumed', {
+          trackTorfl('exam_resumed', {
             scope: detail.scope,
             subtestKind: cur?.kind ?? 'none',
             remainingSec: Math.round(remainingMs(hydrated, at) / 1000),
+            level: torflLevelOf(loadedExam.level),
           });
           const t = reduce(ctxRef.current, hydrated, { type: 'RESUME', now: at });
           stateRef.current = t.state;
@@ -588,10 +606,11 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
         const s = stateRef.current;
         if (s && s.phase === 'running') {
           const cur = s.subtests[s.current];
-          track('exam_resumed', {
+          trackTorfl('exam_resumed', {
             scope: attemptRef.current?.scope ?? 'full',
             subtestKind: cur?.kind ?? 'none',
             remainingSec: Math.round(remainingMs(s, at) / 1000),
+            level: torflLevelOf(ctxRef.current?.exam.level),
           });
         }
         send({ type: 'RESUME', now: at });

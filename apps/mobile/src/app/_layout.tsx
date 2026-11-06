@@ -136,6 +136,14 @@ export default function RootLayout() {
                   name="games/typing"
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
                 />
+                <Stack.Screen
+                  name="games/numbers"
+                  options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
+                />
+                <Stack.Screen
+                  name="games/blitz"
+                  options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
+                />
                 <Stack.Screen name="dialogues" options={{ title: 'Діалоги' }} />
                 <Stack.Screen name="scenarios/index" options={{ title: 'Сценарії' }} />
                 <Stack.Screen name="scenarios/runs" options={{ title: 'Проходження' }} />
@@ -252,6 +260,7 @@ export default function RootLayout() {
                 <Stack.Screen name="dev-assist" options={{ title: 'Assist bench' }} />
                 <Stack.Screen name="dev-judge" options={{ title: 'Judge lab' }} />
                 <Stack.Screen name="dev-scene" options={{ title: 'Scene gallery' }} />
+                <Stack.Screen name="dev-exam-capture" options={{ title: 'A2 grading capture' }} />
               </Stack>
               <AmbientAudioHost ready={introDone} />
               <AutoSync />

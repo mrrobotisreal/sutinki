@@ -80,6 +80,12 @@ export const SETTING_KEYS = {
    */
   typingStats: 'games.typingStats',
   /**
+   * Match-blitz «Молния» stats (T34): { v: 1, best, rounds, totalPairs,
+   * lastPlayedAt } — Zod-validated on read (features/review/games/blitz/
+   * stats.ts), heals to defaults. Per-sprint rows live in game_sessions.
+   */
+  blitzStats: 'games.blitzStats',
+  /**
    * boolean (T31, default false): still every ambient animation — room
    * scenes freeze on their poster frame, the threshold transition and the
    * house-map flicker are skipped. OR-combined with the OS reduced-motion
@@ -194,13 +200,15 @@ export const SETTING_KEYS = {
   scenarioAssistModel: 'scenario.assistModel',
   /**
    * «ТРКИ» prefs (M18, TORFL_EXAM_PREP §4.4; declared in T68, healed by
-   * `features/torfl/settings-core.ts`): { v: 1, showEnglishInstructions:
-   * true, drillTimer: 'off' | 'exam-pace' ('off'), breakBetweenSubtests:
+   * `features/torfl/settings-core.ts`): { v: 1, instructionLang:
+   * 'ru' | 'en' ('ru'; T77 replaced showEnglishInstructions), drillTimer: 'off' | 'exam-pace' ('off'), breakBetweenSubtests:
    * true, allowLookupInMockReading: true } — field-by-field healing.
    */
   torflPrefs: 'torfl.prefs',
   /** The real exam date (M18 §4.4): ISO 'YYYY-MM-DD' or null — the hub countdown. Invalid → null. */
   torflExamDate: 'torfl.examDate',
+  /** The A2 (ТБУ) exam date (M19, T75; TORFL_A2 A2-5): ISO 'YYYY-MM-DD' or null — healed like torfl.examDate. `torfl.examDate` stays A1's. */
+  torflExamDateA2: 'torfl.examDateA2',
   /**
    * «Exam grading» run profile (M18 §4.4, ADR-0020 decision 10): { v: 1,
    * provider, quality, effort } — the M16 run-profile triple only; default
