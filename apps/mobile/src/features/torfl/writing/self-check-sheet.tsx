@@ -120,7 +120,7 @@ function SelfCheckBody({
               className="gap-2 rounded-2xl border border-border bg-bg px-4 py-3"
               testID={`self-check-${check.id}`}
             >
-              <Text className="font-ui-medium">{check.ru}</Text>
+              <Text className="font-ui-medium">{check.uk}</Text>
               <Text variant="caption">{check.en}</Text>
               <View className="flex-row gap-2">
                 {([0, 0.5, 1] as const).map((v) => {

@@ -21,11 +21,11 @@ export type ExamSpeakingTask = 'reply' | 'situation' | 'monologue';
 export interface ExamSpeakingInput {
   task: ExamSpeakingTask;
   /** Task 1: the examiner's line; task 2: the situation as read aloud; task 3: the topic title. */
-  promptRu: string;
+  promptUk: string;
   /** Task 2: the situation text as printed (RU). */
-  situationRu?: string | null;
+  situationUk?: string | null;
   /** Task 3: the topic's guiding questions (RU). */
-  questionsRu?: string[];
+  questionsUk?: string[];
   /** Task 3: the required sentence range. */
   minSentences?: number;
   maxSentences?: number;
@@ -96,14 +96,14 @@ ${ids}
 export function buildExamSpeakingMessages(input: ExamSpeakingInput): ChatMessage[] {
   const lines: string[] = [];
   if (input.task === 'reply') {
-    lines.push("THE EXAMINER'S QUESTION (spoken once):", input.promptRu);
+    lines.push("THE EXAMINER'S QUESTION (spoken once):", input.promptUk);
   } else if (input.task === 'situation') {
-    lines.push('THE SITUATION (as printed and read aloud):', input.situationRu ?? input.promptRu);
+    lines.push('THE SITUATION (as printed and read aloud):', input.situationUk ?? input.promptUk);
   } else {
-    lines.push('THE TOPIC:', input.promptRu);
-    if (input.questionsRu && input.questionsRu.length > 0) {
+    lines.push('THE TOPIC:', input.promptUk);
+    if (input.questionsUk && input.questionsUk.length > 0) {
       lines.push('', 'Guiding questions:');
-      input.questionsRu.forEach((q, i) => lines.push(`  ${i + 1}. ${q}`));
+      input.questionsUk.forEach((q, i) => lines.push(`  ${i + 1}. ${q}`));
     }
     const min = input.minSentences ?? 10;
     const max = input.maxSentences ?? 12;

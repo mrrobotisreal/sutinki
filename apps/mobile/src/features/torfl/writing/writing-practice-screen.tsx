@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as React from 'react';
 import {
@@ -326,7 +326,7 @@ function PracticeResult({
                 className={`gap-0.5 px-4 py-2.5 ${i > 0 ? 'border-t border-border' : ''}`}
               >
                 <View className="flex-row items-center gap-2">
-                  <Text className="flex-1 font-ui-medium text-sm">{criterionLabel(c.id).ru}</Text>
+                  <Text className="flex-1 font-ui-medium text-sm">{criterionLabel(c.id).uk}</Text>
                   <Text className={`font-ui-bold text-sm ${c.pending ? 'text-text-muted' : ''}`}>
                     {c.pending ? '—' : c.score.toLocaleString('ru-RU')} / {c.max}
                   </Text>
@@ -341,7 +341,7 @@ function PracticeResult({
           <FeedbackView
             feedback={{
               v: 1,
-              sourceRu: letter,
+              sourceUk: letter,
               corrected: ai.corrected,
               changes: ai.changes ?? [],
               summary: ai.tips.length > 0 ? ai.tips.join(' ') : 'No tips.',

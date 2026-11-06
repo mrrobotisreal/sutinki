@@ -78,7 +78,7 @@ export async function storyText(
   const wanted = sentenceIds ? new Set(sentenceIds) : null;
   const text = detail.sentences
     .filter((s) => !wanted || wanted.has(s.id))
-    .map((s) => s.ru.trim())
+    .map((s) => s.uk.trim())
     .join(' ');
   return text.length > 0 ? text : null;
 }

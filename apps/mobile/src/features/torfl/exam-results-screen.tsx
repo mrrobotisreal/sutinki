@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Exam } from '@sumrak/schema';
+import type { Exam } from '@sutinki/schema';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
@@ -137,7 +137,7 @@ function ResultsBody({
         </Pressable>
         <View className="flex-1">
           <Text className="font-reading-bold text-xl" numberOfLines={2}>
-            {exam.title.ru}
+            {exam.title.uk}
           </Text>
           <Text variant="caption">
             {MODE_LABELS[attempt.mode]} · {when}
@@ -214,7 +214,7 @@ function ResultsBody({
                 )}
               >
                 <View className="flex-1">
-                  <Text className="font-ui-medium">{topicLabel(t.topic).ru}</Text>
+                  <Text className="font-ui-medium">{topicLabel(t.topic).uk}</Text>
                   <Text variant="caption">
                     {SUBTEST_LABELS[t.kind].short} · {t.correct} из {t.total} верно
                   </Text>
@@ -316,7 +316,7 @@ function VerdictCard({ v, xp }: { v: ReturnType<typeof computeVerdict>; xp: numb
       </View>
       {v.verdict === 'fail' && v.retake.length > 0 ? (
         <Text testID="verdict-retake">
-          Пересдать: {v.retake.map((k) => SUBTEST_LABELS[k].ru).join(', ')}
+          Пересдать: {v.retake.map((k) => SUBTEST_LABELS[k].uk).join(', ')}
         </Text>
       ) : null}
       {v.provisional ? (
@@ -363,7 +363,7 @@ function SubtestRow({
     >
       <View className="flex-row items-center gap-2">
         <Text className="flex-1 font-ui-medium" numberOfLines={1}>
-          {row.titleRu}
+          {row.titleUk}
         </Text>
         {row.status === 'scored' && row.pct !== null ? (
           <Text className={cn('font-ui-bold', band && BAND_TEXT_CLASS[band])}>

@@ -1,4 +1,4 @@
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 
 import { bulletCoverage, sentenceSplit } from '../grading/writing';
 
@@ -39,7 +39,7 @@ export function writingCounters(
 
 export interface ChecklistRow {
   id: string;
-  ru: string;
+  uk: string;
   en: string;
   done: boolean;
 }
@@ -50,7 +50,7 @@ export function writingChecklist(item: Pick<WritingItem, 'bullets'>, text: strin
   const done = new Set(cov.covered);
   return item.bullets.map((b) => ({
     id: b.id,
-    ru: b.text.ru,
+    uk: b.text.uk,
     en: b.text.en,
     done: done.has(b.id),
   }));

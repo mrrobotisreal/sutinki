@@ -1,4 +1,4 @@
-import type { TypedItem } from '@sumrak/schema';
+import type { TypedItem } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, Text as RNText, TextInput, View } from 'react-native';
 

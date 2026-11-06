@@ -56,7 +56,7 @@ export function useExamAudio(
     () =>
       audio && audio.stamps.length > 0
         ? buildKaraokeIndex(
-            audio.transcript.map((s) => ({ id: s.id, ru: s.ru })),
+            audio.transcript.map((s) => ({ id: s.id, uk: s.uk })),
             audio.stamps,
             0,
           )

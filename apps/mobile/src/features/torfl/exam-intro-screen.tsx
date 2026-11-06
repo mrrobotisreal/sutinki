@@ -265,7 +265,7 @@ export function ExamIntroScreen({
                   )}
                 >
                   <View className="flex-1">
-                    <Text className="font-ui-medium">{topicLabel(t.topic).ru}</Text>
+                    <Text className="font-ui-medium">{topicLabel(t.topic).uk}</Text>
                     <Text variant="caption">{topicLabel(t.topic).en}</Text>
                   </View>
                   <Text variant="caption">

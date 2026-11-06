@@ -1,4 +1,4 @@
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 
 import type { ExamVerdict } from './model';
 import { SUBTEST_ORDER } from './topics';

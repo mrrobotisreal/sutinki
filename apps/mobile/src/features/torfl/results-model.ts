@@ -4,7 +4,7 @@ import {
   type ExamItem,
   type ExamSubtest,
   type ExamSubtestKind,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 
 import { OPTION_LETTERS, acceptedDisplay, scoreItem, type ItemOutcome } from './scoring';
 import { isAnswered, type ExamAnswer, type ExamResults } from './model';
@@ -35,7 +35,7 @@ export interface ResultsAttemptLike {
 export interface ResultRow {
   subtestId: string;
   kind: ExamSubtestKind;
-  titleRu: string;
+  titleUk: string;
   /** scored = has a result; skipped = a «скоро» placeholder / skipped subtest; pending = never reached. */
   status: 'scored' | 'skipped' | 'pending';
   pct: number | null;
@@ -57,7 +57,7 @@ export function buildResultRows(exam: Exam, attempt: ResultsAttemptLike): Result
     rows.push({
       subtestId: subtest.id,
       kind: subtest.kind,
-      titleRu: subtest.title.ru,
+      titleUk: subtest.title.uk,
       status: result ? 'scored' : skipped || run?.status === 'submitted' ? 'skipped' : 'pending',
       pct: result?.pct ?? null,
       points: result?.points ?? null,
@@ -162,7 +162,7 @@ export interface ReviewEntry {
   /** 1-based number within the subtest (the matrix number). */
   number: number;
   item: ExamItem;
-  partInstructionsRu: string;
+  partInstructionsUk: string;
   outcome: ItemOutcome;
   /** The stem / prompt text. */
   stem: string;
@@ -195,7 +195,7 @@ export function reviewEntries(
       const base = {
         number,
         item,
-        partInstructionsRu: part.instructions.ru,
+        partInstructionsUk: part.instructions.uk,
         outcome: score.outcome,
         explain: item.explain,
         passageStoryId: item.passage?.storyId,

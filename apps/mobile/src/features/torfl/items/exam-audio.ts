@@ -1,5 +1,5 @@
-import type { ExamPart, ExamItem, StoryRef } from '@sumrak/schema';
-import { resolveItemAudio } from '@sumrak/schema';
+import type { ExamPart, ExamItem, StoryRef } from '@sutinki/schema';
+import { resolveItemAudio } from '@sutinki/schema';
 
 import type { Repositories } from '@/db/repositories';
 import type { AudioTrackRow, SentenceWithTokens, WordStampRow } from '@/db/repositories/content';
@@ -74,7 +74,7 @@ export function buildExamAudio(input: BuildAudioInput): ExamAudio {
   );
   const idSet = new Set(ids);
   const transcript = input.sentences.filter((s) => idSet.has(s.id));
-  const ttsText = transcript.map((s) => s.ru).join(' ');
+  const ttsText = transcript.map((s) => s.uk).join(' ');
   const tts: ExamAudio = {
     source: { kind: 'tts', text: ttsText },
     synthetic: true,

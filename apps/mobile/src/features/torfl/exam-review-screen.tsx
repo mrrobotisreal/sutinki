@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { Exam, ExamSubtest } from '@sumrak/schema';
+import type { Exam, ExamSubtest } from '@sutinki/schema';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
@@ -262,7 +262,7 @@ function ReviewCard({
         />
         <Text className="font-ui-bold">Задание {entry.number}</Text>
         <Text variant="caption" className="flex-1" numberOfLines={1}>
-          {topicLabel(entry.item.topic).ru}
+          {topicLabel(entry.item.topic).uk}
         </Text>
         {entry.outcome === 'blank' ? <Text variant="caption">без ответа</Text> : null}
       </View>

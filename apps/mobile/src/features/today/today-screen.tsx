@@ -4,6 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import * as React from 'react';
 import { Pressable, Text as RNText, ScrollView, View } from 'react-native';
 
+import { ukPending } from '@/config/flags';
 import { QueryError } from '@/components/query-error';
 import { Text } from '@/components/ui/text';
 import {
@@ -251,7 +252,7 @@ export function TodayScreen() {
       )}
 
       {/* M18 (T70, TORFL §7.2): «ТРКИ» — shown with an exam date set OR deck items due; the hub itself fires torfl_hub_opened {from:'today'} */}
-      {(examDate.date !== null || torfl.deckDue > 0) && (
+      {!ukPending('exam') && (examDate.date !== null || torfl.deckDue > 0) && (
         <View
           className="gap-3 rounded-xl border border-border bg-surface p-4"
           testID="today-torfl-card"
@@ -261,7 +262,7 @@ export function TodayScreen() {
               router.push({ pathname: '/torfl', params: { from: 'today' } });
             }}
             accessibilityRole="button"
-            accessibilityLabel="Открыть подготовку к ТРКИ"
+            accessibilityLabel="Открыть подготовку к ТРКИ" // upstream-ok: hidden TORFL card (UT16/UT17)
             className="flex-row items-center justify-between gap-3 active:opacity-70"
           >
             <View className="flex-1 gap-0.5">

@@ -1,4 +1,4 @@
-import type { Exam, ExamItem, SpeakingMonologueItem, SpeakingTurnItem } from '@sumrak/schema';
+import type { Exam, ExamItem, SpeakingMonologueItem, SpeakingTurnItem } from '@sutinki/schema';
 
 import type { ExamResponse } from '@/db/repositories/exams';
 import type { ScenarioFamily } from '@/db/repositories/scenarios';

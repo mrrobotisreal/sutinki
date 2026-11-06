@@ -17,7 +17,7 @@ const TOPIC_TAG_PREFIX = 'torfl:';
 export interface AnswerPrompt {
   packId: string;
   id: string;
-  promptRu: string;
+  promptUk: string;
   promptEn: string;
   tags: string[] | null;
 }
@@ -25,7 +25,7 @@ export interface AnswerPrompt {
 export interface AnswerEntry {
   id: string;
   promptId: string | null;
-  ru: string;
+  uk: string;
   aiFeedback: string | null;
   feedbackStatus: string;
   createdAt: number;
@@ -41,7 +41,7 @@ export interface AnswerPromptGroup {
 export interface AnswerTopicGroup {
   /** The `torfl:<topic>` slug, or `'other'` for a `torfl` prompt without one. */
   topic: string;
-  labelRu: string;
+  labelUk: string;
   labelEn: string;
   prompts: AnswerPromptGroup[];
   /** Entries across the topic's prompts. */
@@ -64,10 +64,10 @@ export function isTorflPrompt(p: Pick<AnswerPrompt, 'tags'>): boolean {
   return (p.tags ?? []).includes(TORFL_PROMPT_TAG);
 }
 
-function topicLabels(topic: string): { ru: string; en: string } {
-  if (topic === OTHER_TOPIC) return { ru: 'Другие темы', en: 'Other topics' };
+function topicLabels(topic: string): { uk: string; en: string } {
+  if (topic === OTHER_TOPIC) return { uk: 'Другие темы', en: 'Other topics' };
   const l = topicLabel(topic);
-  return { ru: l.ru, en: l.en };
+  return { uk: l.uk, en: l.en };
 }
 
 /**
@@ -106,7 +106,7 @@ export function groupAnswers(
     const labels = topicLabels(topic);
     return {
       topic,
-      labelRu: labels.ru,
+      labelUk: labels.uk,
       labelEn: labels.en,
       prompts: groups,
       entryCount: groups.reduce((n, g) => n + g.entries.length, 0),
@@ -128,11 +128,11 @@ export interface RehearsalText {
  * has one (§9 — «AI-corrected when available»), else Mitch's own words.
  * Split into sentences by the T28 rule-based splitter; empty → no sentences.
  */
-export function rehearsalText(entry: Pick<AnswerEntry, 'ru' | 'aiFeedback'>): RehearsalText {
+export function rehearsalText(entry: Pick<AnswerEntry, 'uk' | 'aiFeedback'>): RehearsalText {
   const feedback = parseStoredFeedback(entry.aiFeedback);
   const corrected = feedback?.corrected?.trim();
   if (corrected) return { sentences: splitSentences(corrected), corrected: true };
-  return { sentences: splitSentences(entry.ru), corrected: false };
+  return { sentences: splitSentences(entry.uk), corrected: false };
 }
 
 export type RehearsalPass = 'with-text' | 'without-text';

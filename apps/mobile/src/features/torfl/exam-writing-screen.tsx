@@ -1,4 +1,4 @@
-import type { ExamSubtest, WritingItem } from '@sumrak/schema';
+import type { ExamSubtest, WritingItem } from '@sutinki/schema';
 import * as React from 'react';
 import { Alert } from 'react-native';
 

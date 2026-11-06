@@ -362,7 +362,7 @@ export function TicketsScreen() {
                   <View className="flex-1 justify-center gap-2 rounded-3xl border-2 border-accent bg-accent-soft px-5 py-4">
                     <Text variant="caption">Билет</Text>
                     <Text className="font-reading-bold text-2xl" testID="ticket-topic">
-                      {phase.kind === 'revealed' ? phase.ticket.item.topicTitle.ru : ''}
+                      {phase.kind === 'revealed' ? phase.ticket.item.topicTitle.uk : ''}
                     </Text>
                     <Text variant="caption">
                       {phase.kind === 'revealed'
@@ -405,10 +405,10 @@ export function TicketsScreen() {
         ) : phase.kind === 'prep' ? (
           <>
             <View className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4">
-              <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.ru}</Text>
+              <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
               {phase.ticket.item.questions.map((q, i) => (
                 <Text key={i} className="font-reading text-lg leading-7">
-                  {i + 1}. {q.ru}
+                  {i + 1}. {q.uk}
                 </Text>
               ))}
               <Text variant="caption">
@@ -459,10 +459,10 @@ export function TicketsScreen() {
         ) : phase.kind === 'answer' || phase.kind === 'processing' ? (
           <>
             <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
-              <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.ru}</Text>
+              <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
               {phase.ticket.item.questions.map((q, i) => (
                 <Text key={i} variant="muted" className="font-reading leading-6">
-                  {i + 1}. {q.ru}
+                  {i + 1}. {q.uk}
                 </Text>
               ))}
             </View>

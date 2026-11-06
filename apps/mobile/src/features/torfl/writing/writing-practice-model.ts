@@ -1,4 +1,4 @@
-import type { Exam, WritingItem } from '@sumrak/schema';
+import type { Exam, WritingItem } from '@sutinki/schema';
 
 import type { ExamSummaryLike } from '../hub-model';
 
@@ -12,7 +12,7 @@ import type { ExamSummaryLike } from '../hub-model';
 export interface WritingPracticeEntry {
   packId: string;
   examId: string;
-  examTitleRu: string;
+  examTitleUk: string;
   mode: 'drill' | 'mock';
   subtestId: string;
   item: WritingItem;
@@ -30,7 +30,7 @@ export function writingPracticeEntries(
         out.push({
           packId: s.packId,
           examId: s.examId,
-          examTitleRu: s.titleRu,
+          examTitleUk: s.titleUk,
           mode: s.mode,
           subtestId: subtest.id,
           item,

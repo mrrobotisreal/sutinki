@@ -33,7 +33,7 @@ import {
 } from './readiness';
 import { stepAction, type TodayAction, type TopicTarget } from './today';
 import { SUBTEST_ORDER } from './topics';
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 import type { ExamMode } from './model';
 import { getExamDate, setExamDate } from './settings';
 

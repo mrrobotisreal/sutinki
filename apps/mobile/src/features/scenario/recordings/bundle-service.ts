@@ -63,7 +63,7 @@ export type BundleState = 'pending' | 'uploaded' | 'failed';
  * two sources — a scenario RUN (`scenario_runs` bundle columns, T63) and an
  * exam ATTEMPT (`recordings/exam/<attemptId>/`, state in the `torfl.media`
  * ledger). A source knows its id, its root, its bundle NAME on the targets
- * (`sumrak-media-<runId>.json` · `sumrak-media-exam-<attemptid>.json` — the
+ * (`sutinki-media-<runId>.json` · `sutinki-media-exam-<attemptid>.json` — the
  * attempt id LOWERCASED for the syncd `MediaFileRe`), how to read / write
  * its state and which files to pack.
  */

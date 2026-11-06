@@ -1,4 +1,4 @@
-import type { Exam } from '@sumrak/schema';
+import type { Exam } from '@sutinki/schema';
 import { Rating } from 'ts-fsrs';
 
 import type { Repositories } from '@/db/repositories';

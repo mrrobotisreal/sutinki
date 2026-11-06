@@ -130,7 +130,7 @@ export function ExamRunScreen() {
       return (
         <ExamBreakScreen
           nextKind={next.kind}
-          nextTitle={nextDef.title.ru}
+          nextTitle={nextDef.title.uk}
           nextMin={nextDef.durationMin}
           onContinue={() => run.send({ type: 'BREAK_DONE' })}
           onQuit={quit}
@@ -141,7 +141,7 @@ export function ExamRunScreen() {
   if (state.phase === 'placeholder' || isPlaceholderKind(cur.kind)) {
     return (
       <ExamPlaceholderScreen
-        titleRu={def.title.ru}
+        titleUk={def.title.uk}
         kind={cur.kind}
         onSkip={() => run.send({ type: 'SUBMIT_SUBTEST', now: Date.now() })}
         onQuit={quit}

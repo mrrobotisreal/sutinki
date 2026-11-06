@@ -50,7 +50,7 @@ export function TorflTextsScreen() {
         <View className="mb-2 mt-5 flex-row items-center gap-2 px-1">
           <Ionicons name={SUBTEST_LABELS[section.kind].icon} size={15} color={tokens.textMuted} />
           <Text variant="caption" className="font-ui-medium uppercase tracking-wider">
-            {SUBTEST_LABELS[section.kind].ru} · {section.data.length}
+            {SUBTEST_LABELS[section.kind].uk} · {section.data.length}
           </Text>
         </View>
       )}

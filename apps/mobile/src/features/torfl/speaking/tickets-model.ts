@@ -1,4 +1,4 @@
-import type { Exam, SpeakingMonologueItem, SpeakingTurnItem } from '@sumrak/schema';
+import type { Exam, SpeakingMonologueItem, SpeakingTurnItem } from '@sutinki/schema';
 
 import type { ExamSummaryLike } from '../hub-model';
 
@@ -15,7 +15,7 @@ import type { ExamSummaryLike } from '../hub-model';
 export interface SpeakingPracticeEntry {
   packId: string;
   examId: string;
-  examTitleRu: string;
+  examTitleUk: string;
   mode: 'drill' | 'mock';
   subtestId: string;
   item: SpeakingTurnItem;
@@ -24,7 +24,7 @@ export interface SpeakingPracticeEntry {
 export interface MonologueTicket {
   packId: string;
   examId: string;
-  examTitleRu: string;
+  examTitleUk: string;
   subtestId: string;
   item: SpeakingMonologueItem;
   /** Finished responses on this item (any attempt scope). */
@@ -43,7 +43,7 @@ export function speakingPracticeEntries(
         out.push({
           packId: s.packId,
           examId: s.examId,
-          examTitleRu: s.titleRu,
+          examTitleUk: s.titleUk,
           mode: s.mode,
           subtestId: subtest.id,
           item,
@@ -71,7 +71,7 @@ export function monologueTickets(
         out.push({
           packId: s.packId,
           examId: s.examId,
-          examTitleRu: s.titleRu,
+          examTitleUk: s.titleUk,
           subtestId: subtest.id,
           item,
           answered: answeredCounts.get(`${s.packId}:${s.examId}:${item.id}`) ?? 0,

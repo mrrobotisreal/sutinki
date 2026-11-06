@@ -1,4 +1,4 @@
-import type { ChoiceItem, TypedItem } from '@sumrak/schema';
+import type { ChoiceItem, TypedItem } from '@sutinki/schema';
 import { File } from 'expo-file-system';
 import * as React from 'react';
 import { ActivityIndicator, ScrollView, View } from 'react-native';
@@ -115,7 +115,7 @@ export function DrillItem({
       keyboardShouldPersistTaps="handled"
     >
       <View className="flex-row items-center gap-2">
-        <Badge label={topicLabel(item.topic).ru} />
+        <Badge label={topicLabel(item.topic).uk} />
       </View>
       {assets.passage && (
         <PassagePanel

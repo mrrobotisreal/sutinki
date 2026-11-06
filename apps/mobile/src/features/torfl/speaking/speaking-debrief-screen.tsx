@@ -338,10 +338,10 @@ export function EntryCard({
 
   const title =
     item.kind === 'speaking-monologue'
-      ? item.topicTitle.ru
+      ? item.topicTitle.uk
       : item.kind === 'speaking-situation'
-        ? (item.situation?.ru ?? 'Ситуация')
-        : (promptAudio.data?.transcript.map((s) => s.ru).join(' ') ?? 'Вопрос экзаменатора');
+        ? (item.situation?.uk ?? 'Ситуация')
+        : (promptAudio.data?.transcript.map((s) => s.uk).join(' ') ?? 'Вопрос экзаменатора');
 
   const verdictLine = (() => {
     if (!details) return entry.unchosen ? 'Тема не выбрана' : 'Без ответа';
@@ -367,7 +367,7 @@ export function EntryCard({
       <View className="flex-row items-start gap-2">
         <View className="flex-1 gap-0.5">
           <Text variant="caption">
-            {TASK_LABEL[entry.task].ru} · {entry.number}
+            {TASK_LABEL[entry.task].uk} · {entry.number}
           </Text>
           <Text className="font-reading text-lg leading-7">{title}</Text>
         </View>
@@ -482,7 +482,7 @@ export function EntryCard({
             >
               <View className="flex-row items-center gap-2">
                 <Text className="flex-1 font-ui-medium text-sm">
-                  {speakingCriterionLabel(c.id).ru}
+                  {speakingCriterionLabel(c.id).uk}
                 </Text>
                 <Text className={cn('font-ui-bold text-sm', c.pending && 'text-text-muted')}>
                   {c.pending ? '—' : c.score.toLocaleString('ru-RU')} / {c.max}
@@ -518,7 +518,7 @@ export function EntryCard({
         <FeedbackView
           feedback={{
             v: 1,
-            sourceRu: answer.assistTranscript?.trim() || answer.transcript || '—',
+            sourceUk: answer.assistTranscript?.trim() || answer.transcript || '—',
             corrected: ai.corrected,
             changes: ai.changes ?? [],
             summary: ai.tips.length > 0 ? ai.tips.join(' ') : 'No tips.',

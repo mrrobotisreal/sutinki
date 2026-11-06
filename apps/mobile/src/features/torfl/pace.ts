@@ -1,4 +1,4 @@
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 import { Rating, type Grade } from 'ts-fsrs';
 
 /**

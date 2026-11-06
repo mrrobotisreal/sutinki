@@ -133,7 +133,7 @@ function TopicSection({
     <View testID={`answers-topic-${group.topic}`}>
       <View className="mb-2.5 flex-row items-baseline justify-between px-1">
         <Text variant="caption" className="font-ui-medium uppercase tracking-wider">
-          {group.labelRu}
+          {group.labelUk}
         </Text>
         <Text variant="caption">
           {group.entryCount} {ruPlural(group.entryCount, ANSWERS)}
@@ -173,7 +173,7 @@ function PromptCard({
       testID={`answers-prompt-${prompt.id}`}
     >
       <View className="gap-1">
-        <Text className="font-reading text-base leading-6">{prompt.promptRu}</Text>
+        <Text className="font-reading text-base leading-6">{prompt.promptUk}</Text>
         <Text variant="caption">{prompt.promptEn}</Text>
       </View>
 
@@ -189,7 +189,7 @@ function PromptCard({
       <Pressable
         onPress={onWrite}
         accessibilityRole="button"
-        accessibilityLabel={`Написать ответ: ${prompt.promptRu}`}
+        accessibilityLabel={`Написать ответ: ${prompt.promptUk}`}
         testID={`answers-write-${prompt.id}`}
         className="flex-row items-center justify-center gap-2 self-start rounded-full border border-border px-3 py-1.5 active:bg-surface-2"
       >
@@ -225,7 +225,7 @@ function EntryRow({
     >
       <Pressable onPress={onOpen} accessibilityRole="button" accessibilityLabel="Открыть запись">
         <Text className="font-reading text-base leading-6" numberOfLines={3}>
-          {text.sentences.join(' ') || entry.ru}
+          {text.sentences.join(' ') || entry.uk}
         </Text>
         <View className="mt-1.5 flex-row flex-wrap items-center gap-2">
           <Text variant="caption">

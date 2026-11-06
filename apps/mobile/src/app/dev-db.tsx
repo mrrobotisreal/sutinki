@@ -59,7 +59,7 @@ const FIXTURE_PACKS = [
   // T69 (M18): a 6-sentence `torfl:lexicon` story («bank a topic» on the S25) — never published;
   // «Delete exam fixture» removes it too (the words it banked are restored with the pre-DB).
   { id: 'a1-torfl-lexicon-fixture', note: 'stories/torfl · lx-fx-semya · torfl:lexicon' },
-  // T74 (M18): four `torfl`-tagged journal prompts («Мои ответы» on the S25) — never published;
+  // T74 (M18): four `torfl`-tagged journal prompts («Мои ответы» on the S25) — never published; // upstream-ok
   // «Delete exam fixture» removes it too (entries written against it are restored with the pre-DB).
   { id: 'a1-torfl-prompts-fixture', note: 'prompts/torfl · 4 prompts · torfl:<topic>' },
 ] as const;

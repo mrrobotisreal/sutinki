@@ -113,7 +113,7 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
                 )}
                 testID={`topic-row-${t.topic}`}
               >
-                <Text className="flex-1 font-ui-medium">{t.ru}</Text>
+                <Text className="flex-1 font-ui-medium">{t.uk}</Text>
                 <Text variant="caption">
                   {t.correct}/{t.answered}
                 </Text>
@@ -181,8 +181,8 @@ export function DrillSummary({ outcome, onDone }: { outcome: DrillOutcome; onDon
           <Text variant="muted" className="flex-1 text-sm">
             Задания на{' '}
             {[
-              skipped.writing > 0 ? SUBTEST_LABELS.writing.ru : null,
-              skipped.speaking > 0 ? SUBTEST_LABELS.speaking.ru : null,
+              skipped.writing > 0 ? SUBTEST_LABELS.writing.uk : null,
+              skipped.speaking > 0 ? SUBTEST_LABELS.speaking.uk : null,
             ]
               .filter(Boolean)
               .join(' и ')}{' '}

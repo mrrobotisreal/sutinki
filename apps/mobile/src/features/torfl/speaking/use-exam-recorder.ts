@@ -127,7 +127,7 @@ export function useExamRecorder(events: RecorderEvents): ExamRecorder {
         }
         if (isAssistInstalled()) {
           try {
-            assistTranscript = (await transcribeWithAssist(wavUri, 'ru')).text;
+            assistTranscript = (await transcribeWithAssist(wavUri, 'uk')).text;
           } catch (err) {
             logError('manual', err);
           }

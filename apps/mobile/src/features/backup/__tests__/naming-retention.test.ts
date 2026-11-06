@@ -148,21 +148,21 @@ describe('media bundle naming (T63 §10.3)', () => {
 });
 
 describe('exam media bundle naming (T74, TORFL §8.5)', () => {
-  // SumrakAPI `internal/naming/naming.go:24` — the server-side acceptance regex, copied verbatim
+  // SutinkiAPI `internal/naming/naming.go:24` — the server-side acceptance regex, copied verbatim
   // so a rename on either side breaks this test: lowercase stems only, 4–80 chars.
-  const SYNCD_MEDIA_FILE_RE = /^sumrak-media-([a-z0-9][a-z0-9-]{3,79})\.json$/;
+  const SYNCD_MEDIA_FILE_RE = /^sutinki-media-([a-z0-9][a-z0-9-]{3,79})\.json$/;
 
-  it('an exam bundle is sumrak-media-exam-<attemptid>.json with the id lowercased — accepted by syncd', () => {
+  it('an exam bundle is sutinki-media-exam-<attemptid>.json with the id lowercased — accepted by syncd', () => {
     const attemptId = 'MKXY1ABC-Q7zTuV00';
     const name = mediaFileName(examBundleStem(attemptId));
-    expect(name).toBe('sumrak-media-exam-mkxy1abc-q7ztuv00.json');
+    expect(name).toBe('sutinki-media-exam-mkxy1abc-q7ztuv00.json');
     expect(SYNCD_MEDIA_FILE_RE.test(name)).toBe(true);
     expect(MEDIA_FILE_RE.test(name)).toBe(true);
     expect(parseMediaFileName(name)).toBe('exam-mkxy1abc-q7ztuv00');
   });
 
   it('the uppercase id itself would have been refused — the lowercase stem is the fix', () => {
-    expect(SYNCD_MEDIA_FILE_RE.test('sumrak-media-exam-MKXY1ABC.json')).toBe(false);
+    expect(SYNCD_MEDIA_FILE_RE.test('sutinki-media-exam-MKXY1ABC.json')).toBe(false);
     expect(() => mediaFileName('exam-MKXY1ABC')).toThrow();
   });
 

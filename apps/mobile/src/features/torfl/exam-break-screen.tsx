@@ -8,7 +8,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { formatMinutes } from './hub-model';
 import { SUBTEST_LABELS } from './topics';
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 
 /** The untimed break between subtests of a full mock (T71, TORFL §8.2). */
 export function ExamBreakScreen({
@@ -65,12 +65,12 @@ export function ExamBreakScreen({
 
 /** The writing / speaking «скоро» placeholder (T72 / T73 replace it). */
 export function ExamPlaceholderScreen({
-  titleRu,
+  titleUk,
   kind,
   onSkip,
   onQuit,
 }: {
-  titleRu: string;
+  titleUk: string;
   kind: ExamSubtestKind;
   onSkip: () => void;
   onQuit: () => void;
@@ -85,7 +85,7 @@ export function ExamPlaceholderScreen({
     >
       <Ionicons name={SUBTEST_LABELS[kind].icon} size={44} color={tokens.textMuted} />
       <View className="items-center gap-1">
-        <Text className="font-reading-bold text-2xl">{titleRu}</Text>
+        <Text className="font-reading-bold text-2xl">{titleUk}</Text>
         <Text className="font-ui-medium text-accent">скоро</Text>
         <Text variant="muted" className="mt-2 text-center">
           Этот субтест появится в следующем обновлении. Сейчас он записывается как пропущенный и не

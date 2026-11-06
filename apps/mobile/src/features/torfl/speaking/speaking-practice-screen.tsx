@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import type { SpeakingMonologueItem, SpeakingTurnItem } from '@sumrak/schema';
+import type { SpeakingMonologueItem, SpeakingTurnItem } from '@sutinki/schema';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, View } from 'react-native';
@@ -259,7 +259,7 @@ export function SpeakingPracticeScreen() {
             Говорение · тренировка
           </Text>
           <Text variant="caption" className="text-xs">
-            {TASK_LABEL[task].ru} · без таймера
+            {TASK_LABEL[task].uk} · без таймера
           </Text>
         </View>
       </View>
@@ -296,10 +296,10 @@ export function SpeakingPracticeScreen() {
                 </View>
               </View>
               {item.kind === 'speaking-situation' && item.situation ? (
-                <Text className="font-reading text-lg leading-8">{item.situation.ru}</Text>
+                <Text className="font-reading text-lg leading-8">{item.situation.uk}</Text>
               ) : promptAudio.data ? (
                 <Text className="font-reading text-lg leading-8">
-                  {promptAudio.data.transcript.map((s) => s.ru).join(' ')}
+                  {promptAudio.data.transcript.map((s) => s.uk).join(' ')}
                 </Text>
               ) : null}
             </View>

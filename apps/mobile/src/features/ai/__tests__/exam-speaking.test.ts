@@ -43,7 +43,7 @@ describe('exam-speaking prompt', () => {
   it('task 1: the question, the ASR caveat, both transcripts, the three turn ids', () => {
     const messages = buildExamSpeakingMessages({
       task: 'reply',
-      promptRu: 'Где вы сейчас живёте?',
+      promptUk: 'Где вы сейчас живёте?',
       transcript: 'я живу в колорадо',
       assistTranscript: 'Я живу в Колорадо.',
       modelAnswer: 'Я сейчас в Москве.',
@@ -66,8 +66,8 @@ describe('exam-speaking prompt', () => {
   it('task 2: the situation text; no assist → no Whisper block; empty transcript is named', () => {
     const user = buildExamSpeakingMessages({
       task: 'situation',
-      promptRu: 'Вы хотите узнать, где работает ваш друг.',
-      situationRu: 'Вы хотите узнать, где работает ваш друг. Спросите его.',
+      promptUk: 'Вы хотите узнать, где работает ваш друг.',
+      situationUk: 'Вы хотите узнать, где работает ваш друг. Спросите его.',
       transcript: '',
     })[1]!.content;
     expect(user).toContain('THE SITUATION');
@@ -79,8 +79,8 @@ describe('exam-speaking prompt', () => {
   it('task 3: the topic, numbered questions, the sentence range, the four monologue ids', () => {
     const messages = buildExamSpeakingMessages({
       task: 'monologue',
-      promptRu: 'О себе',
-      questionsRu: ['Как вас зовут?', 'Откуда вы?'],
+      promptUk: 'О себе',
+      questionsUk: ['Как вас зовут?', 'Откуда вы?'],
       minSentences: 10,
       maxSentences: 12,
       transcript: 'меня зовут митч',

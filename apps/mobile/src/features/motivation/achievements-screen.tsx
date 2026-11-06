@@ -8,8 +8,16 @@ import { Text } from '@/components/ui/text';
 import { track } from '@/services/analytics';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { ACHIEVEMENTS } from './achievements';
+import { ukPending } from '@/config/flags';
+
+import { ACHIEVEMENTS as ALL_ACHIEVEMENTS } from './achievements';
+
 import { useAchievements } from './use-motivation';
+
+/** UP04: the `torfl-*` achievements stay out of the gallery while `UK_PENDING.exam` hides the exam. */
+const ACHIEVEMENTS = ukPending('exam')
+  ? ALL_ACHIEVEMENTS.filter((a) => !a.id.startsWith('torfl-'))
+  : ALL_ACHIEVEMENTS;
 
 /**
  * Achievement gallery (T19, §7.7) — every defined achievement, unlocked

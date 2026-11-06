@@ -1,5 +1,5 @@
-import { ExamSchema, type Exam, type Pack } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
 import { writingPracticeEntries, writingPracticeHref } from '../writing/writing-practice-model';
@@ -10,7 +10,7 @@ const summaries = PACK.exams!.map((e) => ({
   packId: PACK.id,
   examId: e.id,
   mode: e.mode,
-  titleRu: e.title.ru,
+  titleUk: e.title.uk,
   titleEn: e.title.en,
   exam: ExamSchema.parse(e) as Exam,
 }));

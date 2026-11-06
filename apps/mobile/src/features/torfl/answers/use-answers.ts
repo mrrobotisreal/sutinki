@@ -32,7 +32,7 @@ async function loadAnswers(): Promise<AnswersData> {
     .map((r) => ({
       packId: r.packId,
       id: r.id,
-      promptRu: r.promptRu,
+      promptUk: r.promptUk,
       promptEn: r.promptEn,
       tags: r.tags ?? null,
     }))

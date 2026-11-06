@@ -299,12 +299,12 @@ const RESCUE_EXTRAS = {
  * the two graders' scores for the same letters. Temperature 0.2 = the queue.
  */
 const EXAM_WRITING_TASK: Omit<ExamWritingInput, 'letter'> = {
-  taskRu: 'Ваш друг хочет знать о вашей жизни. Напишите ему письмо.',
+  taskUk: 'Ваш друг хочет знать о вашей жизни. Напишите ему письмо.',
   bullets: [
-    { id: 'b1', ru: 'как вас зовут' },
-    { id: 'b2', ru: 'где вы живёте' },
-    { id: 'b3', ru: 'где вы работаете' },
-    { id: 'b4', ru: 'что вы любите делать' },
+    { id: 'b1', uk: 'как вас зовут' },
+    { id: 'b2', uk: 'где вы живёте' },
+    { id: 'b3', uk: 'где вы работаете' },
+    { id: 'b4', uk: 'что вы любите делать' },
   ],
   minSentences: 10,
   minQuestions: 2,
@@ -363,7 +363,7 @@ const EXAM_SPEAKING_CASES: { name: string; input: ExamSpeakingInput }[] = [
     name: 'reply',
     input: {
       task: 'reply',
-      promptRu: 'Где вы сейчас живёте?',
+      promptUk: 'Где вы сейчас живёте?',
       transcript: 'я сейчас живу в колорадо с моя невеста она украинка',
       assistTranscript: 'Я сейчас живу в Колорадо с моя невеста, она украинка.',
       modelAnswer: 'Я сейчас живу в Москве.',
@@ -373,8 +373,8 @@ const EXAM_SPEAKING_CASES: { name: string; input: ExamSpeakingInput }[] = [
     name: 'monologue',
     input: {
       task: 'monologue',
-      promptRu: 'О себе',
-      questionsRu: ['Как вас зовут?', 'Откуда вы?', 'Где вы живёте?', 'Что вы любите делать?'],
+      promptUk: 'О себе',
+      questionsUk: ['Как вас зовут?', 'Откуда вы?', 'Где вы живёте?', 'Что вы любите делать?'],
       minSentences: 10,
       maxSentences: 12,
       transcript:

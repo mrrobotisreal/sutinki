@@ -1,5 +1,5 @@
-import { ExamSchema, type Exam } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Exam } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -158,7 +158,7 @@ describe('summarizeDrill', () => {
       ['case-gen', 50],
       ['case-prep', 50],
     ]);
-    expect(s.perTopic[1]!.ru).toBe('Родительный');
+    expect(s.perTopic[1]!.uk).toBe('Родительный');
   });
   it('an empty session is all zeros', () => {
     expect(summarizeDrill([])).toMatchObject({

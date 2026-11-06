@@ -1,5 +1,5 @@
-import { ExamSchema, type Exam, type Pack, type SpeakingMonologueItem } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Exam, type Pack, type SpeakingMonologueItem } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';

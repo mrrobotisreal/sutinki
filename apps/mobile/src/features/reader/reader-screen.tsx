@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ActivityIndicator, FlatList, Pressable, View, type ViewToken } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ukPending } from '@/config/flags';
 import { Text } from '@/components/ui/text';
 import { repos } from '@/db';
 import { useBookmarksForStory, useStoryDetail, useStoryProgress } from '@/db/hooks';
@@ -434,7 +435,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
   // ---- bank a topic (T69, TORFL §5.4) ----------------------------------------
   // Only on `torfl:lexicon` stories: one transaction banks every content
   // lemma not yet in the Словарь; the toast reports «+N слов».
-  const showBankTopic = !!detail.data && canBankTopic(detail.data.pack);
+  const showBankTopic = !ukPending('exam') && !!detail.data && canBankTopic(detail.data.pack);
   const [bankToast, setBankToast] = React.useState<string | null>(null);
   const bankBusyRef = React.useRef(false);
   React.useEffect(() => {

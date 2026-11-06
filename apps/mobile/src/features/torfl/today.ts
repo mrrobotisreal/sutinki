@@ -1,4 +1,4 @@
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 
 import { ruPlural } from './hub-model';
 import type { TodayStep } from './readiness';
@@ -26,7 +26,7 @@ export function describeStep(step: TodayStep): { title: string; caption: string 
   switch (step.kind) {
     case 'topic':
       return {
-        title: `Подтяни: ${topicLabel(step.topic).ru}`,
+        title: `Подтяни: ${topicLabel(step.topic).uk}`,
         caption: `${SUBTEST_LABELS[step.subtestKind].short} · сейчас ${step.accuracy}% верных — самая слабая тема`,
       };
     case 'deck':

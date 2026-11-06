@@ -1,4 +1,4 @@
-import type { Exam, ExamItem, ExamPart, ExamSubtest, ExamSubtestKind } from '@sumrak/schema';
+import type { Exam, ExamItem, ExamPart, ExamSubtest, ExamSubtestKind } from '@sutinki/schema';
 
 import { examItemKey, findExamItem } from '../model';
 import { LIGHTNING_ITEMS } from '../pace';
@@ -157,7 +157,7 @@ export interface DrillResult {
 
 export interface TopicRow {
   topic: string;
-  ru: string;
+  uk: string;
   answered: number;
   correct: number;
   pct: number;
@@ -191,7 +191,7 @@ export function summarizeDrill(results: readonly DrillResult[]): DrillSummary {
     }
     const row = per.get(r.topic) ?? {
       topic: r.topic,
-      ru: topicLabel(r.topic).ru,
+      uk: topicLabel(r.topic).uk,
       answered: 0,
       correct: 0,
       pct: 0,

@@ -45,7 +45,7 @@ export function ReadinessBars({
                 row.band && BAND_TEXT_CLASS[row.band],
               )}
               accessibilityLabel={
-                row.pct === null ? `${SUBTEST_LABELS[row.kind].ru}: нет данных` : undefined
+                row.pct === null ? `${SUBTEST_LABELS[row.kind].uk}: нет данных` : undefined
               }
             >
               {row.pct === null ? '—' : `${Math.round(row.pct)} %`}

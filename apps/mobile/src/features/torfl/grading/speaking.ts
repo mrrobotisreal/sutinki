@@ -3,7 +3,7 @@ import type {
   ExamSubtest,
   SpeakingMonologueItem,
   SpeakingTurnItem,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 
 import { judgeAnswer, type JudgeResult } from '@/features/scenario/judge/judge';
 import { contentTokens } from '@/features/scenario/judge/slots';
@@ -47,16 +47,16 @@ import { bulletCoverage } from './writing';
 export type SpeakingTask = 1 | 2 | 3;
 
 export const SPEAKING_TURN_CRITERIA = [
-  { id: 'task-response', max: 60, ru: 'Ответ по заданию', en: 'Task response' },
-  { id: 'completeness', max: 20, ru: 'Полный ответ', en: 'Full answer' },
-  { id: 'grammar', max: 20, ru: 'Грамматика и уместность', en: 'Grammar & appropriacy' },
+  { id: 'task-response', max: 60, uk: 'Ответ по заданию', en: 'Task response' },
+  { id: 'completeness', max: 20, uk: 'Полный ответ', en: 'Full answer' },
+  { id: 'grammar', max: 20, uk: 'Грамматика и уместность', en: 'Grammar & appropriacy' },
 ] as const;
 
 export const SPEAKING_MONOLOGUE_CRITERIA = [
-  { id: 'coverage', max: 40, ru: 'Ответы на вопросы темы', en: 'Questions covered' },
-  { id: 'length', max: 20, ru: 'Объём (предложений)', en: 'Length (sentences)' },
-  { id: 'fluency', max: 10, ru: 'Беглость', en: 'Fluency' },
-  { id: 'lexis-grammar', max: 30, ru: 'Лексика и грамматика', en: 'Lexis & grammar' },
+  { id: 'coverage', max: 40, uk: 'Ответы на вопросы темы', en: 'Questions covered' },
+  { id: 'length', max: 20, uk: 'Объём (предложений)', en: 'Length (sentences)' },
+  { id: 'fluency', max: 10, uk: 'Беглость', en: 'Fluency' },
+  { id: 'lexis-grammar', max: 30, uk: 'Лексика и грамматика', en: 'Lexis & grammar' },
 ] as const;
 
 export const SPEAKING_AI_ONLY_IDS: readonly string[] = ['grammar', 'lexis-grammar'];
@@ -71,11 +71,11 @@ export function speakingCriteria(task: SpeakingTask) {
   return task === 3 ? SPEAKING_MONOLOGUE_CRITERIA : SPEAKING_TURN_CRITERIA;
 }
 
-export function speakingCriterionLabel(id: string): { ru: string; en: string } {
+export function speakingCriterionLabel(id: string): { uk: string; en: string } {
   const hit =
     SPEAKING_TURN_CRITERIA.find((c) => c.id === id) ??
     SPEAKING_MONOLOGUE_CRITERIA.find((c) => c.id === id);
-  return hit ? { ru: hit.ru, en: hit.en } : { ru: id, en: id };
+  return hit ? { uk: hit.uk, en: hit.en } : { uk: id, en: id };
 }
 
 /** The official task number of a speaking item (by kind, never by part index). */
@@ -92,10 +92,10 @@ export function speakingTaskOf(item: Pick<ExamItem, 'kind'>): SpeakingTask | nul
   }
 }
 
-export const TASK_LABEL: Record<SpeakingTask, { ru: string; en: string }> = {
-  1: { ru: 'Задание 1 · ответы', en: 'Task 1 · replies' },
-  2: { ru: 'Задание 2 · ситуации', en: 'Task 2 · situations' },
-  3: { ru: 'Задание 3 · монолог', en: 'Task 3 · monologue' },
+export const TASK_LABEL: Record<SpeakingTask, { uk: string; en: string }> = {
+  1: { uk: 'Задание 1 · ответы', en: 'Task 1 · replies' },
+  2: { uk: 'Задание 2 · ситуации', en: 'Task 2 · situations' },
+  3: { uk: 'Задание 3 · монолог', en: 'Task 3 · monologue' },
 };
 
 // --- shares -----------------------------------------------------------------------------------

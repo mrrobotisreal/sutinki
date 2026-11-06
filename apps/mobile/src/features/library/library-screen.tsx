@@ -29,6 +29,7 @@ import type { DialogueListItem } from '@/db/repositories/dialogues';
 import { readStateOf, type StoryProgressRow } from '@/db/repositories/reading';
 import { DialogueRow } from '@/features/dialogue/dialogues-list-screen';
 import { useImportedPackMeta } from '@/features/import/hooks';
+import { ukPending } from '@/config/flags';
 import { ChipRow } from '@/features/library/category-chips';
 import {
   ALL_GENRES,
@@ -112,7 +113,9 @@ export function LibraryScreen() {
   const importedMeta = useImportedPackMeta();
   const examItems = useExamListItems();
   // M14 (T45): the persisted shelf selection — category chips + genre sub-row.
-  const category = useLibraryPrefs((s) => s.category);
+  const storedCategory = useLibraryPrefs((s) => s.category);
+  // UP04: «ТРКИ» is hidden while `UK_PENDING.exam`; a persisted torfl shelf falls back to «Історії».
+  const category = ukPending('exam') && storedCategory === 'torfl' ? 'stories' : storedCategory;
   const genre = useLibraryPrefs((s) => s.genre);
   const setCategory = useLibraryPrefs((s) => s.setCategory);
   const setGenre = useLibraryPrefs((s) => s.setGenre);
@@ -228,7 +231,10 @@ export function LibraryScreen() {
   // only when ≥2 distinct genre values are installed under «Історії».
   // Memoized so a chip tap re-renders the header without remounting the list.
   const categoryItems = React.useMemo(
-    () => categoryChipItems(categoryCounts(packs.data ?? []), category),
+    () =>
+      categoryChipItems(categoryCounts(packs.data ?? []), category).filter(
+        (item) => !(ukPending('exam') && item.key === 'torfl'),
+      ),
     [packs.data, category],
   );
   const genreItems = React.useMemo(
@@ -433,7 +439,7 @@ export function LibraryScreen() {
         )}
         {/* M18 (T69): the pinned hub card — under «ТРКИ» only, above the
             sections AND inside the empty state (the hub works before sync). */}
-        {category === 'torfl' && (
+        {category === 'torfl' && !ukPending('exam') && (
           <View className="px-4">
             <TorflHubCard />
           </View>

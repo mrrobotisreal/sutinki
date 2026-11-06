@@ -4,7 +4,7 @@ import type {
   ExamSubtest,
   SpeakingMonologueItem,
   SpeakingTurnItem,
-} from '@sumrak/schema';
+} from '@sutinki/schema';
 import * as React from 'react';
 import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -125,7 +125,7 @@ export function ExamSpeakingScreen({
         </Pressable>
         <View className="flex-1">
           <Text className="font-ui-medium" numberOfLines={1}>
-            Говорение · {TASK_LABEL[sp.task as 1 | 2 | 3].ru}
+            Говорение · {TASK_LABEL[sp.task as 1 | 2 | 3].uk}
           </Text>
           <Text variant="caption" className="text-xs">
             {sp.itemId ? `Задание ${position} из ${total}` : 'Выбор темы'}
@@ -261,7 +261,7 @@ function TurnBody({
     <>
       <ScrollView className="flex-1" contentContainerClassName="gap-4 px-4 pb-6 pt-2">
         <Text variant="caption" className="px-1" testID="part-instructions">
-          {part.instructions.ru}
+          {part.instructions.uk}
         </Text>
         <View
           className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4"
@@ -297,7 +297,7 @@ function TurnBody({
           </View>
           {item.kind === 'speaking-situation' && item.situation ? (
             <Text className="font-reading text-lg leading-8" testID="speaking-situation">
-              {item.situation.ru}
+              {item.situation.uk}
             </Text>
           ) : null}
         </View>
@@ -405,7 +405,7 @@ function MonologueBody({
             testID={`speaking-topic-${t.id}`}
             className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4 active:bg-surface-2"
           >
-            <Text className="font-reading-bold text-xl">{t.topicTitle.ru}</Text>
+            <Text className="font-reading-bold text-xl">{t.topicTitle.uk}</Text>
             <Text variant="caption">{t.topicTitle.en}</Text>
             <Text variant="caption">
               {t.questions.length} вопрос(ов) · {t.minSentences}–{t.maxSentences} предложений
@@ -451,12 +451,12 @@ function MonologueBody({
           </View>
           <View className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4">
             <Text className="font-reading-bold text-2xl" testID="speaking-topic-title">
-              {item.topicTitle.ru}
+              {item.topicTitle.uk}
             </Text>
             <View className="gap-1.5">
               {item.questions.map((q, i) => (
                 <Text key={i} className="font-reading text-lg leading-7">
-                  {i + 1}. {q.ru}
+                  {i + 1}. {q.uk}
                 </Text>
               ))}
             </View>
@@ -541,11 +541,11 @@ function MonologueBody({
           </Text>
         </View>
         <View className="gap-3 rounded-2xl border border-border bg-surface px-4 py-4">
-          <Text className="font-reading-bold text-2xl">{item.topicTitle.ru}</Text>
+          <Text className="font-reading-bold text-2xl">{item.topicTitle.uk}</Text>
           <View className="gap-1">
             {item.questions.map((q, i) => (
               <Text key={i} variant="muted" className="font-reading leading-6">
-                {i + 1}. {q.ru}
+                {i + 1}. {q.uk}
               </Text>
             ))}
           </View>

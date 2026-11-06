@@ -1,4 +1,4 @@
-import type { SpeakingMonologueItem, SpeakingTurnItem } from '@sumrak/schema';
+import type { SpeakingMonologueItem, SpeakingTurnItem } from '@sutinki/schema';
 
 import {
   buildExamSpeakingMessages,
@@ -35,14 +35,14 @@ export const speakingGrader: KindGrader = {
     let input: ExamSpeakingInput;
     if (hit.item.kind === 'speaking-reply' || hit.item.kind === 'speaking-situation') {
       const item: SpeakingTurnItem = hit.item;
-      const promptRu =
+      const promptUk =
         (await ctx.storyText(item.prompt.storyId, item.prompt.sentenceIds)) ??
-        item.situation?.ru ??
+        item.situation?.uk ??
         '';
       input = {
         task: item.kind === 'speaking-reply' ? 'reply' : 'situation',
-        promptRu,
-        situationRu: item.situation?.ru ?? null,
+        promptUk,
+        situationUk: item.situation?.uk ?? null,
         transcript: a.transcript,
         assistTranscript: a.assistTranscript ?? null,
         modelAnswer: item.expect.accept[0] ?? null,
@@ -54,8 +54,8 @@ export const speakingGrader: KindGrader = {
         : null;
       input = {
         task: 'monologue',
-        promptRu: item.topicTitle.ru,
-        questionsRu: item.questions.map((q) => q.ru),
+        promptUk: item.topicTitle.uk,
+        questionsUk: item.questions.map((q) => q.uk),
         minSentences: item.minSentences,
         maxSentences: item.maxSentences,
         transcript: a.transcript,

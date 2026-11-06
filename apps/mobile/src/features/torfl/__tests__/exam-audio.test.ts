@@ -4,13 +4,13 @@ import type { AudioTrackRow, SentenceWithTokens, WordStampRow } from '@/db/repos
 
 import { buildExamAudio, pickTrack } from '../items/exam-audio';
 
-const sentence = (id: string, ru: string): SentenceWithTokens =>
+const sentence = (id: string, uk: string): SentenceWithTokens =>
   ({
     packId: 'p',
     id,
     storyId: 's',
     orderIdx: 0,
-    ru,
+    uk,
     en: '',
     grammarTopics: null,
     tokens: [],

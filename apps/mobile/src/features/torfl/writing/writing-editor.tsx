@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 import * as React from 'react';
 import {
   KeyboardAvoidingView,
@@ -173,11 +173,11 @@ export function WritingEditor({
       >
         {/* the task as printed */}
         <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
-          <RNText className="font-reading text-lg leading-7 text-text">{item.task.ru}</RNText>
+          <RNText className="font-reading text-lg leading-7 text-text">{item.task.uk}</RNText>
           <View className="mt-1 gap-1.5">
             {(
               checklist ??
-              item.bullets.map((b) => ({ id: b.id, ru: b.text.ru, en: b.text.en, done: false }))
+              item.bullets.map((b) => ({ id: b.id, uk: b.text.uk, en: b.text.en, done: false }))
             ).map((row) => (
               <View key={row.id} className="flex-row items-start gap-2" testID={`bullet-${row.id}`}>
                 {checklist ? (
@@ -197,7 +197,7 @@ export function WritingEditor({
                     row.done ? 'text-success' : 'text-text',
                   )}
                 >
-                  {row.ru}
+                  {row.uk}
                 </RNText>
               </View>
             ))}

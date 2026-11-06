@@ -1,4 +1,4 @@
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 
 import { buildExamWritingMessages } from '@/features/ai/prompts/exam-writing';
 
@@ -32,8 +32,8 @@ export const writingGrader: KindGrader = {
       : null;
     return {
       messages: buildExamWritingMessages({
-        taskRu: item.task.ru,
-        bullets: item.bullets.map((b) => ({ id: b.id, ru: b.text.ru })),
+        taskUk: item.task.uk,
+        bullets: item.bullets.map((b) => ({ id: b.id, uk: b.text.uk })),
         minSentences: item.minSentences,
         minQuestions: item.minQuestions,
         maxQuestions: item.maxQuestions ?? null,

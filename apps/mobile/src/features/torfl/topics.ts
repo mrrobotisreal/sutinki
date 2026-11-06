@@ -10,44 +10,44 @@ import type { IoniconName } from '@/features/library/categories';
  */
 
 export interface TopicLabel {
-  ru: string;
+  uk: string;
   en: string;
   subtestKind: ExamSubtestKind;
 }
 
 /** §3.4, in table order (the hub's tile order inside a subtest tab). */
 export const TOPICS = {
-  'lex-verbs': { ru: 'Глаголы-близнецы', en: 'Look-alike verbs', subtestKind: 'lexgram' },
-  'lex-family': { ru: 'Однокоренные слова', en: 'Word families', subtestKind: 'lexgram' },
-  'lex-negation': { ru: 'Не / нет', en: 'Negation', subtestKind: 'lexgram' },
-  agr: { ru: 'Согласование', en: 'Agreement', subtestKind: 'lexgram' },
-  pron: { ru: 'Местоимения', en: 'Pronouns', subtestKind: 'lexgram' },
-  'case-prep': { ru: 'Предложный', en: 'Prepositional case', subtestKind: 'lexgram' },
-  'case-acc': { ru: 'Винительный', en: 'Accusative case', subtestKind: 'lexgram' },
-  'case-gen': { ru: 'Родительный', en: 'Genitive case', subtestKind: 'lexgram' },
-  'case-dat': { ru: 'Дательный', en: 'Dative case', subtestKind: 'lexgram' },
-  'case-instr': { ru: 'Творительный', en: 'Instrumental case', subtestKind: 'lexgram' },
+  'lex-verbs': { uk: 'Глаголы-близнецы', en: 'Look-alike verbs', subtestKind: 'lexgram' },
+  'lex-family': { uk: 'Однокоренные слова', en: 'Word families', subtestKind: 'lexgram' },
+  'lex-negation': { uk: 'Не / нет', en: 'Negation', subtestKind: 'lexgram' },
+  agr: { uk: 'Согласование', en: 'Agreement', subtestKind: 'lexgram' },
+  pron: { uk: 'Местоимения', en: 'Pronouns', subtestKind: 'lexgram' },
+  'case-prep': { uk: 'Предложный', en: 'Prepositional case', subtestKind: 'lexgram' },
+  'case-acc': { uk: 'Винительный', en: 'Accusative case', subtestKind: 'lexgram' },
+  'case-gen': { uk: 'Родительный', en: 'Genitive case', subtestKind: 'lexgram' },
+  'case-dat': { uk: 'Дательный', en: 'Dative case', subtestKind: 'lexgram' },
+  'case-instr': { uk: 'Творительный', en: 'Instrumental case', subtestKind: 'lexgram' },
   'verb-forms': {
-    ru: 'Спряжение и императив',
+    uk: 'Спряжение и императив',
     en: 'Conjugation & imperative',
     subtestKind: 'lexgram',
   },
-  'verb-aspect': { ru: 'Вид и время', en: 'Aspect & tense', subtestKind: 'lexgram' },
-  'verb-motion': { ru: 'Глаголы движения', en: 'Verbs of motion', subtestKind: 'lexgram' },
-  conj: { ru: 'Союзы и вопросы', en: 'Conjunctions & questions', subtestKind: 'lexgram' },
-  'read-continue': { ru: 'Продолжите фразу', en: 'Continue the line', subtestKind: 'reading' },
-  'read-signs': { ru: 'Объявления', en: 'Signs & notices', subtestKind: 'reading' },
-  'read-topic': { ru: 'О чём статья?', en: 'What is it about?', subtestKind: 'reading' },
-  'read-detail': { ru: 'Текст и вопросы', en: 'Text & questions', subtestKind: 'reading' },
-  'listen-where': { ru: 'Где они?', en: 'Where are they?', subtestKind: 'listening' },
-  'listen-who': { ru: 'Кто говорит?', en: 'Who is speaking?', subtestKind: 'listening' },
-  'listen-phrase': { ru: 'Фраза-синоним', en: 'Same meaning', subtestKind: 'listening' },
-  'listen-detail': { ru: 'Детали диалога', en: 'Dialogue details', subtestKind: 'listening' },
-  'listen-info': { ru: 'Запишите информацию', en: 'Info capture', subtestKind: 'listening' },
-  'write-letter': { ru: 'Письмо', en: 'The letter', subtestKind: 'writing' },
-  'speak-reply': { ru: 'Ответьте', en: 'Reply', subtestKind: 'speaking' },
-  'speak-situation': { ru: 'Начните диалог', en: 'Start the dialogue', subtestKind: 'speaking' },
-  'speak-monologue': { ru: 'Монолог', en: 'Monologue', subtestKind: 'speaking' },
+  'verb-aspect': { uk: 'Вид и время', en: 'Aspect & tense', subtestKind: 'lexgram' },
+  'verb-motion': { uk: 'Глаголы движения', en: 'Verbs of motion', subtestKind: 'lexgram' },
+  conj: { uk: 'Союзы и вопросы', en: 'Conjunctions & questions', subtestKind: 'lexgram' },
+  'read-continue': { uk: 'Продолжите фразу', en: 'Continue the line', subtestKind: 'reading' },
+  'read-signs': { uk: 'Объявления', en: 'Signs & notices', subtestKind: 'reading' },
+  'read-topic': { uk: 'О чём статья?', en: 'What is it about?', subtestKind: 'reading' },
+  'read-detail': { uk: 'Текст и вопросы', en: 'Text & questions', subtestKind: 'reading' },
+  'listen-where': { uk: 'Где они?', en: 'Where are they?', subtestKind: 'listening' },
+  'listen-who': { uk: 'Кто говорит?', en: 'Who is speaking?', subtestKind: 'listening' },
+  'listen-phrase': { uk: 'Фраза-синоним', en: 'Same meaning', subtestKind: 'listening' },
+  'listen-detail': { uk: 'Детали диалога', en: 'Dialogue details', subtestKind: 'listening' },
+  'listen-info': { uk: 'Запишите информацию', en: 'Info capture', subtestKind: 'listening' },
+  'write-letter': { uk: 'Письмо', en: 'The letter', subtestKind: 'writing' },
+  'speak-reply': { uk: 'Ответьте', en: 'Reply', subtestKind: 'speaking' },
+  'speak-situation': { uk: 'Начните диалог', en: 'Start the dialogue', subtestKind: 'speaking' },
+  'speak-monologue': { uk: 'Монолог', en: 'Monologue', subtestKind: 'speaking' },
 } as const satisfies Record<string, TopicLabel>;
 
 export type TopicSlug = keyof typeof TOPICS;
@@ -59,11 +59,11 @@ export function isKnownTopic(slug: string): slug is TopicSlug {
 
 /** Known → its §3.4 label; unknown → the raw slug (subtest kind unknown → null). */
 export function topicLabel(slug: string): {
-  ru: string;
+  uk: string;
   en: string;
   subtestKind: ExamSubtestKind | null;
 } {
-  return isKnownTopic(slug) ? TOPICS[slug] : { ru: slug, en: slug, subtestKind: null };
+  return isKnownTopic(slug) ? TOPICS[slug] : { uk: slug, en: slug, subtestKind: null };
 }
 
 /**
@@ -83,7 +83,7 @@ export function compareTopics(a: string, b: string): number {
 
 export interface SubtestLabel {
   /** Official title («Лексика. Грамматика»). */
-  ru: string;
+  uk: string;
   /** Short form for tabs and readiness rows («Лексика»). */
   short: string;
   en: string;
@@ -92,16 +92,16 @@ export interface SubtestLabel {
 
 /** The five subtests (TORFL §2), keyed by kind. */
 export const SUBTEST_LABELS: Record<ExamSubtestKind, SubtestLabel> = {
-  writing: { ru: 'Письмо', short: 'Письмо', en: 'Writing', icon: 'create-outline' },
+  writing: { uk: 'Письмо', short: 'Письмо', en: 'Writing', icon: 'create-outline' },
   lexgram: {
-    ru: 'Лексика. Грамматика',
+    uk: 'Лексика. Грамматика',
     short: 'Лексика',
     en: 'Vocabulary & grammar',
     icon: 'extension-puzzle-outline',
   },
-  reading: { ru: 'Чтение', short: 'Чтение', en: 'Reading', icon: 'reader-outline' },
-  listening: { ru: 'Аудирование', short: 'Аудирование', en: 'Listening', icon: 'headset-outline' },
-  speaking: { ru: 'Говорение', short: 'Говорение', en: 'Speaking', icon: 'mic-outline' },
+  reading: { uk: 'Чтение', short: 'Чтение', en: 'Reading', icon: 'reader-outline' },
+  listening: { uk: 'Аудирование', short: 'Аудирование', en: 'Listening', icon: 'headset-outline' },
+  speaking: { uk: 'Говорение', short: 'Говорение', en: 'Speaking', icon: 'mic-outline' },
 };
 
 /** Official SPbU order (§1.3 decision 7): Письмо → Лексика → Чтение → Аудирование → Говорение. */

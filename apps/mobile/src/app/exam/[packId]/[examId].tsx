@@ -1,5 +1,5 @@
-import type { Exam } from '@sumrak/schema';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import type { Exam } from '@sutinki/schema';
+import { useLocalSearchParams, useRouter, Redirect } from 'expo-router';
 import * as React from 'react';
 import { Alert } from 'react-native';
 
@@ -11,13 +11,14 @@ import { startMockAttempt } from '@/features/torfl/engine/start';
 import { ExamIntroScreen, type ExamStartScope } from '@/features/torfl/exam-intro-screen';
 import { track } from '@/services/analytics';
 import { logError } from '@/services/error-log';
+import { ukPending } from '@/config/flags';
 
 /**
  * Exam intro route (T69 + T70 drills + T71 mocks). A mock start creates the
  * attempt (single-active rule) and opens the full-screen runner; an existing
  * active attempt offers «Продолжить» / «Начать заново» (the latter abandons).
  */
-export default function ExamIntroRoute() {
+function ExamIntroRoute() {
   const router = useRouter();
   const { packId, examId } = useLocalSearchParams<{ packId: string; examId: string }>();
 
@@ -78,4 +79,9 @@ export default function ExamIntroRoute() {
       onRestartMock={(exam, pack, scope) => void begin(exam, pack, scope, true)}
     />
   );
+}
+
+/** UP04: hidden behind `UK_PENDING.exam` in release builds until UT16/UT17 (docs/SUTINKI_UPSTREAM.md §3). */
+export default function GuardedExamIntroRoute() {
+  return ukPending('exam') ? <Redirect href="/" /> : <ExamIntroRoute />;
 }

@@ -1,4 +1,4 @@
-import type { ExamSubtestKind } from '@sumrak/schema';
+import type { ExamSubtestKind } from '@sutinki/schema';
 
 import type { ExamResults, ExamVerdict } from './model';
 import { BORDERLINE_PCT, PASS_PCT, predictVerdict } from './verdict';

@@ -1,4 +1,4 @@
-import type { ExamSubtest } from '@sumrak/schema';
+import type { ExamSubtest } from '@sutinki/schema';
 
 import type { Repositories } from '@/db/repositories';
 

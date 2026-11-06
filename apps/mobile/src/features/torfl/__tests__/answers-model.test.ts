@@ -18,7 +18,7 @@ function prompt(
   tags: string[] | null,
   packId = 'a1-torfl-prompts-fixture',
 ): AnswerPrompt {
-  return { packId, id, promptRu: `Вопрос ${id}`, promptEn: `Prompt ${id}`, tags };
+  return { packId, id, promptUk: `Вопрос ${id}`, promptEn: `Prompt ${id}`, tags };
 }
 
 function entry(
@@ -30,7 +30,7 @@ function entry(
   return {
     id,
     promptId,
-    ru: 'Меня зовут Митч. Мне тридцать шесть лет.',
+    uk: 'Меня зовут Митч. Мне тридцать шесть лет.',
     aiFeedback: null,
     feedbackStatus: 'none',
     createdAt,
@@ -73,9 +73,9 @@ describe('groupAnswers', () => {
       'zzz-new-topic',
       'other',
     ]);
-    expect(groups[0]!.labelRu).toBe('Письмо');
-    expect(groups[2]!.labelRu).toBe('zzz-new-topic');
-    expect(groups[3]!.labelRu).toBe('Другие темы');
+    expect(groups[0]!.labelUk).toBe('Письмо');
+    expect(groups[2]!.labelUk).toBe('zzz-new-topic');
+    expect(groups[3]!.labelUk).toBe('Другие темы');
     expect(groups[0]!.prompts.map((p) => p.prompt.id)).toEqual(['tf-letter-01', 'tf-letter-02']);
   });
 
@@ -115,7 +115,7 @@ describe('rehearsalText', () => {
   it('prefers the stored AI correction and says so', () => {
     const aiFeedback = JSON.stringify({
       v: 1,
-      sourceRu: 'Я живу в Колорадо уже тринадцать год.',
+      sourceUk: 'Я живу в Колорадо уже тринадцать год.',
       model: 'anthropic/claude-opus-5.5',
       createdAt: 1,
       corrected: 'Я живу в Колорадо уже тринадцать лет. Моя невеста Алина — украинка!',
@@ -123,7 +123,7 @@ describe('rehearsalText', () => {
       summary: 'Хорошо.',
     });
     const t = rehearsalText(
-      entry('e', null, 1, { ru: 'Я живу в Колорадо уже тринадцать год.', aiFeedback }),
+      entry('e', null, 1, { uk: 'Я живу в Колорадо уже тринадцать год.', aiFeedback }),
     );
     expect(t.corrected).toBe(true);
     expect(t.sentences).toEqual([
@@ -134,7 +134,7 @@ describe('rehearsalText', () => {
 
   it('unreadable feedback falls back to the entry; empty text → no sentences', () => {
     expect(rehearsalText(entry('e', null, 1, { aiFeedback: '{not json' })).corrected).toBe(false);
-    expect(rehearsalText(entry('e', null, 1, { ru: '   \n ' })).sentences).toEqual([]);
+    expect(rehearsalText(entry('e', null, 1, { uk: '   \n ' })).sentences).toEqual([]);
   });
 });
 

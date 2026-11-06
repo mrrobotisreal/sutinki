@@ -12,8 +12,8 @@ const ITEM = {
   minQuestions: 2,
   maxQuestions: 5,
   bullets: [
-    { id: 'b1', text: { ru: 'как вас зовут', en: 'name' }, cues: ['зовут'] },
-    { id: 'b2', text: { ru: 'где вы живёте', en: 'live' }, cues: ['живу', 'живём'] },
+    { id: 'b1', text: { uk: 'как вас зовут', en: 'name' }, cues: ['зовут'] },
+    { id: 'b2', text: { uk: 'где вы живёте', en: 'live' }, cues: ['живу', 'живём'] },
   ],
 };
 

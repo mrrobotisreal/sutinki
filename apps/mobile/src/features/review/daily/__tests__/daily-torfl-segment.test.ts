@@ -1,5 +1,5 @@
-import { ExamSchema, type Exam, type Pack } from '@sumrak/schema';
-import examPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestDb } from '@/db/__tests__/helpers';

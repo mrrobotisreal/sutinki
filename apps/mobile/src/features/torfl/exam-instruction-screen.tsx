@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ExamSubtest } from '@sumrak/schema';
+import type { ExamSubtest } from '@sutinki/schema';
 import * as React from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -65,14 +65,14 @@ export function ExamInstructionScreen({
         </View>
         <View className="gap-1">
           <Text className="font-reading-bold text-3xl leading-10" testID="instruction-title">
-            {subtest.title.ru}
+            {subtest.title.uk}
           </Text>
           <Text variant="muted" className="font-reading-italic">
             {subtest.title.en}
           </Text>
         </View>
         <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
-          <Text className="font-reading text-lg leading-8">{subtest.instructions.ru}</Text>
+          <Text className="font-reading text-lg leading-8">{subtest.instructions.uk}</Text>
           {showEnglish ? (
             <Text variant="muted" className="font-reading-italic leading-6">
               {subtest.instructions.en}

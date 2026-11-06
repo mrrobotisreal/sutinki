@@ -13,9 +13,9 @@ import type { ChatMessage } from '../client';
 
 export interface ExamWritingInput {
   /** The task text as the exam prints it (RU). */
-  taskRu: string;
+  taskUk: string;
   /** The bullet points, in order, RU text. */
-  bullets: { id: string; ru: string }[];
+  bullets: { id: string; uk: string }[];
   minSentences: number;
   minQuestions: number;
   maxQuestions?: number | null;
@@ -61,14 +61,14 @@ Respond with ONLY a JSON object, no markdown fences, no prose around it:
 }`;
 
 export function buildExamWritingMessages(input: ExamWritingInput): ChatMessage[] {
-  const bullets = input.bullets.map((b, i) => `  ${i + 1}. ${b.ru}`).join('\n');
+  const bullets = input.bullets.map((b, i) => `  ${i + 1}. ${b.uk}`).join('\n');
   const questions =
     input.maxQuestions != null
       ? `${input.minQuestions}–${input.maxQuestions} questions`
       : `at least ${input.minQuestions} question(s)`;
   const lines = [
     'THE TASK (as printed):',
-    input.taskRu,
+    input.taskUk,
     '',
     'Bullet points to cover:',
     bullets,

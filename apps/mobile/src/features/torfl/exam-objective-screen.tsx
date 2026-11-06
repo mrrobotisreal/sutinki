@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import type { ChoiceItem, ExamItem, ExamSubtest, TypedItem } from '@sumrak/schema';
+import type { ChoiceItem, ExamItem, ExamSubtest, TypedItem } from '@sutinki/schema';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -159,7 +159,7 @@ export function ExamObjectiveScreen({
         keyboardShouldPersistTaps="handled"
       >
         <Text variant="caption" className="px-1" testID="part-instructions">
-          {part.instructions.ru}
+          {part.instructions.uk}
         </Text>
         {examAudio && group.audioKey !== null ? (
           <ListeningPlayer

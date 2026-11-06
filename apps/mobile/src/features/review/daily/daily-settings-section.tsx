@@ -8,6 +8,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { useExamDate } from '@/features/torfl/hooks';
 
+import { ukPending } from '@/config/flags';
 import { DAILY_LENGTH_OPTIONS, torflSegmentEnabled, type DailyWeights } from './prefs';
 
 const WEIGHT_ROWS: { key: keyof DailyWeights; label: string; hint: string }[] = [
@@ -114,21 +115,23 @@ export function DailySettingsSection() {
         })}
 
         {/* M18 (T70): the TORFL deck block — auto-on once an exam date is set */}
-        <View className="flex-row items-center justify-between border-t border-border px-4 py-3">
-          <View className="flex-1 gap-0.5 pr-3">
-            <Text className="font-ui-medium">ТРКИ: Работа над ошибками</Text>
-            <Text variant="caption">
-              До 10 карточек экзамена в конце сессии
-              {prefs.torfl === undefined ? ' · включается сама, когда задана дата экзамена' : ''}
-            </Text>
+        {!ukPending('exam') && (
+          <View className="flex-row items-center justify-between border-t border-border px-4 py-3">
+            <View className="flex-1 gap-0.5 pr-3">
+              <Text className="font-ui-medium">ТРКИ: Работа над ошибками</Text>
+              <Text variant="caption">
+                До 10 карточек экзамена в конце сессии
+                {prefs.torfl === undefined ? ' · включается сама, когда задана дата экзамена' : ''}
+              </Text>
+            </View>
+            <Switch
+              value={torflOn}
+              onValueChange={setTorfl}
+              accessibilityLabel="TORFL deck segment in the daily session"
+              testID="daily-torfl-switch"
+            />
           </View>
-          <Switch
-            value={torflOn}
-            onValueChange={setTorfl}
-            accessibilityLabel="TORFL deck segment in the daily session"
-            testID="daily-torfl-switch"
-          />
-        </View>
+        )}
       </View>
     </>
   );

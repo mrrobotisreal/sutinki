@@ -1,8 +1,8 @@
 {
   "input": {
     "task": "monologue",
-    "promptRu": "О себе",
-    "questionsRu": [
+    "promptUk": "О себе",
+    "questionsUk": [
       "Как вас зовут?",
       "Откуда вы?",
       "Где вы живёте?",

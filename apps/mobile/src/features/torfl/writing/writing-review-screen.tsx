@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 import { useRouter } from 'expo-router';
 import * as React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text as RNText, View } from 'react-native';
@@ -213,7 +213,7 @@ export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
                 testID={`criterion-${c.id}`}
               >
                 <View className="flex-row items-center gap-2">
-                  <Text className="flex-1 font-ui-medium">{criterionLabel(c.id).ru}</Text>
+                  <Text className="flex-1 font-ui-medium">{criterionLabel(c.id).uk}</Text>
                   <Text className={cn('font-ui-bold', c.pending && 'text-text-muted')}>
                     {c.pending ? '—' : c.score.toLocaleString('ru-RU')} / {c.max}
                   </Text>
@@ -239,7 +239,7 @@ export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
             <FeedbackView
               feedback={{
                 v: 1,
-                sourceRu: letter,
+                sourceUk: letter,
                 corrected: g.ai.corrected,
                 changes: g.ai.changes ?? [],
                 summary: g.ai.tips.length > 0 ? g.ai.tips.join(' ') : 'No tips.',

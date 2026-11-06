@@ -1,4 +1,4 @@
-import type { WritingItem } from '@sumrak/schema';
+import type { WritingItem } from '@sutinki/schema';
 
 import { matchesPattern, normalizeAnswer, roundPct, type ItemScore } from '../scoring';
 import type { ExamCriterion } from '../model';
@@ -20,11 +20,11 @@ import type { ExamCriterion } from '../model';
  */
 
 export const WRITING_CRITERIA = [
-  { id: 'task-points', max: 30, ru: 'Задание: пункты', en: 'Task: points covered' },
-  { id: 'task-length', max: 15, ru: 'Объём и вопросы', en: 'Length & questions' },
-  { id: 'letter-form', max: 10, ru: 'Форма письма', en: 'Letter form' },
-  { id: 'vocabulary', max: 20, ru: 'Лексика', en: 'Vocabulary' },
-  { id: 'grammar', max: 25, ru: 'Грамматика', en: 'Grammar' },
+  { id: 'task-points', max: 30, uk: 'Задание: пункты', en: 'Task: points covered' },
+  { id: 'task-length', max: 15, uk: 'Объём и вопросы', en: 'Length & questions' },
+  { id: 'letter-form', max: 10, uk: 'Форма письма', en: 'Letter form' },
+  { id: 'vocabulary', max: 20, uk: 'Лексика', en: 'Vocabulary' },
+  { id: 'grammar', max: 25, uk: 'Грамматика', en: 'Grammar' },
 ] as const;
 export type WritingCriterionId = (typeof WRITING_CRITERIA)[number]['id'];
 export const WRITING_CRITERION_IDS = WRITING_CRITERIA.map((c) => c.id) as WritingCriterionId[];
@@ -43,9 +43,9 @@ export function criterionMax(id: WritingCriterionId): number {
   return WRITING_CRITERIA.find((c) => c.id === id)!.max;
 }
 
-export function criterionLabel(id: string): { ru: string; en: string } {
+export function criterionLabel(id: string): { uk: string; en: string } {
   const hit = WRITING_CRITERIA.find((c) => c.id === id);
-  return hit ? { ru: hit.ru, en: hit.en } : { ru: id, en: id };
+  return hit ? { uk: hit.uk, en: hit.en } : { uk: id, en: id };
 }
 
 // --- text analysis -----------------------------------------------------------------------
@@ -302,28 +302,28 @@ export const SELF_CHECKS = [
     id: 'vocab-range',
     criterion: 'vocabulary' as const,
     max: 10,
-    ru: 'Слов хватило: я сказал всё, что хотел, без английского и пропусков',
+    uk: 'Слов хватило: я сказал всё, что хотел, без английского и пропусков',
     en: 'Enough words: I said everything I meant, no English, no gaps',
   },
   {
     id: 'vocab-fit',
     criterion: 'vocabulary' as const,
     max: 10,
-    ru: 'Слова подходят: как в образце — простые, точные, по теме',
+    uk: 'Слова подходят: как в образце — простые, точные, по теме',
     en: 'Words fit: like the model letter — simple, precise, on topic',
   },
   {
     id: 'grammar-cases',
     criterion: 'grammar' as const,
     max: 12,
-    ru: 'Падежи и согласование: окончания существительных и прилагательных как в образце',
+    uk: 'Падежи и согласование: окончания существительных и прилагательных как в образце',
     en: 'Cases & agreement: noun and adjective endings match the model',
   },
   {
     id: 'grammar-verbs',
     criterion: 'grammar' as const,
     max: 13,
-    ru: 'Глаголы: формы, время и порядок слов как в образце',
+    uk: 'Глаголы: формы, время и порядок слов как в образце',
     en: 'Verbs: forms, tense and word order match the model',
   },
 ] as const;

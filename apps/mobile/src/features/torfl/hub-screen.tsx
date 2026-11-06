@@ -388,10 +388,10 @@ export function TorflHubScreen({
                   <Ionicons name="create-outline" size={20} color={tokens.accent} />
                   <View className="flex-1 gap-0.5">
                     <Text className="font-ui-medium" numberOfLines={2}>
-                      {e.item.task.ru}
+                      {e.item.task.uk}
                     </Text>
                     <Text variant="caption" numberOfLines={1}>
-                      {e.examTitleRu} · {e.item.bullets.length} пункт(ов) · без таймера
+                      {e.examTitleUk} · {e.item.bullets.length} пункт(ов) · без таймера
                     </Text>
                   </View>
                   <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -416,11 +416,11 @@ export function TorflHubScreen({
                   <View className="flex-1 gap-0.5">
                     <Text className="font-ui-medium" numberOfLines={2}>
                       {e.item.kind === 'speaking-situation' && e.item.situation
-                        ? e.item.situation.ru
+                        ? e.item.situation.uk
                         : e.item.expect.accept[0]}
                     </Text>
                     <Text variant="caption" numberOfLines={1}>
-                      {e.examTitleRu} ·{' '}
+                      {e.examTitleUk} ·{' '}
                       {e.item.kind === 'speaking-reply'
                         ? 'задание 1 · ответ'
                         : 'задание 2 · ситуация'}{' '}
@@ -433,7 +433,7 @@ export function TorflHubScreen({
             </View>
           )
         ) : tabTiles.length === 0 ? (
-          <EmptyLine text={`Тренировок по разделу «${SUBTEST_LABELS[tab].ru}» пока нет.`} />
+          <EmptyLine text={`Тренировок по разделу «${SUBTEST_LABELS[tab].uk}» пока нет.`} />
         ) : (
           <View className="flex-row flex-wrap gap-2">
             {tabTiles.map((tile) => (
@@ -452,12 +452,12 @@ export function TorflHubScreen({
                 onLongPress={() => openIntro(tile.packId, tile.examId)}
                 accessibilityRole="button"
                 accessibilityHint="Long press for the whole drill set"
-                accessibilityLabel={`${topicLabel(tile.topic).ru}: ${tile.itemCount} ${ruPlural(tile.itemCount, ITEMS)}`}
+                accessibilityLabel={`${topicLabel(tile.topic).uk}: ${tile.itemCount} ${ruPlural(tile.itemCount, ITEMS)}`}
                 testID={`torfl-topic-${tile.topic}`}
                 className="w-[48.5%] gap-1 rounded-xl border border-border bg-surface px-3 py-3 active:bg-surface-2"
               >
                 <Text className="font-ui-medium" numberOfLines={2}>
-                  {topicLabel(tile.topic).ru}
+                  {topicLabel(tile.topic).uk}
                 </Text>
                 <Text variant="caption" className="text-xs" numberOfLines={1}>
                   {topicLabel(tile.topic).en}

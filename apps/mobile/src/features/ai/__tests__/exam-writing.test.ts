@@ -38,10 +38,10 @@ const NAMES = [
 describe('exam-writing prompt', () => {
   it('system pins the five criteria + JSON keys; user carries the task, bullets, counts, letter', () => {
     const messages = buildExamWritingMessages({
-      taskRu: 'Напишите письмо другу.',
+      taskUk: 'Напишите письмо другу.',
       bullets: [
-        { id: 'b1', ru: 'как вас зовут' },
-        { id: 'b2', ru: 'где вы живёте' },
+        { id: 'b1', uk: 'как вас зовут' },
+        { id: 'b2', uk: 'где вы живёте' },
       ],
       minSentences: 10,
       minQuestions: 2,
@@ -75,8 +75,8 @@ describe('exam-writing prompt', () => {
 
   it('no model letter → no calibration block; no maxQuestions → «at least N question(s)»', () => {
     const user = buildExamWritingMessages({
-      taskRu: 'Т',
-      bullets: [{ id: 'b1', ru: 'п' }],
+      taskUk: 'Т',
+      bullets: [{ id: 'b1', uk: 'п' }],
       minSentences: 5,
       minQuestions: 1,
       letter: 'Я.',

@@ -18,15 +18,15 @@ describe('topics (TORFL §3.4)', () => {
     expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'reading')).toHaveLength(4);
     expect(TOPIC_ORDER.filter((t) => TOPICS[t].subtestKind === 'listening')).toHaveLength(5);
     expect(topicLabel('case-prep')).toEqual({
-      ru: 'Предложный',
+      uk: 'Предложный',
       en: 'Prepositional case',
       subtestKind: 'lexgram',
     });
-    expect(topicLabel('speak-monologue').ru).toBe('Монолог');
+    expect(topicLabel('speak-monologue').uk).toBe('Монолог');
   });
 
   it('an unknown slug renders raw (never dropped)', () => {
-    expect(topicLabel('case-voc')).toEqual({ ru: 'case-voc', en: 'case-voc', subtestKind: null });
+    expect(topicLabel('case-voc')).toEqual({ uk: 'case-voc', en: 'case-voc', subtestKind: null });
     expect(isKnownTopic('constructor')).toBe(false);
   });
 
@@ -42,7 +42,7 @@ describe('topics (TORFL §3.4)', () => {
 
   it('SUBTEST_LABELS: the five official titles in SPbU order', () => {
     expect(SUBTEST_ORDER).toEqual(EXAM_SUBTEST_KINDS);
-    expect(SUBTEST_ORDER.map((k) => SUBTEST_LABELS[k].ru)).toEqual([
+    expect(SUBTEST_ORDER.map((k) => SUBTEST_LABELS[k].uk)).toEqual([
       'Письмо',
       'Лексика. Грамматика',
       'Чтение',
