@@ -470,7 +470,9 @@ function py(code: string): unknown {
 
 describe('UT15 Ukrainian aligner (forced_align.py clean/interpolate, engine choice, env names)', () => {
   const clean = (w: string, apos: string | null = null, lang = 'uk') =>
-    py(`print(json.dumps(fa.clean(${JSON.stringify(w)}, ${JSON.stringify(lang)}, ${apos === null ? 'None' : JSON.stringify(apos)})))`);
+    py(
+      `print(json.dumps(fa.clean(${JSON.stringify(w)}, ${JSON.stringify(lang)}, ${apos === null ? 'None' : JSON.stringify(apos)})))`,
+    );
 
   it('keeps ґ ї є і and never folds them to Russian letters', () => {
     expect(clean('Ґанок')).toBe('ґанок');
@@ -504,7 +506,8 @@ describe('UT15 Ukrainian aligner (forced_align.py clean/interpolate, engine choi
     expect(clean('їжак', null, 'ru')).toBe('жак');
   });
   it('words with no alignable letters are interpolated between aligned neighbours', () => {
-    const out = py(`o=[{"id":"a","startMs":100,"endMs":300,"aligned":True},{"id":"b","startMs":0,"endMs":0,"aligned":False},{"id":"c","startMs":0,"endMs":0,"aligned":False},{"id":"d","startMs":700,"endMs":900,"aligned":True}]
+    const out =
+      py(`o=[{"id":"a","startMs":100,"endMs":300,"aligned":True},{"id":"b","startMs":0,"endMs":0,"aligned":False},{"id":"c","startMs":0,"endMs":0,"aligned":False},{"id":"d","startMs":700,"endMs":900,"aligned":True}]
 fa.interpolate(o,1000)
 print(json.dumps(o))`) as { id: string; startMs: number; endMs: number }[];
     expect(out[1]).toMatchObject({ startMs: 300, endMs: 500 });

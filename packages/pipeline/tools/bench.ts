@@ -9,12 +9,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { safeParsePack } from '@sutinki/schema';
-import {
-  analyseTrack,
-  auditTrack,
-  restampTrack,
-  type AlignedWord,
-} from '../src/stamp-audit.ts';
+import { analyseTrack, auditTrack, restampTrack, type AlignedWord } from '../src/stamp-audit.ts';
 
 interface B {
   pack: string;
@@ -74,9 +69,13 @@ for (const key of Object.keys(truth.tracks)) {
       const n = new Map(stamps.map((t) => [`${t.sentenceId}:${t.tokenIndex}`, t]));
       for (const b of truth.boundaries) {
         if (b.pack !== pack || b.track !== tid) continue;
-        for (const [wh, m] of [['old', o], ['new', n]] as const) {
+        for (const [wh, m] of [
+          ['old', o],
+          ['new', n],
+        ] as const) {
           const s = m.get(b.id);
-          if (s) push(wh, `${b.class}-${b.kind}`, (b.kind === 'start' ? s.startMs : s.endMs) - b.ms);
+          if (s)
+            push(wh, `${b.class}-${b.kind}`, (b.kind === 'start' ? s.startMs : s.endMs) - b.ms);
         }
       }
       for (const s of track.timestamps) {
@@ -99,9 +98,25 @@ const row: Record<string, unknown> = {};
 for (const wh of ['old', 'new'] as const) {
   for (const k of Object.keys(acc[wh]).sort()) {
     const v = acc[wh][k]!;
-    row[`${wh} ${k}`] = { n: v.length, med: Math.round(med(v)), absMed: Math.round(med(v.map(Math.abs))), p90: Math.round(p90(v)) };
+    row[`${wh} ${k}`] = {
+      n: v.length,
+      med: Math.round(med(v)),
+      absMed: Math.round(med(v.map(Math.abs))),
+      p90: Math.round(p90(v)),
+    };
   }
 }
 const frac = total ? short / total : 0;
-console.log(JSON.stringify({ ...row, 'new stamps<=100ms': +frac.toFixed(4), 'old stamps<=100ms': +(shortOld / Math.max(1, totalOld)).toFixed(4), seed }, null, 1));
+console.log(
+  JSON.stringify(
+    {
+      ...row,
+      'new stamps<=100ms': +frac.toFixed(4),
+      'old stamps<=100ms': +(shortOld / Math.max(1, totalOld)).toFixed(4),
+      seed,
+    },
+    null,
+    1,
+  ),
+);
 if (opt('--json')) writeFileSync(opt('--json')!, JSON.stringify({ row, frac, tracks }, null, 1));

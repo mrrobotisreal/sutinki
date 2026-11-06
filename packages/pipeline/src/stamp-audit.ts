@@ -163,7 +163,9 @@ export function pythonAligner(opts: PythonAlignerOptions = {}): Aligner {
   const revision = opts.revision ?? process.env.SUTINKI_ALIGN_REVISION ?? '';
   return (audioFile, words) => {
     if (engine === 'ctc-ru' && (language !== 'ru' || words.some((w) => UK_ONLY.test(w.text)))) {
-      throw new Error('Russian CTC model cannot align Ukrainian (use --language ru only for Russian text)');
+      throw new Error(
+        'Russian CTC model cannot align Ukrainian (use --language ru only for Russian text)',
+      );
     }
     if (engine === 'ctc-uk' && language !== 'uk') throw new Error('ctc-uk aligns Ukrainian only');
     // The cache key carries engine + language + model + revision, so swapping the model never serves stale stamps.
