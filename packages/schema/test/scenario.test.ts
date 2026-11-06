@@ -529,6 +529,15 @@ describe('scenario slots — forms hygiene', () => {
     expect(slotFormIssue('95')).toBeNull();
   });
 
+  it('accepts in-word apostrophes (UISS-005) but not stray ones', () => {
+    for (const ok of ["м'яс*", 'п’ю', 'пʼю', "не п'ю", "дев'яносто п'ять", "дев'яносто п'ят*"]) {
+      expect(slotFormIssue(ok)).toBeNull();
+    }
+    for (const bad of ["м'", "'яс", "м''яс", "м'*яс", "м' яс", 'м,яс']) {
+      expect(slotFormIssue(bad)).not.toBeNull();
+    }
+  });
+
   it('rejects duplicate option keys and duplicate slot ids', () => {
     const keys = makeValidScenarioPack() as any;
     scn(keys).turns[2].expect.slots[0].options[1].key = 'good';

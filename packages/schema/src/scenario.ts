@@ -475,8 +475,13 @@ export function slotBranchKeys(slot: Slot): string[] {
   }
 }
 
-/** Letters, digits, spaces and in-word hyphens; a single trailing `*` glob. */
-const FORM_RE = /^[\p{L}\p{N}]+(?:[ -][\p{L}\p{N}]+)*\*?$/u;
+/**
+ * Letters, digits, spaces, in-word hyphens and in-word apostrophes (the
+ * apostrophe is content in Ukrainian, ADR-0004; U+0027 / U+2019 / U+02BC all
+ * allowed — the app's matcher folds them to U+02BC); a single trailing `*` glob.
+ */
+const FORM_RE =
+  /^[\p{L}\p{N}]+(?:['\u2019\u02BC][\p{L}\p{N}]+)*(?:[ -][\p{L}\p{N}]+(?:['\u2019\u02BC][\p{L}\p{N}]+)*)*\*?$/u;
 
 /**
  * Validate one slot form: NFC, free of punctuation, glob only as a trailing

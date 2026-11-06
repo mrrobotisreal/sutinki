@@ -86,6 +86,19 @@ describe('stemMatches', () => {
   });
 });
 
+describe('matchForm with apostrophe forms (UISS-005)', () => {
+  const uk = (t: string) => scoringTokens(t);
+  it("м'яс* matches every apostrophe variant", () => {
+    for (const say of ["Я їв м'ясо", 'Я їв м’ясо', 'Я їв мʼясо']) {
+      expect(matchForm("м'яс*", uk(say), 'uk')).not.toBeNull();
+    }
+  });
+  it("не п'ю matches «Я не п'ю»", () => {
+    expect(matchForm("не п'ю", uk("Я не п'ю"), 'uk')).not.toBeNull();
+    expect(matchForm("не п'ю", uk('Я не пʼю'), 'uk')).not.toBeNull();
+  });
+});
+
 describe('matchForm / matchForms', () => {
   it('exact forms are tolerant, globs are stems', () => {
     expect(matchForm('колорадо', scoringTokens('я из колорадо'))).toEqual({
