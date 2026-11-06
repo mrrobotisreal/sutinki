@@ -34,6 +34,7 @@ import { ShareIntentGate } from '@/features/import/share-gate';
 import { AchievementToastHost } from '@/features/motivation/achievement-toast';
 import { NotificationRouter } from '@/features/motivation/notification-router';
 import { ReminderReplanner } from '@/features/motivation/reminder-replanner';
+import { WidgetLinkTracker } from '@/features/motivation/widget-link-tracker';
 import { queryClient } from '@/lib/query-client';
 import { track } from '@/services/analytics';
 import { installGlobalErrorLogging } from '@/services/error-log';
@@ -131,6 +132,10 @@ export default function RootLayout() {
                   options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
                 />
                 <Stack.Screen name="games" options={{ title: 'Games' }} />
+                <Stack.Screen
+                  name="games/typing"
+                  options={{ headerShown: false, animation: 'fade', gestureEnabled: false }}
+                />
                 <Stack.Screen name="dialogues" options={{ title: 'Діалоги' }} />
                 <Stack.Screen name="scenarios/index" options={{ title: 'Сценарії' }} />
                 <Stack.Screen name="scenarios/runs" options={{ title: 'Проходження' }} />
@@ -202,6 +207,8 @@ export default function RootLayout() {
                 />
                 <Stack.Screen name="dashboard/index" options={{ title: 'Progress' }} />
                 <Stack.Screen name="dashboard/assessment" options={{ title: 'AI assessment' }} />
+                <Stack.Screen name="dashboard/leeches" options={{ title: 'Leeches' }} />
+                <Stack.Screen name="dashboard/core-gaps" options={{ title: 'Not met yet' }} />
                 <Stack.Screen name="path/[packId]/lesson" options={{ title: 'Lesson' }} />
                 <Stack.Screen
                   name="path/[packId]/quiz"
@@ -253,6 +260,7 @@ export default function RootLayout() {
               <ShareIntentGate />
               <NotificationRouter />
               <ReminderReplanner />
+              <WidgetLinkTracker />
               <AchievementToastHost />
               {!introDone && <AnimatedSplash onDone={() => setIntroDone(true)} />}
             </CrashGuard>

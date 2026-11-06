@@ -242,6 +242,19 @@ export type AnalyticsEvent =
   | 'assessment_completed'
   | 'assessment_failed'
   | 'assessment_screen_opened'
+  // T38 progress science. Props are counts / levels / kinds only — never
+  // lemma text: core_coverage_viewed {levels, a1Pct?, a2Pct?},
+  // core_gaps_opened {level, gaps}, forecast_viewed {today, overdue,
+  // next30}, forecast_day_selected {offset, total}, heatmap_viewed
+  // {activeDays}, leech_inbox_opened {count, from},
+  // leech_action {action: explain|note|drill|dismiss, direction, againCount}.
+  | 'core_coverage_viewed'
+  | 'core_gaps_opened'
+  | 'forecast_viewed'
+  | 'forecast_day_selected'
+  | 'heatmap_viewed'
+  | 'leech_inbox_opened'
+  | 'leech_action'
   // T19 streaks, goals, XP, achievements, notifications. All local — the
   // notification events log delivery *scheduling* and taps, never content.
   | 'daily_goal_changed'
@@ -255,6 +268,8 @@ export type AnalyticsEvent =
   | 'notifications_replanned'
   | 'notification_new_content'
   | 'notification_tapped'
+  // T40 widget: a home-screen tap-through landed (props: screen, from).
+  | 'widget_opened'
   | 'notification_prompt_accepted'
   | 'notification_prompt_dismissed'
   // T20 backup & restore. Props carry trigger/code/counts/bytes ONLY —
@@ -493,7 +508,23 @@ export type AnalyticsEvent =
   | 'torfl_rehearsal_finished'
   | 'torfl_ticket_drawn'
   | 'exam_attempt_pinned'
-  | 'exam_debrief_download_failed';
+  | 'exam_debrief_download_failed'
+  // T39 FSRS control (card management, retention, optimizer import). Props are
+  // numbers / enum kinds only — never lemma text. fsrs_retention_changed
+  // {value, previous}; fsrs_params_applied {reviewCount, cardCount, logLoss?};
+  // fsrs_params_rejected {reason}; fsrs_params_reverted {};
+  // card_action {kind: suspend|unsuspend|bury|unbury|reset, direction,
+  // from: item-detail|leech-inbox}; review_log_exported {rows}.
+  | 'fsrs_retention_changed'
+  | 'fsrs_params_applied'
+  | 'fsrs_params_rejected'
+  | 'fsrs_params_reverted'
+  | 'card_action'
+  | 'review_log_exported'
+  // T40 typing trainer
+  | 'typing_round_started'
+  | 'typing_round_finished'
+  | 'typing_round_abandoned';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 

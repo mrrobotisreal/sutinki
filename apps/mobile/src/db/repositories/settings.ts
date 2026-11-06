@@ -73,6 +73,13 @@ export const SETTING_KEYS = {
    */
   dialogueTapMode: 'games.dialogueTapMode',
   /**
+   * Typing trainer stats (T40): { v: 1, bestWpm, bestAccuracy, rounds,
+   * totalWords, totalCorrectChars, lastPlayedAt } — Zod-validated on read
+   * (features/review/games/typing/stats.ts); a corrupt value heals to the
+   * defaults. No table: the per-round rows live in game_sessions.
+   */
+  typingStats: 'games.typingStats',
+  /**
    * boolean (T31, default false): still every ambient animation — room
    * scenes freeze on their poster frame, the threshold transition and the
    * house-map flicker are skipped. OR-combined with the OS reduced-motion
@@ -209,6 +216,19 @@ export const SETTING_KEYS = {
    * state rides this one settings row (and the snapshot with it).
    */
   torflMedia: 'torfl.media',
+  /**
+   * FSRS desired retention (T39): a number in 0.8–0.95, default 0.9 — the
+   * target recall the scheduler aims for. Healed to 0.9 on read
+   * (features/review/fsrs-settings.ts); store/fsrs-prefs.ts owns the writes.
+   */
+  fsrsDesiredRetention: 'fsrs.desiredRetention',
+  /**
+   * FSRS optimizer parameters imported from the desktop optimizer (T39):
+   * { v: 1, w: number[21], fittedAt, importedAt, reviewCount, cardCount,
+   * logLoss?, rmse? } or absent (= ts-fsrs defaults). Validated on read by
+   * parseStoredParams; a malformed row heals to defaults.
+   */
+  fsrsParams: 'fsrs.params',
 } as const;
 
 /** Key-value settings, JSON-encoded values. */

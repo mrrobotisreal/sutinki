@@ -175,7 +175,30 @@ describe('migrations from empty DB', () => {
   it('0006_exams: fresh DB has the exams content table + three user tables with their indexes', async () => {
     const db = createTestDb();
     await expectExamTables(db);
-    expect(journal.entries.at(-1)).toMatchObject({ idx: 6, tag: '0006_exams' });
+    expect(journal.entries.find((e) => e.tag === '0006_exams')).toMatchObject({ idx: 6 });
+  });
+
+  it('0007_core-lemmas: fresh DB has core_lemmas (content) + leech_dismissals (user)', async () => {
+    const db = createTestDb();
+    expect(await columnNames(db, 'core_lemmas')).toEqual(
+      expect.arrayContaining(['pack_id', 'list_id', 'level', 'entry_idx', 'lemma', 'lemma_norm']),
+    );
+    expect(await indexNames(db, 'core_lemmas')).toEqual(
+      expect.arrayContaining(['core_lemmas_norm_idx', 'core_lemmas_level_idx']),
+    );
+    expect(await columnNames(db, 'leech_dismissals')).toEqual(['card_id', 'dismissed_at']);
+    expect(journal.entries.find((e) => e.tag === '0007_core-lemmas')).toMatchObject({ idx: 7 });
+  });
+
+  it('0008_card-management: fresh DB cards has suspended_at + buried_until (nullable, additive)', async () => {
+    const db = createTestDb();
+    const cols = await columnNames(db, 'cards');
+    expect(cols).toEqual(expect.arrayContaining(['suspended_at', 'buried_until']));
+    const rows = await db.all<{ name: string; notnull: number }>(sql`PRAGMA table_info(cards)`);
+    for (const name of ['suspended_at', 'buried_until']) {
+      expect(rows.find((r) => r.name === name)?.notnull).toBe(0);
+    }
+    expect(journal.entries.at(-1)).toMatchObject({ idx: 8, tag: '0008_card-management' });
   });
 });
 
