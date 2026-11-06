@@ -14,6 +14,8 @@ import {
   getExamDate,
   getExamDates,
   getExamGradingPreset,
+  getStoredLevel,
+  setStoredLevel,
   getTorflPrefs,
   setExamDate,
   setExamGradingPreset,
@@ -178,9 +180,60 @@ describe('torfl.examDateA2 (T75, TORFL_A2 A2-5)', () => {
     expect(settingsStore.get('torfl.examDate')).toBe('2026-12-05');
   });
 
-  it('an old backup without the A2 key restores with A2 = null', async () => {
+  it('an old backup without the newer keys restores with those levels = null', async () => {
     settingsStore.set('torfl.examDate', '2026-12-05');
-    expect(await getExamDates()).toEqual({ A1: '2026-12-05', A2: null });
+    expect(await getExamDates()).toEqual({
+      A1: '2026-12-05',
+      A2: null,
+      B1: null,
+      B2: null,
+      C1: null,
+    });
+  });
+});
+
+describe('B1 / B2 / C1 exam dates and the stored level (UT16b)', () => {
+  it('declares the keys and the profiles point at them', () => {
+    expect(SETTING_KEYS.torflExamDateB1).toBe('torfl.examDateB1');
+    expect(SETTING_KEYS.torflExamDateB2).toBe('torfl.examDateB2');
+    expect(SETTING_KEYS.torflExamDateC1).toBe('torfl.examDateC1');
+    expect(SETTING_KEYS.torflLevel).toBe('torfl.level');
+    expect(TORFL_PROFILES.B1.examDateKey).toBe(SETTING_KEYS.torflExamDateB1);
+    expect(TORFL_PROFILES.B2.examDateKey).toBe(SETTING_KEYS.torflExamDateB2);
+    expect(TORFL_PROFILES.C1.examDateKey).toBe(SETTING_KEYS.torflExamDateC1);
+  });
+
+  it('each date persists independently; getExamDates returns all five levels', async () => {
+    await setExamDate('2027-05-04', 'B1');
+    await setExamDate('2027-06-01', 'C1');
+    expect(await getExamDate('B1')).toBe('2027-05-04');
+    expect(await getExamDate('B2')).toBeNull();
+    expect(await getExamDates()).toEqual({
+      A1: null,
+      A2: null,
+      B1: '2027-05-04',
+      B2: null,
+      C1: '2027-06-01',
+    });
+    await setExamDate(null, 'B1');
+    expect(settingsStore.has('torfl.examDateB1')).toBe(false);
+    expect(settingsStore.has('torfl.examDateC1')).toBe(true);
+  });
+
+  it('a garbage B2 date heals to null', async () => {
+    settingsStore.set('torfl.examDateB2', 'garbage');
+    expect(await getExamDate('B2')).toBeNull();
+  });
+
+  it('torfl.level: stored level round-trips; anything unknown heals to null', async () => {
+    expect(await getStoredLevel()).toBeNull();
+    await setStoredLevel('B1');
+    expect(settingsStore.get('torfl.level')).toBe('B1');
+    expect(await getStoredLevel()).toBe('B1');
+    settingsStore.set('torfl.level', 'D9');
+    expect(await getStoredLevel()).toBeNull();
+    settingsStore.set('torfl.level', 7);
+    expect(await getStoredLevel()).toBeNull();
   });
 });
 

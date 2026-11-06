@@ -159,7 +159,7 @@ export function createContentRepo(db: SutinkiDB) {
     },
 
     /**
-     * T69 «Тексты»: `packId/storyId` keys of the stories that carry at least
+     * T69 «Тексти»: `packId/storyId` keys of the stories that carry at least
      * one audio track, across the given packs (the audio icon on a text row).
      */
     async listStoryKeysWithAudio(packIds: readonly string[]): Promise<Set<string>> {
@@ -344,7 +344,7 @@ export function createContentRepo(db: SutinkiDB) {
     },
 
     /**
-     * Journal prompts with their PACK's level (T75 «Мои ответы» level rule:
+     * Journal prompts with their PACK's level (T75 «Мої відповіді» level rule:
      * a TORFL prompt belongs to the level of its pack — `packs.level`).
      */
     async listJournalPromptsWithPackLevel() {

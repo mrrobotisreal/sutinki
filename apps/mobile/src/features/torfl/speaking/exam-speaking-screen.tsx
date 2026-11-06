@@ -621,7 +621,7 @@ function MonologueBody({
           <Text className="font-reading-bold text-2xl">{item.topicTitle.uk}</Text>
           {item.image ? (
             <Text variant="muted" testID="photo-alt">
-              Фото: {item.image.alt}
+              {c.photoAlt(item.image.alt)}
             </Text>
           ) : null}
           <View className="gap-1">

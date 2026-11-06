@@ -62,10 +62,6 @@ apps/mobile/src/features/ai/exam-grading-preset-section.tsx # UT16/UT17 — hidd
 apps/mobile/src/features/ai/__tests__/exam-* # UT16/UT17 — pins the Russian exam prompts; removed when UT16/UT17 rewrite them
 apps/mobile/src/features/review/daily/daily-settings-section.tsx # UT16/UT17 — hidden «ТРКИ» daily-deck row copy; removed when UT17 deletes the flag
 apps/mobile/src/features/motivation/__tests__/torfl-mock-xp.test.ts # UT16/UT17 — pins the Russian TORFL achievement titles; removed when UT16/UT17 rewrite them
-apps/mobile/src/db/repositories/stats.ts # UT16/UT17 — TORFL doc comment («Мои ответы»); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/content.ts # UT16/UT17 — TORFL doc comment («Тексты»); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/bank.ts # UT16/UT17 — bankLemmasFromStory comment (ё/е); removed when UT16/UT17 rewrite it
-apps/mobile/src/db/repositories/journal.ts # UT16/UT17 — TORFL answers comment; removed when UT16/UT17 rewrite it
 apps/mobile/src/features/review/games/cloze/stem-split.ts # UT20 (already on main, found by UP04 sweep) — language-parameterised ru branch intentionally kept; removed when the ru branch is dropped
 apps/mobile/src/features/review/games/__tests__/stem-split.test.ts # UT20 (already on main) — ru-branch tests; removed with the ru branch
 apps/mobile/src/features/word-forms/lessons-screen.tsx # UT13 (already on main) — renders profile `ru` section title; removed when the profile contract renames

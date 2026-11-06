@@ -437,7 +437,7 @@ export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
               <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
               {phase.ticket.item.image ? (
                 <Text variant="muted" testID="photo-alt">
-                  Фото: {phase.ticket.item.image.alt}
+                  {c.photoAlt(phase.ticket.item.image.alt)}
                 </Text>
               ) : null}
               {phase.ticket.item.questions.map((q, i) => (
@@ -501,7 +501,7 @@ export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
               <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
               {phase.ticket.item.image ? (
                 <Text variant="muted" testID="photo-alt">
-                  Фото: {phase.ticket.item.image.alt}
+                  {c.photoAlt(phase.ticket.item.image.alt)}
                 </Text>
               ) : null}
               {phase.ticket.item.questions.map((q, i) => (

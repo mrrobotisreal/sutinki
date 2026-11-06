@@ -79,9 +79,13 @@ describe('bulletCoverage', () => {
     expect(c.total).toBe(5);
   });
 
-  it('ё/е tolerant and punctuation-blind', () => {
-    const c = bulletCoverage('Мы живем в Киеве!', [{ id: 'live', cues: ['живём'] }]);
-    expect(c.covered).toEqual(['live']);
+  it('apostrophe / ґ tolerant and punctuation-blind', () => {
+    const c = bulletCoverage('Я люблю п’ятницю, ганок і м’ясо!', [
+      { id: 'day', cues: ["п'ятниц*"] },
+      { id: 'porch', cues: ['ґанок'] },
+      { id: 'meat', cues: ['мʼяс*'] },
+    ]);
+    expect(c.covered).toEqual(['day', 'porch', 'meat']);
   });
 });
 

@@ -28,72 +28,73 @@ describe('examXp', () => {
   });
 });
 
+const four = (n: number) => ({ listening: n, reading: n, writing: n, speaking: n });
+
 describe('examAchievements', () => {
-  it('a three-subtest mock: first-mock only (lexgram-90 needs 90)', () => {
-    expect(examAchievements(base)).toEqual(['torfl-first-mock']);
-    expect(examAchievements({ ...base, pcts: { lexgram: 90 } })).toEqual([
-      'torfl-first-mock',
-      'torfl-lexgram-90',
-    ]);
-    expect(examAchievements({ ...base, pcts: { lexgram: 89.9 } })).toEqual(['torfl-first-mock']);
+  it('a scored mock: first-mock only (there is no lexgram-90 any more)', () => {
+    expect(examAchievements(base)).toEqual(['exam-a1-first-mock']);
+    expect(examAchievements({ ...base, pcts: { lexgram: 95 } })).toEqual(['exam-a1-first-mock']);
   });
-  it('would-pass needs a five-subtest verdict of pass / borderline', () => {
-    const v = { ...base, scoredSubtests: 5, pcts: five(70) };
-    expect(examAchievements({ ...v, verdict: 'pass' })).toContain('torfl-would-pass');
-    expect(examAchievements({ ...v, verdict: 'pass-borderline' })).toContain('torfl-would-pass');
-    expect(examAchievements({ ...v, verdict: 'fail' })).not.toContain('torfl-would-pass');
-    expect(examAchievements(base)).not.toContain('torfl-would-pass');
+  it('would-pass needs a verdict of pass / pass-borderline', () => {
+    const v = { ...base, scoredSubtests: 4, pcts: four(75) };
+    expect(examAchievements({ ...v, verdict: 'pass' })).toContain('exam-a1-would-pass');
+    expect(examAchievements({ ...v, verdict: 'pass-borderline' })).toContain('exam-a1-would-pass');
+    expect(examAchievements({ ...v, verdict: 'fail' })).not.toContain('exam-a1-would-pass');
+    expect(examAchievements(base)).not.toContain('exam-a1-would-pass');
   });
-  it('margin needs all five ≥ 80 inside a verdict', () => {
-    const v = { ...base, scoredSubtests: 5, verdict: 'pass' as const };
-    expect(examAchievements({ ...v, pcts: five(80) })).toContain('torfl-margin');
-    expect(examAchievements({ ...v, pcts: { ...five(85), speaking: 79.9 } })).not.toContain(
-      'torfl-margin',
+  it('margin needs every section of the level at 80 or better, inside a verdict', () => {
+    const v = { ...base, scoredSubtests: 4, verdict: 'pass' as const };
+    expect(examAchievements({ ...v, pcts: four(80) })).toContain('exam-a1-margin');
+    expect(examAchievements({ ...v, pcts: { ...four(85), speaking: 79.9 } })).not.toContain(
+      'exam-a1-margin',
     );
-    expect(examAchievements({ ...v, verdict: null, pcts: five(90) })).not.toContain('torfl-margin');
+    expect(examAchievements({ ...v, pcts: { listening: 90, reading: 90, writing: 90 } })).not.toContain(
+      'exam-a1-margin',
+    );
+    expect(examAchievements({ ...v, verdict: null, pcts: four(90) })).not.toContain('exam-a1-margin');
   });
   it('nothing scored → nothing unlocked', () => {
     expect(examAchievements({ ...base, scoredSubtests: 0, pcts: {} })).toEqual([]);
   });
 });
 
-describe('per level (T75, A2-11)', () => {
-  const passFive = {
+describe('per level', () => {
+  const passFour = {
     ...base,
     scope: 'full' as const,
-    scoredSubtests: 5,
-    pcts: five(90),
+    scoredSubtests: 4,
+    pcts: four(90),
     verdict: 'pass' as const,
   };
-  const fourA1 = ['torfl-first-mock', 'torfl-lexgram-90', 'torfl-would-pass', 'torfl-margin'];
-  const fourA2 = [
-    'torfl-a2-first-mock',
-    'torfl-a2-lexgram-90',
-    'torfl-a2-would-pass',
-    'torfl-a2-margin',
-  ];
+  const idsOf = (l: string) => [`exam-${l}-first-mock`, `exam-${l}-would-pass`, `exam-${l}-margin`];
 
-  it('A2 five(90)+pass → the four A2 ids, in order', () => {
-    expect(examAchievements({ ...passFive, level: 'A2' })).toEqual(fourA2);
+  it('every level yields its own three ids, in order', () => {
+    for (const level of ['A1', 'A2', 'B1', 'B2', 'C1'] as const) {
+      expect(examAchievements({ ...passFour, level })).toEqual(idsOf(level.toLowerCase()));
+    }
   });
 
-  it('the same input at A1 → the four A1 ids; level absent → A1 too', () => {
-    expect(examAchievements({ ...passFive, level: 'A1' })).toEqual(fourA1);
-    expect(examAchievements(passFive)).toEqual(fourA1);
+  it('level absent → A1', () => {
+    expect(examAchievements(passFour)).toEqual(idsOf('a1'));
   });
 
-  it('an A2 input never yields an A1 id, and an A1 input never yields an A2 id', () => {
+  it('B2 / C1 margin needs only their own three sections (no listening)', () => {
+    const v = { ...passFour, pcts: { reading: 85, writing: 85, speaking: 85 } };
+    expect(examAchievements({ ...v, level: 'B2' })).toContain('exam-b2-margin');
+    expect(examAchievements({ ...v, level: 'C1' })).toContain('exam-c1-margin');
+    expect(examAchievements({ ...v, level: 'B1' })).not.toContain('exam-b1-margin');
+  });
+
+  it('an input of one level never yields another level id', () => {
     const cases: ExamRewardInput[] = [
-      { ...base, scope: 'full', scoredSubtests: 5, pcts: five(40), verdict: 'fail' },
-      { ...base, scope: 'full', scoredSubtests: 5, pcts: five(70), verdict: 'pass' },
-      { ...base, scoredSubtests: 1, pcts: { lexgram: 95 }, verdict: null },
+      { ...base, scope: 'full', scoredSubtests: 4, pcts: four(40), verdict: 'fail' },
+      { ...base, scope: 'full', scoredSubtests: 4, pcts: four(75), verdict: 'pass' },
+      { ...base, scoredSubtests: 1, pcts: { reading: 95 }, verdict: null },
     ];
     for (const c of cases) {
-      for (const level of ['A1', 'A2'] as const) {
-        const ids = examAchievements({ ...c, level });
-        for (const id of ids) {
-          if (level === 'A2') expect(id.startsWith('torfl-a2-')).toBe(true);
-          else expect(id.startsWith('torfl-a2-')).toBe(false);
+      for (const level of ['A1', 'A2', 'B1', 'B2', 'C1'] as const) {
+        for (const id of examAchievements({ ...c, level })) {
+          expect(id.startsWith(`exam-${level.toLowerCase()}-`)).toBe(true);
         }
       }
     }

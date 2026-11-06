@@ -90,14 +90,14 @@ describe('filterSectionsByCategory', () => {
     expect(filterSectionsByCategory(all, { category: 'travel', genre: ALL_GENRES })).toEqual([]);
   });
 
-  it('T75: an A2 exam pack shelves under torfl-a2, not torfl', () => {
+  it('UT16b: an A2 exam pack shelves under ukr-exam-a2, not ukr-exam-a1', () => {
     const all2 = [...all, examA1, examA2];
     expect(
-      ids(filterSectionsByCategory(all2, { category: 'torfl-a2', genre: ALL_GENRES })),
+      ids(filterSectionsByCategory(all2, { category: 'ukr-exam-a2', genre: ALL_GENRES })),
     ).toEqual(['a2-exam-001']);
-    expect(ids(filterSectionsByCategory(all2, { category: 'torfl', genre: ALL_GENRES }))).toEqual([
-      'a1-exam-001',
-    ]);
+    expect(
+      ids(filterSectionsByCategory(all2, { category: 'ukr-exam-a1', genre: ALL_GENRES })),
+    ).toEqual(['a1-exam-001']);
   });
 
   it('unknown installed category is filterable by its raw slug', () => {
@@ -190,55 +190,53 @@ describe('categoryCounts', () => {
     expect(categoryCounts([])).toEqual({});
   });
 
-  it('T75: an A2 exam pack counts under torfl-a2, an A1 exam pack under torfl', () => {
-    expect(categoryCounts([examA2.pack, examA1.pack])).toEqual({ 'torfl-a2': 1, torfl: 1 });
+  it('UT16b: an A2 exam pack counts under ukr-exam-a2, an A1 exam pack under ukr-exam-a1', () => {
+    expect(categoryCounts([examA2.pack, examA1.pack])).toEqual({
+      'ukr-exam-a2': 1,
+      'ukr-exam-a1': 1,
+    });
   });
 });
 
-describe('categoryChipItems — eight known chips always, unknown installed categories appended', () => {
-  it('renders all eight known categories with counts (0 when nothing is installed)', () => {
+describe('categoryChipItems — six base chips always, an «Іспит» chip only for installed levels, unknown categories appended', () => {
+  const BASE = ['stories', 'news', 'education', 'podcast', 'documentary', 'travel'];
+
+  it('renders the six base categories with counts (0 when nothing is installed) and NO exam chip', () => {
     const items = categoryChipItems({ stories: 22, news: 1, podcast: 1 });
-    expect(items.map((i) => i.key)).toEqual([
-      'stories',
-      'news',
-      'education',
-      'podcast',
-      'documentary',
-      'travel',
-      'torfl',
-      'torfl-a2',
-    ]);
-    expect(items.map((i) => i.count)).toEqual([22, 1, 0, 1, 0, 0, 0, 0]);
+    expect(items.map((i) => i.key)).toEqual(BASE);
+    expect(items.map((i) => i.count)).toEqual([22, 1, 0, 1, 0, 0]);
     expect(items[0]).toEqual({ key: 'stories', label: 'Історії', icon: 'book-outline', count: 22 });
   });
 
-  it('a ninth chip for an unknown installed category with its raw slug + generic icon', () => {
-    const items = categoryChipItems({ recipes: 1, stories: 3 });
-    expect(items.map((i) => i.key)).toEqual([
-      'stories',
-      'news',
-      'education',
-      'podcast',
-      'documentary',
-      'travel',
-      'torfl',
-      'torfl-a2',
-      'recipes',
-    ]);
-    expect(items[8]).toEqual({
-      key: 'recipes',
-      label: 'recipes',
-      icon: 'albums-outline',
+  it('UT16b: an exam chip appears for each level with ≥ 1 installed pack, in level order', () => {
+    const items = categoryChipItems({ 'ukr-exam-b1': 1, 'ukr-exam-a1': 2 });
+    expect(items.map((i) => i.key)).toEqual([...BASE, 'ukr-exam-a1', 'ukr-exam-b1']);
+    expect(items.find((i) => i.key === 'ukr-exam-b1')).toEqual({
+      key: 'ukr-exam-b1',
+      label: 'Іспит · B1',
+      icon: 'ribbon-outline',
       count: 1,
     });
   });
 
-  it('T75: a torfl-a2 count shows on the eighth chip with the «ТРКИ-А2» label', () => {
-    expect(categoryChipItems({ 'torfl-a2': 3 })[7]).toEqual({
-      key: 'torfl-a2',
-      label: 'ТРКИ-А2',
+  it('the persisted exam selection keeps its chip even at count 0', () => {
+    const items = categoryChipItems({}, 'ukr-exam-c1');
+    expect(items.at(-1)).toEqual({
+      key: 'ukr-exam-c1',
+      label: 'Іспит · C1',
       icon: 'ribbon-outline',
-      count: 3,
+      count: 0,
+    });
+  });
+
+  it('an extra chip for an unknown installed category with its raw slug + generic icon', () => {
+    const items = categoryChipItems({ recipes: 1, stories: 3 });
+    expect(items.map((i) => i.key)).toEqual([...BASE, 'recipes']);
+    expect(items[6]).toEqual({
+      key: 'recipes',
+      label: 'recipes',
+      icon: 'albums-outline',
+      count: 1,
     });
   });
 

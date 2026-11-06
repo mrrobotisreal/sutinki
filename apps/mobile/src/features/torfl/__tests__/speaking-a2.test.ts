@@ -100,37 +100,48 @@ describe('A2 single-topic monologue (T76, A2-9)', () => {
     expect(r.state.speaking?.phaseDeadlineAt).toBe(T0 + 20_000);
   });
 
-  it('task 1 / 2 answer caps come from the level profile (A2 45 s / 60 s)', () => {
+  it('task 1 / 2 answer caps come from the level profile (A2 40 s / 50 s)', () => {
     const r = runA2();
     r.send({ type: 'AUDIO_ENDED', now: T0 });
     const fx = r.send({ type: 'TAP_REC', now: T0 + 1000 });
-    expect(fx[0]).toMatchObject({ type: 'START_REC', task: 1, capMs: 45_000 });
-    expect(r.state.speaking?.phaseDeadlineAt).toBe(T0 + 1000 + 45_000);
+    expect(fx[0]).toMatchObject({ type: 'START_REC', task: 1, capMs: 40_000 });
+    expect(r.state.speaking?.phaseDeadlineAt).toBe(T0 + 1000 + 40_000);
   });
 });
 
 describe('speaking profile wiring', () => {
-  it('A1 caps are the legacy constants; A2 differs', () => {
-    expect(speakingCapMsFor('A1', 1)).toBe(SPEAKING_CAP_MS[1]);
+  it('caps come from the level profile: A1 30/40 s, A2 40/50 s, B1+ 45/60 s', () => {
+    expect(SPEAKING_CAP_MS).toEqual({ 1: 30_000, 2: 40_000 });
+    expect(speakingCapMsFor('A1', 1)).toBe(30_000);
     expect(speakingCapMsFor('A1', 2)).toBe(SPEAKING_CAP_MS[2]);
     expect(speakingCapMsFor(undefined, 2)).toBe(40_000);
-    expect(speakingCapMsFor('A2', 2)).toBe(60_000);
+    expect(speakingCapMsFor('A2', 1)).toBe(40_000);
+    expect(speakingCapMsFor('A2', 2)).toBe(50_000);
+    for (const l of ['B1', 'B2', 'C1'] as const) {
+      expect(speakingCapMsFor(l, 1)).toBe(45_000);
+      expect(speakingCapMsFor(l, 2)).toBe(60_000);
+    }
   });
   it('monologueWindows: the item wins, else the profile default', () => {
-    expect(monologueWindows('A2', {})).toEqual({ prepSec: 600, answerSec: 300 });
-    expect(monologueWindows('A1', {})).toEqual({ prepSec: 480, answerSec: 120 });
+    expect(monologueWindows('A2', {})).toEqual({ prepSec: 180, answerSec: 240 });
+    expect(monologueWindows('A1', {})).toEqual({ prepSec: 120, answerSec: 180 });
+    expect(monologueWindows('B1', {})).toEqual({ prepSec: 300, answerSec: 360 });
     expect(monologueWindows('A2', { prepSec: 60, answerSec: 30 })).toEqual({
       prepSec: 60,
       answerSec: 30,
     });
   });
-  it('fluency bands come from the profile (a 60 wpm answer is good at A2, full at A1? no: full needs 70)', () => {
-    const est = { wpm: 60, longestPauseMs: 1000, words: 100 };
-    expect(fluencyShare(est)).toBeCloseTo(0.6 * (2 / 3) + 0.4, 5); // A1 default
-    expect(fluencyShare(est, TORFL_PROFILES.A2.fluencyBands)).toBeCloseTo(0.6 * (2 / 3) + 0.4, 5);
+  it('fluency bands come from the profile (65 wpm: full at A1 (60), good at A2 (70) and the default)', () => {
+    const est = { wpm: 65, longestPauseMs: 1000, words: 100 };
+    const good = 0.6 * (2 / 3) + 0.4;
+    expect(fluencyShare(est)).toBeCloseTo(good, 5); // default = WPM_BANDS (full 70)
+    expect(fluencyShare(est, WPM_BANDS)).toBeCloseTo(good, 5);
+    expect(fluencyShare(est, TORFL_PROFILES.A1.fluencyBands)).toBeCloseTo(1, 5);
+    expect(fluencyShare(est, TORFL_PROFILES.A2.fluencyBands)).toBeCloseTo(good, 5);
     const est2 = { wpm: 75, longestPauseMs: 1000, words: 100 };
     expect(fluencyShare(est2, WPM_BANDS)).toBeCloseTo(1, 5);
-    expect(fluencyShare(est2, TORFL_PROFILES.A2.fluencyBands)).toBeCloseTo(0.6 * (2 / 3) + 0.4, 5);
+    expect(fluencyShare(est2, TORFL_PROFILES.A2.fluencyBands)).toBeCloseTo(1, 5);
+    expect(fluencyShare(est2, TORFL_PROFILES.B1.fluencyBands)).toBeCloseTo(good, 5); // B1 full = 80
   });
   it('the offline monologue scorer reads the level bands + the item minSentences', () => {
     const item = A2.subtests.find((s) => s.kind === 'speaking')!.parts[2]!.items[0] as never;
@@ -224,19 +235,18 @@ describe('A2 verb stems (data list + corpus)', () => {
 });
 
 describe('timing copy is generated', () => {
-  it('windowsLine / chooseLine / task3Fact', () => {
-    expect(windowsLine(480, 120)).toBe('8 минут на подготовку, затем 2 минуты на ответ');
-    expect(windowsLine(600, 300)).toBe('10 минут на подготовку, затем 5 минут на ответ');
-    expect(chooseLine(2, 480, 120)).toBe(
-      'Задание 3. Выбери одну из двух тем. После выбора — 8 минут на подготовку, затем 2 минуты на ответ.',
-    );
-    expect(task3Fact(2, 480, 120)).toBe(
-      'Задание 3: одна тема из двух, подготовка 8 мин, ответ 2 мин.',
-    );
-    expect(task3Fact(1, 600, 300)).toBe('Задание 3: одна тема, подготовка 10 мин, ответ 5 мин.');
-    expect(startAnswerLine(300)).toBe('Запись пойдёт сразу: 5 минут, без остановки таймера.');
-    expect(startAnswerLine(120)).toBe('Запись пойдёт сразу: 2 минуты, без остановки таймера.');
-    expect(recordingLine(300)).toBe('Идёт запись — 5 минут');
-    expect(sentencesLine(12, 15)).toContain('12–15 предложений');
+  it('windowsLine / chooseLine / task3Fact read the windows through minutesUk', () => {
+    expect(windowsLine(480, 120)).toContain('8 хвилин');
+    expect(windowsLine(480, 120)).toContain('2 хвилини');
+    expect(windowsLine(600, 300)).toContain('10 хвилин');
+    expect(windowsLine(600, 300)).toContain('5 хвилин');
+    expect(chooseLine(2, 480, 120)).toContain('8 хвилин');
+    expect(chooseLine(2, 480, 120)).toContain('2 хвилини');
+    expect(task3Fact(2, 480, 120)).toContain('8 мин');
+    expect(task3Fact(1, 600, 300)).toContain('10 мин');
+    expect(startAnswerLine(300)).toContain('5 хвилин');
+    expect(startAnswerLine(120)).toContain('2 хвилини');
+    expect(recordingLine(300)).toContain('5 хвилин');
+    expect(sentencesLine(12, 15)).toContain('12–15');
   });
 });
