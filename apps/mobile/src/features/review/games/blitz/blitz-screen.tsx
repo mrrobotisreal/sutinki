@@ -43,7 +43,7 @@ import {
 import type { BlitzStats } from './stats';
 
 /**
- * Match blitz «Молния» (T34, route `/games/blitz`). 60 s: tap a Russian
+ * Match blitz «Блискавка» (T34, route `/games/blitz`). 60 s: tap a Ukrainian
  * word on the left, then its gloss on the right (or the other way round).
  * FSRS-free — nothing here grades a card (see service.ts).
  *
@@ -296,10 +296,10 @@ export function BlitzScreen() {
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
         {phase === 'empty' ? (
           <>
-            <Text className="font-reading text-xl">Мало слов</Text>
+            <Text className="font-reading text-xl">Мало слів</Text>
             <Text variant="muted" className="text-center">
-              Молния uses words you already know a little — at least {MIN_BLITZ_POOL} bank words at
-              young or mature strength (stable for a week or more). Keep reviewing and come back.
+              Блискавка uses words you already know a little — at least {MIN_BLITZ_POOL} bank words
+              at young or mature strength (stable for a week or more). Keep reviewing and come back.
             </Text>
           </>
         ) : (
@@ -349,13 +349,13 @@ export function BlitzScreen() {
           ) : (
             <>
               <View className="gap-1">
-                <Text variant="heading">Молния</Text>
+                <Text variant="heading">Блискавка</Text>
                 <Text variant="caption">Match blitz · 60 seconds</Text>
               </View>
               <Text variant="muted">
-                Match each Russian word to its meaning. A wrong pair costs {WRONG_PENALTY_MS / 1000}{' '}
-                s. Pure speed — nothing here touches your review schedule. {pool.length} words in
-                play.
+                Match each Ukrainian word to its meaning. A wrong pair costs{' '}
+                {WRONG_PENALTY_MS / 1000} s. Pure speed — nothing here touches your review schedule.{' '}
+                {pool.length} words in play.
               </Text>
               <View className="rounded-xl border border-border bg-surface p-4">
                 <Text className="font-ui-medium">
@@ -429,7 +429,7 @@ export function BlitzScreen() {
               return (
                 <BlitzTile
                   key={slot}
-                  text={pair ? (side === 'left' ? pair.ru : pair.en) : ''}
+                  text={pair ? (side === 'left' ? pair.uk : pair.en) : ''}
                   russian={side === 'left'}
                   selected={selected?.side === side && selected.slot === slot}
                   glowing={glow?.[side] === slot}
@@ -506,7 +506,7 @@ function BlitzTile({
         onPress={onPress}
         disabled={text === ''}
         accessibilityRole="button"
-        accessibilityLabel={`${russian ? 'Russian' : 'Meaning'}: ${text}`}
+        accessibilityLabel={`${russian ? 'Ukrainian' : 'Meaning'}: ${text}`}
         accessibilityState={{ selected }}
         className="min-h-16 items-center justify-center rounded-xl border-2 px-2 py-2 active:bg-surface-2"
         style={{

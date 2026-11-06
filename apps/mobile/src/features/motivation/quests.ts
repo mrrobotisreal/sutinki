@@ -30,7 +30,7 @@ import {
  *   carries the kind, `QuestContext.dictationAvailable` stays false until
  *   then (recorded: T33 is ⬜ at T34's ship; flipping the flag + T33's mode
  *   string is the whole wiring).
- * - match-blitz — finish 1 full 60 s «Молния» sprint today (any score —
+ * - match-blitz — finish 1 full 60 s «Блискавка» sprint today (any score —
  *   recorded: "any run", not a threshold, so the quest never punishes a
  *   small bank) · available when the blitz pool can fill a board.
  * - numbers-round — finish 1 full numbers-drill round today (the ticket's
@@ -97,7 +97,7 @@ export const PRONUNCIATION_QUEST_TARGET = 5;
 export const QUEST_KINDS: readonly QuestKind[] = [
   {
     id: 'finish-a-story',
-    title: 'Finish a story',
+    title: 'Дочитати історію',
     subtitle: 'Read one story to the end',
     icon: 'book-outline',
     isAvailable: (c) => c.unfinishedStories > 0,
@@ -107,7 +107,7 @@ export const QUEST_KINDS: readonly QuestKind[] = [
   },
   {
     id: 'pronunciation-5',
-    title: 'Say 5 phrases',
+    title: '5 фраз: вимова',
     subtitle: 'Five pronunciation items, out loud',
     icon: 'mic-outline',
     isAvailable: (c) => c.asrInstalled && c.productionCards > 0,
@@ -117,7 +117,7 @@ export const QUEST_KINDS: readonly QuestKind[] = [
   },
   {
     id: 'journal-1',
-    title: 'Write in your journal',
+    title: 'Запис у щоденнику',
     subtitle: 'One entry, any length',
     icon: 'create-outline',
     isAvailable: () => true,
@@ -138,7 +138,7 @@ export const QUEST_KINDS: readonly QuestKind[] = [
   },
   {
     id: 'match-blitz',
-    title: 'Молния',
+    title: 'Блискавка',
     subtitle: 'Run one 60-second match sprint',
     icon: 'flash-outline',
     isAvailable: (c) => c.blitzPoolSize >= QUEST_BLITZ_MIN_POOL,
@@ -158,7 +158,7 @@ export const QUEST_KINDS: readonly QuestKind[] = [
   },
   {
     id: 'clear-leeches',
-    title: 'Clear your leeches',
+    title: 'Позбутися «п’явок»',
     subtitle: 'Drill or dismiss every word flagged this morning',
     icon: 'bandage-outline',
     isAvailable: (c) => isClearLeechesAvailable(c.visibleLeechIds.length),

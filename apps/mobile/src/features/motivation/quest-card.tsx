@@ -41,7 +41,7 @@ export function QuestCard() {
         <Ionicons
           name={(complete ? 'checkmark-circle' : kind.icon) as IoniconName}
           size={22}
-          color={tokens.gold}
+          color={tokens.accent2}
         />
       </View>
       <View className="flex-1 gap-1">
@@ -58,7 +58,7 @@ export function QuestCard() {
         <View className="mt-1 h-1 overflow-hidden rounded-full bg-surface-2">
           <View
             className="h-full rounded-full"
-            style={{ width: `${fraction * 100}%`, backgroundColor: tokens.gold }}
+            style={{ width: `${fraction * 100}%`, backgroundColor: tokens.accent2 }}
           />
         </View>
       </View>

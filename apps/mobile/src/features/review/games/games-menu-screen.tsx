@@ -104,7 +104,7 @@ export function GamesMenuScreen() {
       />
       <GameRow
         icon="flash-outline"
-        title="Молния"
+        title="Блискавка"
         subtitle={
           blitzStats.data && blitzStats.data.best > 0
             ? `60-second match sprint · best ${blitzStats.data.best} pairs`

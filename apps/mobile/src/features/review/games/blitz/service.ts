@@ -26,7 +26,7 @@ export async function loadBlitzStats(repos: Pick<Repositories, 'settings'>): Pro
 /** The deduped young+mature pool, glosses shortened to their first sense. */
 export async function loadBlitzPool(repos: Pick<Repositories, 'bank'>): Promise<BlitzPair[]> {
   const rows = await repos.bank.listBlitzCandidates();
-  return dedupePool(rows.map((r) => ({ id: r.id, ru: r.ru, en: shortGloss(r.en) })));
+  return dedupePool(rows.map((r) => ({ id: r.id, uk: r.uk, en: shortGloss(r.en) })));
 }
 
 export async function startBlitzRound(

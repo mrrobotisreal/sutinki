@@ -9,7 +9,7 @@ import {
   journalEntries,
   storyProgress,
 } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 import { seedStory } from '@/features/review/games/__tests__/seed';
 import { addDaysToKey, localDayWindow } from '@/lib/dates';
 
@@ -136,7 +136,7 @@ function makeEnv(
 }
 
 /** A game_sessions row ended inside `day` (noon local). */
-async function finishSession(db: SumrakDB, mode: string, day: string, completed: boolean) {
+async function finishSession(db: SutinkiDB, mode: string, day: string, completed: boolean) {
   const t = localDayWindow(day).start + 12 * 3_600_000;
   await db.insert(gameSessions).values({
     id: `${mode}-${day}-${Math.random()}`,
@@ -156,7 +156,7 @@ describe('evaluateQuest (DB, injected day keys)', () => {
     await seedStory(db, {
       packId: 'p',
       storyId: 's',
-      sentences: [{ id: 's1', ru: 'дом', en: 'house', lemmas: ['дом'] }],
+      sentences: [{ id: 's1', uk: 'дім', en: 'house', lemmas: ['дім'] }],
     });
     const env = makeEnv(repos, { blitzPoolSize: async () => 10 });
     // Four always/now-available kinds: finish-a-story, journal, blitz, numbers.
@@ -186,7 +186,7 @@ describe('evaluateQuest (DB, injected day keys)', () => {
     await seedStory(db, {
       packId: 'p',
       storyId: 's',
-      sentences: [{ id: 's1', ru: 'дом', en: 'house', lemmas: ['дом'] }],
+      sentences: [{ id: 's1', uk: 'дім', en: 'house', lemmas: ['дім'] }],
     });
     await repos.reading.markFinished('p', 's');
     const env = makeEnv(repos);
@@ -217,7 +217,7 @@ describe('evaluateQuest (DB, injected day keys)', () => {
     const noon = localDayWindow(day).start + 12 * 3_600_000;
     await db.insert(journalEntries).values({
       id: 'j1',
-      ru: 'Привет',
+      uk: 'Привіт',
       feedbackStatus: 'none',
       createdAt: noon,
       updatedAt: noon,
@@ -276,8 +276,8 @@ describe('evaluateQuest (DB, injected day keys)', () => {
     const db = createTestDb();
     const repos = createRepositories(db);
     const { item } = await repos.bank.addWord({
-      lemma: 'дом',
-      surface: 'дом',
+      lemma: 'дім',
+      surface: 'дім',
       translation: 'house',
     });
     const card = await repos.reviews.getCard(item.id, 'production');

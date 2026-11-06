@@ -1,8 +1,8 @@
 import { XP_TABLE } from '@/features/motivation/xp';
 
 /**
- * Match blitz «Молния» — the pure engine (T34, V2 §7.9). A 60-second sprint:
- * two columns (Russian lemmas left, English glosses right), tap one on each
+ * Match blitz «Блискавка» — the pure engine (T34, V2 §7.9). A 60-second sprint:
+ * two columns (Ukrainian lemmas left, English glosses right), tap one on each
  * side to match; matched pairs leave and refill from the pool. No DB, no
  * React, no FSRS. `rng` injectable for tests.
  *
@@ -12,7 +12,7 @@ import { XP_TABLE } from '@/features/motivation/xp';
  *   lives here, tunable.
  * - Score = pairs matched. Mistakes are counted (detail) but never subtract.
  * - Refill: a matched pair's two slots are refilled IN PLACE by the next
- *   pool pair, the Russian into the left slot it vacated and the gloss into
+ *   pool pair, the Ukrainian into the left slot it vacated and the gloss into
  *   the right slot it vacated — so the other tiles never move (T13's
  *   rapid-tap reflow lesson: nothing slides under a finger).
  *   (When the two vacated slots share a row, the new pair lands on one row —
@@ -32,7 +32,7 @@ export const MIN_BLITZ_POOL = VISIBLE_PAIRS + 1;
 export interface BlitzPair {
   /** bank item id. */
   id: string;
-  ru: string;
+  uk: string;
   en: string;
 }
 
@@ -58,7 +58,7 @@ function shuffle<T>(xs: readonly T[], rng: Rng): T[] {
 }
 
 function norm(text: string): string {
-  return text.normalize('NFC').trim().toLocaleLowerCase('ru');
+  return text.normalize('NFC').trim().toLocaleLowerCase('uk');
 }
 
 /**
@@ -66,14 +66,14 @@ function norm(text: string): string {
  * Keeps the board unambiguous.
  */
 export function dedupePool(pairs: readonly BlitzPair[]): BlitzPair[] {
-  const ru = new Set<string>();
+  const uk = new Set<string>();
   const en = new Set<string>();
   const out: BlitzPair[] = [];
   for (const p of pairs) {
-    const r = norm(p.ru);
+    const r = norm(p.uk);
     const e = norm(p.en);
-    if (!r || !e || ru.has(r) || en.has(e)) continue;
-    ru.add(r);
+    if (!r || !e || uk.has(r) || en.has(e)) continue;
+    uk.add(r);
     en.add(e);
     out.push(p);
   }

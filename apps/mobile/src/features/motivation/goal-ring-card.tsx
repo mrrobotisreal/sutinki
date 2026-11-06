@@ -21,8 +21,8 @@ import { useMotivation } from './use-motivation';
  *
  * T34: on a day with a quest, a THIRD ring (quest progress) is added inside
  * the reading ring on T19's exact pitch — same 9 px stroke, same 14 px step
- * (radii 61 / 47 / 33), same track, round caps — in the `gold` token (the
- * reward colour; both themes). The flame column shrinks to fit the smaller
+ * (radii 61 / 47 / 33), same track, round caps — in the `accent2` token (Sutinki:
+ * `gold` = `accent`, so the quest ring would be indistinguishable from reviews). The flame column shrinks to fit the smaller
  * hole (flame 18, number text-lg, the «days» caption moves to the a11y
  * label). Quest-less days render the two-ring card byte-for-byte as before.
  */
@@ -125,7 +125,7 @@ export function GoalRingCard() {
                 radius={RING_SIZE / 2 - 19 - RING_STEP}
                 strokeWidth={RING_STROKE}
                 fraction={quest.target > 0 ? quest.progress / quest.target : 0}
-                color={tokens.gold}
+                color={tokens.accent2}
                 trackColor={tokens.surface2}
               />
             )}
@@ -175,7 +175,7 @@ export function GoalRingCard() {
           {quest && (
             <GoalLine
               icon="ribbon-outline"
-              iconColor={tokens.gold}
+              iconColor={tokens.accent2}
               label="Quest"
               value={`${quest.progress} / ${quest.target}`}
               done={quest.complete}

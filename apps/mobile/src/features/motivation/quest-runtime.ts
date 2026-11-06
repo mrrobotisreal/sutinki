@@ -78,7 +78,7 @@ async function runOnce(): Promise<QuestEvaluation | null> {
       });
       useAchievementToasts.getState().push({
         id: `quest-${todayKey}`,
-        kicker: 'Quest complete',
+        kicker: 'Квест виконано',
         title: state.kind.title,
         description: `+${XP_TABLE.questCompleted} XP · today's quest is done`,
         icon: 'ribbon-outline',

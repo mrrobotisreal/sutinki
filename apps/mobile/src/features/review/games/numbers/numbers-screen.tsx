@@ -11,6 +11,7 @@ import { evaluateMotivation, onSessionEnded } from '@/features/motivation/servic
 import { SessionShell } from '@/features/review/session-shell';
 import { track } from '@/services/analytics';
 import { logError } from '@/services/error-log';
+import { toSpeech } from '@/lib/uk-numbers';
 import { getSpeechService } from '@/services/speech';
 import { useAppTheme } from '@/theme/use-app-theme';
 
@@ -37,7 +38,7 @@ import {
 
 /**
  * The numbers drill (T34, route `/games/numbers`). Pick a tier → 10 items:
- * the TTS speaks the RENDERED WORDS (lib/ru-numbers; never digits), you
+ * the TTS speaks the RENDERED WORDS (lib/uk-numbers; never digits), you
  * pick from 4 (tier 1) or type digits on the in-app numpad. Replay is free
  * and unlimited; there is no slow replay (ticket).
  *
@@ -121,7 +122,7 @@ export function NumbersScreen() {
     if (!item) return;
     playsRef.current += 1;
     const speech = getSpeechService();
-    void speech.stop().then(() => speech.speak(item.spoken));
+    void speech.stop().then(() => speech.speak(toSpeech(item.spoken)));
   }, []);
 
   // Auto-play each item once when it appears.

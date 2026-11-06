@@ -5,7 +5,7 @@ import { createTestDb } from '@/db/__tests__/helpers';
 import { createRepositories } from '@/db/repositories';
 import { SETTING_KEYS } from '@/db/repositories/settings';
 import { cards, dailyActivity, reviewLog } from '@/db/schema';
-import type { SumrakDB } from '@/db/types';
+import type { SutinkiDB } from '@/db/types';
 
 import {
   BLITZ_DURATION_MS,
@@ -40,7 +40,7 @@ function seeded(seed: number): () => number {
 }
 
 async function seedWord(
-  db: SumrakDB,
+  db: SutinkiDB,
   repos: ReturnType<typeof createRepositories>,
   lemma: string,
   stability: number | null,
@@ -51,7 +51,7 @@ async function seedWord(
     await db
       .update(cards)
       .set({ stability, reps: 2 })
-      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} IN ('ru-en','en-ru')`);
+      .where(sql`${cards.bankItemId} = ${item.id} AND ${cards.direction} IN ('uk-en','en-uk')`);
   }
   return item.id;
 }
@@ -62,21 +62,21 @@ describe('blitz pool (young + mature only)', () => {
   it('includes stability ≥ 7 weakest-link words, excludes shaky / unreviewed / phrases', async () => {
     const db = createTestDb();
     const repos = createRepositories(db);
-    await seedWord(db, repos, 'дом', 40);
-    await seedWord(db, repos, 'кот', 7);
-    await seedWord(db, repos, 'лес', 6.9);
+    await seedWord(db, repos, 'дім', 40);
+    await seedWord(db, repos, 'кіт', 7);
+    await seedWord(db, repos, 'ліс', 6.9);
     await seedWord(db, repos, 'нож', null);
     await repos.bank.addPhrase({ surface: 'как дела', translation: 'how are you' });
     const pool = await loadBlitzPool(repos);
-    expect(pool.map((p) => p.ru).sort()).toEqual(['дом', 'кот']);
+    expect(pool.map((p) => p.uk).sort()).toEqual(['дім', 'кіт']);
   });
 
   it('dedupes lemma/gloss collisions and shortens glosses to the first sense', () => {
     const pool = dedupePool([
-      { id: 'a', ru: 'дом', en: 'house' },
-      { id: 'b', ru: 'здание', en: 'House' },
-      { id: 'c', ru: 'Дом', en: 'home' },
-      { id: 'd', ru: 'лес', en: 'forest' },
+      { id: 'a', uk: 'дім', en: 'house' },
+      { id: 'b', uk: 'будинок', en: 'House' },
+      { id: 'c', uk: 'Дім', en: 'home' },
+      { id: 'd', uk: 'ліс', en: 'forest' },
     ]);
     expect(pool.map((p) => p.id)).toEqual(['a', 'd']);
     expect(shortGloss('to go; to walk (on foot)')).toBe('to go');
@@ -86,7 +86,7 @@ describe('blitz pool (young + mature only)', () => {
 describe('blitz board', () => {
   const pool: BlitzPair[] = Array.from({ length: 8 }, (_, i) => ({
     id: `p${i}`,
-    ru: `ру${i}`,
+    uk: `ру${i}`,
     en: `en${i}`,
   }));
   const ids = pool.map((p) => p.id);
@@ -139,7 +139,7 @@ describe('blitz service — FSRS-free', () => {
   it('a full sprint writes zero review_log rows, leaves cards untouched, stores game_sessions + best', async () => {
     const db = createTestDb();
     const repos = createRepositories(db);
-    for (const w of ['дом', 'кот', 'лес', 'нож', 'окно', 'стол', 'вода'])
+    for (const w of ['дім', 'кіт', 'ліс', 'нож', 'окно', 'стол', 'вода'])
       await seedWord(db, repos, w, 30);
     const cardsBefore = await db.select().from(cards);
     const logBefore = await db.select().from(reviewLog);

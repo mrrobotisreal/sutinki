@@ -7,7 +7,7 @@ import {
   formatPrice,
   formatYear,
   type Currency,
-} from '@/lib/ru-numbers';
+} from '@/lib/uk-numbers';
 
 /**
  * The numbers drill's pure engine (T34, V2 §7.5): tiers, the item generator,
@@ -21,10 +21,10 @@ import {
  * - Typed tiers: 2, 3, 4, 5 (numpad). Tier 1 (0–20) is pick-from-4 — the
  *   point at that level is recognising the word, not keyboard speed.
  *   Distractors are near-misses (±1, ±10, the teen/ty confusion 13 ↔ 30).
- * - Prices in tier 3 are roubles OR hryvnias (Mitch's Ukrainian context);
+ * - Prices in tier 3 are hryvnias (uah only);
  *   kopecks appear on a third of prices; the typed answer is «12.50».
- * - Times use the `digital` clock reading (recorded in lib/ru-numbers).
- * - Dates are spoken without a year («пятое марта») and answered «5.3».
+ * - Times use the `digital` clock reading (recorded in lib/uk-numbers).
+ * - Dates are spoken without a year («п’яте березня») and answered «5.3».
  */
 
 export type NumbersTier = 1 | 2 | 3 | 4 | 5;
@@ -57,19 +57,19 @@ export const BAND_LABEL: Record<NumbersBand, string> = {
   '21-100': '21–100',
   '101-1000': '101–1000',
   '1001+': '1000+',
-  price: 'Prices',
-  time: 'Times',
-  date: 'Dates',
-  year: 'Years',
-  age: 'Ages',
+  price: 'Ціни',
+  time: 'Час',
+  date: 'Дати',
+  year: 'Роки',
+  age: 'Вік',
 };
 
 export const TIER_INFO: Record<NumbersTier, { title: string; subtitle: string }> = {
-  1: { title: '0–20', subtitle: 'Pick what you hear' },
-  2: { title: '0–100', subtitle: 'Type the digits' },
-  3: { title: 'Up to 1000 + prices', subtitle: 'рубли · гривны · копейки' },
-  4: { title: 'Years, dates, times', subtitle: '«пятое марта», «четырнадцать тридцать»' },
-  5: { title: 'Ages + big numbers', subtitle: 'год / года / лет, up to a million' },
+  1: { title: '0–20', subtitle: 'Вибери, що чуєш' },
+  2: { title: '0–100', subtitle: 'Набери цифри' },
+  3: { title: 'До 1000 + ціни', subtitle: 'гривні · копійки' },
+  4: { title: 'Роки, дати, час', subtitle: '«п’яте березня», «чотирнадцята тридцять»' },
+  5: { title: 'Вік + великі числа', subtitle: 'рік / роки / років, до мільйона' },
 };
 
 export type AnswerMode = 'choice' | 'typed';
@@ -195,7 +195,7 @@ function numberItem(id: string, n: number, mode: AnswerMode, rng: Rng): NumbersI
 }
 
 function priceItem(id: string, rng: Rng): NumbersItem {
-  const currency: Currency = rng() < 0.5 ? 'rub' : 'uah';
+  const currency: Currency = 'uah';
   const whole = rng() < 0.5 ? randInt(rng, 1, 99) : randInt(rng, 100, 999);
   const kopecks = rng() < 1 / 3 ? randInt(rng, 1, 99) : 0;
   return {
