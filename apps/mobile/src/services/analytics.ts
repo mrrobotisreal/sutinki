@@ -167,6 +167,7 @@ export type AnalyticsEvent =
   | 'daily_session_started'
   | 'daily_session_empty'
   | 'daily_session_composed'
+  | 'daily_torfl_segment'
   | 'daily_item_graded'
   | 'daily_session_finished'
   | 'daily_session_abandoned'
@@ -327,8 +328,8 @@ export type AnalyticsEvent =
   // never `source`, which pron/listening items already use for other meanings).
   | 'bank_sort_changed'
   // M16 run profile (T51). Props: provider/quality/effort/model slugs + scope only — never the key.
-  // ai_grammar_preset_changed {provider, quality, effort, scope: 'default'|'run'} — the Settings
-  // preset (default) or a Generate-sheet run that differs from it (run);
+  // ai_grammar_preset_changed {provider, quality, effort, scope: 'default'|'run'|'exam-grading'} — the Settings
+  // preset (default), a Generate-sheet run that differs from it (run), or the T72 «Exam grading» preset;
   // ai_model_table_edited {provider, quality} — one slug in the Advanced table saved;
   // ai_effort_param_rejected {provider, model} — the §4.4 fallback fired (retried without effort).
   // ai_request_sent/succeeded/failed gain optional provider/quality/effort/model when a run profile is used.
@@ -425,6 +426,9 @@ export type AnalyticsEvent =
   | 'scenario_subtitles_toggled'
   | 'scenario_pref_changed'
   | 'scenario_hub_opened'
+  // scenario_level_selected {familyId, level, isDefault} — a rung chip tapped on the hub
+  // (Mitch 2026-10-04: the chips are a level picker; finished rungs stay selectable).
+  | 'scenario_level_selected'
   | 'scenario_gate_shown'
   | 'scenario_assist_banner'
   | 'scenario_runs_list_opened'
@@ -445,7 +449,51 @@ export type AnalyticsEvent =
   | 'media_bundle_wav_warning'
   | 'scenario_run_pinned'
   | 'scenario_transcript_shared'
-  | 'scenario_debrief_download_failed';
+  | 'scenario_debrief_download_failed'
+  // M18 (T68–T74) — TORFL exam prep («ТРКИ», TORFL_EXAM_PREP §4.5). Declared by T68; later tickets
+  // fire them. Props are slugs / ids / numbers / booleans only — never answers, transcripts,
+  // letters or any Russian text.
+  // torfl_hub_opened {from} · torfl_exam_date_set {daysOut} · torfl_topic_banked {topic, words,
+  // newWords} · torfl_text_opened {packId, storyId, from} · exam_drill_started {packId, examId,
+  // subtestKind, topic, source: 'set'|'deck'|'lightning'} · exam_drill_item_answered {subtestKind,
+  // topic, correct, ms} · exam_drill_finished {…, answered, correct, ms} · exam_deck_reviewed {due,
+  // reviewed} · exam_started {packId, examId, scope, subtestKind?} · exam_resumed {scope,
+  // subtestKind, remainingSec} (no attemptId) · exam_subtest_started {subtestKind, scope} ·
+  // exam_subtest_submitted {subtestKind, answered, total, autoSubmitted, timeUsedSec} ·
+  // exam_audio_played {playNo} · exam_lookup_used {subtestKind} · exam_finished {scope, verdict,
+  // lexgramPct, readingPct, listeningPct, writingPct, speakingPct, provisional} · exam_abandoned
+  // {scope, subtestKind, answered} · exam_review_opened {scope} · exam_writing_scored {source:
+  // 'offline'|'ai'|'self', pct, sentences, questions, pointsCovered} · exam_speaking_scored {task,
+  // source, pct} · exam_grading_failed {kind, code} · exam_recording_saved {task, ms} ·
+  // torfl_rehearsal_finished {topic, score} · torfl_ticket_drawn {topic}.
+  // ai_request_* gain feature 'exam-writing' | 'exam-speaking' via the AiFeature union.
+  // T74 (§8.5): exam_attempt_pinned {pinned} · exam_debrief_download_failed {code}; the T63
+  // recordings_pruned / media_bundle_* events gain `root: 'exam'` for the exam root.
+  | 'torfl_hub_opened'
+  | 'torfl_exam_date_set'
+  | 'torfl_topic_banked'
+  | 'torfl_text_opened'
+  | 'exam_drill_started'
+  | 'exam_drill_item_answered'
+  | 'exam_drill_finished'
+  | 'exam_deck_reviewed'
+  | 'exam_started'
+  | 'exam_resumed'
+  | 'exam_subtest_started'
+  | 'exam_subtest_submitted'
+  | 'exam_audio_played'
+  | 'exam_lookup_used'
+  | 'exam_finished'
+  | 'exam_abandoned'
+  | 'exam_review_opened'
+  | 'exam_writing_scored'
+  | 'exam_speaking_scored'
+  | 'exam_grading_failed'
+  | 'exam_recording_saved'
+  | 'torfl_rehearsal_finished'
+  | 'torfl_ticket_drawn'
+  | 'exam_attempt_pinned'
+  | 'exam_debrief_download_failed';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 

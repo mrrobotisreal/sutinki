@@ -105,7 +105,7 @@ export const SETTING_KEYS = {
    */
   checkpointPassThreshold: 'path.checkpointPassThreshold',
   /**
-   * OpenRouter model id (T16), e.g. 'anthropic/claude-sonnet-5' — validated
+   * OpenRouter model id (T16), e.g. 'anthropic/claude-opus-5.5' — validated
    * on read (features/ai/config). The API key is NEVER here: secure-store
    * only (same rule as the GitHub PAT).
    */
@@ -185,6 +185,30 @@ export const SETTING_KEYS = {
    * fallbacks that mirrors the on-disk model state, never the truth itself.
    */
   scenarioAssistModel: 'scenario.assistModel',
+  /**
+   * «ТРКИ» prefs (M18, TORFL_EXAM_PREP §4.4; declared in T68, healed by
+   * `features/torfl/settings-core.ts`): { v: 1, showEnglishInstructions:
+   * true, drillTimer: 'off' | 'exam-pace' ('off'), breakBetweenSubtests:
+   * true, allowLookupInMockReading: true } — field-by-field healing.
+   */
+  torflPrefs: 'torfl.prefs',
+  /** The real exam date (M18 §4.4): ISO 'YYYY-MM-DD' or null — the hub countdown. Invalid → null. */
+  torflExamDate: 'torfl.examDate',
+  /**
+   * «Exam grading» run profile (M18 §4.4, ADR-0020 decision 10): { v: 1,
+   * provider, quality, effort } — the M16 run-profile triple only; default
+   * { <the grammar preset's provider>, 'normal', 'high' }; healed
+   * field-by-field like `ai.grammarPreset`.
+   */
+  torflGradingPreset: 'torfl.gradingPreset',
+  /**
+   * Exam media-bundle ledger (M18 §8.5, T74; healed by `features/torfl/
+   * media-state-core.ts`): { v: 1, attempts: { [attemptId]: { state:
+   * 'pending' | 'uploaded' | 'failed', name } } } — `exam_attempts` has no
+   * bundle columns and T74 ships no migration, so the per-attempt bundle
+   * state rides this one settings row (and the snapshot with it).
+   */
+  torflMedia: 'torfl.media',
 } as const;
 
 /** Key-value settings, JSON-encoded values. */

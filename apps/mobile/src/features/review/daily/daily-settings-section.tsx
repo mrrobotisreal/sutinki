@@ -1,12 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
-import { Pressable, Text as RNText, View } from 'react-native';
+import { Pressable, Switch, Text as RNText, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
 import { useDailyPrefs } from '@/store/daily-prefs';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { DAILY_LENGTH_OPTIONS, type DailyWeights } from './prefs';
+import { useExamDate } from '@/features/torfl/hooks';
+
+import { ukPending } from '@/config/flags';
+import { DAILY_LENGTH_OPTIONS, torflSegmentEnabled, type DailyWeights } from './prefs';
 
 const WEIGHT_ROWS: { key: keyof DailyWeights; label: string; hint: string }[] = [
   { key: 'flashcard', label: 'Flashcards', hint: 'Flip and self-grade' },
@@ -26,7 +29,9 @@ const WEIGHT_MAX = 5;
  */
 export function DailySettingsSection() {
   const { tokens } = useAppTheme();
-  const { prefs, setLength, setWeight } = useDailyPrefs();
+  const { prefs, setLength, setWeight, setTorfl } = useDailyPrefs();
+  const { date: examDate } = useExamDate();
+  const torflOn = torflSegmentEnabled(prefs, examDate);
 
   return (
     <>
@@ -108,6 +113,25 @@ export function DailySettingsSection() {
             </View>
           );
         })}
+
+        {/* M18 (T70): the TORFL deck block — auto-on once an exam date is set */}
+        {!ukPending('exam') && (
+          <View className="flex-row items-center justify-between border-t border-border px-4 py-3">
+            <View className="flex-1 gap-0.5 pr-3">
+              <Text className="font-ui-medium">ТРКИ: Работа над ошибками</Text>
+              <Text variant="caption">
+                До 10 карточек экзамена в конце сессии
+                {prefs.torfl === undefined ? ' · включается сама, когда задана дата экзамена' : ''}
+              </Text>
+            </View>
+            <Switch
+              value={torflOn}
+              onValueChange={setTorfl}
+              accessibilityLabel="TORFL deck segment in the daily session"
+              testID="daily-torfl-switch"
+            />
+          </View>
+        )}
       </View>
     </>
   );

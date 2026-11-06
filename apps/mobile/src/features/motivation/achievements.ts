@@ -109,6 +109,36 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     icon: 'layers-outline',
   },
   {
+    id: 'torfl-deck-100',
+    title: 'Работа над ошибками',
+    description: 'Bring 100 TORFL exam-deck items to the FSRS Review state',
+    icon: 'ribbon-outline',
+  },
+  {
+    id: 'torfl-first-mock',
+    title: 'Первый вариант',
+    description: 'Finish your first TORFL mock exam',
+    icon: 'document-text-outline',
+  },
+  {
+    id: 'torfl-would-pass',
+    title: 'Сдал бы!',
+    description: 'A full TORFL mock whose verdict is a pass',
+    icon: 'ribbon-outline',
+  },
+  {
+    id: 'torfl-margin',
+    title: 'С запасом',
+    description: 'All five TORFL subtests at 80 % or better in one mock',
+    icon: 'trophy-outline',
+  },
+  {
+    id: 'torfl-lexgram-90',
+    title: 'Без словаря',
+    description: 'Score 90 % or more on Лексика. Грамматика (no dictionary allowed)',
+    icon: 'extension-puzzle-outline',
+  },
+  {
     id: 'pron-perfect',
     title: 'Чиста вимова',
     description: 'Score a perfect 100 in pronunciation practice',
@@ -146,3 +176,5 @@ export const LEVEL_ACHIEVEMENTS: { id: string; level: number }[] = [
 export const MASTERED_STABILITY_DAYS = STABILITY_MATURE_MIN;
 export const MASTERED_TARGET = 100;
 export const BANK_TARGET = 100;
+/** `torfl-deck-100` (T70): exam-deck cards in the FSRS Review state. */
+export const EXAM_DECK_TARGET = 100;

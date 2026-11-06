@@ -32,6 +32,7 @@
     --scrim: 0 0 0; /* modal/sheet backdrop wash (used with alpha) */
     --track-warm: 139 98 51; /* #8B6233 «Сім’я» track identity */
     /* CEFR chip ramp — deep sea → moonlight gold (ADR-0009) */
+    --gold: 138 106 0; /* #8A6A00 «із запасом» readiness band (T70) */
     --level-a1: 31 78 158; /* #1F4E9E */
     --level-a2: 49 94 151; /* #315E97 */
     --level-b1: 81 94 115; /* #515E73 */
@@ -55,6 +56,7 @@
     --scrim: 0 0 0; /* modal/sheet backdrop wash (used with alpha) */
     --track-warm: 217 164 65; /* #D9A441 «Сім’я» track identity */
     /* CEFR chip ramp — deep sea → moonlight gold (ADR-0009) */
+    --gold: 233 192 50; /* #E9C032 «із запасом» readiness band (T70) */
     --level-a1: 124 159 221; /* #7C9FDD */
     --level-a2: 157 181 230; /* #9DB5E6 */
     --level-b1: 140 159 192; /* #8C9FC0 */
