@@ -272,7 +272,7 @@ describe('migrations from empty DB', () => {
       'responses_json',
     ]);
     expect(await indexNames(db, 'course_floors')).toContain('course_floors_ladder_idx');
-    expect(journal.entries.at(-1)).toMatchObject({ idx: 11, tag: '0011_hotel' });
+    expect(journal.entries.find((e) => e.tag === '0011_hotel')).toMatchObject({ idx: 11 });
   });
 });
 
@@ -786,5 +786,60 @@ describe('0002_library-categories upgrade from 0001', () => {
       n: number;
     };
     expect(applied.n).toBe(journal.entries.length);
+  });
+});
+
+const FULL_AUDIO_COLUMNS = [
+  'pack_id',
+  'track_id',
+  'voice',
+  'style',
+  'file',
+  'local_uri',
+  'duration_ms',
+  'gap_ms',
+  'segments',
+];
+
+describe('0012_full-story', () => {
+  it('fresh DB has pack_full_audio and packs.cover_file/cover_local_uri', async () => {
+    const db = createTestDb();
+    expect(await columnNames(db, 'pack_full_audio')).toEqual(FULL_AUDIO_COLUMNS);
+    const packCols = await columnNames(db, 'packs');
+    expect(packCols).toContain('cover_file');
+    expect(packCols).toContain('cover_local_uri');
+    expect(journal.entries.at(-1)).toMatchObject({ idx: 12, tag: '0012_full-story' });
+  });
+
+  it('upgrades a device that ran 0011; prior pack rows survive with NULL cover', async () => {
+    const { sqlite, db } = createDbUpTo('0011_hotel');
+    sqlite
+      .prepare(
+        `INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at, origin)
+         VALUES ('p1', 1, 'stories', 'Т', 'T', 'A1', '[]', 1, 'remote')`,
+      )
+      .run();
+    migrate(drizzle(sqlite, { schema }), { migrationsFolder });
+    expect(await columnNames(db, 'pack_full_audio')).toEqual(FULL_AUDIO_COLUMNS);
+    expect(sqlite.prepare('SELECT id, cover_file, cover_local_uri FROM packs').all()).toEqual([
+      { id: 'p1', cover_file: null, cover_local_uri: null },
+    ]);
+  });
+
+  it('deleting a pack cascades its pack_full_audio row', () => {
+    const { sqlite } = createDbUpTo('0012_full-story');
+    sqlite
+      .prepare(
+        `INSERT INTO packs (id, version, type, title_ru, title_en, level, tags, imported_at, origin)
+         VALUES ('p1', 1, 'stories', 'Т', 'T', 'A1', '[]', 1, 'remote')`,
+      )
+      .run();
+    sqlite
+      .prepare(
+        `INSERT INTO pack_full_audio VALUES ('p1', 'p1-full', 'v', 'full', 'audio/p1-full.opus', NULL, 10, 0, '[]')`,
+      )
+      .run();
+    sqlite.prepare(`DELETE FROM packs WHERE id = 'p1'`).run();
+    expect(sqlite.prepare('SELECT COUNT(*) AS n FROM pack_full_audio').get()).toEqual({ n: 0 });
   });
 });

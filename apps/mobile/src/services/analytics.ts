@@ -59,6 +59,8 @@ export type AnalyticsEvent =
   // T58 scenario scene layers ride the same Wi-Fi gate (SPEAKING_SCENARIOS §3).
   | 'scene_deferred_wifi'
   | 'scene_backfilled'
+  // M26 (T95): staged audio/cover files reused on a pack bump (hash matched; no re-download).
+  | 'sync_file_reused'
   | 'sync_config_saved'
   | 'sync_pat_saved'
   | 'sync_pat_cleared'
@@ -379,6 +381,11 @@ export type AnalyticsEvent =
   | 'library_category_switched'
   | 'library_genre_switched'
   | 'library_empty_category_viewed'
+  // M26 listen-to-the-whole-story (T97, FULL_STORY_LISTEN §8).
+  // listen_row_shown {packId, state, parts} — once per pack per Library visit.
+  // listen_row_tapped {packId} — a tap on «Прослушать всю историю».
+  | 'listen_row_shown'
+  | 'listen_row_tapped'
   | 'story_source_link_opened'
   // M15 themed ambience (T48). Props: theme/bed slugs + ms only.
   // ambient_theme_started {theme, bed, resumedMs} — a theme begins (fresh or resumed);
@@ -617,7 +624,26 @@ export type AnalyticsEvent =
   | 'quest_assigned'
   | 'quest_completed'
   | 'quest_launched'
-  | 'quest_progress';
+  | 'quest_progress'
+  // M26/T96 listen player (FULL_STORY_LISTEN §8). Ids/numbers/slugs only.
+  // listen_opened {packId, kind, parts, durationMs, resumedFromMs, source: library|now-playing|resume};
+  // listen_play/pause {packId, positionMs, partIndex}; listen_seek {packId, method:
+  // scrub|back15|forward30|part|lockscreen, fromMs, toMs}; listen_rate_changed {packId, rate};
+  // listen_volume_changed {packId, volume, muted}; listen_part_reached {packId, storyId, partIndex};
+  // listen_finished {packId, durationMs, listenedMs, rate}; listen_stopped {packId, positionMs,
+  // reason: user|replaced|error|reader}; listen_open_reader {packId, storyId, positionMs};
+  // listen_background {packId}. (listen_row_shown = T97, sync_file_reused = T95.)
+  | 'listen_opened'
+  | 'listen_play'
+  | 'listen_pause'
+  | 'listen_seek'
+  | 'listen_rate_changed'
+  | 'listen_volume_changed'
+  | 'listen_part_reached'
+  | 'listen_finished'
+  | 'listen_stopped'
+  | 'listen_open_reader'
+  | 'listen_background';
 
 export type AnalyticsProps = Record<string, string | number | boolean>;
 
