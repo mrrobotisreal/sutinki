@@ -11,6 +11,10 @@ usage: build_truth.py out.json pack:trackId ...   (needs $W/wh/<pack>__<track>.w
 import sys,json,statistics as S
 sys.path.insert(0,__file__.rsplit('/',1)[0])
 from lib import *
+# UT15: on Ukrainian narration Whisper large-v3 word STARTS straddle the preceding pause (median ~400 ms early), so the
+# identity vote only requires 'consistent with' (start <= onset+150, as in the docstring) within this look-back; the TIME
+# of the boundary is always the energy edge.
+START_STRADDLE_MS=900
 def edges(db,floor,minsil=24):
     sil=floor+14; quiet=db<sil; n=len(db); f=0; pauses=[]
     while f<n:
@@ -55,7 +59,7 @@ for spec in sys.argv[2:]:
     cc=ctc(pack,tid,os.environ.get('TRUTH_ENGINE','ctc')); order=[w for w,_ in words]
     for offE,onE in pauses:
         nxt=next((w for w in order if cc[w][2] and cc[w][0]>=onE-150),None)
-        if nxt and nxt in wh and len(norm(dict(words)[nxt]))>=3 and abs(wh[nxt][0]-onE)<=120 and db[onE//5+2]>floor+25 and cc[nxt][0]-onE<=700:
+        if nxt and nxt in wh and len(norm(dict(words)[nxt]))>=3 and -START_STRADDLE_MS<=wh[nxt][0]-onE<=150 and db[onE//5+2]>floor+25 and cc[nxt][0]-onE<=700:
             add(nxt,dict(words)[nxt],'start',onE,wh[nxt])
         prv=next((w for w in reversed(order) if cc[w][2] and cc[w][1]<=offE+150),None)
         if prv and prv in wh and len(norm(dict(words)[prv]))>=3 and abs(wh[prv][1]-offE)<=150 and offE-cc[prv][1]<=700:

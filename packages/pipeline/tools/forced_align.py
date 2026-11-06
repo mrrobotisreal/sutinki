@@ -27,8 +27,8 @@ import argparse, json, re, subprocess, sys
 import os, unicodedata
 
 RU_MODEL = "jonatasgrosman/wav2vec2-large-xlsr-53-russian"  # intentional --language ru compat (upstream merges)
-UK_DEFAULT_MODEL = os.environ.get("SUTINKI_ALIGN_MODEL_DEFAULT", "robinhad/wav2vec2-xls-r-300m-uk")
-UK_DEFAULT_REVISION = os.environ.get("SUTINKI_ALIGN_REVISION_DEFAULT", "")
+UK_DEFAULT_MODEL = "arampacha/wav2vec2-xls-r-1b-uk"  # Apache-2.0, 3.8 GB; chosen by the UT15 benchmark
+UK_DEFAULT_REVISION = "ee3ebb6117bde6b1bf3a9f332fa20cca65e2c453"
 SR = 16000
 APOS = "'ʼ’‘`´"  # every apostrophe spelling seen in authored text / ElevenLabs output
 UK_LETTERS = "абвгдежзийклмнопрстуфхцчшщьюяєіїґ"
@@ -137,7 +137,7 @@ def run_ctc(audio, words, device, language, model_id, revision):
     out = [{"id": w["id"], "startMs": 0, "endMs": 0, "aligned": False} for w in words]
     if toks and em.shape[0] >= len(toks):
         ali, _ = F.forced_align(em[None], torch.tensor([toks], dtype=torch.int32), blank=blank)
-        spans = F.merge_tokens(ali[0], torch.exp(em.gather(1, ali[0][:, None])[:, 0]))
+        spans = F.merge_tokens(ali[0], torch.exp(em.gather(1, ali[0][:, None])[:, 0]), blank=blank)
         assert len(spans) == len(toks), (len(spans), len(toks))
         for sp, wi in zip(spans, owner):
             s, e = sp.start * 20, (sp.end) * 20
@@ -159,7 +159,7 @@ def run_whisper(audio_path, words, language, whisper_model, device="cpu"):
     if whisper_model not in _WH:
         _WH[whisper_model] = WhisperModel(whisper_model, device="cpu", compute_type="int8")
     m = _WH[whisper_model]
-    segs, _ = m.transcribe(audio_path, language=language, word_timestamps=True,
+    segs, _ = m.transcribe(load_audio(audio_path), language=language, word_timestamps=True,
                            condition_on_previous_text=False)
     ww = [(clean(x.word, language), x.start, x.end) for s in segs for x in s.words if clean(x.word, language)]
     ref = [(clean(w["text"], language), i) for i, w in enumerate(words) if clean(w["text"], language)]
@@ -192,7 +192,7 @@ def main():
     if engine == "ctc-uk" and a.language != "uk":
         sys.exit("ctc-uk aligns Ukrainian only")
     model = a.model or (RU_MODEL if engine == "ctc-ru" else UK_DEFAULT_MODEL)
-    revision = a.revision or (UK_DEFAULT_REVISION or None if engine == "ctc-uk" and not a.model else None)
+    revision = a.revision or (UK_DEFAULT_REVISION if engine == "ctc-uk" and not a.model else None)
     jobs = (json.load(open(a.jobs, encoding="utf-8")) if a.jobs
             else [{"audio": a.audio, "words": a.words, "out": a.out}])
     for j in jobs:

@@ -2,7 +2,7 @@
  * T80 dry run: audit (+ restamp) every published pack with timestamps.
  * Usage: tsx tools/dry-run.ts <content-dir> <out-dir> [--align-dir DIR] [--packs a,b]
  * Without --align-dir uses pythonAligner (cached). With it, reads precomputed
- * `<pack>__<track>.ctc.json` files (forced_align.py --jobs output).
+ * `<pack>__<track>.json` files (forced_align.py --jobs output).
  * Writes <out>/<pack>.pack.json (restamped), <out>/audit-before.json,
  * <out>/audit-after.json. Never writes to the content dir.
  */
@@ -45,7 +45,7 @@ for (const id of readdirSync(join(content!, 'packs')).sort()) {
       if (track.timestamps.length === 0) continue;
       let aligner: Aligner;
       if (alignDir) {
-        const f = join(alignDir, `${id}__${track.id}.ctc.json`);
+        const f = join(alignDir, `${id}__${track.id}.json`);
         if (!existsSync(f)) continue;
         const words = (JSON.parse(readFileSync(f, 'utf8')) as { words: AlignedWord[] }).words;
         aligner = () => words;

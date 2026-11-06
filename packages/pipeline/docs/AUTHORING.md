@@ -144,15 +144,32 @@ itself (decode → excise → level-match → concat → MP3 → Opus) is sample
 (`test/timeline.test.ts`); the provider times are the defect. So since T80 the
 stamps are **re-derived from the encoded Opus**:
 
-1. a CTC forced aligner (`tools/forced_align.py`: Russian wav2vec2
-   `jonatasgrosman/wav2vec2-large-xlsr-53-russian` + `torchaudio.functional.forced_align`)
-   places every known word token in the audio;
+1. a CTC forced aligner (`tools/forced_align.py`, engine `ctc-uk`: Ukrainian wav2vec2
+   `arampacha/wav2vec2-xls-r-1b-uk` @ `ee3ebb6` (Apache-2.0, 3.8 GB, chosen by the UT15
+   benchmark) + `torchaudio.functional.forced_align`; the full Ukrainian alphabet is kept,
+   no folding to Russian letters, apostrophes mapped to the model's token) places every
+   known word token in the audio. `--language ru` selects the upstream Russian model
+   (compat only; it refuses Ukrainian text);
 2. boundary refinement on 5 ms RMS frames: each start snaps to the quiet point
    before the energy rise (±80 ms, never past the midpoint to a neighbour);
    each end is extended to the true energy release of the last phoneme (the
    aligner's end is early — this is the «ужасная» → «ужасно» end-clip fix);
 3. invariants as before: one stamp per non-punct token, strictly monotonic,
    inside the duration, integer ms (the 20 ms provider quantisation is gone).
+
+**Environment** (UT15; `~/.sutinki-tools/env.sh` exports them): `SUTINKI_ALIGN_PYTHON`
+(`~/.sutinki-tools/venv-w2v/bin/python`, python3.12; pins in `tools/requirements.lock`),
+`SUTINKI_ALIGN_DEVICE` (`cpu|mps`, default `cpu`), `SUTINKI_ALIGN_CACHE`
+(`~/.cache/sutinki-align`; the key carries audio + words + engine + language + model +
+revision), `SUTINKI_ALIGN_MODEL` / `SUTINKI_ALIGN_REVISION` (HF id or local path; default =
+the pinned model), `HF_HOME=~/.sutinki-tools/hf` + `HF_HUB_OFFLINE=1`. Run it with
+`python -I` from a directory that is not the model cache.
+
+**Status (UT15):** the Ukrainian audit stays **report-only** (`publish --stamp-audit report`,
+`audio --restamp` opt-in): on the Ukrainian truth set the chosen model meets the pause-edge
+bars but not every Decision-6 bar (see `tools/stamp-truth/README.md`). `restamp` is still a
+large net improvement on every published pack (below), so UCT063 uses it, with the
+track-level audit table reviewed.
 
 **Commands** (offline; no network once the model is cached, no API key):
 
