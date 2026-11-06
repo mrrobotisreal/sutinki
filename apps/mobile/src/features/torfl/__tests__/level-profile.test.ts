@@ -45,7 +45,7 @@ describe('A1 profile ≡ the pre-T75 constants', () => {
     expect(a1.category).toBe('torfl');
     expect(a1.chipLabel).toBe('ТРКИ-А1');
     expect(a1.code).toBe('ТЭУ');
-    expect(a1.nameRu).toBe('Элементарный уровень');
+    expect(a1.nameUk).toBe('Элементарный уровень');
     expect(a1.achievements).toEqual({
       firstMock: 'torfl-first-mock',
       wouldPass: 'torfl-would-pass',
@@ -68,7 +68,7 @@ describe('A2 profile = TORFL_A2 §5.1', () => {
 
   it('identity and copy', () => {
     expect(a2.code).toBe('ТБУ');
-    expect(a2.nameRu).toBe('Базовый уровень');
+    expect(a2.nameUk).toBe('Базовый уровень');
     expect(a2.nameEn).toBe('Basic');
     expect(a2.chipLabel).toBe('ТРКИ-А2');
     expect(a2.aiStandard).toBe('HONEST A2 (ТБУ, базовый уровень)');

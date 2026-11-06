@@ -116,7 +116,8 @@ export function LibraryScreen() {
   // M14 (T45): the persisted shelf selection — category chips + genre sub-row.
   const storedCategory = useLibraryPrefs((s) => s.category);
   // UP04: «ТРКИ» is hidden while `UK_PENDING.exam`; a persisted torfl shelf falls back to «Історії».
-  const category = ukPending('exam') && isTorflCategory(storedCategory) ? 'stories' : storedCategory;
+  const category =
+    ukPending('exam') && isTorflCategory(storedCategory) ? 'stories' : storedCategory;
   const genre = useLibraryPrefs((s) => s.genre);
   const setCategory = useLibraryPrefs((s) => s.setCategory);
   const setGenre = useLibraryPrefs((s) => s.setGenre);

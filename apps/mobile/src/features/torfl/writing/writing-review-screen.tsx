@@ -274,7 +274,7 @@ function TaskReview({
               testID={`criterion-${c.id}`}
             >
               <View className="flex-row items-center gap-2">
-                <Text className="flex-1 font-ui-medium">{criterionLabel(c.id, item.topic).ru}</Text>
+                <Text className="flex-1 font-ui-medium">{criterionLabel(c.id, item.topic).uk}</Text>
                 <Text className={cn('font-ui-bold', c.pending && 'text-text-muted')}>
                   {c.pending ? '—' : c.score.toLocaleString('ru-RU')} / {c.max}
                 </Text>
@@ -300,7 +300,7 @@ function TaskReview({
           <FeedbackView
             feedback={{
               v: 1,
-              sourceRu: letter,
+              sourceUk: letter,
               corrected: g.ai.corrected,
               changes: g.ai.changes ?? [],
               summary: g.ai.tips.length > 0 ? g.ai.tips.join(' ') : 'No tips.',

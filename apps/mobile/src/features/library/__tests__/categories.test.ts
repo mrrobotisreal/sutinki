@@ -236,8 +236,8 @@ describe('sets & order', () => {
       en: 'TORFL A2',
       icon: 'ribbon-outline',
     });
-    expect(CATEGORIES.torfl.ru).toBe(TORFL_PROFILES.A1.chipLabel);
-    expect(CATEGORIES['torfl-a2'].ru).toBe(TORFL_PROFILES.A2.chipLabel);
+    expect(CATEGORIES.torfl.uk).toBe(TORFL_PROFILES.A1.chipLabel);
+    expect(CATEGORIES['torfl-a2'].uk).toBe(TORFL_PROFILES.A2.chipLabel);
   });
 
   it('labelForCategory resolves both TORFL shelves to their level chip labels', () => {

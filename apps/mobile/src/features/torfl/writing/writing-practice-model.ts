@@ -63,7 +63,7 @@ export function writingPracticeHref(e: Pick<WritingPracticeEntry, 'packId' | 'ex
  */
 export interface WritingPracticeGroup {
   key: 'letter' | 'note';
-  titleRu: string | null;
+  titleUk: string | null;
   entries: WritingPracticeEntry[];
 }
 
@@ -74,8 +74,8 @@ export function writingPracticeGroups(
   const letters = entries.filter((e) => e.item.topic !== 'write-note');
   const out: WritingPracticeGroup[] = [];
   if (letters.length > 0) {
-    out.push({ key: 'letter', titleRu: notes.length > 0 ? 'Письмо' : null, entries: letters });
+    out.push({ key: 'letter', titleUk: notes.length > 0 ? 'Письмо' : null, entries: letters });
   }
-  if (notes.length > 0) out.push({ key: 'note', titleRu: 'Записка', entries: notes });
+  if (notes.length > 0) out.push({ key: 'note', titleUk: 'Записка', entries: notes });
   return out;
 }

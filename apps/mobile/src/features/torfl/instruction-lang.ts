@@ -20,7 +20,7 @@ interface InstructionLangState {
 }
 
 export const useInstructionLangStore = create<InstructionLangState>((set, get) => ({
-  lang: 'ru',
+  lang: 'uk',
   loaded: false,
   load: async () => {
     if (get().loaded) return;
@@ -57,7 +57,7 @@ export type InstructionScreen =
 
 /** Flip RU ⇄ EN, persist, and log `torfl_instruction_lang_toggled {to, screen, level}`. */
 export function toggleInstructionLang(screen: InstructionScreen, level: TorflLevel): void {
-  const to: InstructionLang = useInstructionLangStore.getState().lang === 'ru' ? 'en' : 'ru';
+  const to: InstructionLang = useInstructionLangStore.getState().lang === 'uk' ? 'en' : 'uk';
   useInstructionLangStore.getState().set(to);
   trackTorfl('torfl_instruction_lang_toggled', { to, screen, level });
 }

@@ -42,7 +42,7 @@ export interface TorflLevelProfile {
   /** ТЭУ / ТБУ — the official test name abbreviation. */
   code: string;
   /** «Элементарный уровень» / «Базовый уровень». */
-  nameRu: string;
+  nameUk: string;
   nameEn: string;
   /** The Library chip / hub title / Today label: «ТРКИ-А1» / «ТРКИ-А2» (Cyrillic «А»). */
   chipLabel: string;
@@ -74,7 +74,7 @@ export const TORFL_PROFILES: Readonly<Record<TorflLevel, TorflLevelProfile>> = {
   A1: {
     level: 'A1',
     code: 'ТЭУ',
-    nameRu: 'Элементарный уровень',
+    nameUk: 'Элементарный уровень',
     nameEn: 'Elementary',
     chipLabel: 'ТРКИ-А1',
     passPct: 66,
@@ -98,7 +98,7 @@ export const TORFL_PROFILES: Readonly<Record<TorflLevel, TorflLevelProfile>> = {
   A2: {
     level: 'A2',
     code: 'ТБУ',
-    nameRu: 'Базовый уровень',
+    nameUk: 'Базовый уровень',
     nameEn: 'Basic',
     chipLabel: 'ТРКИ-А2',
     passPct: 66,
@@ -178,13 +178,13 @@ export function ruleLine(level: TorflLevel): string {
 
 /** Hub header subtitle: «Элементарный уровень · онлайн-экзамен СПбГУ». */
 export function hubSubtitle(level: TorflLevel): string {
-  return `${TORFL_PROFILES[level].nameRu} · онлайн-экзамен СПбГУ`;
+  return `${TORFL_PROFILES[level].nameUk} · онлайн-экзамен СПбГУ`;
 }
 
 /** Library hub-card title: «ТРКИ-А1 · Элементарный уровень». */
 export function hubCardTitle(level: TorflLevel): string {
   const p = TORFL_PROFILES[level];
-  return `${p.chipLabel} · ${p.nameRu}`;
+  return `${p.chipLabel} · ${p.nameUk}`;
 }
 
 /** The hub's «Молния» row caption: «20 заданий в темпе экзамена — 34 секунды на задание». */

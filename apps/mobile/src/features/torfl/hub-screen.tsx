@@ -49,7 +49,7 @@ import {
   writingPracticeGroups,
   writingPracticeHref,
 } from './writing/writing-practice-model';
-import { minutesRu } from './minutes-ru';
+import { minutesUk } from './minutes-ru';
 
 export type HubOpenedFrom = 'library' | 'today' | 'deeplink';
 
@@ -334,7 +334,7 @@ export function TorflHubScreen({
               <View className="flex-1 gap-0.5">
                 <Text className="font-ui-medium">Билеты · {ticketCount}</Text>
                 <Text variant="caption">
-                  {`Тянешь тему монолога — ${minutesRu(profile.monologueDefaults.prepSec)} подготовки, ${minutesRu(profile.monologueDefaults.answerSec)} ответа, запись`}
+                  {`Тянешь тему монолога — ${minutesUk(profile.monologueDefaults.prepSec)} подготовки, ${minutesUk(profile.monologueDefaults.answerSec)} ответа, запись`}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -393,12 +393,12 @@ export function TorflHubScreen({
             <View className="gap-2">
               {writingPracticeGroups(writingEntries).map((group) => (
                 <View key={group.key} className="gap-2" testID={`torfl-writing-group-${group.key}`}>
-                  {group.titleRu && (
+                  {group.titleUk && (
                     <Text
                       variant="caption"
                       className="px-1 pt-1 font-ui-medium uppercase tracking-wider"
                     >
-                      {group.titleRu}
+                      {group.titleUk}
                     </Text>
                   )}
                   {group.entries.map((e) => (
@@ -412,10 +412,10 @@ export function TorflHubScreen({
                       <Ionicons name="create-outline" size={20} color={tokens.accent} />
                       <View className="flex-1 gap-0.5">
                         <Text className="font-ui-medium" numberOfLines={2}>
-                          {e.item.task.ru}
+                          {e.item.task.uk}
                         </Text>
                         <Text variant="caption" numberOfLines={1}>
-                          {e.examTitleRu} · {e.item.bullets.length} пункт(ов) · без таймера
+                          {e.examTitleUk} · {e.item.bullets.length} пункт(ов) · без таймера
                         </Text>
                       </View>
                       <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />

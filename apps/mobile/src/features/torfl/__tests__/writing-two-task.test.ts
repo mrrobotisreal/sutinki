@@ -1,6 +1,6 @@
-import { ExamSchema, type Exam } from '@sumrak/schema';
-import a1Pack from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import a2Pack from '@sumrak/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import { ExamSchema, type Exam } from '@sutinki/schema';
+import a1Pack from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import a2Pack from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
 import { describe, expect, it, vi } from 'vitest';
 
 import { scoreWritingSubtest } from '../engine/finish';
@@ -208,9 +208,9 @@ describe('write-note (T76)', () => {
     expect(isNoteTopic('write-note')).toBe(true);
   });
   it('labels the form row per topic', () => {
-    expect(criterionLabel('letter-form').ru).toBe('Форма письма');
-    expect(criterionLabel('letter-form', 'write-note').ru).toBe('Форма записки');
-    expect(criterionLabel('grammar', 'write-note').ru).toBe(criterionLabel('grammar').ru);
+    expect(criterionLabel('letter-form').uk).toBe('Форма письма');
+    expect(criterionLabel('letter-form', 'write-note').uk).toBe('Форма записки');
+    expect(criterionLabel('grammar', 'write-note').uk).toBe(criterionLabel('grammar').uk);
   });
   it('offlineItemScore over a 50-point row', () => {
     const g = gradeWritingOffline(note, NOTE);

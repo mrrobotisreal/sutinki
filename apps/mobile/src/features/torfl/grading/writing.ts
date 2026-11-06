@@ -43,10 +43,10 @@ export function criterionMax(id: WritingCriterionId): number {
   return WRITING_CRITERIA.find((c) => c.id === id)!.max;
 }
 
-export function criterionLabel(id: string, topic?: string): { ru: string; en: string } {
+export function criterionLabel(id: string, topic?: string): { uk: string; en: string } {
   // T76: the messenger note's form row reads «Форма записки» (letters keep «Форма письма»).
   if (id === 'letter-form' && topic === 'write-note') {
-    return { ru: 'Форма записки', en: 'Note form' };
+    return { uk: 'Форма записки', en: 'Note form' };
   }
   const hit = WRITING_CRITERIA.find((c) => c.id === id);
   return hit ? { uk: hit.uk, en: hit.en } : { uk: id, en: id };

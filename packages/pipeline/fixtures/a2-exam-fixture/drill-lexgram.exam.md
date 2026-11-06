@@ -4,13 +4,13 @@ exam:
   format: torfl
   level: A2
   mode: drill
-  title: { ru: 'Время и даты', en: 'Time and dates' }
+  title: { uk: 'Время и даты', en: 'Time and dates' }
   blurb: 'Time expressions in the accusative and genitive — six fixture items.'
   subtests:
     - id: lexgram
       kind: lexgram
-      title: { ru: 'Лексика. Грамматика', en: 'Vocabulary. Grammar' }
-      instructions: { ru: 'Выберите один вариант ответа.', en: 'Choose one answer.' }
+      title: { uk: 'Лексика. Грамматика', en: 'Vocabulary. Grammar' }
+      instructions: { uk: 'Выберите один вариант ответа.', en: 'Choose one answer.' }
       durationMin: 5
       dictionary: false
       navigation: free
@@ -18,7 +18,7 @@ exam:
       maxPoints: 6
       parts:
         - id: p1
-          instructions: { ru: 'Задания 1–6.', en: 'Items 1–6.' }
+          instructions: { uk: 'Задания 1–6.', en: 'Items 1–6.' }
           items:
             - id: dt01
               kind: choice

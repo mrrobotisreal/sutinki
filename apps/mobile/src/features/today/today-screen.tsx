@@ -282,7 +282,7 @@ export function TodayScreen() {
                     router.push({ pathname: '/torfl', params: { from: 'today', level } });
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={`Открыть подготовку к ${chip}`}
+                  accessibilityLabel={`Открыть подготовку к ${chip}`} // upstream-ok: hidden TORFL card (UT16/UT17)
                   className="flex-row items-center justify-between gap-3 active:opacity-70"
                 >
                   <View className="flex-1 gap-0.5">

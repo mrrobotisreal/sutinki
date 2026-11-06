@@ -83,8 +83,8 @@ export function promptsForLevel<T extends Pick<AnswerPrompt, 'tags' | 'packLevel
   return prompts.filter((p) => isTorflPrompt(p) && promptLevel(p) === level);
 }
 
-function topicLabels(topic: string): { ru: string; en: string } {
-  if (topic === OTHER_TOPIC) return { ru: 'Другие темы', en: 'Other topics' };
+function topicLabels(topic: string): { uk: string; en: string } {
+  if (topic === OTHER_TOPIC) return { uk: 'Другие темы', en: 'Other topics' };
   const l = topicLabel(topic);
   return { uk: l.uk, en: l.en };
 }

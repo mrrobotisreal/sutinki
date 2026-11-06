@@ -56,7 +56,7 @@ describe('torfl.prefs healing', () => {
   it('defaults match TORFL §4.4', () => {
     expect(DEFAULT_TORFL_PREFS).toEqual({
       v: 1,
-      instructionLang: 'ru',
+      instructionLang: 'uk',
       drillTimer: 'off',
       breakBetweenSubtests: true,
       allowLookupInMockReading: true,
@@ -97,12 +97,12 @@ describe('torfl.prefs healing', () => {
       }),
     ).toEqual({
       v: 1,
-      instructionLang: 'ru',
+      instructionLang: 'uk',
       drillTimer: 'exam-pace',
       breakBetweenSubtests: false,
       allowLookupInMockReading: true,
     });
-    expect(parseTorflPrefs({ instructionLang: 'de' }).instructionLang).toBe('ru');
+    expect(parseTorflPrefs({ instructionLang: 'de' }).instructionLang).toBe('uk');
   });
 
   it('a valid value passes through untouched', () => {

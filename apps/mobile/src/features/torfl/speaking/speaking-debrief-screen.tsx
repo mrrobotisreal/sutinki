@@ -356,8 +356,8 @@ export function EntryCard({
     item.kind === 'speaking-monologue'
       ? item.topicTitle.uk
       : item.kind === 'speaking-situation'
-        ? (item.situation?.ru ?? c.situation)
-        : (promptAudio.data?.transcript.map((s) => s.ru).join(' ') ?? c.examinerQuestion);
+        ? (item.situation?.uk ?? c.situation)
+        : (promptAudio.data?.transcript.map((s) => s.uk).join(' ') ?? c.examinerQuestion);
 
   const verdictLine = (() => {
     if (!details) return entry.unchosen ? c.topicNotChosen : c.noAnswer;

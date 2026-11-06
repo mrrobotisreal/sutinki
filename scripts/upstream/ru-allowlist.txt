@@ -75,3 +75,9 @@ packages/schema/src/exam.ts # UT16/UT17 — exam schema docs/normalization keep 
 apps/mobile/src/features/review/games/cloze/stem-split.ts # UT20 (already on main, found by UP04 sweep) — language-parameterised ru branch intentionally kept; removed when the ru branch is dropped
 apps/mobile/src/features/review/games/__tests__/stem-split.test.ts # UT20 (already on main) — ru-branch tests; removed with the ru branch
 apps/mobile/src/features/word-forms/lessons-screen.tsx # UT13 (already on main) — renders profile `ru` section title; removed when the profile contract renames
+apps/mobile/src/features/ai/dev/exam-a2-cases.ts # UT16/UT17 (UP06) — Russian A2 grading capture cases (dev only); removed when UT16/UT17 rewrite them
+apps/mobile/src/app/dev-exam-capture.tsx # UT16/UT17 (UP06) — dev-only A2 capture screen; removed when UT16/UT17 rewrite it
+apps/mobile/src/features/ai/__tests__/__fixtures__/a1-prompts.golden.json # UT16/UT17 (UP06) — Russian exam prompt golden; removed when UT16/UT17 rewrite the prompts
+packages/pipeline/fixtures/a2-exam-fixture/* # UT16/UT17 (UP06) — Russian TORFL A2 engine fixture; removed when UT16/UT17 re-target it
+packages/schema/fixtures/packs/a2-exam-fixture/* # UT16/UT17 (UP06) — Russian TORFL A2 engine fixture; removed when UT16/UT17 re-target it
+packages/schema/fixtures/packs/a2-torfl-* # UT16/UT17 (UP06) — Russian TORFL A2 prompts fixture; removed when UT16/UT17 re-target it

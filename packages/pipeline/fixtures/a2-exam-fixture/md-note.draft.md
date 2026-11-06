@@ -3,13 +3,13 @@ pack:
   id: a2-exam-fixture
   version: 1
   type: exam
-  title: { ru: "ТРКИ-А2: тестовый пакет", en: "TORFL A2: fixture pack" }
+  title: { uk: "ТРКИ-А2: тестовый пакет", en: "TORFL A2: fixture pack" }
   level: A2
   tags: ["torfl", "torfl-a2", "torfl:fixture"]
   category: torfl-a2
 story:
   id: md-note
-  title: { ru: "Сообщение: давай встретимся", en: "Message: let's meet" }
+  title: { uk: "Сообщение: давай встретимся", en: "Message: let's meet" }
   level: A2
 voice:
   - id: md01-wintrow-lecturer
@@ -20,7 +20,7 @@ voice:
 
 ## tfa2fx01d01-s01
 
-RU: Привет, Алина!
+UK: Привет, Алина!
 EN: Hi, Alina!
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -32,7 +32,7 @@ EN: Hi, Alina!
 
 ## tfa2fx01d01-s02
 
-RU: В пятницу я работаю допоздна, поэтому предлагаю субботу.
+UK: В пятницу я работаю допоздна, поэтому предлагаю субботу.
 EN: On Friday I work late, so I suggest Saturday.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -50,7 +50,7 @@ EN: On Friday I work late, so I suggest Saturday.
 
 ## tfa2fx01d01-s03
 
-RU: Давай встретимся в три часа дня в кафе возле парка в Киеве.
+UK: Давай встретимся в три часа дня в кафе возле парка в Киеве.
 EN: Let's meet at three in the afternoon at a café near the park in Kyiv.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -71,7 +71,7 @@ EN: Let's meet at three in the afternoon at a café near the park in Kyiv.
 
 ## tfa2fx01d01-s04
 
-RU: Если это неудобно, напиши мне.
+UK: Если это неудобно, напиши мне.
 EN: If this is inconvenient, write to me.
 
 | text | lemma | translation | pos | grammar | level | note |
@@ -86,7 +86,7 @@ EN: If this is inconvenient, write to me.
 
 ## tfa2fx01d01-s05
 
-RU: Пока! Целую.
+UK: Пока! Целую.
 EN: Bye! Kisses.
 
 | text | lemma | translation | pos | grammar | level | note |

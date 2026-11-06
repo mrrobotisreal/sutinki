@@ -14,16 +14,16 @@ import type { AiRunProfile } from '@/features/ai/run-profile';
 export const DRILL_TIMERS = ['off', 'exam-pace'] as const;
 export type DrillTimer = (typeof DRILL_TIMERS)[number];
 
-export const INSTRUCTION_LANGS = ['ru', 'en'] as const;
+export const INSTRUCTION_LANGS = ['uk', 'en'] as const;
 export type InstructionLang = (typeof INSTRUCTION_LANGS)[number];
 
 export interface TorflPrefs {
   v: 1;
   /**
    * T77: the language of every INSTRUCTION string (what to do / buttons / status lines) on the
-   * TORFL screens — 'ru' (the real test, default) or 'en'. Examiner questions, situations,
+   * TORFL screens — 'uk' (the real test, default) or 'en'. Examiner questions, situations,
    * topics, passages and scripts are content and are never translated. Replaces the T68
-   * `showEnglishInstructions` boolean (any stored value just heals to the 'ru' default).
+   * `showEnglishInstructions` boolean (any stored value just heals to the 'uk' default).
    */
   instructionLang: InstructionLang;
   /** Drills untimed ('off') or with the 34 s/item exam pace bar. */
@@ -36,7 +36,7 @@ export interface TorflPrefs {
 
 export const DEFAULT_TORFL_PREFS: TorflPrefs = {
   v: 1,
-  instructionLang: 'ru',
+  instructionLang: 'uk',
   drillTimer: 'off',
   breakBetweenSubtests: true,
   allowLookupInMockReading: true,

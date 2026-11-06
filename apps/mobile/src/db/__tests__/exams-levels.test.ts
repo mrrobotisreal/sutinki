@@ -1,8 +1,8 @@
-import { ExamSchema, type Pack } from '@sumrak/schema';
-import a1ExamPackJson from '@sumrak/schema/fixtures/packs/a1-exam-fixture/pack.json';
-import a2ExamPackJson from '@sumrak/schema/fixtures/packs/a2-exam-fixture/pack.json';
-import a1PromptsPackJson from '@sumrak/schema/fixtures/packs/a1-torfl-prompts-fixture/pack.json';
-import a2PromptsPackJson from '@sumrak/schema/fixtures/packs/a2-torfl-prompts-fixture/pack.json';
+import { ExamSchema, type Pack } from '@sutinki/schema';
+import a1ExamPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
+import a2ExamPackJson from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import a1PromptsPackJson from '@sutinki/schema/fixtures/packs/a1-torfl-prompts-fixture/pack.json';
+import a2PromptsPackJson from '@sutinki/schema/fixtures/packs/a2-torfl-prompts-fixture/pack.json';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { groupTexts, type TextStoryLike } from '@/features/torfl/hub-model';
@@ -14,7 +14,7 @@ import { importPack, removePack } from '../importer';
 import { createRepositories } from '../repositories';
 import { ExamRating } from '../repositories/exams';
 import { createTestDb } from './helpers';
-import type { SumrakDB } from '../types';
+import type { SutinkiDB } from '../types';
 
 const trackMock = vi.hoisted(() => vi.fn());
 vi.mock('@/services/analytics', () => ({ track: trackMock }));
@@ -38,7 +38,7 @@ const T0 = 1_790_000_000_000;
 const MIN = 60_000;
 const DAY = 86_400_000;
 
-let db: SumrakDB;
+let db: SutinkiDB;
 let repos: ReturnType<typeof createRepositories>;
 
 function stateFor(pack: Pack, examId: string): ExamAttemptState {
@@ -267,7 +267,7 @@ describe('journal prompts by pack level', () => {
     const shaped = rows.map((r) => ({
       packId: r.prompt.packId,
       id: r.prompt.id,
-      promptRu: r.prompt.promptRu,
+      promptUk: r.prompt.promptUk,
       promptEn: r.prompt.promptEn,
       tags: r.prompt.tags ?? null,
       packLevel: r.packLevel,
@@ -287,7 +287,7 @@ describe('texts per level', () => {
       packId: s.packId,
       id: s.id,
       orderIdx: s.orderIdx,
-      titleRu: s.titleRu,
+      titleUk: s.titleUk,
       titleEn: s.titleEn,
       sentenceCount: s.sentenceCount,
     }));

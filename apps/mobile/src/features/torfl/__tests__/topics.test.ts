@@ -28,20 +28,20 @@ describe('topics (TORFL §3.4)', () => {
 
   it('the 11 A2 slugs carry their T75 RU labels and sort after their A1 neighbours', () => {
     expect(topicLabel('lex-phrases')).toEqual({
-      ru: 'Речевой этикет',
+      uk: 'Речевой этикет',
       en: 'Speech etiquette',
       subtestKind: 'lexgram',
     });
-    expect(topicLabel('case-plural').ru).toBe('Падежи во мн. числе');
-    expect(topicLabel('case-time').ru).toBe('Время и даты');
-    expect(topicLabel('numerals').ru).toBe('Числительные');
-    expect(topicLabel('comparative').ru).toBe('Сравнение');
-    expect(topicLabel('verb-motion-prefix').ru).toBe('Приставочные глаголы движения');
-    expect(topicLabel('clauses').ru).toBe('Сложное предложение');
-    expect(topicLabel('read-match').ru).toBe('Какой фильм?');
-    expect(topicLabel('listen-goal').ru).toBe('Цель диалога');
-    expect(topicLabel('listen-monologue').ru).toBe('Монолог');
-    expect(topicLabel('write-note').ru).toBe('Записка / сообщение');
+    expect(topicLabel('case-plural').uk).toBe('Падежи во мн. числе');
+    expect(topicLabel('case-time').uk).toBe('Время и даты');
+    expect(topicLabel('numerals').uk).toBe('Числительные');
+    expect(topicLabel('comparative').uk).toBe('Сравнение');
+    expect(topicLabel('verb-motion-prefix').uk).toBe('Приставочные глаголы движения');
+    expect(topicLabel('clauses').uk).toBe('Сложное предложение');
+    expect(topicLabel('read-match').uk).toBe('Какой фильм?');
+    expect(topicLabel('listen-goal').uk).toBe('Цель диалога');
+    expect(topicLabel('listen-monologue').uk).toBe('Монолог');
+    expect(topicLabel('write-note').uk).toBe('Записка / сообщение');
     expect(compareTopics('conj', 'lex-phrases')).toBeLessThan(0);
     expect(compareTopics('write-letter', 'write-note')).toBeLessThan(0);
   });

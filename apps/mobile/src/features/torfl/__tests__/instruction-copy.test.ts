@@ -44,7 +44,7 @@ describe('instruction copy (T77)', () => {
   });
 
   it('every ru/en pair is filled, and en differs from ru for plain strings', () => {
-    const ru = instructionCopy('ru');
+    const ru = instructionCopy('uk');
     const en = instructionCopy('en');
     expect(Object.keys(en).sort()).toEqual(Object.keys(ru).sort());
     for (const key of Object.keys(ru) as (keyof typeof ru)[]) {
@@ -58,9 +58,9 @@ describe('instruction copy (T77)', () => {
 
   it('the speaking-flow strings say what Mitch asked', () => {
     expect(instructionCopy('en').readyHeading).toBe('Tap the mic and answer');
-    expect(instructionCopy('ru').readyHeading).toBe('Нажми и говори');
+    expect(instructionCopy('uk').readyHeading).toBe('Нажми и говори');
     expect(instructionCopy('en').done).toBe('Done');
-    expect(instructionCopy('ru').done).toBe('Готово');
+    expect(instructionCopy('uk').done).toBe('Готово');
   });
 
   it('timing copy: RU stays the T76 text, EN is the same sentence in plain words', () => {

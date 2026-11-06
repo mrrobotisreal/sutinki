@@ -38,7 +38,7 @@ async function loadAnswers(level: TorflLevel): Promise<AnswersData> {
     rows.map((r) => ({
       packId: r.prompt.packId,
       id: r.prompt.id,
-      promptRu: r.prompt.promptRu,
+      promptUk: r.prompt.promptUk,
       promptEn: r.prompt.promptEn,
       tags: r.prompt.tags ?? null,
       packLevel: r.packLevel,

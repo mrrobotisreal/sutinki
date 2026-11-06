@@ -29,11 +29,11 @@ export function LangToggle({
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={instructionCopy(lang).toggleA11y}
-      accessibilityValue={{ text: lang === 'ru' ? 'Русский' : 'English' }}
+      accessibilityValue={{ text: lang === 'uk' ? 'Русский' : 'English' }}
       testID="lang-toggle"
       className="flex-row overflow-hidden rounded-full border border-border bg-surface"
     >
-      {(['ru', 'en'] as const).map((l) => (
+      {(['uk', 'en'] as const).map((l) => (
         <View key={l} className={cn('px-2.5 py-1', lang === l && 'bg-accent')}>
           <Text className={cn('font-ui-bold text-xs', lang === l ? 'text-bg' : 'text-text-muted')}>
             {l.toUpperCase()}

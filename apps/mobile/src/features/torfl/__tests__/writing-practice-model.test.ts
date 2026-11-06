@@ -2,7 +2,7 @@ import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
 import examPackJson from '@sutinki/schema/fixtures/packs/a1-exam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
-import a2Pack from '@sumrak/schema/fixtures/packs/a2-exam-fixture/pack.json';
+import a2Pack from '@sutinki/schema/fixtures/packs/a2-exam-fixture/pack.json';
 import {
   writingPracticeEntries,
   writingPracticeGroups,
@@ -80,19 +80,19 @@ describe('mergedCriteria', () => {
 describe('writingPracticeGroups (T76)', () => {
   it('A1: one flat letter group with no header', () => {
     const groups = writingPracticeGroups(writingPracticeEntries(summaries));
-    expect(groups.map((g) => [g.key, g.titleRu, g.entries.length])).toEqual([['letter', null, 1]]);
+    expect(groups.map((g) => [g.key, g.titleUk, g.entries.length])).toEqual([['letter', null, 1]]);
   });
   it('A2: Письмо then Записка', () => {
     const a2 = (a2Pack as unknown as Pack).exams!.map((e) => ({
       packId: 'a2-exam-fixture',
       examId: e.id,
       mode: e.mode,
-      titleRu: e.title.ru,
+      titleUk: e.title.uk,
       titleEn: e.title.en,
       exam: ExamSchema.parse(e) as Exam,
     }));
     const groups = writingPracticeGroups(writingPracticeEntries(a2));
-    expect(groups.map((g) => [g.key, g.titleRu])).toEqual([
+    expect(groups.map((g) => [g.key, g.titleUk])).toEqual([
       ['letter', 'Письмо'],
       ['note', 'Записка'],
     ]);

@@ -70,7 +70,7 @@ const FIXTURE_PACKS = [
   // parts, 10 lexgram, 5 read-match, 3 listening, 5 speaking) + 2 drills; dev import only, and
   // «Delete exam fixture» removes it with its attempts/cards (T75: the A2 fixtures go too).
   { id: 'a2-exam-fixture', note: 'exam · A2 · a2-mock-fx 5 subtests / 25 items · 2 drills' },
-  // T75 (M19): two `torfl-a2` prompts («ТРКИ-А2: мои ответы» on the S25) — never published.
+  // T75 (M19): two `torfl-a2` prompts («ТРКИ-А2: мои ответы» on the S25) — never published. // upstream-ok
   { id: 'a2-torfl-prompts-fixture', note: 'prompts/torfl-a2 · 2 prompts · A2' },
   // T38: a 15-lemma `reference` pack (core-a1 10 + core-a2 5) — dev import only. A planted
   // files/packs/core-lemmas-fixture/pack.json (e.g. the real core-lemmas-001 before its

@@ -3,7 +3,7 @@
   "version": 1,
   "type": "exam",
   "title": {
-    "ru": "ТРКИ-А2: тестовый пакет",
+    "uk": "ТРКИ-А2: тестовый пакет",
     "en": "TORFL A2: fixture pack"
   },
   "level": "A2",
@@ -16,14 +16,14 @@
     {
       "id": "ex-01",
       "title": {
-        "ru": "Вопросы экзаменатора",
+        "uk": "Вопросы экзаменатора",
         "en": "Examiner lines"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "tfa2fx01e01-s01",
-          "ru": "Как вы обычно проводите выходные?",
+          "uk": "Как вы обычно проводите выходные?",
           "en": "How do you usually spend your weekends?",
           "tokens": [
             {
@@ -72,7 +72,7 @@
         },
         {
           "id": "tfa2fx01e01-s02",
-          "ru": "Какой фильм вы смотрели недавно?",
+          "uk": "Какой фильм вы смотрели недавно?",
           "en": "Which film did you watch recently?",
           "tokens": [
             {
@@ -122,7 +122,7 @@
         },
         {
           "id": "tfa2fx01e01-s03",
-          "ru": "Ваш друг пригласил вас в кино, но вы заняты. Откажитесь и предложите другой день.",
+          "uk": "Ваш друг пригласил вас в кино, но вы заняты. Откажитесь и предложите другой день.",
           "en": "Your friend invited you to the cinema, but you are busy. Refuse and suggest another day.",
           "tokens": [
             {
@@ -251,7 +251,7 @@
         },
         {
           "id": "tfa2fx01e01-s04",
-          "ru": "Вы хотите купить билеты в театр. Спросите, сколько они стоят.",
+          "uk": "Вы хотите купить билеты в театр. Спросите, сколько они стоят.",
           "en": "You want to buy tickets for the theatre. Ask how much they cost.",
           "tokens": [
             {
@@ -353,14 +353,14 @@
     {
       "id": "ls-01",
       "title": {
-        "ru": "Маша и Саша",
+        "uk": "Маша и Саша",
         "en": "Masha and Sasha"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "tfa2fx01l01-s01",
-          "ru": "Привет, Саша! Ты свободен в субботу?",
+          "uk": "Привет, Саша! Ты свободен в субботу?",
           "en": "Hi, Sasha! Are you free on Saturday?",
           "tokens": [
             {
@@ -426,7 +426,7 @@
         },
         {
           "id": "tfa2fx01l01-s02",
-          "ru": "Привет, Маша! Да, свободен. Давай пойдём в кино.",
+          "uk": "Привет, Маша! Да, свободен. Давай пойдём в кино.",
           "en": "Hi, Masha! Yes, I'm free. Let's go to the cinema.",
           "tokens": [
             {
@@ -514,7 +514,7 @@
         },
         {
           "id": "tfa2fx01l01-s03",
-          "ru": "Хорошо! Во сколько встретимся?",
+          "uk": "Хорошо! Во сколько встретимся?",
           "en": "Good! What time shall we meet?",
           "tokens": [
             {
@@ -560,7 +560,7 @@
         },
         {
           "id": "tfa2fx01l01-s04",
-          "ru": "В шесть часов. Встретимся у кинотеатра, хорошо?",
+          "uk": "В шесть часов. Встретимся у кинотеатра, хорошо?",
           "en": "At six o'clock. Let's meet by the cinema, OK?",
           "tokens": [
             {
@@ -633,7 +633,7 @@
         },
         {
           "id": "tfa2fx01l01-s05",
-          "ru": "Отлично. До субботы!",
+          "uk": "Отлично. До субботы!",
           "en": "Great. See you on Saturday!",
           "tokens": [
             {
@@ -671,7 +671,7 @@
         },
         {
           "id": "tfa2fx01l01-s06",
-          "ru": "Пока! Не опоздай.",
+          "uk": "Пока! Не опоздай.",
           "en": "Bye! Don't be late.",
           "tokens": [
             {
@@ -712,14 +712,14 @@
     {
       "id": "md-note",
       "title": {
-        "ru": "Сообщение: давай встретимся",
+        "uk": "Сообщение: давай встретимся",
         "en": "Message: let's meet"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "tfa2fx01d01-s01",
-          "ru": "Привет, Алина!",
+          "uk": "Привет, Алина!",
           "en": "Hi, Alina!",
           "tokens": [
             {
@@ -749,7 +749,7 @@
         },
         {
           "id": "tfa2fx01d01-s02",
-          "ru": "В пятницу я работаю допоздна, поэтому предлагаю субботу.",
+          "uk": "В пятницу я работаю допоздна, поэтому предлагаю субботу.",
           "en": "On Friday I work late, so I suggest Saturday.",
           "tokens": [
             {
@@ -827,7 +827,7 @@
         },
         {
           "id": "tfa2fx01d01-s03",
-          "ru": "Давай встретимся в три часа дня в кафе возле парка в Киеве.",
+          "uk": "Давай встретимся в три часа дня в кафе возле парка в Киеве.",
           "en": "Let's meet at three in the afternoon at a café near the park in Kyiv.",
           "tokens": [
             {
@@ -932,7 +932,7 @@
         },
         {
           "id": "tfa2fx01d01-s04",
-          "ru": "Если это неудобно, напиши мне.",
+          "uk": "Если это неудобно, напиши мне.",
           "en": "If this is inconvenient, write to me.",
           "tokens": [
             {
@@ -984,7 +984,7 @@
         },
         {
           "id": "tfa2fx01d01-s05",
-          "ru": "Пока! Целую.",
+          "uk": "Пока! Целую.",
           "en": "Bye! Kisses.",
           "tokens": [
             {
@@ -1018,14 +1018,14 @@
     {
       "id": "rd-01",
       "title": {
-        "ru": "Три фильма",
+        "uk": "Три фильма",
         "en": "Three films"
       },
       "level": "A2",
       "sentences": [
         {
           "id": "tfa2fx01r01-s01",
-          "ru": "Фильм «Старый дом».",
+          "uk": "Фильм «Старый дом».",
           "en": "The film \"Old House\".",
           "tokens": [
             {
@@ -1070,7 +1070,7 @@
         },
         {
           "id": "tfa2fx01r01-s02",
-          "ru": "Семья переехала в старый дом, и там начались странные звуки.",
+          "uk": "Семья переехала в старый дом, и там начались странные звуки.",
           "en": "A family moved into an old house, and strange sounds started there.",
           "tokens": [
             {
@@ -1163,7 +1163,7 @@
         },
         {
           "id": "tfa2fx01r01-s03",
-          "ru": "Этот фильм страшнее, чем другие фильмы этого года.",
+          "uk": "Этот фильм страшнее, чем другие фильмы этого года.",
           "en": "This film is scarier than other films this year.",
           "tokens": [
             {
@@ -1242,7 +1242,7 @@
         },
         {
           "id": "tfa2fx01r01-s04",
-          "ru": "Фильм «Зимний вечер».",
+          "uk": "Фильм «Зимний вечер».",
           "en": "The film \"Winter Evening\".",
           "tokens": [
             {
@@ -1287,7 +1287,7 @@
         },
         {
           "id": "tfa2fx01r01-s05",
-          "ru": "Молодая женщина приехала в маленький город и встретила старого друга.",
+          "uk": "Молодая женщина приехала в маленький город и встретила старого друга.",
           "en": "A young woman came to a small town and met an old friend.",
           "tokens": [
             {
@@ -1377,7 +1377,7 @@
         },
         {
           "id": "tfa2fx01r01-s06",
-          "ru": "Это добрый фильм, который можно смотреть вместе с семьёй.",
+          "uk": "Это добрый фильм, который можно смотреть вместе с семьёй.",
           "en": "It is a kind film that you can watch together with the family.",
           "tokens": [
             {
@@ -1461,7 +1461,7 @@
         },
         {
           "id": "tfa2fx01r01-s07",
-          "ru": "Фильм «Друг из Львова».",
+          "uk": "Фильм «Друг из Львова».",
           "en": "The film \"A Friend from Lviv\".",
           "tokens": [
             {
@@ -1514,7 +1514,7 @@
         },
         {
           "id": "tfa2fx01r01-s08",
-          "ru": "Мальчик из Львова помог новому соседу в трудной ситуации.",
+          "uk": "Мальчик из Львова помог новому соседу в трудной ситуации.",
           "en": "A boy from Lviv helped his new neighbour in a difficult situation.",
           "tokens": [
             {
@@ -1597,7 +1597,7 @@
         },
         {
           "id": "tfa2fx01r01-s09",
-          "ru": "Фильм был интереснее, чем я думал.",
+          "uk": "Фильм был интереснее, чем я думал.",
           "en": "The film was more interesting than I thought.",
           "tokens": [
             {
@@ -1668,7 +1668,7 @@
       "level": "A2",
       "mode": "drill",
       "title": {
-        "ru": "Время и даты",
+        "uk": "Время и даты",
         "en": "Time and dates"
       },
       "blurb": "Time expressions in the accusative and genitive — six fixture items.",
@@ -1677,11 +1677,11 @@
           "id": "lexgram",
           "kind": "lexgram",
           "title": {
-            "ru": "Лексика. Грамматика",
+            "uk": "Лексика. Грамматика",
             "en": "Vocabulary. Grammar"
           },
           "instructions": {
-            "ru": "Выберите один вариант ответа.",
+            "uk": "Выберите один вариант ответа.",
             "en": "Choose one answer."
           },
           "durationMin": 5,
@@ -1693,7 +1693,7 @@
             {
               "id": "p1",
               "instructions": {
-                "ru": "Задания 1–6.",
+                "uk": "Задания 1–6.",
                 "en": "Items 1–6."
               },
               "items": [
@@ -1791,7 +1791,7 @@
       "level": "A2",
       "mode": "drill",
       "title": {
-        "ru": "Запишите информацию",
+        "uk": "Запишите информацию",
         "en": "Info capture"
       },
       "blurb": "Listen to the dialogue and capture the details — two fixture items.",
@@ -1800,11 +1800,11 @@
           "id": "listening",
           "kind": "listening",
           "title": {
-            "ru": "Аудирование",
+            "uk": "Аудирование",
             "en": "Listening"
           },
           "instructions": {
-            "ru": "Прослушайте диалог и ответьте на вопросы.",
+            "uk": "Прослушайте диалог и ответьте на вопросы.",
             "en": "Listen to the dialogue and answer."
           },
           "durationMin": 5,
@@ -1816,7 +1816,7 @@
             {
               "id": "p1",
               "instructions": {
-                "ru": "Задания 1–2. Прослушайте диалог.",
+                "uk": "Задания 1–2. Прослушайте диалог.",
                 "en": "Items 1–2. Listen to the dialogue."
               },
               "items": [
@@ -1863,7 +1863,7 @@
       "level": "A2",
       "mode": "mock",
       "title": {
-        "ru": "Вариант ФХ (А2)",
+        "uk": "Вариант ФХ (А2)",
         "en": "Fixture mock (A2)"
       },
       "subtests": [
@@ -1871,11 +1871,11 @@
           "id": "writing",
           "kind": "writing",
           "title": {
-            "ru": "Письмо",
+            "uk": "Письмо",
             "en": "Writing"
           },
           "instructions": {
-            "ru": "Время выполнения — 50 минут. Можно пользоваться словарём.",
+            "uk": "Время выполнения — 50 минут. Можно пользоваться словарём.",
             "en": "50 minutes · dictionary allowed."
           },
           "durationMin": 50,
@@ -1886,7 +1886,7 @@
             {
               "id": "p1",
               "instructions": {
-                "ru": "Задание 1. Напишите письмо другу.",
+                "uk": "Задание 1. Напишите письмо другу.",
                 "en": "Task 1. Write a letter to a friend."
               },
               "items": [
@@ -1895,14 +1895,14 @@
                   "topic": "write-letter",
                   "kind": "writing",
                   "task": {
-                    "ru": "Вы закончили курс русского языка. Напишите письмо другу и расскажите об этом.",
+                    "uk": "Вы закончили курс русского языка. Напишите письмо другу и расскажите об этом.",
                     "en": "You finished a Russian language course. Write a letter to a friend and tell them about it."
                   },
                   "bullets": [
                     {
                       "id": "b1",
                       "text": {
-                        "ru": "где и когда был курс",
+                        "uk": "где и когда был курс",
                         "en": "where and when the course was"
                       },
                       "cues": [
@@ -1912,7 +1912,7 @@
                     {
                       "id": "b2",
                       "text": {
-                        "ru": "сколько времени вы учили русский",
+                        "uk": "сколько времени вы учили русский",
                         "en": "how long you studied Russian"
                       },
                       "cues": [
@@ -1924,7 +1924,7 @@
                     {
                       "id": "b3",
                       "text": {
-                        "ru": "кто был преподавателем",
+                        "uk": "кто был преподавателем",
                         "en": "who the teacher was"
                       },
                       "cues": [
@@ -1935,7 +1935,7 @@
                     {
                       "id": "b4",
                       "text": {
-                        "ru": "что было самым трудным",
+                        "uk": "что было самым трудным",
                         "en": "what was the hardest part"
                       },
                       "cues": [
@@ -1945,7 +1945,7 @@
                     {
                       "id": "b5",
                       "text": {
-                        "ru": "что вам понравилось",
+                        "uk": "что вам понравилось",
                         "en": "what you liked"
                       },
                       "cues": [
@@ -1955,7 +1955,7 @@
                     {
                       "id": "b6",
                       "text": {
-                        "ru": "спросите друга, хочет ли он тоже учиться",
+                        "uk": "спросите друга, хочет ли он тоже учиться",
                         "en": "ask your friend whether they want to study too"
                       },
                       "cues": [
@@ -1973,7 +1973,7 @@
             {
               "id": "p2",
               "instructions": {
-                "ru": "Задание 2. Напишите сообщение.",
+                "uk": "Задание 2. Напишите сообщение.",
                 "en": "Task 2. Write a message."
               },
               "items": [
@@ -1982,14 +1982,14 @@
                   "topic": "write-note",
                   "kind": "writing",
                   "task": {
-                    "ru": "Напишите другу сообщение и предложите встретиться. Укажите причину, день, время и место.",
+                    "uk": "Напишите другу сообщение и предложите встретиться. Укажите причину, день, время и место.",
                     "en": "Write a message to a friend and propose meeting. Give a reason, the day, the time and the place."
                   },
                   "bullets": [
                     {
                       "id": "b1",
                       "text": {
-                        "ru": "причина: почему вы не можете в другой день",
+                        "uk": "причина: почему вы не можете в другой день",
                         "en": "reason: why you cannot make another day"
                       },
                       "cues": [
@@ -2000,7 +2000,7 @@
                     {
                       "id": "b2",
                       "text": {
-                        "ru": "какой день",
+                        "uk": "какой день",
                         "en": "which day"
                       },
                       "cues": [
@@ -2012,7 +2012,7 @@
                     {
                       "id": "b3",
                       "text": {
-                        "ru": "во сколько",
+                        "uk": "во сколько",
                         "en": "what time"
                       },
                       "cues": [
@@ -2024,7 +2024,7 @@
                     {
                       "id": "b4",
                       "text": {
-                        "ru": "где",
+                        "uk": "где",
                         "en": "where"
                       },
                       "cues": [
@@ -2048,11 +2048,11 @@
           "id": "lexgram",
           "kind": "lexgram",
           "title": {
-            "ru": "Лексика. Грамматика",
+            "uk": "Лексика. Грамматика",
             "en": "Vocabulary. Grammar"
           },
           "instructions": {
-            "ru": "Время выполнения — 50 минут. Пользоваться словарём нельзя.",
+            "uk": "Время выполнения — 50 минут. Пользоваться словарём нельзя.",
             "en": "50 minutes · no dictionary."
           },
           "durationMin": 50,
@@ -2064,7 +2064,7 @@
             {
               "id": "p1",
               "instructions": {
-                "ru": "Задания 1–5. Выберите один вариант ответа.",
+                "uk": "Задания 1–5. Выберите один вариант ответа.",
                 "en": "Items 1–5. Choose one answer."
               },
               "items": [
@@ -2137,7 +2137,7 @@
             {
               "id": "p2",
               "instructions": {
-                "ru": "Задания 6–10. Выберите один вариант ответа.",
+                "uk": "Задания 6–10. Выберите один вариант ответа.",
                 "en": "Items 6–10. Choose one answer."
               },
               "items": [
@@ -2210,11 +2210,11 @@
           "id": "reading",
           "kind": "reading",
           "title": {
-            "ru": "Чтение",
+            "uk": "Чтение",
             "en": "Reading"
           },
           "instructions": {
-            "ru": "Время выполнения — 50 минут. Можно пользоваться словарём.",
+            "uk": "Время выполнения — 50 минут. Можно пользоваться словарём.",
             "en": "50 minutes · dictionary allowed."
           },
           "durationMin": 50,
@@ -2226,7 +2226,7 @@
             {
               "id": "p3",
               "instructions": {
-                "ru": "Задания 1–5. Прочитайте тексты. Выберите один вариант ответа.",
+                "uk": "Задания 1–5. Прочитайте тексты. Выберите один вариант ответа.",
                 "en": "Items 1–5. Read the texts. Choose one answer."
               },
               "items": [
@@ -2313,11 +2313,11 @@
           "id": "listening",
           "kind": "listening",
           "title": {
-            "ru": "Аудирование",
+            "uk": "Аудирование",
             "en": "Listening"
           },
           "instructions": {
-            "ru": "Время выполнения — 30 минут. Каждый текст звучит два раза.",
+            "uk": "Время выполнения — 30 минут. Каждый текст звучит два раза.",
             "en": "30 minutes · every text plays twice."
           },
           "durationMin": 30,
@@ -2330,7 +2330,7 @@
             {
               "id": "p4",
               "instructions": {
-                "ru": "Задания 1–3. Прослушайте диалог Маши и Саши. Выберите один вариант ответа.",
+                "uk": "Задания 1–3. Прослушайте диалог Маши и Саши. Выберите один вариант ответа.",
                 "en": "Items 1–3. Listen to Masha and Sasha. Choose one answer."
               },
               "items": [
@@ -2381,11 +2381,11 @@
           "id": "speaking",
           "kind": "speaking",
           "title": {
-            "ru": "Говорение",
+            "uk": "Говорение",
             "en": "Speaking"
           },
           "instructions": {
-            "ru": "Время выполнения — 25 минут.",
+            "uk": "Время выполнения — 25 минут.",
             "en": "25 minutes."
           },
           "durationMin": 25,
@@ -2396,7 +2396,7 @@
             {
               "id": "t1",
               "instructions": {
-                "ru": "Задание 1. Ответьте на вопросы.",
+                "uk": "Задание 1. Ответьте на вопросы.",
                 "en": "Task 1. Answer the questions."
               },
               "items": [
@@ -2463,7 +2463,7 @@
             {
               "id": "t2",
               "instructions": {
-                "ru": "Задание 2. Прочитайте ситуацию и начните диалог.",
+                "uk": "Задание 2. Прочитайте ситуацию и начните диалог.",
                 "en": "Task 2. Read the situation and start the dialogue."
               },
               "items": [
@@ -2478,7 +2478,7 @@
                     ]
                   },
                   "situation": {
-                    "ru": "Ваш друг пригласил вас в кино, но вы заняты. Откажитесь и предложите другой день.",
+                    "uk": "Ваш друг пригласил вас в кино, но вы заняты. Откажитесь и предложите другой день.",
                     "en": "Your friend invited you to the cinema, but you are busy. Refuse and suggest another day."
                   },
                   "expect": {
@@ -2512,7 +2512,7 @@
                     ]
                   },
                   "situation": {
-                    "ru": "Вы хотите купить билеты в театр. Спросите, сколько они стоят.",
+                    "uk": "Вы хотите купить билеты в театр. Спросите, сколько они стоят.",
                     "en": "You want to buy theatre tickets. Ask how much they cost."
                   },
                   "expect": {
@@ -2539,7 +2539,7 @@
             {
               "id": "t3",
               "instructions": {
-                "ru": "Задание 3. Расскажите о празднике.",
+                "uk": "Задание 3. Расскажите о празднике.",
                 "en": "Task 3. Talk about a holiday."
               },
               "items": [
@@ -2548,32 +2548,32 @@
                   "topic": "speak-monologue",
                   "kind": "speaking-monologue",
                   "topicTitle": {
-                    "ru": "Мой любимый праздник",
+                    "uk": "Мой любимый праздник",
                     "en": "My favourite holiday"
                   },
                   "questions": [
                     {
-                      "ru": "Какой ваш любимый праздник?",
+                      "uk": "Какой ваш любимый праздник?",
                       "cues": [
                         "праздник*"
                       ]
                     },
                     {
-                      "ru": "Когда он бывает?",
+                      "uk": "Когда он бывает?",
                       "cues": [
                         "декабр*",
                         "январ*"
                       ]
                     },
                     {
-                      "ru": "Как вы его празднуете?",
+                      "uk": "Как вы его празднуете?",
                       "cues": [
                         "празднуем",
                         "праздную"
                       ]
                     },
                     {
-                      "ru": "Кто бывает с вами?",
+                      "uk": "Кто бывает с вами?",
                       "cues": [
                         "друз*",
                         "семь*",
@@ -2581,14 +2581,14 @@
                       ]
                     },
                     {
-                      "ru": "Что вы едите и пьёте?",
+                      "uk": "Что вы едите и пьёте?",
                       "cues": [
                         "ем",
                         "едим"
                       ]
                     },
                     {
-                      "ru": "Что вам нравится больше всего?",
+                      "uk": "Что вам нравится больше всего?",
                       "cues": [
                         "нравится",
                         "нравит*"

@@ -703,7 +703,7 @@ function MonologueBody({
 export function speakingFacts(
   subtest: ExamSubtest,
   level: TorflLevel = 'A1',
-  lang: Lang = 'ru',
+  lang: Lang = 'uk',
 ): string[] {
   const c = instructionCopy(lang);
   const out: string[] = [];

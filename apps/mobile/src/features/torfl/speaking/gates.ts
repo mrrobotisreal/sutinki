@@ -10,7 +10,7 @@ import { instructionCopy, type Lang } from '../copy';
  */
 export function speakingGateMessage(
   gates: Pick<HubGates, 'gate' | 'mic'>,
-  lang: Lang = 'ru',
+  lang: Lang = 'uk',
 ): string | null {
   const c = instructionCopy(lang);
   if (gates.gate === 'asr-missing') {

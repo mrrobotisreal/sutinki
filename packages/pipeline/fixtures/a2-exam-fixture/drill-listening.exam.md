@@ -4,13 +4,13 @@ exam:
   format: torfl
   level: A2
   mode: drill
-  title: { ru: 'Запишите информацию', en: 'Info capture' }
+  title: { uk: 'Запишите информацию', en: 'Info capture' }
   blurb: 'Listen to the dialogue and capture the details — two fixture items.'
   subtests:
     - id: listening
       kind: listening
-      title: { ru: 'Аудирование', en: 'Listening' }
-      instructions: { ru: 'Прослушайте диалог и ответьте на вопросы.', en: 'Listen to the dialogue and answer.' }
+      title: { uk: 'Аудирование', en: 'Listening' }
+      instructions: { uk: 'Прослушайте диалог и ответьте на вопросы.', en: 'Listen to the dialogue and answer.' }
       durationMin: 5
       dictionary: false
       navigation: linear
@@ -18,7 +18,7 @@ exam:
       maxPoints: 12
       parts:
         - id: p1
-          instructions: { ru: 'Задания 1–2. Прослушайте диалог.', en: 'Items 1–2. Listen to the dialogue.' }
+          instructions: { uk: 'Задания 1–2. Прослушайте диалог.', en: 'Items 1–2. Listen to the dialogue.' }
           items:
             - id: di01
               kind: choice

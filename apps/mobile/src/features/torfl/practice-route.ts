@@ -1,4 +1,4 @@
-import type { Exam } from '@sumrak/schema';
+import type { Exam } from '@sutinki/schema';
 
 import { torflLevelOf } from './level-profile';
 import { ticketHref } from './speaking/tickets-model';
