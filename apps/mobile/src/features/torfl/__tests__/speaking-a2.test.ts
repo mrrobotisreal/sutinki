@@ -16,8 +16,8 @@ import {
   type ExamRunState,
 } from '../engine/exam-machine';
 import {
-  A2_VERB_STEMS,
   WPM_BANDS,
+  countVerbs,
   fluencyShare,
   gradeMonologueOffline,
   looksLikeVerb,
@@ -144,93 +144,112 @@ describe('speaking profile wiring', () => {
     expect(fluencyShare(est2, TORFL_PROFILES.B1.fluencyBands)).toBeCloseTo(good, 5); // B1 full = 80
   });
   it('the offline monologue scorer reads the level bands + the item minSentences', () => {
-    const item = A2.subtests.find((s) => s.kind === 'speaking')!.parts[2]!.items[0] as never;
+    const item = A2.subtests
+      .find((s) => s.kind === 'speaking')!
+      .parts.flatMap((p) => p.items)
+      .find((i) => i.kind === 'speaking-monologue') as never;
     const words = Array.from({ length: 75 }, () => 'слово');
-    const stamps = words.map((_, i) => ({ w: 'слово', s: i * 800, e: i * 800 + 800 }));
+    const stamps = words.map((_, i) => ({ w: 'слово', s: i * 923, e: i * 923 + 923 }));
     const a = { transcript: words.join(' '), words: stamps } as never;
     const g1 = gradeMonologueOffline(item, a, { level: 'A1' });
     const g2 = gradeMonologueOffline(item, a, { level: 'A2' });
-    const f = (g: typeof g1) => g.criteria.find((c) => c.id === 'fluency')!.score;
+    const f = (g: typeof g1) => g.criteria.find((c) => c.id === 'structure')!.score;
+    // ~65 wpm: full fluency at A1 (60), only «good» at A2 (70)
     expect(f(g1)).toBeGreaterThanOrEqual(f(g2));
+    expect(g1.criteria.map((c) => c.id)).toEqual(['content', 'structure']);
   });
 });
 
-describe('A2 verb stems (data list + corpus)', () => {
+describe('Ukrainian verb heuristic (verbs-uk data + corpus)', () => {
   const VERBS = [
-    'приходит',
-    'пришёл',
-    'уехал',
-    'выхожу',
-    'зашла',
-    'дошли',
-    'приезжаем',
-    'переехали',
-    'подходит',
+    'приходить',
+    'прийшов',
+    'поїхав',
+    'виходжу',
+    'зайшла',
+    'дійшли',
+    'приїжджаємо',
+    'переїхали',
+    'підходить',
     'принесу',
     'привезла',
-    'встретились',
-    'решил',
-    'пригласил',
-    'предлагаю',
-    'позвонила',
+    'зустрілися',
+    'вирішив',
+    'запросив',
+    'пропоную',
+    'зателефонувала',
     'купили',
-    'отдыхаю',
-    'устаю',
-    'болит',
-    'готовлю',
-    'заказал',
-    'берёт',
+    'відпочиваю',
+    'працюю',
+    'готую',
+    'замовив',
+    'бере',
     'дала',
-    'объясняет',
-    'ищет',
-    'понимаю',
-    'повторяю',
+    'пояснює',
+    'шукає',
+    'розумію',
+    'повторюю',
     'пробую',
-    'мечтаю',
-    'интересуюсь',
-    'улыбается',
-    'поздравляю',
+    'мрію',
+    'цікавлюся',
+    'усміхається',
+    'вітаю',
     'проведу',
-    'отмечаем',
-    'получил',
+    'святкуємо',
+    'отримав',
     'написала',
-    'прочитал',
-    'посмотрели',
-    'вспомнил',
-    'помогает',
-    'познакомились',
-    'просыпаюсь',
-    'ложусь',
+    'прочитав',
+    'подивилися',
+    'згадав',
+    'допомагає',
+    'познайомилися',
+    'прокидаюся',
+    'лягаю',
     'встаю',
+    'живу',
+    'люблю',
+    'звати',
+    'вчуся',
+    'був',
+    'було',
+    'хочу',
+    'подобається',
+    'читати',
+    'гуляємо',
   ];
   const NOUNS = [
-    'приход',
-    'выход',
-    'вход',
-    'встреча',
-    'праздник',
-    'подарок',
+    'прихід',
+    'вихід',
+    'вхід',
+    'зустріч',
+    'свято',
+    'подарунок',
     'мама',
-    'город',
-    'письмо',
-    'вечер',
-    'работа',
+    'місто',
+    'лист',
+    'вечір',
+    'робота',
     'квартира',
     'друг',
-    'суббота',
+    'субота',
     'кафе',
+    'київ',
+    'книги',
+    'мітч',
+    'колорадо',
+    'парк',
+    'родина',
+    'и',
+    'в',
   ];
-  it('is a plain Cyrillic data list', () => {
-    expect(A2_VERB_STEMS.length).toBeGreaterThan(100);
-    for (const s of A2_VERB_STEMS) expect(s).toMatch(/^[Ѐ-ӿ]+$/u);
-  });
-  it('recognises the A2 corpus verbs', () => {
-    const miss = VERBS.filter((v) => !looksLikeVerb(v));
-    expect(miss).toEqual([]);
+  it('recognises the corpus verbs (prefixed motion, past, reflexive, irregular)', () => {
+    expect(VERBS.filter((v) => !looksLikeVerb(v))).toEqual([]);
   });
   it('rejects the noun corpus', () => {
-    const hit = NOUNS.filter((n) => looksLikeVerb(n));
-    expect(hit).toEqual([]);
+    expect(NOUNS.filter((n) => looksLikeVerb(n))).toEqual([]);
+  });
+  it('countVerbs counts only verbs', () => {
+    expect(countVerbs(['я', 'живу', 'в', 'києві', 'і', 'працюю'])).toBe(2);
   });
 });
 
@@ -242,8 +261,8 @@ describe('timing copy is generated', () => {
     expect(windowsLine(600, 300)).toContain('5 хвилин');
     expect(chooseLine(2, 480, 120)).toContain('8 хвилин');
     expect(chooseLine(2, 480, 120)).toContain('2 хвилини');
-    expect(task3Fact(2, 480, 120)).toContain('8 мин');
-    expect(task3Fact(1, 600, 300)).toContain('10 мин');
+    expect(task3Fact(2, 480, 120)).toContain('8 хв');
+    expect(task3Fact(1, 600, 300)).toContain('10 хв');
     expect(startAnswerLine(300)).toContain('5 хвилин');
     expect(startAnswerLine(120)).toContain('2 хвилини');
     expect(recordingLine(300)).toContain('5 хвилин');

@@ -1,0 +1,41 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Ваш друг запросив вас на день народження. Напишіть йому коротке повідомлення: подякуйте, скажіть, чи прийдете, і запитайте, що принести.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "подякуйте за запрошення"
+      },
+      {
+        "id": "b2",
+        "uk": "скажіть, що ви прийдете"
+      },
+      {
+        "id": "b3",
+        "uk": "запитайте, що принести"
+      }
+    ],
+    "minSentences": 3,
+    "minQuestions": 1,
+    "maxQuestions": 2,
+    "minWords": 10,
+    "maxWords": 25,
+    "taskTopic": "wr-message",
+    "level": "A1",
+    "modelLetter": null,
+    "letter": "Привіт. Спасибі за приглашення. Я прийду. Що принести"
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 27,\n      \"max\": 40,\n      \"comment\": \"Thanks and coming are covered, but «Що принести» is not marked as a question and lacks a subject, so the third point is only partly done.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 5,\n      \"max\": 10,\n      \"comment\": \"A greeting is present, but there is no sign-off and the register is abrupt.\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 14,\n      \"max\": 40,\n      \"comment\": \"«Спасибі» and «приглашення» are Russianisms (surzhyk); the correct forms are «Дякую» and «запрошення». Missing question mark.\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 5,\n      \"max\": 10,\n      \"comment\": \"Only about 8 words, under the 10-word minimum.\"\n    }\n  ],\n  \"corrected\": \"Привіт! Дякую за запрошення. Я прийду. Що принести?\",\n  \"changes\": [\n    {\n      \"before\": \"Спасибі\",\n      \"after\": \"Дякую\",\n      \"explanation\": \"Surzhyk: Ukrainian uses «дякую» (or «дякуємо»); «спасибі» is a Russian calque.\"\n    },\n    {\n      \"before\": \"приглашення\",\n      \"after\": \"запрошення\",\n      \"explanation\": \"Russianism: the Ukrainian noun is «запрошення» (from запросити).\"\n    },\n    {\n      \"before\": \"Що принести\",\n      \"after\": \"Що принести?\",\n      \"explanation\": \"A question needs a question mark.\"\n    }\n  ],\n  \"tips\": [\n    \"Replace Russian-looking words with their Ukrainian pair: спасибі → дякую.\",\n    \"End with a short friendly sign-off such as «До зустрічі!».\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

@@ -109,7 +109,7 @@ describe('recordExamFinished', () => {
       expect.arrayContaining(['exam-a1-first-mock', 'exam-a1-would-pass', 'exam-a1-margin']),
     );
     listAttempts.mockResolvedValue([
-      { id: 'old', mode: 'mock', status: 'finished', verdict: 'pass-borderline' },
+      { id: 'old', mode: 'mock', status: 'finished', verdict: 'pass' },
       { id: 'me', mode: 'mock', status: 'finished', verdict: 'pass' },
     ]);
     const second = await recordExamFinished(pass, { excludeAttemptId: 'me' });
@@ -186,7 +186,7 @@ describe('definitions', () => {
     for (const level of EXAM_LEVELS) {
       for (const id of Object.values(UKR_PROFILES[level].achievements)) {
         expect(t(id), id).toContain(level);
-        expect(t(id), id).not.toMatch(/[ёыэъ]/i);
+        expect(t(id), id).not.toMatch(/[\u0451\u044B\u044D\u044A]/i);
       }
     }
   });

@@ -1,62 +1,54 @@
 import { ExamSchema, type Exam, type Pack, type WritingItem } from '@sutinki/schema';
-import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
+import { WRITING_RUBRICS } from '../grading/rubrics';
 import {
-  AI_ONLY_CRITERION_IDS,
-  OFFLINE_CRITERION_IDS,
-  OFFLINE_MAX,
-  SELF_CHECKS,
-  WRITING_CRITERIA,
-  WRITING_MAX,
+  aiOnlyIds,
   bulletCoverage,
   countQuestions,
   criteriaPercent,
   gradeWritingOffline,
   letterForm,
   offlineItemScore,
+  paragraphCount,
   selfCheckCriteria,
+  selfChecksFor,
   sentenceSplit,
+  volumeShare,
+  writingKindOf,
 } from '../grading/writing';
 
 const PACK = examPackJson as unknown as Pack;
 const EXAM: Exam = ExamSchema.parse(PACK.exams!.find((e) => e.id === 'a1-mock-fx'));
-const ITEM = EXAM.subtests
-  .find((s) => s.kind === 'writing')!
-  .parts.flatMap((p) => p.items)
-  .find((i) => i.kind === 'writing') as WritingItem;
+const WRITING = EXAM.subtests.find((s) => s.kind === 'writing')!;
+const ITEMS = WRITING.parts
+  .flatMap((p) => p.items)
+  .filter((i) => i.kind === 'writing') as WritingItem[];
+/** Task 44 (message, 10–25 words, bullets «мене» / «живу») and task 45 (text, 30–50 words). */
+const MSG = ITEMS.find((i) => i.topic === 'wr-message')!;
+const TEXT = ITEMS.find((i) => i.topic === 'wr-text')!;
 
-/** A good A1 letter: 11 sentences, 3 questions, all four bullets, greeting + sign-off. */
-export const GOOD_LETTER = [
-  'Привет, Саша!',
-  'Меня зовут Митч. Мне тридцать шесть лет. Я живу в Колорадо.',
-  'Я работаю программистом. Это интересная работа.',
-  'Я люблю читать и слушать музыку. Ещё мне нравится готовить.',
-  'А как ты? Где ты сейчас живёшь? Что ты любишь делать?',
-  'Пока! Жду ответа.',
-  'Твой друг Митч',
-].join('\n');
-
-/** Short, no questions, no greeting, two bullets missing. */
-const WEAK_LETTER = 'Меня зовут Митч. Я живу в Колорадо. Я работаю. Пока.';
-
-/** Long but no questions and no form. */
-const NO_QUESTIONS = Array.from({ length: 10 }, (_, i) => `Я живу тут ${i}.`).join(' ');
-
-/** Questionnaire: too many questions. */
-const TOO_MANY_Q = `${GOOD_LETTER}\nКто ты? Что ты? Где ты? Когда? Почему?`;
+/** A good message: greeting + sign-off, both bullets, 17 words. */
+export const GOOD_MESSAGE =
+  'Привіт, Оксано!\nМене звати Мітч. Я живу в Колорадо і працюю вдома.\nДо зустрічі!';
+/** Weak: no greeting, no sign-off, one bullet, 5 words. */
+const WEAK_MESSAGE = 'Я живу в Колорадо.';
+/** A good text: two paragraphs, both bullets, 36 words. */
+const GOOD_TEXT =
+  'Мене звати Мітч, мені тридцять шість років. Я живу в Колорадо з моєю нареченою.\nВона українка. Ми часто гуляємо в парку, читаємо книжки та готуємо вечерю. Мені дуже подобається наше життя.';
 
 describe('sentenceSplit / countQuestions', () => {
   it('splits on . ! ? … runs, counts ? once per sentence, ignores empty fragments', () => {
-    const s = sentenceSplit('Привет!!! Как дела?! Хорошо… Да. . . Что?');
-    expect(s.sentences).toEqual(['Привет', 'Как дела', 'Хорошо', 'Да', 'Что']);
+    const s = sentenceSplit('Привіт!!! Як справи?! Добре… Так. . . Що?');
+    expect(s.sentences).toEqual(['Привіт', 'Як справи', 'Добре', 'Так', 'Що']);
     expect(s.questions).toBe(2);
-    expect(countQuestions('Где? Кто? Нет.')).toBe(2);
+    expect(countQuestions('Де? Хто? Ні.')).toBe(2);
   });
 
   it('a line without a terminator is still a sentence (greeting lines)', () => {
-    const s = sentenceSplit('Дорогая Анна\nКак дела?\nПока');
-    expect(s.sentences).toEqual(['Дорогая Анна', 'Как дела', 'Пока']);
+    const s = sentenceSplit('Дорога Анно\nЯк справи?\nБувай');
+    expect(s.sentences).toEqual(['Дорога Анно', 'Як справи', 'Бувай']);
     expect(s.questions).toBe(1);
   });
 
@@ -67,12 +59,12 @@ describe('sentenceSplit / countQuestions', () => {
 
 describe('bulletCoverage', () => {
   it('matches exact cues, stem globs and multi-word phrases over normalized tokens', () => {
-    const c = bulletCoverage('Меня ЗОВУТ Митч, я работаю дома и очень люблю кофе.', [
-      { id: 'name', cues: ['зовут'] },
-      { id: 'work', cues: ['работа*'] },
-      { id: 'like', cues: ['люблю', 'нравится'] },
-      { id: 'home', cues: ['работаю дома'] },
-      { id: 'live', cues: ['живу', 'живём'] },
+    const c = bulletCoverage('Мене ЗВАТИ Мітч, я працюю вдома і дуже люблю каву.', [
+      { id: 'name', cues: ['звати'] },
+      { id: 'work', cues: ['працю*'] },
+      { id: 'like', cues: ['люблю', 'подобається'] },
+      { id: 'home', cues: ['працюю вдома'] },
+      { id: 'live', cues: ['живу', 'живемо'] },
     ]);
     expect(c.covered).toEqual(['name', 'work', 'like', 'home']);
     expect(c.missing).toEqual(['live']);
@@ -80,144 +72,189 @@ describe('bulletCoverage', () => {
   });
 
   it('apostrophe / ґ tolerant and punctuation-blind', () => {
-    const c = bulletCoverage('Я люблю п’ятницю, ганок і м’ясо!', [
+    const c = bulletCoverage('Я люблю п’ятницю, ґанок і мʼясо!', [
       { id: 'day', cues: ["п'ятниц*"] },
-      { id: 'porch', cues: ['ґанок'] },
+      { id: 'porch', cues: ['ганок'] },
       { id: 'meat', cues: ['мʼяс*'] },
     ]);
     expect(c.covered).toEqual(['day', 'porch', 'meat']);
   });
 });
 
-describe('letterForm', () => {
+describe('letterForm (Ukrainian greetings and sign-offs)', () => {
   it('greeting on the first line + a sign-off near the end', () => {
-    expect(letterForm(GOOD_LETTER)).toEqual({ greeting: true, signOff: true });
-    expect(letterForm('Здравствуйте, Анна Петровна! Я тут. С уважением, Митч')).toEqual({
+    expect(letterForm(GOOD_MESSAGE)).toEqual({ greeting: true, signOff: true });
+    expect(letterForm('Вітаю, Анно Петрівно! Я тут. З повагою, Мітч')).toEqual({
       greeting: true,
       signOff: true,
     });
+    expect(letterForm('Добрий день!\nДякую. Бувайте')).toEqual({ greeting: true, signOff: true });
   });
-  it('neither when the letter is a bare paragraph', () => {
-    expect(letterForm(NO_QUESTIONS)).toEqual({ greeting: false, signOff: false });
+  it('neither when the text is a bare paragraph', () => {
+    expect(letterForm('Я живу тут. Я працюю там.')).toEqual({ greeting: false, signOff: false });
   });
-  it('a sign-off word buried in the middle of a long letter does not count', () => {
-    const mid = `Привет!\nЯ сказал пока маме утром. ${'Потом я работал весь день. '.repeat(8)}Конец.`;
+  it('a sign-off word buried in the middle of a long text does not count', () => {
+    const mid = `Привіт!\nЯ сказав бувай мамі зранку. ${'Потім я працював увесь день. '.repeat(8)}Кінець.`;
     expect(letterForm(mid)).toEqual({ greeting: true, signOff: false });
+  });
+  it('paragraphCount counts non-empty lines', () => {
+    expect(paragraphCount('а\n\nб\n  \nв')).toBe(3);
   });
 });
 
-describe('gradeWritingOffline (TORFL §6.2 table)', () => {
-  it('the criteria table: 30 + 15 + 10 offline, 20 + 25 AI; Σ = 100, offline Σ = 55', () => {
-    expect(WRITING_CRITERIA.reduce((n, c) => n + c.max, 0)).toBe(WRITING_MAX);
-    expect(
-      WRITING_CRITERIA.filter((c) => OFFLINE_CRITERION_IDS.includes(c.id)).reduce(
-        (n, c) => n + c.max,
-        0,
-      ),
-    ).toBe(OFFLINE_MAX);
-    expect(AI_ONLY_CRITERION_IDS).toEqual(['vocabulary', 'grammar']);
+describe('writingKindOf', () => {
+  it('by topic slug; falls back to the word limit', () => {
+    expect(writingKindOf({ topic: 'wr-message', minWords: undefined })).toBe('message');
+    expect(writingKindOf({ topic: 'wr-text', minWords: undefined })).toBe('text');
+    expect(writingKindOf({ topic: 'x', minWords: 100 })).toBe('text');
+    expect(writingKindOf({ topic: 'x', minWords: 10 })).toBe('message');
+    expect(writingKindOf(MSG)).toBe('message');
+    expect(writingKindOf(TEXT)).toBe('text');
   });
+});
 
-  it('a good letter: full marks on all three offline criteria → 55/55 → 100 % provisional', () => {
-    const g = gradeWritingOffline(ITEM, GOOD_LETTER);
+describe('volumeShare', () => {
+  const lim = { minWords: 10, maxWords: 25, minSentences: 3, sentences: 3 };
+  it('inside the limit full; below proportional; a little above full; far above half; empty 0', () => {
+    expect(volumeShare(15, lim)).toBe(1);
+    expect(volumeShare(5, lim)).toBe(0.5);
+    expect(volumeShare(30, lim)).toBe(1); // ≤ 25 × 1.25
+    expect(volumeShare(40, lim)).toBe(0.5);
+    expect(volumeShare(0, lim)).toBe(0);
+  });
+  it('no word limits → sentences vs minSentences', () => {
+    expect(volumeShare(10, { minWords: null, maxWords: null, minSentences: 4, sentences: 2 })).toBe(
+      0.5,
+    );
+  });
+});
+
+describe('gradeWritingOffline (rubric data)', () => {
+  it('message: content 40 + form 10 + volume 10 = 60 offline of 100 → a good message is 100 % provisional', () => {
+    const g = gradeWritingOffline(MSG, GOOD_MESSAGE);
+    expect(g.kind).toBe('message');
     expect(g.criteria).toEqual([
-      { id: 'task-points', score: 30, max: 30 },
-      { id: 'task-length', score: 15, max: 15 },
-      { id: 'letter-form', score: 10, max: 10 },
+      { id: 'content', score: 40, max: 40 },
+      { id: 'form', score: 10, max: 10 },
+      { id: 'volume', score: 10, max: 10 },
     ]);
-    expect(g.offlinePoints).toBe(55);
+    expect(g.offlineMax).toBe(60);
+    expect(g.offlinePoints).toBe(60);
     expect(g.pct).toBe(100);
     expect(g.provisional).toBe(true);
     expect(g.details).toMatchObject({
-      sentences: 14,
-      questions: 3,
-      pointsCovered: 4,
-      pointsTotal: 4,
+      kind: 'message',
+      pointsCovered: 2,
+      pointsTotal: 2,
       greeting: true,
       signOff: true,
+      minWords: 10,
+      maxWords: 25,
     });
   });
 
-  it('rescaling 55 → 100 is documented: offlinePoints / 55 × 100, one decimal', () => {
-    // 3 of 4 bullets (22.5) + 4/10 sentences (4) + 0/2 questions (0) + sign-off only (5) = 31.5
-    const g = gradeWritingOffline(ITEM, WEAK_LETTER);
-    expect(g.criteria.map((c) => c.score)).toEqual([22.5, 4, 5]);
-    expect(g.offlinePoints).toBe(31.5);
-    expect(g.pct).toBe(Math.round((31.5 / 55) * 1000) / 10); // 57.3
+  it('a weak message: one bullet of two (20), no greeting/sign-off (0), 4 words of 10 (4) → 24/60 = 40 %', () => {
+    const g = gradeWritingOffline(MSG, WEAK_MESSAGE);
+    expect(g.criteria.map((c) => c.score)).toEqual([20, 0, 4]);
+    expect(g.pct).toBe(40);
+    expect(g.details.coveredIds).toEqual(['b2']);
+    expect(g.details.missingIds).toEqual(['b1']);
   });
 
-  it('weak letter detail: which bullets are missing', () => {
-    const g = gradeWritingOffline(ITEM, WEAK_LETTER);
-    expect(g.details.coveredIds).toEqual(['b1', 'b2', 'b3']);
-    expect(g.details.missingIds).toEqual(['b4']);
+  it('a message needs a greeting OR a sign-off: either earns the whole form row', () => {
+    expect(
+      gradeWritingOffline(MSG, 'Привіт! Мене звати Мітч. Я живу тут і працюю вдома щодня.')
+        .criteria[1]!.score,
+    ).toBe(10);
+    expect(
+      gradeWritingOffline(MSG, 'Мене звати Мітч. Я живу тут і працюю вдома щодня. Бувай!')
+        .criteria[1]!.score,
+    ).toBe(10);
   });
 
-  it('long but no questions and no form: length 10/10, questions 0/5, form 0', () => {
-    const g = gradeWritingOffline(ITEM, NO_QUESTIONS);
-    expect(g.criteria[1]).toEqual({ id: 'task-length', score: 10, max: 15 });
-    expect(g.criteria[2]).toEqual({ id: 'letter-form', score: 0, max: 10 });
-    expect(g.details.questions).toBe(0);
+  it('text: content 22 + form 4 + volume 4 = 30 offline; two paragraphs earn the form row', () => {
+    const g = gradeWritingOffline(TEXT, GOOD_TEXT);
+    expect(g.kind).toBe('text');
+    expect(g.offlineMax).toBe(30);
+    expect(g.criteria).toEqual([
+      { id: 'content', score: 22, max: 22 },
+      { id: 'form', score: 4, max: 4 },
+      { id: 'volume', score: 4, max: 4 },
+    ]);
+    expect(g.pct).toBe(100);
   });
 
-  it('one question of the required two → half the questions share (2.5)', () => {
-    const g = gradeWritingOffline(ITEM, `${NO_QUESTIONS} Как дела?`);
-    expect(g.criteria[1]!.score).toBe(12.5);
+  it('text: one block of ≥ 3 sentences earns half the form row; fewer than 3 earns none', () => {
+    const block =
+      'Мене звати Мітч. Я живу в Колорадо. Мені подобається тут жити з наречено. Ми гуляємо.';
+    expect(gradeWritingOffline(TEXT, block).criteria[1]!.score).toBe(2);
+    expect(gradeWritingOffline(TEXT, 'Мене звати Мітч.').criteria[1]!.score).toBe(0);
   });
 
-  it('a questionnaire above maxQuestions keeps only half the questions share', () => {
-    const g = gradeWritingOffline(ITEM, TOO_MANY_Q);
-    expect(g.details.questions).toBeGreaterThan(ITEM.maxQuestions!);
-    expect(g.criteria[1]!.score).toBe(12.5);
-  });
-
-  it('no greeting but a sign-off: 5 of 10 form points', () => {
-    const g = gradeWritingOffline(ITEM, `${NO_QUESTIONS} До свидания!`);
-    expect(g.criteria[2]!.score).toBe(5);
-  });
-
-  it('an empty letter scores 0 on every criterion', () => {
-    const g = gradeWritingOffline(ITEM, '  \n');
+  it('an empty text scores 0 on every criterion', () => {
+    const g = gradeWritingOffline(MSG, '  \n');
     expect(g.criteria.map((c) => c.score)).toEqual([0, 0, 0]);
     expect(g.pct).toBe(0);
   });
 
-  it('offlineItemScore maps the provisional pct onto the subtest points', () => {
-    const g = gradeWritingOffline(ITEM, WEAK_LETTER);
-    expect(offlineItemScore(g, 100)).toEqual({ points: 57.3, maxPoints: 100, outcome: 'half' });
-    expect(offlineItemScore(gradeWritingOffline(ITEM, GOOD_LETTER), 100).outcome).toBe('full');
+  it('offlineItemScore maps the provisional pct onto the response points', () => {
+    const g = gradeWritingOffline(MSG, WEAK_MESSAGE);
+    expect(offlineItemScore(g, 10)).toEqual({ points: 4, maxPoints: 10, outcome: 'half' });
+    expect(offlineItemScore(gradeWritingOffline(MSG, GOOD_MESSAGE), 10).outcome).toBe('full');
+    expect(offlineItemScore(gradeWritingOffline(MSG, ''), 10).outcome).toBe('wrong');
   });
 });
 
 describe('criteriaPercent + the self-check fold', () => {
-  it('a full AI set is Σ score / 100', () => {
+  it('a full message set is Σ score / 100', () => {
     expect(
       criteriaPercent([
-        { id: 'task-points', score: 27, max: 30 },
-        { id: 'task-length', score: 12, max: 15 },
-        { id: 'letter-form', score: 10, max: 10 },
-        { id: 'vocabulary', score: 14, max: 20 },
-        { id: 'grammar', score: 17.5, max: 25 },
+        { id: 'content', score: 30, max: 40 },
+        { id: 'form', score: 10, max: 10 },
+        { id: 'norms', score: 25.5, max: 40 },
+        { id: 'volume', score: 10, max: 10 },
       ]),
-    ).toBe(80.5);
+    ).toBe(75.5);
     expect(criteriaPercent([])).toBe(0);
   });
 
-  it('the four self-checks split the 45 AI-only points (10 + 10 + 12 + 13)', () => {
-    expect(SELF_CHECKS.reduce((n, c) => n + c.max, 0)).toBe(45);
-    const offline = gradeWritingOffline(ITEM, GOOD_LETTER).criteria;
-    const all = selfCheckCriteria(offline, {
-      'vocab-range': 1,
-      'vocab-fit': 0.5,
-      'grammar-cases': 0,
-      'grammar-verbs': 1,
-    });
-    expect(all.map((c) => [c.id, c.score, c.max])).toEqual([
-      ['task-points', 30, 30],
-      ['task-length', 15, 15],
-      ['letter-form', 10, 10],
-      ['vocabulary', 15, 20],
-      ['grammar', 13, 25],
+  it('self-checks cover exactly the AI-only max of each kind (norms split in two halves)', () => {
+    for (const kind of ['message', 'text'] as const) {
+      const aiMax = WRITING_RUBRICS[kind].filter((c) => !c.offline).reduce((n, c) => n + c.max, 0);
+      expect(selfChecksFor(kind).reduce((n, c) => n + c.max, 0)).toBe(aiMax);
+      expect(aiOnlyIds(kind)).toEqual(
+        WRITING_RUBRICS[kind].filter((c) => !c.offline).map((c) => c.id),
+      );
+    }
+    expect(selfChecksFor('message').map((c) => c.id)).toEqual(['norms-forms', 'norms-verbs']);
+    expect(selfChecksFor('text').map((c) => c.id)).toEqual([
+      'fit',
+      'coherence',
+      'norms-forms',
+      'norms-verbs',
+      'richness',
     ]);
-    expect(criteriaPercent(all)).toBe(83);
+  });
+
+  it('message: all-ones self-check → 100 %; mixed answers fold into norms (20 + 20)', () => {
+    const offline = gradeWritingOffline(MSG, GOOD_MESSAGE).criteria;
+    const all = selfCheckCriteria(offline, { 'norms-forms': 1, 'norms-verbs': 1 }, 'message');
+    expect(all.map((c) => [c.id, c.score, c.max])).toEqual([
+      ['content', 40, 40],
+      ['form', 10, 10],
+      ['norms', 40, 40],
+      ['volume', 10, 10],
+    ]);
+    expect(criteriaPercent(all)).toBe(100);
+    const mixed = selfCheckCriteria(offline, { 'norms-forms': 0.5, 'norms-verbs': 0 }, 'message');
+    expect(mixed.find((c) => c.id === 'norms')!.score).toBe(10);
+    expect(criteriaPercent(mixed)).toBe(70);
+  });
+
+  it('text: Σ max = 100 and unanswered checks score 0', () => {
+    const offline = gradeWritingOffline(TEXT, GOOD_TEXT).criteria;
+    const out = selfCheckCriteria(offline, {}, 'text');
+    expect(out.reduce((n, c) => n + c.max, 0)).toBe(100);
+    expect(criteriaPercent(out)).toBe(30);
   });
 });

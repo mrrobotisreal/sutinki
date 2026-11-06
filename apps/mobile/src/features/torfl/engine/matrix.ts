@@ -62,11 +62,11 @@ export function matrixCounts(cells: readonly MatrixCell[]): MatrixCounts {
   };
 }
 
-/** The «Сдать субтест» confirmation copy (unanswered count, flagged count). */
+/** The «Здати розділ» confirmation copy (unanswered count, flagged count). */
 export function submitConfirmCopy(counts: MatrixCounts): { title: string; body: string } {
   const parts: string[] = [];
-  if (counts.unanswered > 0) parts.push(`Без ответа: ${counts.unanswered}.`);
-  if (counts.flagged > 0) parts.push(`С флажком: ${counts.flagged}.`);
-  parts.push('После сдачи вернуться к субтесту нельзя.');
-  return { title: 'Сдать субтест?', body: parts.join(' ') };
+  if (counts.unanswered > 0) parts.push(`Без відповіді: ${counts.unanswered}.`);
+  if (counts.flagged > 0) parts.push(`З позначкою: ${counts.flagged}.`);
+  parts.push('Після здачі повернутися до розділу не можна.');
+  return { title: 'Здати розділ?', body: parts.join(' ') };
 }

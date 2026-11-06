@@ -91,21 +91,32 @@ export function provisionalFromRows(
   return out;
 }
 
-/** «Вердикт — после Письма и Говорения»: the missing subtests in the genitive. */
+/** «Вердикт — після Письма та Говоріння»: the missing sections in the genitive (Ukrainian). */
 const GENITIVE: Record<ExamSubtestKind, string> = {
   writing: 'Письма',
-  lexgram: 'Лексики. Грамматики',
-  reading: 'Чтения',
-  listening: 'Аудирования',
-  speaking: 'Говорения',
+  lexgram: 'Лексики й граматики',
+  reading: 'Читання',
+  listening: 'Слухання',
+  speaking: 'Говоріння',
 };
 
 export function missingVerdictLine(missing: readonly ExamSubtestKind[]): string {
   if (missing.length === 0) return '';
   const names = missing.map((k) => GENITIVE[k]);
   const joined =
-    names.length === 1 ? names[0]! : `${names.slice(0, -1).join(', ')} и ${names.at(-1)}`;
-  return `Вердикт — после ${joined}`;
+    names.length === 1 ? names[0]! : `${names.slice(0, -1).join(', ')} та ${names.at(-1)}`;
+  return `Вердикт — після ${joined}`;
+}
+
+/**
+ * The pending card's count line (ISS-003 §2): derived from the level's sections,
+ * never hard-coded — «Підсумок за всіма чотирма розділами; готові два з чотирьох».
+ */
+export function pendingCountLine(total: number, missing: number): string {
+  const ready = Math.max(0, total - missing);
+  const WORDS = ['жодного', 'один', 'два', 'три', 'чотири', 'пʼять', 'шість'];
+  const w = (n: number) => WORDS[n] ?? String(n);
+  return `Склав чи ні — за сумою всіх розділів (${total}). Готово ${w(ready)} з ${w(total)} — відсотки нижче.`;
 }
 
 // --- answers → scoring helpers -----------------------------------------------------------------

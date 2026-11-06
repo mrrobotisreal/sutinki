@@ -9,7 +9,7 @@ import { ticketHref } from './speaking/tickets-model';
  * speaking / writing items; the T70 runner would open its empty state, so the
  * intro routes to the real practice surface instead:
  *  - replies / situations → `/torfl/speak` on the set's first item,
- *  - monologues → «Билеты»,
+ *  - monologues → «Білети»,
  *  - letters / notes → `/torfl/writing` on the set's first item.
  * Returns null for any exam with at least one objective item (the drill runner).
  */

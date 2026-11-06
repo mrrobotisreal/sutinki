@@ -19,11 +19,10 @@ describe('examXp', () => {
   it('skipped placeholders earn nothing; a full mock with nothing scored earns nothing', () => {
     expect(examXp({ ...base, scoredSubtests: 0 })).toBe(0);
   });
-  it('+100 only for the FIRST pass / pass-borderline verdict', () => {
+  it('+100 only for the FIRST pass verdict', () => {
     const pass = { ...base, scoredSubtests: 5, pcts: five(70), verdict: 'pass' as const };
     expect(examXp(pass)).toBe(5 * 15 + 60 + 100);
     expect(examXp({ ...pass, firstPass: false })).toBe(5 * 15 + 60);
-    expect(examXp({ ...pass, verdict: 'pass-borderline' })).toBe(5 * 15 + 60 + 100);
     expect(examXp({ ...pass, verdict: 'fail' })).toBe(5 * 15 + 60);
   });
 });
@@ -35,10 +34,9 @@ describe('examAchievements', () => {
     expect(examAchievements(base)).toEqual(['exam-a1-first-mock']);
     expect(examAchievements({ ...base, pcts: { lexgram: 95 } })).toEqual(['exam-a1-first-mock']);
   });
-  it('would-pass needs a verdict of pass / pass-borderline', () => {
+  it('would-pass needs a verdict of pass', () => {
     const v = { ...base, scoredSubtests: 4, pcts: four(75) };
     expect(examAchievements({ ...v, verdict: 'pass' })).toContain('exam-a1-would-pass');
-    expect(examAchievements({ ...v, verdict: 'pass-borderline' })).toContain('exam-a1-would-pass');
     expect(examAchievements({ ...v, verdict: 'fail' })).not.toContain('exam-a1-would-pass');
     expect(examAchievements(base)).not.toContain('exam-a1-would-pass');
   });

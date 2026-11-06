@@ -58,21 +58,21 @@ type Screen =
 
 const PASS_LABEL: Record<RehearsalPass, { title: string; hint: string }> = {
   'with-text': {
-    title: 'С текстом',
-    hint: 'Прочитай предложение вслух. Слушай, где слова не узнаются.',
+    title: 'З текстом',
+    hint: 'Прочитай речення вголос. Слухай, де слова не розпізнаються.',
   },
   'without-text': {
-    title: 'Без текста',
-    hint: 'Теперь по памяти — как на экзамене. Подсказка откроется по кнопке.',
+    title: 'Без тексту',
+    hint: 'Тепер по пам’яті — як на іспиті. Підказка відкриється за кнопкою.',
   },
 };
 
 /**
- * «Отрепетировать вслух» (T74, TORFL §9) — route `/torfl/rehearse?entryId&
+ * «Відрепетирувати вголос» (T74, TORFL §9) — route `/torfl/rehearse?entryId&
  * topic`: one journal answer (the AI-corrected text when present, labelled
- * «исправленный текст») walked sentence by sentence through the T12
+ * «виправлений текст») walked sentence by sentence through the T12
  * pronunciation loop — show → record → `transcribeWav` → `scoreAttempt` →
- * per-word ✓/✗ and a score — first «С текстом», then again «Без текста»
+ * per-word ✓/✗ and a score — first «З текстом», then again «Без тексту»
  * (the sentence hidden; a «Показать» peek is allowed and remembered on the
  * card, not in the score). One `game_sessions` row (`torfl-rehearsal`, no
  * FSRS) and `torfl_rehearsal_finished {topic, score}` at the end; a quit
@@ -229,7 +229,7 @@ export function RehearseScreen() {
   if (!entry.data || !text) {
     return (
       <View className="flex-1 justify-center bg-bg px-6">
-        <QueryError message="Запись не найдена." onRetry={quit} />
+        <QueryError message="Запис не знайдено." onRetry={quit} />
       </View>
     );
   }
@@ -248,7 +248,7 @@ export function RehearseScreen() {
           onPress={quit}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Закончить репетицию"
+          accessibilityLabel="Закінчити репетицію"
           className="h-10 w-10 items-center justify-center rounded-full active:bg-surface-2"
         >
           <Ionicons name="close" size={22} color={tokens.textMuted} />
@@ -262,24 +262,24 @@ export function RehearseScreen() {
         <Text variant="caption" className="font-ui-medium">
           {screen.kind === 'rehearsing'
             ? `${PASS_LABEL[screen.pass].title} · ${screen.index + 1}/${sentences.length}`
-            : 'Итог'}
+            : 'Підсумок'}
         </Text>
       </View>
 
       {screen.kind === 'needs-model' && (
         <View className="flex-1 items-center justify-center gap-3 px-8">
           <Ionicons name="mic-off-outline" size={40} color={tokens.textMuted} />
-          <Text className="text-center font-ui-medium">Нет модели распознавания речи</Text>
+          <Text className="text-center font-ui-medium">Немає моделі розпізнавання мовлення</Text>
           <Text variant="muted" className="text-center">
-            Репетиция оценивает произношение на устройстве. Установи «Russian speech recognition» в
-            настройках и вернись.
+            Репетиція оцінює вимову на пристрої. Встанови модель розпізнавання українського мовлення
+            в налаштуваннях і повернися.
           </Text>
           <Pressable
             onPress={() => router.push('/settings')}
             accessibilityRole="button"
             className="mt-1 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
           >
-            <Text className="text-accent">Открыть настройки</Text>
+            <Text className="text-accent">Відкрити налаштування</Text>
           </Pressable>
         </View>
       )}
@@ -287,7 +287,7 @@ export function RehearseScreen() {
       {screen.kind === 'empty' && (
         <View className="flex-1 items-center justify-center gap-3 px-8">
           <Text variant="muted" className="text-center">
-            В этой записи нет предложений для репетиции.
+            У цьому записі немає речень для репетиції.
           </Text>
         </View>
       )}
@@ -327,7 +327,7 @@ function SentenceView({
   pass: RehearsalPass;
   sentence: string;
   corrected: boolean;
-  /** Safe-area bottom (the S25's nav bar covered «Дальше» on the first device walk). */
+  /** Safe-area bottom (the S25's nav bar covered «Далі» on the first device walk). */
   bottomInset: number;
   onDone: (bestScore: number) => void;
   onSkipPass?: () => void;
@@ -368,7 +368,7 @@ function SentenceView({
       setHeard(transcript.text.trim());
       setPhase('feedback');
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'не удалось обработать запись');
+      setErrorMsg(err instanceof Error ? err.message : 'не вдалося обробити запис');
       setPhase('error');
     }
   }, [sentence]);
@@ -387,7 +387,7 @@ function SentenceView({
         if (phaseRef.current === 'recording') void finishRecording();
       }, MAX_ATTEMPT_MS);
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'запись не началась');
+      setErrorMsg(err instanceof Error ? err.message : 'запис не розпочався');
       setPhase('error');
     }
   }, [finishRecording]);
@@ -406,7 +406,7 @@ function SentenceView({
       <View className="items-center gap-3">
         <Text variant="caption" className="uppercase tracking-wider">
           {PASS_LABEL[pass].title}
-          {corrected ? ' · исправленный текст' : ''}
+          {corrected ? ' · виправлений текст' : ''}
         </Text>
         {showText ? (
           <RNText
@@ -419,13 +419,13 @@ function SentenceView({
           <Pressable
             onPress={() => setPeeked(true)}
             accessibilityRole="button"
-            accessibilityLabel="Показать предложение"
+            accessibilityLabel="Показати речення"
             testID="rehearse-peek"
             className="items-center gap-2 rounded-2xl border border-dashed border-border px-6 py-5 active:bg-surface-2"
           >
             <Ionicons name="eye-off-outline" size={26} color={tokens.textMuted} />
             <Text variant="muted" className="text-center">
-              Текст скрыт — скажи по памяти.{'\n'}Нажми, чтобы подсмотреть.
+              Текст приховано — скажи по пам’яті.{'\n'}Торкнися, щоб підглянути.
             </Text>
           </Pressable>
         )}
@@ -436,12 +436,12 @@ function SentenceView({
           <Pressable
             onPress={() => void speak(sentence)}
             accessibilityRole="button"
-            accessibilityLabel="Послушать предложение"
+            accessibilityLabel="Послухати речення"
             className="mt-1 flex-row items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 active:bg-surface-2"
           >
             <Ionicons name="volume-medium-outline" size={18} color={tokens.accent} />
             <Text variant="caption" className="text-accent">
-              Послушать
+              Послухати
             </Text>
           </Pressable>
         )}
@@ -477,14 +477,14 @@ function SentenceView({
             </RNText>
             <Text variant="muted">
               {passed
-                ? 'Отлично.'
+                ? 'Чудово.'
                 : result.score > 0
-                  ? 'Красные слова — ещё раз.'
-                  : 'Не расслышал — попробуй медленнее.'}
+                  ? 'Червоні слова — ще раз.'
+                  : 'Не розчув — спробуй повільніше.'}
             </Text>
             {heard.length > 0 && (
               <Text variant="caption" className="mt-1 text-center">
-                Услышал: «{heard}»
+                Почув: «{heard}»
               </Text>
             )}
           </View>
@@ -494,20 +494,20 @@ function SentenceView({
       {phase === 'mic-denied' && (
         <View className="mt-8 items-center gap-3 px-4">
           <Ionicons name="mic-off-outline" size={40} color={tokens.textMuted} />
-          <Text className="text-center font-ui-medium">Нужен доступ к микрофону</Text>
+          <Text className="text-center font-ui-medium">Потрібен доступ до мікрофона</Text>
           <Text variant="muted" className="text-center">
-            Произношение оценивается на устройстве — ничего не отправляется. Разреши запись звука в
-            настройках системы.
+            Вимова оцінюється на пристрої — нічого не надсилається. Дозволь запис звуку в
+            налаштуваннях системи.
           </Text>
           <Pressable
             onPress={() => void Linking.openSettings()}
             accessibilityRole="button"
             className="mt-1 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
           >
-            <Text className="text-accent">Открыть настройки</Text>
+            <Text className="text-accent">Відкрити налаштування</Text>
           </Pressable>
           <Pressable onPress={() => setPhase('idle')} accessibilityRole="button" hitSlop={8}>
-            <Text variant="caption">Ещё раз</Text>
+            <Text variant="caption">Ще раз</Text>
           </Pressable>
         </View>
       )}
@@ -523,7 +523,7 @@ function SentenceView({
             accessibilityRole="button"
             className="rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
           >
-            <Text className="text-accent">Ещё раз</Text>
+            <Text className="text-accent">Ще раз</Text>
           </Pressable>
         </View>
       )}
@@ -531,7 +531,7 @@ function SentenceView({
       <View className="flex-1 items-center justify-end pb-6">
         {phase === 'recording' && (
           <Text variant="caption" className="mb-2 text-danger">
-            Запись — нажми, чтобы остановить
+            Запис — торкнися, щоб зупинити
           </Text>
         )}
         {(phase === 'idle' || phase === 'recording' || phase === 'processing') && (
@@ -552,7 +552,7 @@ function SentenceView({
             className="mt-4"
             testID="rehearse-skip-pass"
           >
-            <Text variant="caption">Закончить без второго прохода</Text>
+            <Text variant="caption">Закінчити без другого проходу</Text>
           </Pressable>
         )}
         {phase === 'feedback' && (
@@ -561,12 +561,12 @@ function SentenceView({
               <Pressable
                 onPress={() => void startRecording()}
                 accessibilityRole="button"
-                accessibilityLabel="Записать ещё раз"
+                accessibilityLabel="Записати ще раз"
                 className="flex-row items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 active:bg-surface-2"
               >
                 <Ionicons name="mic-outline" size={16} color={tokens.accent} />
                 <Text variant="caption" className="text-accent">
-                  Ещё раз
+                  Ще раз
                 </Text>
               </Pressable>
             </View>
@@ -576,7 +576,7 @@ function SentenceView({
               testID="rehearse-next"
               className="flex-row items-center justify-center gap-2 rounded-xl bg-accent py-3.5 active:opacity-80"
             >
-              <Text className="font-ui-medium text-bg">Дальше</Text>
+              <Text className="font-ui-medium text-bg">Далі</Text>
             </Pressable>
           </View>
         )}
@@ -607,7 +607,7 @@ function SummaryCard({
     >
       <View className="items-center gap-1">
         <Text variant="caption" className="uppercase tracking-wider">
-          Репетиция закончена
+          Репетицію завершено
         </Text>
         <RNText
           className="font-ui-bold text-5xl"
@@ -618,15 +618,15 @@ function SummaryCard({
         >
           {summary.score}%
         </RNText>
-        <Text variant="muted">по памяти · {sentences.length} предл.</Text>
+        <Text variant="muted">по пам’яті · {sentences.length} реч.</Text>
       </View>
       <View className="flex-row gap-3">
-        <Stat label="С текстом" value={fmt(summary.withText)} />
-        <Stat label="Без текста" value={fmt(summary.withoutText)} />
+        <Stat label="З текстом" value={fmt(summary.withText)} />
+        <Stat label="Без тексту" value={fmt(summary.withoutText)} />
       </View>
       {summary.weakest.length > 0 ? (
         <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
-          <Text className="font-ui-medium">Слабые места</Text>
+          <Text className="font-ui-medium">Слабкі місця</Text>
           {summary.weakest.slice(0, 5).map((i) => (
             <Text key={i} className="font-reading text-base leading-6">
               {i + 1}. {sentences[i]}
@@ -635,7 +635,7 @@ function SummaryCard({
         </View>
       ) : (
         <View className="rounded-2xl border border-border bg-surface px-4 py-4">
-          <Text variant="muted">Все предложения узнаны — можно идти на экзамен.</Text>
+          <Text variant="muted">Усі речення розпізнано — можна йти на іспит.</Text>
         </View>
       )}
       <View className="flex-1" />

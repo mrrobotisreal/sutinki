@@ -7,6 +7,7 @@ import {
 import * as React from 'react';
 
 import { classifyPack, type Classified } from '@/features/library/categories';
+import { practiceExams, visibleExams } from '@/features/torfl/gate';
 import type { TorflLevel } from '@/features/torfl/level-profile';
 import type { ExamMode, ExamScope } from '@/features/torfl/model';
 import type { ExamSubtestKind } from '@sutinki/schema';
@@ -504,10 +505,32 @@ export function useScenarioStamps(packId: string | undefined, sentenceId: string
 // --- M18 «ТРКИ» exams (T68) -------------------------------------------------
 
 /** Installed exams (optional pack / mode filter), JSON parsed — the hub's lists (T69). */
-export function useExams(filter: { packId?: string; mode?: ExamMode; level?: TorflLevel } = {}) {
+export function useExams(
+  filter: {
+    packId?: string;
+    mode?: ExamMode;
+    level?: TorflLevel;
+    /**
+     * UT17 (Decisions 8–9): 'visible' (default) hides an unattempted `ukr-exam:gate` pack;
+     * 'practice' also keeps only drills + FINISHED mocks (a mock's items never surface in practice
+     * before it was sat); 'all' = the raw list (sync/diagnostics only).
+     */
+    scope?: 'visible' | 'practice' | 'all';
+  } = {},
+) {
+  const scope = filter.scope ?? 'visible';
   return useQuery({
-    queryKey: queryKeys.exams.list(filter.packId, filter.mode, filter.level),
-    queryFn: () => repos.exams.listExams(filter),
+    queryKey: [...queryKeys.exams.list(filter.packId, filter.mode, filter.level), scope] as const,
+    queryFn: async () => {
+      const { scope: _scope, ...repoFilter } = filter;
+      void _scope;
+      const list = await repos.exams.listExams(repoFilter);
+      if (scope === 'all') return list;
+      const attempted = new Set(await repos.exams.attemptedPackIds());
+      const visible = visibleExams(list, attempted);
+      if (scope === 'visible') return visible;
+      return practiceExams(visible, new Set(await repos.exams.finishedMockKeys()));
+    },
   });
 }
 

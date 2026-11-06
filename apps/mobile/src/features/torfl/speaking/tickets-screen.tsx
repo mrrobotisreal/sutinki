@@ -71,7 +71,7 @@ type Phase =
     };
 
 /**
- * «Билеты» (T73, TORFL §10) — route `/torfl/tickets`: a face-down ticket
+ * «Білети» (T73, TORFL §10) — route `/torfl/tickets`: a face-down ticket
  * flips to reveal a random `speaking-monologue` topic from every installed
  * exam pack (weighted to the least practised), then the task-3 flow —
  * prep 8:00 with the questions, a notes field and lookup → «Начать ответ»
@@ -89,7 +89,7 @@ export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const reduceMotion = useReduceMotion();
-  const exams = useExams({ level });
+  const exams = useExams({ level, scope: 'practice' });
   const gates = useHubGates();
   const lang = useInstructionLang();
   const c = instructionCopy(lang);

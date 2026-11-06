@@ -10,7 +10,7 @@ import type { InstructionLang } from './settings-core';
 /**
  * The shared instruction-language state (T77): one zustand store hydrated from
  * `torfl.prefs.instructionLang`, so every TORFL screen flips together and the
- * choice survives a restart. Default `ru` (the real test).
+ * choice survives a restart. Default `uk` (the real test).
  */
 interface InstructionLangState {
   lang: InstructionLang;

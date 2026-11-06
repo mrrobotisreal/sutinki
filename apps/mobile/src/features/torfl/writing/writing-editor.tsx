@@ -16,7 +16,7 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/cn';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { instructionCopy, RU_CONTENT } from '../copy';
+import { instructionCopy, UK_CONTENT } from '../copy';
 import { formatClock, timerTone } from '../engine/rules';
 import { useInstructionLang } from '../instruction-lang';
 import { LangToggle } from '../lang-toggle';
@@ -44,7 +44,7 @@ export const DRAFT_DEBOUNCE_MS = 600;
  * counters only, lookup per the dictionary rule) and the practice mode
  * (untimed, the bullets as a live checklist). The task and its bullet
  * points sit above exactly as printed; the editor is Literata ≥ 18 px with
- * the Russian keyboard hint; «Словарь» opens the lookup sheet pre-filled
+ * the Ukrainian keyboard hint; «Словарь» opens the lookup sheet pre-filled
  * with the selected word; «Сдать» confirms through the host.
  *
  * Every edit calls `onDraft` after a short debounce (and on blur /
@@ -263,7 +263,7 @@ export function WritingEditor({
           autoCapitalize="sentences"
           autoCorrect={false}
           spellCheck={false}
-          placeholder={RU_CONTENT.letterPlaceholder}
+          placeholder={UK_CONTENT.letterPlaceholder}
           placeholderTextColor={tokens.textMuted}
           testID="writing-input"
           accessibilityLabel={isNoteTopic(item.topic) ? 'The message' : 'The letter'}

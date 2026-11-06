@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam, type Pack, type SpeakingMonologueItem } from '@sutinki/schema';
-import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +14,14 @@ import {
   type GradingQueueDeps,
 } from '../grading/queue-core';
 import { registeredGraderKinds } from '../grading/queue';
-import { gradeSpeakingOffline, offlineSpeakingPoints, responseShare } from '../grading/speaking';
+import { parseExamGrade } from '@/features/ai/schemas';
+
+import {
+  gradeSpeakingOffline,
+  offlineSpeakingPoints,
+  responseShare,
+  speakingCriteriaPercent,
+} from '../grading/speaking';
 import { speakingGrader } from '../grading/speaking-grader';
 import { writingGrader } from '../grading/writing-grader';
 import type { SpeakingAnswer } from '../model';
@@ -45,8 +52,8 @@ const PACK = examPackJson as unknown as Pack;
 const EXAM: Exam = ExamSchema.parse(PACK.exams!.find((e) => e.id === 'a1-mock-fx'));
 const SPEAKING = EXAM.subtests.find((s) => s.kind === 'speaking')!;
 const items = SPEAKING.parts.flatMap((p) => p.items);
-const REPLY = items.find((i) => i.kind === 'speaking-reply')!;
-const MONO = items.find((i) => i.id === 'sp03') as SpeakingMonologueItem;
+const REPLY = items.find((i) => i.id === 'sp46')!;
+const MONO = items.find((i) => i.id === 'sp45') as SpeakingMonologueItem;
 
 const FIXTURES = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -58,6 +65,11 @@ const fixtureContent = (name: string) =>
       choices: { message: { content: string } }[];
     }
   ).choices[0]!.message.content;
+
+const pctOf = (name: string) =>
+  speakingCriteriaPercent(parseExamGrade(fixtureContent(name))!.criteria);
+const REPLY_FX = 'exam-uk-speaking-a1-dialogue-reply-synthetic';
+const MONO_FX = 'exam-uk-speaking-a2-monologue-synthetic';
 
 const RUN: ResolvedRun = {
   profile: { provider: 'anthropic', quality: 'normal', effort: 'high' },
@@ -92,7 +104,7 @@ function makeDeps(over: Partial<GradingQueueDeps> = {}) {
   const failed: { job: GradingJobInput; error: { code: string; attempts: number } }[] = [];
   const recomputed: string[] = [];
   const chat = vi.fn(async () => ({
-    content: fixtureContent('exam-speaking-reply-claude'),
+    content: fixtureContent(REPLY_FX),
     model: 'anthropic/claude-opus-5.5',
     usage: { costUsd: 0.02 },
   }));
@@ -100,7 +112,7 @@ function makeDeps(over: Partial<GradingQueueDeps> = {}) {
     graders: [writingGrader, speakingGrader],
     listPending: async () => [],
     loadExam: async () => EXAM,
-    storyText: async (_p, storyId) => (storyId === 'ls-01' ? 'Привет, Саша! Где ты сейчас?' : null),
+    storyText: async (_p, storyId) => (storyId === 'ex-01' ? 'Де ви зараз живете?' : null),
     resolveRun: async () => RUN,
     chat,
     timeoutMs: () => 1000,
@@ -130,9 +142,9 @@ describe('the speaking grader on the queue', () => {
   it('task 1: requests exam-speaking with the prompt text + model answer; folds pct × share', async () => {
     const answer: SpeakingAnswer = {
       kind: 'speaking-reply',
-      transcript: 'я сейчас живу в колорадо с моя невеста она украинка',
-      assistTranscript: 'Я сейчас живу в Колорадо с моя невеста, она украинка.',
-      recordingPath: 't1-sp01.ogg',
+      transcript: 'я зараз живу в колорадо з моя наречена вона українка',
+      assistTranscript: 'Я зараз живу в Колорадо з моя наречена, вона українка.',
+      recordingPath: 't1-sp46.ogg',
       durationMs: 4200,
     };
     const job = speakingJob(REPLY, answer);
@@ -144,52 +156,54 @@ describe('the speaking grader on the queue', () => {
     ];
     expect(feature).toBe('exam-speaking');
     expect(req.temperature).toBe(0.2);
-    expect(req.messages[0]!.content).toContain('task-1 REPLY');
-    expect(req.messages[1]!.content).toContain('Привет, Саша! Где ты сейчас?');
-    expect(req.messages[1]!.content).toContain('Я сейчас в Москве.');
-    expect(req.messages[1]!.content).toContain('с моя невеста она украинка');
+    expect(req.messages[0]!.content).toContain('task 48');
+    expect(req.messages[0]!.content).toContain('Ukrainian state-language exam');
+    expect(req.messages[1]!.content).toContain('Де ви зараз живете?');
+    expect(req.messages[1]!.content).toContain('Мене звати Оксана.');
+    expect(req.messages[1]!.content).toContain('з моя наречена вона українка');
     expect(req.messages[1]!.content).toContain('re-decoded by Whisper');
     expect(graded).toHaveLength(1);
     const w = graded[0]!.write;
-    expect(w.pct).toBe(96);
-    expect(job.maxPoints).toBe(25);
-    expect(w.points).toBe(24);
+    expect(w.pct).toBe(pctOf(REPLY_FX));
+    expect(job.maxPoints).toBeCloseTo(14 / 3, 3);
+    expect(w.points).toBeCloseTo((w.pct / 100) * job.maxPoints, 1);
     expect(w.grading.offline).toBeDefined();
     expect(w.grading.ai!.criteria.map((c) => c.id)).toEqual([
-      'task-response',
-      'completeness',
-      'grammar',
+      'content',
+      'accuracy',
+      'fullness',
+      'norms',
+      'range',
     ]);
     expect(w.grading.ai).toMatchObject({ provider: 'anthropic', effort: 'high', costUsd: 0.02 });
     expect(recomputed).toEqual(['a1']);
   });
 
-  it('task 3: the monologue prompt carries the questions + range; the GPT fixture folds to 95.5 % of 50', async () => {
+  it('monologue: the prompt carries the points + range; the fixture folds to its pct of the 10-point share', async () => {
     const answer: SpeakingAnswer = {
       kind: 'speaking-monologue',
-      transcript: 'меня зовут митч мне тридцать шесть лет я из америки',
+      transcript: 'мене звати мітч мені тридцять шість років я з америки',
       recordingPath: null,
       durationMs: 120_000,
     };
     const job = speakingJob(MONO, answer);
     const chat = vi.fn(async () => ({
-      content: fixtureContent('exam-speaking-monologue-gpt'),
-      model: 'openai/gpt-6-sol-pro',
+      content: fixtureContent(MONO_FX),
+      model: 'synthetic',
     }));
     const { deps, graded } = makeDeps({ listPending: async () => [job], chat });
     await processGradingQueue(deps);
     const req = (chat.mock.calls[0] as unknown as [string, { messages: { content: string }[] }])[1];
-    expect(req.messages[0]!.content).toContain('MONOLOGUE');
-    expect(req.messages[1]!.content).toContain('  1. Как вас зовут?');
-    expect(req.messages[1]!.content).toContain('Required: 10–12 sentences.');
-    expect(graded[0]!.write.pct).toBe(95.5);
-    expect(job.maxPoints).toBe(50);
-    expect(graded[0]!.write.points).toBe(47.8);
+    expect(req.messages[0]!.content).toContain('task 47');
+    expect(req.messages[1]!.content).toContain('  1. Як вас звати?');
+    expect(req.messages[1]!.content).toContain('Required: 20–25 phrases.'.replace('20–25', '8–10'));
+    expect(graded[0]!.write.pct).toBe(pctOf(MONO_FX));
+    expect(job.maxPoints).toBe(10);
+    expect(graded[0]!.write.points).toBeCloseTo((pctOf(MONO_FX) / 100) * 10, 1);
     expect(graded[0]!.write.grading.ai!.criteria.map((c) => c.id)).toEqual([
-      'coverage',
-      'length',
-      'fluency',
-      'lexis-grammar',
+      'content',
+      'structure',
+      'competence',
     ]);
   });
 
@@ -216,20 +230,20 @@ describe('the speaking grader on the queue', () => {
       examId: EXAM.id,
       subtestId: WRITING.id,
       itemId: wItem.id,
-      answer: { kind: 'writing', text: 'Привет! Меня зовут Митч. Я живу в Колорадо.' },
+      answer: { kind: 'writing', text: 'Привіт! Мене звати Мітч. Я живу в Колорадо.' },
       grading: null,
-      points: 10,
-      maxPoints: WRITING.maxPoints,
+      points: 5,
+      maxPoints: 10,
     };
     const sJob = speakingJob(REPLY, {
       kind: 'speaking-reply',
-      transcript: 'я сейчас в москве',
+      transcript: 'мене звати оксана',
       recordingPath: null,
       durationMs: 1,
     });
     const chat = vi.fn(async (feature: string) => ({
       content: fixtureContent(
-        feature === 'exam-writing' ? 'exam-writing-good-claude' : 'exam-speaking-reply-gpt',
+        feature === 'exam-writing' ? 'exam-uk-writing-a1-message-strong-synthetic' : REPLY_FX,
       ),
       model: 'm',
     }));
@@ -239,6 +253,9 @@ describe('the speaking grader on the queue', () => {
     });
     expect(await processGradingQueue(deps)).toBe(2);
     expect(chat.mock.calls.map((c) => c[0])).toEqual(['exam-writing', 'exam-speaking']);
-    expect(graded.map((g) => g.write.pct)).toEqual([94.5, 97]);
+    expect(graded.map((g) => g.write.pct)).toEqual([
+      pctOf('exam-uk-writing-a1-message-strong-synthetic'),
+      pctOf(REPLY_FX),
+    ]);
   });
 });

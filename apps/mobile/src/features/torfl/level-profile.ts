@@ -13,9 +13,6 @@ import { pluralUk } from '@/lib/uk-plural';
  * THE LEVEL RULE: every exam surface takes an `ExamLevel` and filters by it —
  * an exam's level is `exams.level`; attempts / responses / deck cards inherit
  * it by join on `(pack_id, exam_id)`. Unknown or missing levels fall back to A1.
- *
- * The Sumrak TORFL A1/A2 profiles live on in `legacy-torfl-profile.ts`
- * (SPbU verdict rule, unreachable from any surface until UT17 deletes them).
  */
 
 export const EXAM_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'] as const;

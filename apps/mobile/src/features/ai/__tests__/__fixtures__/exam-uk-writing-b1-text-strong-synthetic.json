@@ -1,0 +1,49 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Напишіть текст «Чому важливо знати державну мову». Обовʼязково напишіть про такі пункти.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "чому ви вчите українську"
+      },
+      {
+        "id": "b2",
+        "uk": "де ви вже користуєтеся мовою"
+      },
+      {
+        "id": "b3",
+        "uk": "що вам дається найважче"
+      },
+      {
+        "id": "b4",
+        "uk": "як ви вчитеся"
+      },
+      {
+        "id": "b5",
+        "uk": "що ви плануєте далі"
+      }
+    ],
+    "minSentences": 8,
+    "minQuestions": 0,
+    "maxQuestions": null,
+    "minWords": 100,
+    "maxWords": 150,
+    "taskTopic": "wr-text",
+    "level": "B1",
+    "modelLetter": null,
+    "letter": "Я вивчаю українську мову, тому що живу з українкою і хочу розмовляти з її родиною без перекладача. Крім того, я планую отримати громадянство, а для цього потрібно скласти іспит.\nВже зараз я користуюся мовою в магазині, у банку та на роботі, коли розмовляю з колегами. Люди завжди усміхаються, коли чують, що іноземець намагається говорити їхньою мовою.\nНайважче мені даються відмінки та вимова літери «ї». Іноді я плутаю слова, схожі на російські, і тоді виходить суржик.\nЩодня я слухаю подкасти, читаю короткі історії та записую нові слова. Раз на тиждень я розмовляю з викладачкою.\nНаступного року я хочу скласти іспит на рівень B1 і вільно спілкуватися з усіма, хто мені дорогий."
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 22,\n      \"max\": 22,\n      \"comment\": \"All five points are covered with real information, including the citizenship plan.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 4,\n      \"max\": 4,\n      \"comment\": \"Clear paragraphs: motive, usage, difficulties, method, plans.\"\n    },\n    {\n      \"id\": \"fit\",\n      \"score\": 9,\n      \"max\": 9,\n      \"comment\": \"Directly answers the theme and keeps the register.\"\n    },\n    {\n      \"id\": \"coherence\",\n      \"score\": 24,\n      \"max\": 26,\n      \"comment\": \"Good logic and connectors (тому що, крім того, тоді, раз на тиждень).\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 23,\n      \"max\": 26,\n      \"comment\": \"Almost entirely correct; a minor slip is «записую нові слова» (fine) and a pair of article-free phrasings that are natural.\"\n    },\n    {\n      \"id\": \"richness\",\n      \"score\": 8,\n      \"max\": 9,\n      \"comment\": \"Varied vocabulary and structures for B1 («намагається», «громадянство»).\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 4,\n      \"max\": 4,\n      \"comment\": \"About 140 words, inside 100–150.\"\n    }\n  ],\n  \"corrected\": \"\",\n  \"changes\": [],\n  \"tips\": [\n    \"Replace a repeated «я» opening with a subordinate clause for more variety.\",\n    \"Keep naming concrete examples as you did.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

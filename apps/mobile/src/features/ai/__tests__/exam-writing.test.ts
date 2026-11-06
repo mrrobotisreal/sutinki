@@ -1,121 +1,118 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { buildExamWritingMessages, type ExamWritingInput } from '../prompts/exam-writing';
+import { WRITING_RUBRICS, rubricMax } from '../../torfl/grading/rubrics';
+import { criteriaPercent } from '../../torfl/grading/writing';
+import { UK_CAPTURE_CASES } from '../dev/exam-uk-cases';
+import {
+  buildExamWritingMessages,
+  examWritingSystem,
+  type ExamWritingInput,
+} from '../prompts/exam-writing';
 import { ExamGradeSchema, parseExamGrade } from '../schemas';
 
 /**
- * T72: the exam-writing prompt contract + the four captured fixtures (one
- * good and one weak letter, graded by the Claude-class and the GPT-class
- * «normal» model at effort high — `scripts/capture-ai-fixtures.ts
- * exam-writing`). Parsed with the production parser; no live call here.
+ * UT17b: the Ukrainian exam-writing prompt contract + the `_synthetic` fixtures (hand-written; live capture via
+ * `/dev-exam-capture` is ready-for-human). Parsed with the production parser; no live call here.
  */
-
 const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), '__fixtures__');
-
 interface Fixture {
+  _synthetic?: boolean;
   input: ExamWritingInput;
-  model: string;
-  ms: number;
   choices: { message: { content: string }; finish_reason: string | null }[];
-  usage: { cost?: number; completion_tokens?: number } | null;
 }
+const load = (name: string) =>
+  JSON.parse(readFileSync(path.join(FIXTURES, name), 'utf8')) as Fixture;
+const WRITING_FILES = readdirSync(FIXTURES).filter((f) => f.startsWith('exam-uk-writing-'));
+const CYRILLIC_RU_ONLY = /[\u0451\u044b\u044d\u044a]/u;
 
-function fixture(name: string): Fixture {
-  return JSON.parse(readFileSync(path.join(FIXTURES, `${name}.json`), 'utf8')) as Fixture;
-}
+describe('exam-writing prompt (Ukrainian examiner)', () => {
+  const base = {
+    taskUk: 'Напишіть повідомлення другові.',
+    bullets: [
+      { id: 'b1', uk: 'подякуйте' },
+      { id: 'b2', uk: 'скажіть, що прийдете' },
+    ],
+    minSentences: 3,
+    minQuestions: 1,
+    maxQuestions: 2,
+    minWords: 10,
+    maxWords: 25,
+    letter: 'Привіт! Дякую.',
+    modelLetter: 'Привіт, Оксано! Дякую за запрошення.',
+  };
 
-const NAMES = [
-  'exam-writing-good-claude',
-  'exam-writing-weak-claude',
-  'exam-writing-good-gpt',
-  'exam-writing-weak-gpt',
-] as const;
-
-describe('exam-writing prompt', () => {
-  it('system pins the five criteria + JSON keys; user carries the task, bullets, counts, letter', () => {
-    const messages = buildExamWritingMessages({
-      taskUk: 'Напишите письмо другу.',
-      bullets: [
-        { id: 'b1', uk: 'как вас зовут' },
-        { id: 'b2', uk: 'где вы живёте' },
-      ],
-      minSentences: 10,
-      minQuestions: 2,
-      maxQuestions: 5,
-      letter: 'Привет! Меня зовут Митч.',
-      modelLetter: 'Здравствуй, Саша! Меня зовут Анна.',
-    });
-    expect(messages[0]!.role).toBe('system');
-    for (const key of [
-      '"task-points"',
-      '"task-length"',
-      '"letter-form"',
-      '"vocabulary"',
-      '"grammar"',
-      '"corrected"',
-      '"changes"',
-      '"tips"',
-    ]) {
-      expect(messages[0]!.content).toContain(key);
-    }
-    const user = messages[1]!.content;
-    expect(user).toContain('Напишите письмо другу.');
-    expect(user).toContain('1. как вас зовут');
-    expect(user).toContain('2. где вы живёте');
-    expect(user).toContain('at least 10 sentences');
-    expect(user).toContain('2–5 questions');
-    expect(user).toContain('A MODEL LETTER');
-    expect(user).toContain('Меня зовут Анна.');
-    expect(user.endsWith('Привет! Меня зовут Митч.')).toBe(true);
+  it('message: system renders the message rubric (Σ 100), the Ukrainian norm and the honest-level line', () => {
+    const sys = buildExamWritingMessages({ ...base, taskTopic: 'wr-message' })[0]!.content;
+    for (const c of WRITING_RUBRICS.message)
+      expect(sys).toContain(`"id": "${c.id}", "score": <0-${c.max}>, "max": ${c.max}`);
+    expect(rubricMax(WRITING_RUBRICS.message)).toBe(100);
+    expect(sys).toContain('Ukrainian state-language exam');
+    expect(sys).toContain('HONEST A1');
+    expect(sys).toContain('surzhyk');
+    expect(sys).toContain('never call it official grading');
+    expect(sys).not.toContain('TORFL');
+    expect(sys).not.toContain('"letter-form"');
   });
 
-  it('no model letter → no calibration block; no maxQuestions → «at least N question(s)»', () => {
+  it('text: renders the seven-criterion rubric; level changes the standard line', () => {
+    const sysB1 = buildExamWritingMessages({ ...base, taskTopic: 'wr-text', level: 'B1' })[0]!
+      .content;
+    for (const c of WRITING_RUBRICS.text) expect(sysB1).toContain(`"${c.id}"`);
+    expect(rubricMax(WRITING_RUBRICS.text)).toBe(100);
+    expect(sysB1).toContain('HONEST B1');
+    expect(examWritingSystem('A2', 'text')).toContain('HONEST A2');
+  });
+
+  it('user carries the task, points, counts, word limits, model text and the candidate text last', () => {
+    const user = buildExamWritingMessages({ ...base, taskTopic: 'wr-message' })[1]!.content;
+    expect(user).toContain('Напишіть повідомлення другові.');
+    expect(user).toContain('1. подякуйте');
+    expect(user).toContain('at least 3 sentences');
+    expect(user).toContain('1–2 questions');
+    expect(user).toContain('Word limit: 10–25 words.');
+    expect(user).toContain('A MODEL TEXT');
+    expect(user.endsWith('Привіт! Дякую.')).toBe(true);
+  });
+
+  it('no model → no calibration block; no quota → «no question quota»', () => {
     const user = buildExamWritingMessages({
-      taskUk: 'Т',
-      bullets: [{ id: 'b1', uk: 'п' }],
-      minSentences: 5,
-      minQuestions: 1,
-      letter: 'Я.',
+      ...base,
+      minQuestions: 0,
+      maxQuestions: null,
+      minWords: null,
+      maxWords: null,
+      modelLetter: null,
+      taskTopic: 'wr-text',
     })[1]!.content;
-    expect(user).not.toContain('MODEL LETTER');
-    expect(user).toContain('at least 1 question(s)');
+    expect(user).not.toContain('MODEL TEXT');
+    expect(user).toContain('no question quota');
+    expect(user).not.toContain('Word limit');
   });
 });
 
 describe('ExamGradeSchema', () => {
   const ok = {
-    criteria: [
-      { id: 'task-points', score: 26, max: 30 },
-      { id: 'task-length', score: 15, max: 15 },
-      { id: 'letter-form', score: 10, max: 10 },
-      { id: 'vocabulary', score: 18.5, max: 20 },
-      { id: 'grammar', score: 25, max: 25 },
-    ],
-    tips: ['Keep it up.'],
+    criteria: WRITING_RUBRICS.message.map((c) => ({ id: c.id, score: c.max, max: c.max })),
   };
-  it('accepts a full set; defaults changes/tips', () => {
-    const g = ExamGradeSchema.parse({ criteria: ok.criteria });
+  it('accepts a full per-kind set; defaults changes/tips', () => {
+    const g = ExamGradeSchema.parse(ok);
     expect(g.changes).toEqual([]);
     expect(g.tips).toEqual([]);
   });
   it('refuses score > max, Σ max ≠ 100, duplicate ids', () => {
     expect(
       ExamGradeSchema.safeParse({
-        ...ok,
-        criteria: ok.criteria.map((c, i) => (i === 0 ? { ...c, score: 31 } : c)),
+        criteria: ok.criteria.map((c, i) => (i === 0 ? { ...c, score: c.max + 1 } : c)),
       }).success,
     ).toBe(false);
-    expect(ExamGradeSchema.safeParse({ ...ok, criteria: ok.criteria.slice(1) }).success).toBe(
-      false,
-    );
+    expect(ExamGradeSchema.safeParse({ criteria: ok.criteria.slice(1) }).success).toBe(false);
     expect(
       ExamGradeSchema.safeParse({
-        ...ok,
-        criteria: [...ok.criteria.slice(0, 4), { ...ok.criteria[4]!, id: 'vocabulary', max: 25 }],
+        criteria: [...ok.criteria.slice(0, 3), { ...ok.criteria[3]!, id: ok.criteria[0]!.id }],
       }).success,
     ).toBe(false);
   });
@@ -127,42 +124,43 @@ describe('ExamGradeSchema', () => {
   });
 });
 
-describe('captured exam-writing fixtures (Claude-class + GPT-class, good + weak letter)', () => {
-  for (const name of NAMES) {
-    it(`${name}: parses through ExamGradeSchema with the five pinned ids`, () => {
-      const fx = fixture(name);
+describe('synthetic writing fixtures (UT17b, ≥ 6 cases: A1/A2/B1 strong + weak)', () => {
+  it('there are six writing fixtures, all marked _synthetic, one per UK_CAPTURE_CASES writing case', () => {
+    const cases = UK_CAPTURE_CASES.filter((c) => c.kind === 'writing').map((c) => c.name);
+    expect(cases).toHaveLength(6);
+    expect(WRITING_FILES).toHaveLength(6);
+    for (const f of WRITING_FILES) expect(load(f)._synthetic).toBe(true);
+    for (const name of cases) expect(WRITING_FILES.some((f) => f.includes(`-${name}-`))).toBe(true);
+  });
+
+  for (const file of WRITING_FILES) {
+    it(`${file}: parses with the rubric's ids in order; the prompt is built from the stored input`, () => {
+      const fx = load(file);
       expect(fx.choices[0]!.finish_reason).toBe('stop');
       const grade = parseExamGrade(fx.choices[0]!.message.content);
       expect(grade).not.toBeNull();
-      expect(grade!.criteria.map((c) => c.id)).toEqual([
-        'task-points',
-        'task-length',
-        'letter-form',
-        'vocabulary',
-        'grammar',
-      ]);
-      expect(grade!.corrected).toBeTruthy();
-      expect(grade!.tips.length).toBeGreaterThanOrEqual(1);
-      // Every change's `before` is really in the letter (the diff view depends on it).
+      const kind = fx.input.taskTopic === 'wr-text' ? 'text' : 'message';
+      expect(grade!.criteria.map((c) => c.id)).toEqual(WRITING_RUBRICS[kind].map((c) => c.id));
+      expect(grade!.criteria.map((c) => c.max)).toEqual(WRITING_RUBRICS[kind].map((c) => c.max));
+      expect(buildExamWritingMessages(fx.input)[0]!.content).toContain(`HONEST ${fx.input.level}`);
       for (const ch of grade!.changes) {
         if (ch.before.length > 0) expect(fx.input.letter).toContain(ch.before);
       }
-      expect(fx.usage?.cost).toBeGreaterThan(0);
+      // Ukrainian only: no Russian-only letters in any corrected text.
+      expect(CYRILLIC_RU_ONLY.test(grade!.corrected ?? '')).toBe(false);
     });
   }
 
-  it('the good letter outscores the weak one on both graders', () => {
-    const total = (name: (typeof NAMES)[number]) =>
-      parseExamGrade(fixture(name).choices[0]!.message.content)!.criteria.reduce(
-        (n, c) => n + c.score,
-        0,
-      );
-    expect(total('exam-writing-good-claude')).toBeGreaterThan(total('exam-writing-weak-claude'));
-    expect(total('exam-writing-good-gpt')).toBeGreaterThan(total('exam-writing-weak-gpt'));
-    // The weak letter has real errors → both graders propose corrections; the good one none.
-    const changes = (name: (typeof NAMES)[number]) =>
-      parseExamGrade(fixture(name).choices[0]!.message.content)!.changes.length;
-    expect(changes('exam-writing-weak-claude')).toBeGreaterThan(0);
-    expect(changes('exam-writing-weak-gpt')).toBeGreaterThan(0);
+  it('strong outscores weak at every level; weak ones carry corrections', () => {
+    const pct = (f: string) =>
+      criteriaPercent(parseExamGrade(load(f).choices[0]!.message.content)!.criteria);
+    for (const lv of ['a1-message', 'a2-text', 'b1-text']) {
+      const strong = WRITING_FILES.find((f) => f.includes(`${lv}-strong`))!;
+      const weak = WRITING_FILES.find((f) => f.includes(`${lv}-weak`))!;
+      expect(pct(strong)).toBeGreaterThan(pct(weak) + 25);
+      expect(
+        parseExamGrade(load(weak).choices[0]!.message.content)!.changes.length,
+      ).toBeGreaterThan(0);
+    }
   });
 });

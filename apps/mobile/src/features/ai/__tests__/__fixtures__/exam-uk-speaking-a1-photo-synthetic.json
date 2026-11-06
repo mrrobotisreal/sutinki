@@ -1,0 +1,31 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "task": "photo",
+    "promptUk": "Опишіть фото",
+    "imageAlt": "Родина з трьох людей обідає за столом на кухні; на столі суп і хліб.",
+    "questionsUk": [
+      "Де вони?",
+      "Хто це?",
+      "Що вони роблять?"
+    ],
+    "minSentences": 5,
+    "maxSentences": 7,
+    "transcript": "на фото я бачу родину вони на кухні мама тато і дочка вони обідають на столі суп і хліб вони щасливі",
+    "assistTranscript": null,
+    "modelAnswer": null,
+    "level": "A1"
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 29,\n      \"max\": 29,\n      \"comment\": \"Place, people, objects and the mood are all mentioned.\"\n    },\n    {\n      \"id\": \"structure\",\n      \"score\": 32,\n      \"max\": 42,\n      \"comment\": \"A clear order, but the opening and closing phrases are missing and there are about 6 phrases (needs 5–7, OK).\"\n    },\n    {\n      \"id\": \"competence\",\n      \"score\": 24,\n      \"max\": 29,\n      \"comment\": \"Simple, correct sentences; a few missing connectors.\"\n    }\n  ],\n  \"corrected\": \"На фото я бачу родину. Вони на кухні: мама, тато і дочка. Вони обідають. На столі суп і хліб. Вони щасливі.\",\n  \"changes\": [],\n  \"tips\": [\n    \"Open with «На фото я бачу…» and close with your impression.\",\n    \"Add one detail about colours or clothing.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

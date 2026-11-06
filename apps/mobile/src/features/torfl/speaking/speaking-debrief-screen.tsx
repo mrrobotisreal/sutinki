@@ -49,8 +49,8 @@ import { ticketHref } from './tickets-model';
  * `accept[0]` spoken by the coach track when the pack has it; task 3: the
  * model story → the reader), the criteria with the grader's comments and
  * the corrected version once the AI graded, «Повторить оценку», and
- * «Практиковать» (tasks 1–2 → the «Экзамен» scenario when installed, else
- * the drill; task 3 → «Билеты»). Subscribes to the grading queue so an AI
+ * «Практикувати» (dialogue → the «Іспит» scenario when installed, else
+ * the drill; monologue → «Білети»). Subscribes to the grading queue so an AI
  * grade landing re-renders in place.
  */
 export function SpeakingDebriefScreen({ attemptId }: { attemptId: string }) {

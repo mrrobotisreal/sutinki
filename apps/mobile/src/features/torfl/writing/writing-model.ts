@@ -1,6 +1,11 @@
 import type { Exam, ExamSubtest, WritingItem } from '@sutinki/schema';
 
-import { bulletCoverage, sentenceSplit } from '../grading/writing';
+import {
+  bulletCoverage,
+  sentenceSplit,
+  writingKindOf,
+  writingTaskPoints,
+} from '../grading/writing';
 
 /**
  * Pure derivations for the writing editor (T72, TORFL §8.3): the live
@@ -43,20 +48,26 @@ export function writingItemsOf(subtest: ExamSubtest): WritingItem[] {
 }
 
 /**
- * The points one writing response is worth: the subtest's `maxPoints` split
- * equally over its writing items (T76, A2-8) — A1's single letter keeps the
- * whole subtest, A2's letter + note 50 each. The ONE rule behind both
- * `use-exam-run` writes, `fold` (via the row's `maxPoints`) and
- * `scoreWritingSubtest`.
+ * The points one writing response is worth inside the section: the Commission's per-task points
+ * (`WRITING_TASK_POINTS`: message 10, text 23 of 33 [reg20 IV.1]) renormalised over the section's writing items
+ * and scaled to the section's `maxPoints` (33 at A1/A2/B1) — so a section % is exactly Σ points / 33. The ONE rule
+ * behind both `use-exam-run` writes, `fold` (via the row's `maxPoints`) and `scoreWritingSubtest`.
  */
-export function writingShare(subtest: Pick<ExamSubtest, 'maxPoints' | 'parts'>): number {
-  const n = writingItemsOf(subtest as ExamSubtest).length;
-  return n > 0 ? subtest.maxPoints / n : subtest.maxPoints;
+export function writingShare(
+  subtest: Pick<ExamSubtest, 'maxPoints' | 'parts'>,
+  item?: Pick<WritingItem, 'topic' | 'minWords'>,
+): number {
+  const items = writingItemsOf(subtest as ExamSubtest);
+  if (items.length === 0) return subtest.maxPoints;
+  const pts = (i: Pick<WritingItem, 'topic' | 'minWords'>) => writingTaskPoints(writingKindOf(i));
+  const total = items.reduce((n, i) => n + pts(i), 0);
+  const mine = item ? pts(item) : total / items.length;
+  return Math.round((mine / total) * subtest.maxPoints * 1000) / 1000;
 }
 
-/** True for the messenger-note task (A2 task 2): `write-note`. */
+/** True for the short-message task (task 44-style): topic `wr-message` (or the legacy `write-note`). */
 export function isNoteTopic(topic: string | undefined): boolean {
-  return topic === 'write-note';
+  return topic === 'wr-message' || topic === 'write-note';
 }
 
 export interface WritingCounters {
@@ -107,11 +118,10 @@ export function writingChecklist(item: Pick<WritingItem, 'bullets'>, text: strin
 }
 
 /**
- * «Предложений: 7 / ≥ 10 · Вопросов: 1 / 2–5». A note (`write-note`, T76)
- * has no question quota: «Предложений: 3 / ≥ 5».
+ * «Речень: 7 / ≥ 10 · Запитань: 1 / 2–5». A message (`wr-message`) with no question quota: «Речень: 3 / ≥ 5».
  */
 export function countersLine(c: WritingCounters, topic?: string, lang: 'uk' | 'en' = 'uk'): string {
-  const [sent, quest] = lang === 'uk' ? ['Предложений', 'Вопросов'] : ['Sentences', 'Questions'];
+  const [sent, quest] = lang === 'uk' ? ['Речень', 'Запитань'] : ['Sentences', 'Questions'];
   if (isNoteTopic(topic) && c.minQuestions === 0 && c.maxQuestions === null) {
     return `${sent}: ${c.sentences} / ≥ ${c.minSentences}`;
   }

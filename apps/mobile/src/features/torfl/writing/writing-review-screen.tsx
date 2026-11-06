@@ -17,7 +17,7 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { applySelfCheck } from '../grading/self-check';
 import { requestGrading, storyText, useGradingQueue } from '../grading/queue';
-import { criterionLabel } from '../grading/writing';
+import { criterionLabel, writingKindOf } from '../grading/writing';
 import { torflLevelOf } from '../level-profile';
 import type { ExamResponse } from '@/db/repositories/exams';
 import { mergedCriteria } from './review-model';
@@ -31,8 +31,8 @@ const LITERATA = { fontFamily: 'Literata_400Regular', fontSize: 17, lineHeight: 
  * `/exam/writing/[attemptId]`: the letter, the five-criterion table with
  * the grader's comments (offline rows marked провизорно until AI / self),
  * the corrected text as the journal's inline diff (`FeedbackView`), the
- * tips, «Повторить оценку» on `ai-failed` / `provisional`, «Самопроверка»,
- * and the model letter («Тексты» → the reader). Subscribes to the grading
+ * tips, «Повторити оцінку» on `ai-failed` / `provisional`, «Самоперевірка»,
+ * and the model letter («Тексти» → the reader). Subscribes to the grading
  * queue so an AI grade landing re-renders in place.
  */
 export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
@@ -73,7 +73,7 @@ export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
   if (!a || !e || !writingSubtest || tasks.length === 0) {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <QueryError message="Письмо не найдено." onRetry={() => router.back()} />
+        <QueryError message="Текст не знайдено." onRetry={() => router.back()} />
       </View>
     );
   }
@@ -96,14 +96,14 @@ export function WritingReviewScreen({ attemptId }: { attemptId: string }) {
           <Ionicons name="chevron-back" size={22} color={tokens.text} />
         </Pressable>
         <View className="flex-1">
-          <Text className="font-reading-bold text-xl">Письмо · разбор</Text>
+          <Text className="font-reading-bold text-xl">Письмо · розбір</Text>
           <Text variant="caption" testID="writing-review-total">
             {pct !== null ? `${pct.toLocaleString('uk-UA')} %` : '—'}
             {provisional
-              ? ' · предварительно'
+              ? ' · попередньо'
               : gradedBy === 'ai'
-                ? ' · оценка ИИ'
-                : ' · самопроверка'}
+                ? ' · оцінка ШІ'
+                : ' · самоперевірка'}
           </Text>
         </View>
       </View>
@@ -167,9 +167,10 @@ function TaskReview({
   // In flight = the pump is sending it now; a `pending-ai` row with no sender is WAITING (offline / no key).
   const inFlight = sending[response.id] === true;
   const waiting = status === 'pending-ai' && !inFlight;
-  const criteria = mergedCriteria(response);
+  const kind = writingKindOf(item);
+  const criteria = mergedCriteria(response, kind);
   const isNote = isNoteTopic(item.topic);
-  const noun = isNote ? 'записку' : 'письмо';
+  const noun = isNote ? 'повідомлення' : 'текст';
 
   const retry = async () => {
     setBusy('retry');
@@ -178,7 +179,9 @@ function TaskReview({
       const ok = await requestGrading(response.id);
       if (!ok)
         setError(
-          isNote ? 'Записка пустая — оценивать нечего.' : 'Письмо пустое — оценивать нечего.',
+          isNote
+            ? 'Повідомлення порожнє — оцінювати нічого.'
+            : 'Текст порожній — оцінювати нічого.',
         );
     } catch (err) {
       setError(
@@ -193,7 +196,7 @@ function TaskReview({
     <View className="gap-5" testID={`writing-task-${task}`}>
       {multi && (
         <Text className="font-reading-bold text-lg" testID={`writing-task-${task}-title`}>
-          Задание {task} · {isNote ? 'сообщение' : 'письмо'}
+          Завдання {task} · {isNote ? 'повідомлення' : 'текст'}
         </Text>
       )}
       {/* status / actions */}
@@ -204,30 +207,30 @@ function TaskReview({
         {inFlight ? (
           <View className="flex-row items-center gap-2">
             <ActivityIndicator size="small" color={tokens.accent} />
-            <Text variant="muted">ИИ оценивает {noun}…</Text>
+            <Text variant="muted">ШІ оцінює {noun}…</Text>
           </View>
         ) : waiting ? (
           <Text variant="muted" testID="writing-waiting">
-            Ждёт связи: ИИ оценит {noun}, когда появится интернет. Пока — предварительная оценка.
+            Очікує мережі: ШІ оцінить {noun}, коли з’явиться інтернет. Поки що — попередня оцінка.
           </Text>
         ) : status === 'ai-failed' ? (
           <>
             <Text className="font-ui-medium text-danger" testID="writing-ai-failed">
-              Оценка ИИ не удалась{g?.error ? ` (${g.error.code})` : ''}.
+              Оцінка ШІ не вдалася{g?.error ? ` (${g.error.code})` : ''}.
             </Text>
             <Text variant="caption">
-              Предварительная оценка осталась. Повтори, когда будет связь и ключ.
+              Попередня оцінка залишилась. Повтори, коли буде зв’язок і ключ.
             </Text>
           </>
         ) : status === 'provisional' ? (
           <Text variant="muted">
-            Оценены только проверяемые офлайн критерии (55 из 100 баллов, пересчитаны в %).
+            Оцінено лише критерії, які можна перевірити офлайн (результат перераховано у %).
           </Text>
         ) : status === 'self-graded' ? (
-          <Text variant="muted">Оценка по самопроверке — окончательная.</Text>
+          <Text variant="muted">Оцінка за самоперевіркою — остаточна.</Text>
         ) : (
           <Text variant="muted">
-            Оценено ИИ
+            Оцінено ШІ
             {g?.ai?.model ? ` · ${g.ai.model.replace(/^(anthropic|openai)\//, '')}` : ''}
             {g?.ai?.costUsd !== undefined ? ` · $${g.ai.costUsd.toFixed(3)}` : ''}
           </Text>
@@ -242,7 +245,7 @@ function TaskReview({
               className="flex-row items-center gap-1.5 rounded-full bg-accent px-4 py-2 active:opacity-80"
             >
               <Ionicons name="refresh" size={14} color={tokens.bg} />
-              <Text className="font-ui-medium text-sm text-bg">Повторить оценку</Text>
+              <Text className="font-ui-medium text-sm text-bg">Повторити оцінку</Text>
             </Pressable>
             <Pressable
               onPress={() => setSelfOpen(true)}
@@ -252,7 +255,7 @@ function TaskReview({
               className="flex-row items-center gap-1.5 rounded-full border border-accent px-4 py-2 active:bg-accent-soft"
             >
               <Ionicons name="checkbox-outline" size={14} color={tokens.accent} />
-              <Text className="font-ui-medium text-sm text-accent">Самопроверка</Text>
+              <Text className="font-ui-medium text-sm text-accent">Самоперевірка</Text>
             </Pressable>
           </View>
         )}
@@ -265,7 +268,7 @@ function TaskReview({
 
       {/* criteria */}
       <View className="gap-2">
-        <SectionTitle>Критерии</SectionTitle>
+        <SectionTitle>Критерії</SectionTitle>
         <View className="overflow-hidden rounded-2xl border border-border bg-surface">
           {criteria.map((c, i) => (
             <View
@@ -284,7 +287,7 @@ function TaskReview({
                 {c.source === 'offline'
                   ? ' · офлайн'
                   : c.source === 'self'
-                    ? ' · самопроверка'
+                    ? ' · самоперевірка'
                     : ''}
               </Text>
               {c.comment ? <Text className="text-sm leading-5">{c.comment}</Text> : null}
@@ -295,7 +298,7 @@ function TaskReview({
 
       {/* the letter / corrections */}
       <View className="gap-2">
-        <SectionTitle>{g?.ai?.corrected ? 'Исправления' : 'Твоё письмо'}</SectionTitle>
+        <SectionTitle>{g?.ai?.corrected ? 'Виправлення' : 'Твій текст'}</SectionTitle>
         {g?.ai?.corrected ? (
           <FeedbackView
             feedback={{
@@ -318,7 +321,7 @@ function TaskReview({
       {/* model letter */}
       {item.model && (
         <View className="gap-2">
-          <SectionTitle>Образец</SectionTitle>
+          <SectionTitle>Зразок</SectionTitle>
           <Pressable
             onPress={() => {
               trackTorfl('torfl_text_opened', {
@@ -338,9 +341,9 @@ function TaskReview({
           >
             <Ionicons name="reader-outline" size={18} color={tokens.accent} />
             <View className="flex-1">
-              <Text className="font-ui-medium">Образец письма</Text>
+              <Text className="font-ui-medium">Зразок тексту</Text>
               <Text variant="caption" numberOfLines={2}>
-                {model.data ?? 'Открыть в читалке'}
+                {model.data ?? 'Відкрити в читалці'}
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={16} color={tokens.textMuted} />
@@ -350,6 +353,7 @@ function TaskReview({
 
       <SelfCheckSheet
         open={selfOpen}
+        kind={kind}
         letter={letter}
         modelLetter={model.data ?? null}
         onClose={() => setSelfOpen(false)}

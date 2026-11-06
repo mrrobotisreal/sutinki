@@ -13,70 +13,67 @@ import type { ExamCriterion, SpeakingAnswer, SpeakingWordStamp } from '../model'
 import { profileFor } from '../level-profile';
 import { roundPct } from '../scoring';
 import { bulletCoverage } from './writing';
+import {
+  SPEAKING_RUBRICS,
+  SPEAKING_TASK_POINTS,
+  anyCriterionLabel,
+  offlineMaxOf,
+  type RubricCriterion,
+  type SpeakingRubricKind,
+} from './rubrics';
+import { countVerbs } from './verbs-uk';
 
 /**
- * The offline (provisional) speaking grader (T73, TORFL_EXAM_PREP §6.2) —
- * PURE. Every speaking response is graded to a 0–100 rubric whose
- * criterion ids the AI prompt pins (Σ max = 100, like writing):
+ * The offline (provisional) speaking grader (UT17b, UKR_EXAM_PREP §2 Говоріння rubrics via `rubrics.ts`) — PURE.
+ * Every speaking response is graded to a 0–100 rubric whose criterion ids the AI prompt pins (Σ max = 100):
  *
- *   tasks 1–2 (reply / situation)        task-response 60 · completeness 20 · grammar 20 (AI)
- *   task 3 (monologue)                   coverage 40 · length 20 · fluency 10 · lexis-grammar 30 (AI)
+ *   photo (46)     content 29 · structure 42 · competence 29 (AI)
+ *   monologue (47) content 40 · structure 20 · competence 40 (AI)
+ *   dialogue (48)  content 29 · fullness 36 · accuracy 21 (AI) · norms 7 (AI) · range 7 (AI)
  *
- * which is the design's 5-point scale ×20: judge `matched` → 3/5 (60),
- * near miss → 1.5/5 (30), else 0; a FULL answer (≥ `minTokens` content
- * tokens — «да / нет / не знаю» is not one) +1 (20); the AI's grammar /
- * appropriacy +1 (20) is pending offline. The monologue's offline parts are
- * cue coverage (20 of 50 → 40), the sentence estimate vs `minSentences`
- * (10 → 20) and fluency (5 → 10); lexis / grammar (15 → 30) is AI-only.
+ * The Commission's point split (4/6/4, 4/2/4, 4/3/5/1/1 of 14/10/14) rescaled to 100 — see `rubrics.ts`. The
+ * offline parts: dialogue content = the M17 judge (matched → full, near-miss → half) and fullness = a FULL answer;
+ * photo / monologue content = cue coverage, structure = the sentence estimate vs the asked phrases (70 %) and
+ * fluency (30 %). The provisional percent RESCALES the offline-scorable points to 100; the AI later supplies the
+ * full 100 through the kind-agnostic queue.
  *
- * The provisional percent RESCALES the offline-scorable points to 100
- * (80 for tasks 1–2, 70 for task 3 — the writing grader's 55 → 100 rule),
- * so the results card shows "how the machine-checkable parts went"; the AI
- * grade later supplies the full 100 through the kind-agnostic queue.
+ * Section arithmetic [reg20 IV.1]: photo 14 + monologue 10 + dialogue 14 = 38 points; a response's share is its
+ * rubric kind's points split over the kind's slots (a monologue pair = ONE slot), scaled to the section's
+ * `maxPoints` (A1/A2/B1 = 38).
  *
- * Subtest weights (§6.2): task 1 = 25 %, task 2 = 25 %, task 3 = 50 % of
- * the subtest's `maxPoints`; `responseShare` splits each task's weight
- * equally over its items (a monologue pair = ONE slot: only the chosen
- * topic gets a response).
- *
- * THE JUDGE IS M17's `judgeAnswer`, UNCHANGED (decision 4). When a Whisper
- * assist transcript exists, both transcripts are judged and the better
- * verdict (then the higher paraphrase score) wins — ASR mis-hearings
- * should never cost a point the other recognizer would have given.
+ * THE JUDGE IS M17's `judgeAnswer` (language `uk`). When a Whisper assist transcript exists, both transcripts are
+ * judged and the better verdict wins — ASR mis-hearings should never cost a point the other recognizer would give.
  */
 
+/** The engine's flow number: 1/2 = turn items (reply / situation), 3 = monologue flow (photo and monologue). */
 export type SpeakingTask = 1 | 2 | 3;
+export type { SpeakingRubricKind } from './rubrics';
 
-export const SPEAKING_TURN_CRITERIA = [
-  { id: 'task-response', max: 60, uk: 'Ответ по заданию', en: 'Task response' },
-  { id: 'completeness', max: 20, uk: 'Полный ответ', en: 'Full answer' },
-  { id: 'grammar', max: 20, uk: 'Грамматика и уместность', en: 'Grammar & appropriacy' },
-] as const;
+export const SPEAKING_TURN_CRITERIA = SPEAKING_RUBRICS.dialogue;
+export const SPEAKING_MONOLOGUE_CRITERIA = SPEAKING_RUBRICS.monologue;
+export const SPEAKING_PHOTO_CRITERIA = SPEAKING_RUBRICS.photo;
 
-export const SPEAKING_MONOLOGUE_CRITERIA = [
-  { id: 'coverage', max: 40, uk: 'Ответы на вопросы темы', en: 'Questions covered' },
-  { id: 'length', max: 20, uk: 'Объём (предложений)', en: 'Length (sentences)' },
-  { id: 'fluency', max: 10, uk: 'Беглость', en: 'Fluency' },
-  { id: 'lexis-grammar', max: 30, uk: 'Лексика и грамматика', en: 'Lexis & grammar' },
-] as const;
+/** The rubric kind of a speaking item (photo = a monologue item carrying an image). */
+export function speakingRubricKind(
+  item: Pick<ExamItem, 'kind'> & { image?: unknown },
+): SpeakingRubricKind | null {
+  switch (item.kind) {
+    case 'speaking-reply':
+    case 'speaking-situation':
+      return 'dialogue';
+    case 'speaking-monologue':
+      return item.image ? 'photo' : 'monologue';
+    default:
+      return null;
+  }
+}
 
-export const SPEAKING_AI_ONLY_IDS: readonly string[] = ['grammar', 'lexis-grammar'];
-/** Σ max over the offline-scorable criteria. */
-export const TURN_OFFLINE_MAX = 80;
-export const MONOLOGUE_OFFLINE_MAX = 70;
-
-/** §6.2 subtest weights per task. */
-export const TASK_WEIGHT: Record<SpeakingTask, number> = { 1: 25, 2: 25, 3: 50 };
-
-export function speakingCriteria(task: SpeakingTask) {
-  return task === 3 ? SPEAKING_MONOLOGUE_CRITERIA : SPEAKING_TURN_CRITERIA;
+export function speakingCriteria(kind: SpeakingRubricKind): readonly RubricCriterion[] {
+  return SPEAKING_RUBRICS[kind];
 }
 
 export function speakingCriterionLabel(id: string): { uk: string; en: string } {
-  const hit =
-    SPEAKING_TURN_CRITERIA.find((c) => c.id === id) ??
-    SPEAKING_MONOLOGUE_CRITERIA.find((c) => c.id === id);
-  return hit ? { uk: hit.uk, en: hit.en } : { uk: id, en: id };
+  return anyCriterionLabel(id);
 }
 
 /** The official task number of a speaking item (by kind, never by part index). */
@@ -93,11 +90,24 @@ export function speakingTaskOf(item: Pick<ExamItem, 'kind'>): SpeakingTask | nul
   }
 }
 
-export const TASK_LABEL: Record<SpeakingTask, { uk: string; en: string }> = {
-  1: { uk: 'Задание 1 · ответы', en: 'Task 1 · replies' },
-  2: { uk: 'Задание 2 · ситуации', en: 'Task 2 · situations' },
-  3: { uk: 'Задание 3 · монолог', en: 'Task 3 · monologue' },
+export const KIND_LABEL: Record<SpeakingRubricKind, { uk: string; en: string }> = {
+  photo: { uk: 'Опис фото', en: 'Photo description' },
+  monologue: { uk: 'Монолог', en: 'Monologue' },
+  dialogue: { uk: 'Діалог з екзаменатором', en: 'Dialogue with the examiner' },
 };
+export const TASK_LABEL: Record<SpeakingTask, { uk: string; en: string }> = {
+  1: KIND_LABEL.dialogue,
+  2: KIND_LABEL.dialogue,
+  3: KIND_LABEL.monologue,
+};
+/** The label of a concrete item (photo vs monologue). */
+export function itemTaskLabel(item: Pick<ExamItem, 'kind'> & { image?: unknown }): {
+  uk: string;
+  en: string;
+} {
+  const k = speakingRubricKind(item);
+  return k ? KIND_LABEL[k] : KIND_LABEL.dialogue;
+}
 
 // --- shares -----------------------------------------------------------------------------------
 
@@ -107,35 +117,36 @@ export interface SpeakingPartsLike {
   maxPoints: number;
 }
 
-/** Slots per task: items for tasks 1–2; distinct `group`s (or ungrouped items) for task 3. */
-export function taskSlots(subtest: Pick<SpeakingPartsLike, 'parts'>): Record<SpeakingTask, number> {
-  const slots: Record<SpeakingTask, number> = { 1: 0, 2: 0, 3: 0 };
+/** Slots per rubric kind: items for dialogue/photo; distinct `group`s (or ungrouped items) for monologues. */
+export function kindSlots(
+  subtest: Pick<SpeakingPartsLike, 'parts'>,
+): Record<SpeakingRubricKind, number> {
+  const slots: Record<SpeakingRubricKind, number> = { photo: 0, monologue: 0, dialogue: 0 };
   const groups = new Set<string>();
   for (const item of subtest.parts.flatMap((p) => p.items)) {
-    const task = speakingTaskOf(item);
-    if (task === null) continue;
-    if (task === 3 && item.kind === 'speaking-monologue') {
+    const kind = speakingRubricKind(item as never);
+    if (kind === null) continue;
+    if (kind === 'monologue' && item.kind === 'speaking-monologue') {
       groups.add(item.group ?? `item:${item.id}`);
-    } else slots[task] += 1;
+    } else slots[kind] += 1;
   }
-  slots[3] = groups.size;
+  slots.monologue = groups.size;
   return slots;
 }
 
 /**
- * The points one response is worth inside the subtest: the task's weight
- * (renormalized over the tasks the subtest actually has) split equally
- * over the task's slots, in `maxPoints` units.
+ * The points one response is worth inside the section: the kind's Commission points (renormalized over the kinds
+ * the section actually has) split equally over the kind's slots, in `maxPoints` units.
  */
 export function responseShare(subtest: SpeakingPartsLike, item: Pick<ExamItem, 'kind'>): number {
-  const task = speakingTaskOf(item);
-  if (task === null) return 0;
-  const slots = taskSlots(subtest);
-  if (slots[task] === 0) return 0;
-  const present = ([1, 2, 3] as SpeakingTask[]).filter((t) => slots[t] > 0);
-  const total = present.reduce((n, t) => n + TASK_WEIGHT[t], 0);
-  const taskPoints = (TASK_WEIGHT[task] / total) * subtest.maxPoints;
-  return Math.round((taskPoints / slots[task]) * 1000) / 1000;
+  const kind = speakingRubricKind(item as never);
+  if (kind === null) return 0;
+  const slots = kindSlots(subtest);
+  if (slots[kind] === 0) return 0;
+  const present = (Object.keys(slots) as SpeakingRubricKind[]).filter((k) => slots[k] > 0);
+  const total = present.reduce((n, k) => n + SPEAKING_TASK_POINTS[k], 0);
+  const kindPoints = (SPEAKING_TASK_POINTS[kind] / total) * subtest.maxPoints;
+  return Math.round((kindPoints / slots[kind]) * 1000) / 1000;
 }
 
 // --- transcript analysis -------------------------------------------------------------------------
@@ -145,446 +156,7 @@ export const PAUSE_CLAUSE_MS = 600;
 /** The clause count may exceed the verb count by this much (an undetected verb is not a lost sentence). */
 export const VERB_SLACK = 1;
 
-/**
- * A1 verb stems (prefix match, ≤ 4 extra letters) + whole forms. Small and
- * explainable on purpose: it caps the pause-based estimate, nothing more.
- */
-const VERB_STEMS = [
-  'жив',
-  'работа',
-  'люб',
-  'уч',
-  'хоч',
-  'хот',
-  'мог',
-  'мож',
-  'зов',
-  'нрав',
-  'чита',
-  'пиш',
-  'писа',
-  'говор',
-  'слуша',
-  'смотр',
-  'гуля',
-  'игра',
-  'ход',
-  'езж',
-  'езд',
-  'ед',
-  'ид',
-  'буд',
-  'зна',
-  'дума',
-  'понима',
-  'отдыха',
-  'готов',
-  'покупа',
-  'дела',
-  'помога',
-  'встава',
-  'встаю',
-  'ложу',
-  'сплю',
-  'спи',
-  'спа',
-  'пь',
-  'пи',
-  'ем',
-  'еш',
-  'ест',
-  'есть',
-  'изуча',
-  'занима',
-  'стою',
-  'сто',
-  'сид',
-  'лежу',
-  'леж',
-  'звон',
-  'отвеча',
-  'спрашива',
-  'расскаж',
-  'рассказыва',
-  'приход',
-  'приезжа',
-  'бег',
-  'плава',
-  'танцу',
-  'пою',
-  'по',
-  'рису',
-  'путешеству',
-  'жд',
-  'вид',
-  'слыш',
-  'помн',
-  'забыва',
-  'забыл',
-  'открыва',
-  'закрыва',
-  'начина',
-  'конча',
-  'заканчива',
-  'прода',
-  'плат',
-  'сто',
-  'дар',
-  'получа',
-  'отправля',
-  'гото',
-  'убира',
-  'мою',
-  'мо',
-  'нос',
-  'вожу',
-  'вод',
-  'лет',
-];
-/**
- * A2 additions (T76, TORFL_A2 §5.3): prefixed motion (при-/у-/вы-/по-/до-/за-/пере-/под-/в- + ход/езжа/ед/ид),
- * carrying (нес/нош/вез/вож), reflexives and the common A2 verbs. A DATA list — `A2_VERB_TEST_CORPUS`
- * in the tests is its proof set. Stems match as prefixes (≤ 4 extra letters) and a token must still end
- * like a verb, so nouns stay out (a test asserts a noun corpus is rejected).
- */
-export const A2_VERB_STEMS: readonly string[] = [
-  // past of prefixed motion / irregulars
-  'приш',
-  'ушл',
-  'уш',
-  'уех',
-  'зашл',
-  'заш',
-  'дошл',
-  'дош',
-  'вышл',
-  'выш',
-  'нашл',
-  'пошл',
-  'перешл',
-  'переех',
-  'приех',
-  'привезл',
-  'вывезл',
-  'встретил',
-  'познакомил',
-  'уста',
-  'дал',
-  'взял',
-  'принесл',
-  // prefixed motion
-  'приход',
-  'прихож',
-  'приед',
-  'приезжа',
-  'прийд',
-  'приду',
-  'уход',
-  'ухож',
-  'уйд',
-  'уйду',
-  'уезжа',
-  'уед',
-  'выход',
-  'выхож',
-  'выйд',
-  'выйду',
-  'выезжа',
-  'выед',
-  'заход',
-  'захож',
-  'зайд',
-  'зайду',
-  'заезжа',
-  'заед',
-  'доход',
-  'дойд',
-  'доезжа',
-  'доед',
-  'переход',
-  'перейд',
-  'переезжа',
-  'переед',
-  'подход',
-  'подойд',
-  'вход',
-  'войд',
-  'пойд',
-  'поед',
-  'поех',
-  // carrying / leading
-  'принес',
-  'принос',
-  'принош',
-  'привез',
-  'привоз',
-  'привож',
-  'унес',
-  'увез',
-  'нес',
-  'нош',
-  'вез',
-  'вож',
-  'веду',
-  'вел',
-  // meeting, inviting, deciding, calling
-  'встреч',
-  'встрет',
-  'пригласи',
-  'приглаша',
-  'предлож',
-  'предлага',
-  'реша',
-  'реши',
-  'решу',
-  'звон',
-  'позвон',
-  'собира',
-  'собер',
-  // everyday A2 verbs
-  'купи',
-  'куплю',
-  'продава',
-  'отдыха',
-  'отдохн',
-  'устава',
-  'болит',
-  'болею',
-  'лечи',
-  'лечу',
-  'выздоравл',
-  'готовит',
-  'приготов',
-  'заказыв',
-  'заказа',
-  'принима',
-  'бра',
-  'бер',
-  'взя',
-  'дава',
-  'даю',
-  'дад',
-  'сказа',
-  'скаж',
-  'объясн',
-  'объясня',
-  'спроси',
-  'спраш',
-  'проси',
-  'прош',
-  'найд',
-  'наход',
-  'нашл',
-  'ищу',
-  'ищет',
-  'поним',
-  'узна',
-  'выуч',
-  'повтор',
-  'пробу',
-  'стара',
-  'мечта',
-  'интересу',
-  'увлека',
-  'улыба',
-  'смея',
-  'плака',
-  'радуе',
-  'радую',
-  'волну',
-  'беспокои',
-  'ссор',
-  'помир',
-  'полюб',
-  'вырос',
-  'расту',
-  'поступ',
-  'окончи',
-  'закончи',
-  'провод',
-  'провел',
-  'провёл',
-  'проведу',
-  'праздну',
-  'поздравл',
-  'подар',
-  'дарю',
-  'отмеча',
-  'ожида',
-  'надею',
-  'верю',
-  'пользу',
-  'использу',
-  'трати',
-  'зараб',
-  'платит',
-  'стоит',
-  'стоят',
-  'требу',
-  'получи',
-  'получа',
-  'послал',
-  'пошл',
-  'посыл',
-  'напиш',
-  'написа',
-  'прочита',
-  'прочт',
-  'просмотр',
-  'посмотр',
-  'услыш',
-  'послуша',
-  'увид',
-  'заметил',
-  'вспомин',
-  'вспомн',
-  'забуд',
-  'запомн',
-  'запомин',
-  'помог',
-  'помога',
-  'меша',
-  'разреш',
-  // reflexive-leaning (the `-ся` ending rule completes them)
-  'встреча',
-  'знакомл',
-  'познаком',
-  'собира',
-  'чувству',
-  'называ',
-  'находи',
-  'оказыва',
-  'каже',
-  'каж',
-  'надо',
-  'занима',
-  'готови',
-  'одева',
-  'умыва',
-  'купа',
-  'моюс',
-  'просыпа',
-  'просып',
-  'засып',
-  'засыпа',
-  'ложи',
-  'ляг',
-  'лёг',
-  'лег',
-  'сяд',
-  'сад',
-  'сид',
-  'встава',
-  'встан',
-  'встаю',
-];
-
-const VERB_FORMS = new Set([
-  'был',
-  'была',
-  'было',
-  'были',
-  'есть',
-  'нет',
-  'можно',
-  'нельзя',
-  'надо',
-  'нужно',
-  'зовут',
-  'будет',
-  'будут',
-  'буду',
-  'хочу',
-  'хочешь',
-  'хочет',
-  'хотим',
-  'хотите',
-  'хотят',
-  'могу',
-  'можешь',
-  'может',
-  'можем',
-  'можете',
-  'могут',
-  'нравится',
-  'нравятся',
-  'ем',
-  'ешь',
-  'ест',
-  'едим',
-  'едите',
-  'едят',
-  'иду',
-  'идёшь',
-  'идешь',
-  'идёт',
-  'идет',
-  'идём',
-  'идем',
-  'идут',
-  'еду',
-  'едешь',
-  'едет',
-  'едем',
-  'едут',
-  'живу',
-  'живёшь',
-  'живешь',
-  'живёт',
-  'живет',
-  'живём',
-  'живем',
-  'живут',
-  'люблю',
-  'любишь',
-  'любит',
-  'любим',
-  'любите',
-  'любят',
-  'учусь',
-  'учишься',
-  'учится',
-  'учимся',
-  'учитесь',
-  'учатся',
-]);
-const VERB_ENDINGS = [
-  'ю',
-  'ешь',
-  'ет',
-  'ем',
-  'ете',
-  'ют',
-  'у',
-  'ишь',
-  'ит',
-  'им',
-  'ите',
-  'ат',
-  'ят',
-];
-const PAST_ENDINGS = ['л', 'ла', 'ло', 'ли', 'лся', 'лась', 'лось', 'лись'];
-
-/** Heuristic: is this (normalized) token a verb form? Stems + whole forms + a conservative ending rule. */
-export function looksLikeVerb(token: string): boolean {
-  const t = token.replace('ё', 'е');
-  if (VERB_FORMS.has(t)) return true;
-  const stemHit =
-    VERB_STEMS.some((s) => t.startsWith(s) && t.length - s.length <= 4 && t.length >= 3) ||
-    A2_VERB_STEMS.some((s) => t.startsWith(s) && t.length - s.length <= 4 && t.length >= 3);
-  if (!stemHit) return false;
-  return (
-    VERB_ENDINGS.some((e) => t.endsWith(e)) ||
-    PAST_ENDINGS.some((e) => t.endsWith(e)) ||
-    t.endsWith('ся') ||
-    t.endsWith('сь') ||
-    t.endsWith('ть')
-  );
-}
-
-export function countVerbs(tokens: readonly string[]): number {
-  return tokens.filter(looksLikeVerb).length;
-}
+export { looksLikeVerb, countVerbs } from './verbs-uk';
 
 export interface SentenceEstimate {
   /** The final estimate (≥ 1 when anything was said). */
@@ -640,7 +212,7 @@ export function estimateSentences(
   return { sentences, clauses, verbs, words, speechMs, longestPauseMs, wpm };
 }
 
-/** A1 fluency bands (recorded; tune once on the device walk). */
+/** Fluency bands (modelled; the level profile overrides them). */
 export const WPM_BANDS = { full: 70, good: 45, weak: 25 } as const;
 export const PAUSE_BANDS_MS = { full: 2_000, half: 4_000 } as const;
 
@@ -667,6 +239,7 @@ export function fluencyShare(
 
 export interface OfflineTurnDetails {
   task: 1 | 2;
+  rubric: 'dialogue';
   verdict: JudgeResult['verdict'];
   nearMiss: boolean;
   judgeScore: number;
@@ -682,6 +255,7 @@ export interface OfflineTurnDetails {
 
 export interface OfflineMonologueDetails {
   task: 3;
+  rubric: 'photo' | 'monologue';
   covered: number;
   total: number;
   coveredIdx: number[];
@@ -701,6 +275,7 @@ export type OfflineSpeakingDetails = OfflineTurnDetails | OfflineMonologueDetail
 
 export interface OfflineSpeakingGrade {
   task: SpeakingTask;
+  rubric: SpeakingRubricKind;
   criteria: ExamCriterion[];
   offlinePoints: number;
   offlineMax: number;
@@ -714,16 +289,19 @@ function half(n: number): number {
   return Math.round(n * 2) / 2;
 }
 
+const maxOf = (kind: SpeakingRubricKind, id: string) =>
+  SPEAKING_RUBRICS[kind].find((c) => c.id === id)!.max;
+
+/** `uk` judge context: Ukrainian stop-words, numerals and stems (ADR-0004 fold). */
+const JUDGE_CTX = { language: 'uk' } as const;
+
 /**
- * The content-token count a FULL answer needs (recorded T73 deviation):
- * the item's `minTokens` (schema default 4) counted against the M17
- * stop-word list fails the fixture's own model answers — «Я сейчас в
- * Москве» is 2 content tokens — so the threshold is calibrated to the
- * model answer: `min(minTokens, contentTokens(accept[0]))`, never below 1.
- * «да» / «нет» / «не знаю» stay below it; «в Москве» (1) does too.
+ * The content-token count a FULL answer needs: the item's `minTokens` (schema default 4) counted against the
+ * stop-word list is calibrated to the model answer: `min(minTokens, contentTokens(accept[0]))`, never below 1.
+ * «так» / «ні» / «не знаю» stay below it.
  */
 export function fullAnswerThreshold(item: Pick<SpeakingTurnItem, 'expect' | 'minTokens'>): number {
-  const model = contentTokens(scoringTokens(item.expect.accept[0] ?? '')).length;
+  const model = contentTokens(scoringTokens(item.expect.accept[0] ?? ''), 'uk').length;
   return Math.max(1, model > 0 ? Math.min(item.minTokens, model) : item.minTokens);
 }
 
@@ -737,43 +315,47 @@ function better(a: JudgeResult, b: JudgeResult): boolean {
   return a.score > b.score;
 }
 
-/** Tasks 1–2: judge (unchanged M17) → 60/30/0, full answer → +20, grammar pending. */
+/** Dialogue (task 48 replies): content = judge (matched full / near-miss half), fullness = a FULL answer. */
 export function gradeTurnOffline(
   item: Pick<SpeakingTurnItem, 'kind' | 'expect' | 'minTokens'>,
   answer: Pick<SpeakingAnswer, 'transcript' | 'assistTranscript'>,
 ): OfflineSpeakingGrade {
   const task: 1 | 2 = item.kind === 'speaking-reply' ? 1 : 2;
-  const primary = judgeAnswer(answer.transcript, item.expect);
+  const primary = judgeAnswer(answer.transcript, item.expect, JUDGE_CTX);
   let used: 'primary' | 'assist' = 'primary';
   let judge = primary;
   if (answer.assistTranscript && answer.assistTranscript.trim().length > 0) {
-    const assist = judgeAnswer(answer.assistTranscript, item.expect);
+    const assist = judgeAnswer(answer.assistTranscript, item.expect, JUDGE_CTX);
     if (better(assist, primary)) {
       judge = assist;
       used = 'assist';
     }
   }
   const transcript = used === 'assist' ? answer.assistTranscript! : answer.transcript;
-  const content = contentTokens(scoringTokens(transcript)).length;
-  const responseMax = 60;
-  const response = judge.verdict === 'matched' ? responseMax : judge.nearMiss ? responseMax / 2 : 0;
+  const content = contentTokens(scoringTokens(transcript), 'uk').length;
+  const contentMax = maxOf('dialogue', 'content');
+  const response =
+    judge.verdict === 'matched' ? contentMax : judge.nearMiss ? half(contentMax / 2) : 0;
   const threshold = fullAnswerThreshold(item);
   const fullAnswer = judge.verdict !== 'no-speech' && content >= threshold;
-  const completeness = fullAnswer ? 20 : 0;
+  const fullness = fullAnswer ? maxOf('dialogue', 'fullness') : 0;
   const criteria: ExamCriterion[] = [
-    { id: 'task-response', score: response, max: 60 },
-    { id: 'completeness', score: completeness, max: 20 },
+    { id: 'content', score: response, max: contentMax },
+    { id: 'fullness', score: fullness, max: maxOf('dialogue', 'fullness') },
   ];
-  const offlinePoints = response + completeness;
+  const offlinePoints = response + fullness;
+  const offlineMax = offlineMaxOf(SPEAKING_RUBRICS.dialogue);
   return {
     task,
+    rubric: 'dialogue',
     criteria,
     offlinePoints,
-    offlineMax: TURN_OFFLINE_MAX,
-    pct: roundPct((offlinePoints / TURN_OFFLINE_MAX) * 100),
+    offlineMax,
+    pct: roundPct((offlinePoints / offlineMax) * 100),
     provisional: true,
     details: {
       task,
+      rubric: 'dialogue',
       verdict: judge.verdict,
       nearMiss: judge.nearMiss,
       judgeScore: judge.score,
@@ -787,12 +369,16 @@ export function gradeTurnOffline(
   };
 }
 
-/** Task 3: cue coverage (40) + sentence estimate (20) + fluency (10); lexis/grammar pending. */
+/**
+ * Photo (46) and monologue (47): content = cue coverage of the item's questions / details, structure = the
+ * sentence estimate vs the asked phrases (70 %) + fluency (30 %); competence is AI-only.
+ */
 export function gradeMonologueOffline(
-  item: Pick<SpeakingMonologueItem, 'questions' | 'minSentences'>,
+  item: Pick<SpeakingMonologueItem, 'questions' | 'minSentences'> & { image?: unknown },
   answer: Pick<SpeakingAnswer, 'transcript' | 'assistTranscript' | 'words'>,
   opts: { pauseMs?: number; level?: string | null } = {},
 ): OfflineSpeakingGrade {
+  const rubric: 'photo' | 'monologue' = item.image ? 'photo' : 'monologue';
   const bullets = item.questions.map((q, i) => ({ id: `q${i}`, cues: q.cues }));
   const primaryCov = bulletCoverage(answer.transcript, bullets);
   let coverage = primaryCov;
@@ -806,33 +392,34 @@ export function gradeMonologueOffline(
   }
   const est = estimateSentences(answer.transcript, answer.words, opts);
   const empty = est.words === 0 && !(answer.assistTranscript ?? '').trim();
-  const coverageScore = empty
+  const contentMax = maxOf(rubric, 'content');
+  const structMax = maxOf(rubric, 'structure');
+  const contentScore = empty
     ? 0
     : coverage.total > 0
-      ? half((coverage.covered.length / coverage.total) * 40)
+      ? half((coverage.covered.length / coverage.total) * contentMax)
       : 0;
-  const lengthScore = empty
-    ? 0
-    : half(Math.min(1, est.sentences / Math.max(1, item.minSentences)) * 20);
-  const fluencyScore = empty
-    ? 0
-    : half(fluencyShare(est, profileFor(opts.level).fluencyBands) * 10);
+  const lengthShare = Math.min(1, est.sentences / Math.max(1, item.minSentences));
+  const fluency = fluencyShare(est, profileFor(opts.level).fluencyBands);
+  const structureScore = empty ? 0 : half((0.7 * lengthShare + 0.3 * fluency) * structMax);
   const criteria: ExamCriterion[] = [
-    { id: 'coverage', score: coverageScore, max: 40 },
-    { id: 'length', score: lengthScore, max: 20 },
-    { id: 'fluency', score: fluencyScore, max: 10 },
+    { id: 'content', score: contentScore, max: contentMax },
+    { id: 'structure', score: structureScore, max: structMax },
   ];
-  const offlinePoints = coverageScore + lengthScore + fluencyScore;
+  const offlinePoints = contentScore + structureScore;
+  const offlineMax = offlineMaxOf(SPEAKING_RUBRICS[rubric]);
   const idx = (ids: string[]) => ids.map((id) => Number(id.slice(1)));
   return {
     task: 3,
+    rubric,
     criteria,
     offlinePoints,
-    offlineMax: MONOLOGUE_OFFLINE_MAX,
-    pct: roundPct((offlinePoints / MONOLOGUE_OFFLINE_MAX) * 100),
+    offlineMax,
+    pct: roundPct((offlinePoints / offlineMax) * 100),
     provisional: true,
     details: {
       task: 3,
+      rubric,
       covered: coverage.covered.length,
       total: coverage.total,
       coveredIdx: idx(coverage.covered),
@@ -875,15 +462,14 @@ export function gradeSpeakingOffline(
   return null;
 }
 
-/** Response-row points of a provisional grade worth `share` points of the subtest. */
+/** Response-row points of a provisional grade worth `share` points of the section. */
 export function offlineSpeakingPoints(grade: OfflineSpeakingGrade, share: number): number {
   return Math.round((grade.pct / 100) * share * 10) / 10;
 }
 
 /**
- * The subtest's provisional result from the stored speaking answers (the
- * `computeFinish` path): Σ over answered items of pct × share; items with
- * no answer (skipped, the unchosen monologue) contribute 0.
+ * The section's provisional result from the stored speaking answers (the `computeFinish` path): Σ over answered
+ * items of pct × share; items with no answer (skipped, the unchosen monologue) contribute 0.
  */
 export function scoreSpeakingSubtest(
   subtest: ExamSubtest,
@@ -892,8 +478,7 @@ export function scoreSpeakingSubtest(
 ): { points: number; maxPoints: number; pct: number } {
   let points = 0;
   for (const item of subtest.parts.flatMap((p) => p.items)) {
-    const task = speakingTaskOf(item);
-    if (task === null) continue;
+    if (speakingTaskOf(item) === null) continue;
     const a = answers[item.id];
     if (!a || typeof a.transcript !== 'string') continue;
     const grade = gradeSpeakingOffline(item, a as SpeakingAnswer, { level });
@@ -911,7 +496,7 @@ export function scoreSpeakingSubtest(
   };
 }
 
-/** The percent a full criteria set is worth (Σ score / Σ max). Shared with writing via the same formula. */
+/** The percent a full criteria set is worth (Σ score / Σ max). */
 export function speakingCriteriaPercent(criteria: readonly ExamCriterion[]): number {
   const max = criteria.reduce((n, c) => n + c.max, 0);
   if (max <= 0) return 0;

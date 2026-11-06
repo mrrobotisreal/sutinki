@@ -5,15 +5,27 @@ import { torflLevelOf, type TorflLevel } from '../level-profile';
 import { compareTopics, topicLabel } from '../topics';
 
 /**
- * «Мои ответы» — the personal answer bank (T74, TORFL_EXAM_PREP §9): pure
- * model over journal prompts + Mitch's entries. A prompt belongs to the
- * bank when its tags carry `torfl`; `torfl:<topic>` names the §3.4 topic
- * (unknown slugs render raw — a CT session may coin one first). Tested in
- * Node; no DB / React imports.
+ * «Мої відповіді» — the personal answer bank (T74 → UT17b, UKR_EXAM_PREP §4):
+ * pure model over journal prompts + Mitch's entries. A prompt belongs to the
+ * bank when its tags carry `ukr-exam:speaking` or `ukr-exam:writing` (the
+ * `a1-ukrexam-prompts-001` pack); any other `ukr-exam:<slug>` that is not a
+ * stack-kind tag names the topic (unknown slugs render raw — a content session
+ * may coin one first). Tested in Node; no DB / React imports.
  */
 
-export const TORFL_PROMPT_TAG = 'torfl';
-const TOPIC_TAG_PREFIX = 'torfl:';
+export const EXAM_PROMPT_TAGS = ['ukr-exam:speaking', 'ukr-exam:writing'] as const;
+const TOPIC_TAG_PREFIX = 'ukr-exam:';
+/** `ukr-exam:<kind>` tags that are NOT topics (UKR_EXAM_PREP §4 tag scheme). */
+const NON_TOPIC_TAGS = new Set([
+  'lexgram',
+  'lexicon',
+  'reading',
+  'listening',
+  'speaking',
+  'writing',
+  'mock',
+  'gate',
+]);
 
 export interface AnswerPrompt {
   packId: string;
@@ -42,7 +54,7 @@ export interface AnswerPromptGroup {
 }
 
 export interface AnswerTopicGroup {
-  /** The `torfl:<topic>` slug, or `'other'` for a `torfl` prompt without one. */
+  /** The `ukr-exam:<topic>` slug, or `'other'` for an exam prompt without one. */
   topic: string;
   labelUk: string;
   labelEn: string;
@@ -53,18 +65,19 @@ export interface AnswerTopicGroup {
 
 export const OTHER_TOPIC = 'other';
 
-/** The `torfl:<topic>` slug of a prompt, else `'other'`. */
+/** The `ukr-exam:<topic>` slug of a prompt (skipping the stack-kind tags), else `'other'`. */
 export function promptTopic(tags: readonly string[] | null | undefined): string {
   for (const t of tags ?? []) {
     if (t.startsWith(TOPIC_TAG_PREFIX) && t.length > TOPIC_TAG_PREFIX.length) {
-      return t.slice(TOPIC_TAG_PREFIX.length);
+      const slug = t.slice(TOPIC_TAG_PREFIX.length);
+      if (!NON_TOPIC_TAGS.has(slug)) return slug;
     }
   }
   return OTHER_TOPIC;
 }
 
-export function isTorflPrompt(p: Pick<AnswerPrompt, 'tags'>): boolean {
-  return (p.tags ?? []).includes(TORFL_PROMPT_TAG);
+export function isExamPrompt(p: Pick<AnswerPrompt, 'tags'>): boolean {
+  return (p.tags ?? []).some((t) => (EXAM_PROMPT_TAGS as readonly string[]).includes(t));
 }
 
 /**
@@ -75,22 +88,22 @@ export function promptLevel(p: Pick<AnswerPrompt, 'packLevel'>): TorflLevel {
   return torflLevelOf(p.packLevel);
 }
 
-/** The TORFL prompts (tagged `torfl`) of one level — the «Мои ответы» level filter (T75). */
+/** The exam prompts (tagged `ukr-exam:speaking|writing`) of one level — the «Мої відповіді» level filter. */
 export function promptsForLevel<T extends Pick<AnswerPrompt, 'tags' | 'packLevel'>>(
   prompts: readonly T[],
   level: TorflLevel,
 ): T[] {
-  return prompts.filter((p) => isTorflPrompt(p) && promptLevel(p) === level);
+  return prompts.filter((p) => isExamPrompt(p) && promptLevel(p) === level);
 }
 
 function topicLabels(topic: string): { uk: string; en: string } {
-  if (topic === OTHER_TOPIC) return { uk: 'Другие темы', en: 'Other topics' };
+  if (topic === OTHER_TOPIC) return { uk: 'Інші теми', en: 'Other topics' };
   const l = topicLabel(topic);
   return { uk: l.uk, en: l.en };
 }
 
 /**
- * Group the installed `torfl` prompts by topic, each with Mitch's entries
+ * Group the installed exam prompts by topic, each with Mitch's entries
  * (newest first). Topics in §3.4 order, unknown slugs after, `other` last;
  * prompts inside a topic keep pack order. Topics with no prompt vanish.
  */
@@ -109,7 +122,7 @@ export function groupAnswers(
 
   const byTopic = new Map<string, AnswerPromptGroup[]>();
   for (const p of prompts) {
-    if (!isTorflPrompt(p)) continue;
+    if (!isExamPrompt(p)) continue;
     const topic = promptTopic(p.tags);
     const list = byTopic.get(topic) ?? [];
     list.push({ prompt: p, entries: byPrompt.get(p.id) ?? [] });
@@ -138,7 +151,7 @@ export function groupAnswers(
 export interface RehearsalText {
   /** The sentences to rehearse, in order. */
   sentences: string[];
-  /** True when the AI-corrected text was used (the screen labels it «исправленный текст»). */
+  /** True when the AI-corrected text was used (the screen labels it «виправлений текст»). */
   corrected: boolean;
 }
 

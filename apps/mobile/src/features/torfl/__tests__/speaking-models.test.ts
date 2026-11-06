@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
-import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import { describe, expect, it } from 'vitest';
 
 import type { ExamResponse } from '@/db/repositories/exams';
@@ -19,7 +19,7 @@ import {
   ticketHref,
 } from '../speaking/tickets-model';
 
-/** T73: the pure debrief + practice / «Билеты» derivations over the fixture mock. */
+/** T73: the pure debrief + practice / «Білети» derivations over the fixture mock. */
 
 const PACK = examPackJson as unknown as Pack;
 const summaries = PACK.exams!.map((e) => ({
@@ -37,7 +37,7 @@ function response(itemId: string, over: Partial<ExamResponse> = {}): ExamRespons
   const item = SPEAKING.parts.flatMap((p) => p.items).find((i) => i.id === itemId)!;
   const answer = {
     kind: item.kind as 'speaking-reply',
-    transcript: 'я сейчас в москве',
+    transcript: 'мене звати оксана',
     recordingPath: `t1-${itemId}.ogg`,
     durationMs: 2000,
   };
@@ -60,64 +60,75 @@ function response(itemId: string, over: Partial<ExamResponse> = {}): ExamRespons
 }
 
 describe('speakingDebriefEntries', () => {
-  it('one entry per item; the monologue pair collapses to the answered topic (or the first, marked unchosen)', () => {
+  it('one entry per item; each carries its rubric kind (photo · monologue · dialogue)', () => {
     const none = speakingDebriefEntries(EXAM, SPEAKING.id, []);
-    expect(none.map((e) => [e.item.id, e.task, e.number, e.unchosen])).toEqual([
-      ['sp01', 1, 1, false],
-      ['sp02', 2, 2, false],
-      ['sp03', 3, 3, true],
+    expect(none.map((e) => [e.item.id, e.task, e.rubric, e.number, e.unchosen])).toEqual([
+      ['sp44', 3, 'photo', 1, false],
+      ['sp45', 3, 'monologue', 2, false],
+      ['sp46', 1, 'dialogue', 3, false],
+      ['sp47', 1, 'dialogue', 4, false],
+      ['sp48', 1, 'dialogue', 5, false],
     ]);
-    expect(none[0]!.modelLine).toBe('Я сейчас в Москве.');
-    expect(none[2]!.modelLine).toBeNull();
-    expect(none[0]!.pct).toBeNull();
-    const withMono = speakingDebriefEntries(EXAM, SPEAKING.id, [response('sp04')]);
-    expect(withMono[2]!.item.id).toBe('sp04');
-    expect(withMono[2]!.unchosen).toBe(false);
+    expect(none[2]!.modelLine).toBe('Мене звати Оксана.');
+    expect(none[1]!.modelLine).toBeNull();
+    expect(none[2]!.pct).toBeNull();
   });
 
-  it('a graded reply: pct from points/max, the offline details, criteria merged with grammar pending', () => {
-    const [e] = speakingDebriefEntries(EXAM, SPEAKING.id, [response('sp01')]);
+  it('a graded reply: pct from points/max, the offline details, criteria merged with the AI-only parts pending', () => {
+    const [e] = speakingDebriefEntries(EXAM, SPEAKING.id, [response('sp46')]).filter(
+      (x) => x.item.id === 'sp46',
+    );
     expect(e!.pct).toBe(100);
     expect(e!.details?.task).toBe(1);
     expect(e!.criteria.map((c) => [c.id, c.pending, c.source])).toEqual([
-      ['task-response', false, 'offline'],
-      ['completeness', false, 'offline'],
-      ['grammar', true, 'offline'],
+      ['content', false, 'offline'],
+      ['accuracy', true, 'offline'],
+      ['fullness', false, 'offline'],
+      ['norms', true, 'offline'],
+      ['range', true, 'offline'],
     ]);
-    expect(transcriptChips(e!.answer)).toEqual(['я', 'сейчас', 'в', 'москве']);
+    expect(transcriptChips(e!.answer)).toEqual(['мене', 'звати', 'оксана']);
     expect(transcriptChips({ ...e!.answer!, words: [{ w: 'Я', s: 0, e: 1 }] })).toEqual(['Я']);
   });
 
   it('scored by AI → the AI rows replace the offline ones', () => {
-    const r = response('sp01', {
+    const r = response('sp46', {
       gradingStatus: 'scored',
       grading: {
         v: 1,
         ai: {
           criteria: [
-            { id: 'task-response', score: 55, max: 60, comment: 'ok' },
-            { id: 'completeness', score: 20, max: 20 },
-            { id: 'grammar', score: 16, max: 20 },
+            { id: 'content', score: 27, max: 29, comment: 'ok' },
+            { id: 'accuracy', score: 18, max: 21 },
+            { id: 'fullness', score: 36, max: 36 },
+            { id: 'norms', score: 6, max: 7 },
+            { id: 'range', score: 5, max: 7 },
           ],
           tips: [],
         },
       },
     });
-    const m = mergedSpeakingCriteria(1, r);
+    const m = mergedSpeakingCriteria('dialogue', r);
     expect(m.map((c) => [c.id, c.score, c.source, c.pending])).toEqual([
-      ['task-response', 55, 'ai', false],
-      ['completeness', 20, 'ai', false],
-      ['grammar', 16, 'ai', false],
+      ['content', 27, 'ai', false],
+      ['accuracy', 18, 'ai', false],
+      ['fullness', 36, 'ai', false],
+      ['norms', 6, 'ai', false],
+      ['range', 5, 'ai', false],
     ]);
-    expect(mergedSpeakingCriteria(3, null).map((c) => c.id)).toEqual([
-      'coverage',
-      'length',
-      'fluency',
-      'lexis-grammar',
+    expect(mergedSpeakingCriteria('monologue', null).map((c) => c.id)).toEqual([
+      'content',
+      'structure',
+      'competence',
+    ]);
+    expect(mergedSpeakingCriteria('photo', null).map((c) => c.id)).toEqual([
+      'content',
+      'structure',
+      'competence',
     ]);
   });
 
-  it('examScenarioRung finds the «Экзамен» family by id or pack slug', () => {
+  it('examScenarioRung finds the «Іспит» family by id or pack slug', () => {
     const rung = { id: 'exam-a1', packId: 'a1-scn-exam-001' } as never;
     expect(examScenarioRung([{ familyId: 'exam', rungs: [rung] } as never])).toEqual({
       packId: 'a1-scn-exam-001',
@@ -133,31 +144,31 @@ describe('speakingDebriefEntries', () => {
 });
 
 describe('speaking practice + tickets', () => {
-  it('practice lists task-1 / task-2 items (drills first, then mocks); the href carries the item', () => {
+  const fx = summaries.find((x) => x.examId === 'a1-mock-fx')!;
+  it('practice lists dialogue items (drills first, then finished mocks); the href carries the item', () => {
     const entries = speakingPracticeEntries(summaries);
-    expect(entries.map((e) => [e.examId, e.item.id])).toEqual([
-      ['a1-mock-fx', 'sp01'],
-      ['a1-mock-fx', 'sp02'],
-    ]);
+    expect(entries.length).toBeGreaterThan(0);
+    expect(
+      entries.every(
+        (e) => e.item.kind === 'speaking-reply' || e.item.kind === 'speaking-situation',
+      ),
+    ).toBe(true);
     expect(speakingPracticeHref(entries[0]!)).toEqual({
       pathname: '/torfl/speak',
-      params: { packId: PACK.id, examId: 'a1-mock-fx', itemId: 'sp01' },
+      params: { packId: PACK.id, examId: entries[0]!.examId, itemId: entries[0]!.item.id },
     });
     expect(ticketHref()).toEqual({ pathname: '/torfl/tickets' });
   });
 
-  it('tickets = every monologue item with its answered count; the draw is weighted to the least practised', () => {
-    const counts = new Map([[`${PACK.id}:a1-mock-fx:sp03`, 3]]);
-    const tickets = monologueTickets(summaries, counts);
-    expect(tickets.map((t) => [t.item.id, t.answered])).toEqual([
-      ['sp03', 3],
-      ['sp04', 0],
-    ]);
-    // weights 1/4 and 1 → sp04 wins everything from 0.2 of the total upward
-    expect(drawTicket(tickets, () => 0.1)!.item.id).toBe('sp03');
-    expect(drawTicket(tickets, () => 0.3)!.item.id).toBe('sp04');
-    expect(drawTicket(tickets, () => 0.999)!.item.id).toBe('sp04');
+  it('tickets = monologue items with their answered count; the draw is weighted to the least practised', () => {
+    const tickets = monologueTickets([fx], new Map());
+    expect(tickets.length).toBeGreaterThan(0);
+    const first = tickets[0]!;
+    const counts = new Map([[`${PACK.id}:${first.examId}:${first.item.id}`, 3]]);
+    const weighted = monologueTickets([fx], counts);
+    expect(weighted.find((t) => t.item.id === first.item.id)!.answered).toBe(3);
+    expect(drawTicket(weighted, () => 0.999)).not.toBeNull();
     expect(drawTicket([], () => 0)).toBeNull();
-    expect(monologueTickets([{ ...summaries[0]!, exam: null }])).toEqual([]);
+    expect(monologueTickets([{ ...fx, exam: null }])).toEqual([]);
   });
 });

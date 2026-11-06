@@ -114,21 +114,22 @@ describe('the results card variants (five injected pcts → each verdict variant
 
   it('pass / borderline / fail / provisional / missing', () => {
     expect(verdict(pctsFromRows(five(70)), {}).verdict).toBe('pass');
-    expect(verdict(pctsFromRows(five(70, { reading: 62 }))).verdict).toBe('pass-borderline');
+    // no per-section floor: reading 62 is carried by the total (UT17)
+    expect(verdict(pctsFromRows(five(78, { reading: 62 }))).verdict).toBe('pass');
     const fail = verdict(pctsFromRows(five(70, { speaking: 40 })));
-    expect(fail).toMatchObject({ verdict: 'fail', retake: ['speaking'] });
+    expect(fail).toMatchObject({ verdict: 'fail', retake: [] });
     expect(verdict(pctsFromRows(five(70)), provisionalFromRows(five(70))).provisional).toBe(true);
     const three = verdict(pctsFromRows(buildResultRows(EXAM, attempt)));
     expect(three.verdict).toBeNull();
-    expect(missingVerdictLine(three.missing)).toBe('Вердикт — после Письма и Говорения');
+    expect(missingVerdictLine(three.missing)).toBe('Вердикт — після Письма та Говоріння');
   });
 });
 
 describe('missingVerdictLine', () => {
   it('genitive list', () => {
-    expect(missingVerdictLine(['writing'])).toBe('Вердикт — после Письма');
+    expect(missingVerdictLine(['writing'])).toBe('Вердикт — після Письма');
     expect(missingVerdictLine(['writing', 'reading', 'speaking'])).toBe(
-      'Вердикт — после Письма, Чтения и Говорения',
+      'Вердикт — після Письма, Читання та Говоріння',
     );
     expect(missingVerdictLine([])).toBe('');
   });

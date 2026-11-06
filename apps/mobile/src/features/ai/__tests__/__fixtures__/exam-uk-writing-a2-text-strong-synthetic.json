@@ -1,0 +1,45 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Напишіть розповідь про свій вихідний день. Обовʼязково напишіть про такі пункти.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "де ви були"
+      },
+      {
+        "id": "b2",
+        "uk": "з ким ви були"
+      },
+      {
+        "id": "b3",
+        "uk": "що ви робили"
+      },
+      {
+        "id": "b4",
+        "uk": "що вам сподобалося"
+      }
+    ],
+    "minSentences": 6,
+    "minQuestions": 0,
+    "maxQuestions": null,
+    "minWords": 50,
+    "maxWords": 70,
+    "taskTopic": "wr-text",
+    "level": "A2",
+    "modelLetter": null,
+    "letter": "Минулої неділі я їздив до Львова з моєю нареченою Оленою.\nМи прокинулися рано і поїхали потягом. У місті ми гуляли центром, пили каву і фотографували старі будинки.\nПотім ми пообідали в маленькому ресторані та пішли до музею.\nМені дуже сподобалася архітектура і смачна їжа. Увечері ми повернулися додому втомлені, але щасливі."
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 22,\n      \"max\": 22,\n      \"comment\": \"All four points are developed: where (Львів), with whom (нареченою Оленою), what they did and what he liked.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 4,\n      \"max\": 4,\n      \"comment\": \"Opening, body and closing in clear paragraphs.\"\n    },\n    {\n      \"id\": \"fit\",\n      \"score\": 9,\n      \"max\": 9,\n      \"comment\": \"Exactly a short account of a day off, in a suitable register.\"\n    },\n    {\n      \"id\": \"coherence\",\n      \"score\": 22,\n      \"max\": 26,\n      \"comment\": \"Events follow in order with «потім» and «увечері»; one or two links could be richer.\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 22,\n      \"max\": 26,\n      \"comment\": \"Cases and verbs are correct (мала дрібниця: «центром» is fine). Very few slips.\"\n    },\n    {\n      \"id\": \"richness\",\n      \"score\": 7,\n      \"max\": 9,\n      \"comment\": \"Good A2 range: past tense, instrumental, simple connectors.\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 4,\n      \"max\": 4,\n      \"comment\": \"About 65 words, inside 50–70.\"\n    }\n  ],\n  \"corrected\": \"\",\n  \"changes\": [],\n  \"tips\": [\n    \"Add one more connector («після цього», «зрештою») to reach the next level of cohesion.\",\n    \"Try one sentence with «тому що» to give a reason.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}
