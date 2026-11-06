@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CefrLevelSchema, LocalizedTextSchema, StableIdSchema } from './common';
+import { CefrLevelSchema, LocalizedTextSchema, RelativePathSchema, StableIdSchema } from './common';
 import { ExpectationSchema, slotFormIssue } from './scenario';
 
 /**
@@ -23,8 +23,20 @@ export const EXAM_SUBTEST_KINDS = [
 ] as const;
 export const ExamSubtestKindSchema = z.enum(EXAM_SUBTEST_KINDS);
 export type ExamSubtestKind = z.infer<typeof ExamSubtestKindSchema>;
-/** Official SPbU order of a full mock (§1.3 decision 7). */
+/** Official SPbU order of a full TORFL mock (§1.3 decision 7). */
 export const TORFL_SUBTEST_ORDER = EXAM_SUBTEST_KINDS;
+/**
+ * Order of the four parts of a `ukr-state` mock: Слухання · Читання · Письмо ·
+ * Говоріння, 25 % each; there is NO `lexgram` part [exam-doc p1] [reg20 IV.4]
+ * (UKR_EXAM_PREP §2, §5). `lexgram` stays a legal subtest kind for study-only
+ * drills, never in a `ukr-state` mock.
+ */
+export const UKR_STATE_SUBTEST_ORDER = ['listening', 'reading', 'writing', 'speaking'] as const;
+
+/** `torfl` = Sumrak's TORFL engine format (kept parseable); `ukr-state` = the Ukrainian state exam (UT16). */
+export const EXAM_FORMATS = ['torfl', 'ukr-state'] as const;
+export const ExamFormatSchema = z.enum(EXAM_FORMATS);
+export type ExamFormat = z.infer<typeof ExamFormatSchema>;
 
 /** Subtests scored by points per item (choice / typed); the others are rubric %. */
 export const OBJECTIVE_SUBTEST_KINDS: readonly ExamSubtestKind[] = [
@@ -53,10 +65,21 @@ const ItemBase = {
   explain: z.string().min(1).optional(),
 };
 
-/** A–Г single choice. `stem` may contain one «…» gap. */
+/**
+ * Display hint for a `choice` item (UT16, UKR_EXAM_PREP §5) — no new scoring.
+ * `true-false` = Правда/Неправда (exactly 2 options); `true-false-ns` = 3 options
+ * (… / не сказано); `gap-word` / `gap-form` = the cloze kinds of reading
+ * tasks 29–33 / 34–38 (word choice / word form; the stem has the gap).
+ */
+export const CHOICE_VARIANTS = ['true-false', 'true-false-ns', 'gap-word', 'gap-form'] as const;
+export const ChoiceVariantSchema = z.enum(CHOICE_VARIANTS);
+export type ChoiceVariant = z.infer<typeof ChoiceVariantSchema>;
+
+/** A–Г single choice (А/Б/В at A1–B1 listening). `stem` may contain one «…» gap. */
 export const ChoiceItemSchema = z.strictObject({
   ...ItemBase,
   kind: z.literal('choice'),
+  variant: ChoiceVariantSchema.optional(),
   stem: z.string().min(1),
   /** EN gloss of the stem for drills' "show translation" (never shown in a mock). */
   stemEn: z.string().optional(),
@@ -74,7 +97,7 @@ export const TypedItemSchema = z.strictObject({
   kind: z.literal('typed'),
   /** «Тамара Иванова родилась (где?)» */
   prompt: z.string().min(1),
-  /** Full credit (normalized, ё/е-tolerant, trailing-* stem globs allowed). */
+  /** Full credit (normalized through the Ukrainian fold, trailing-* stem globs allowed). */
   accept: z.array(z.string().min(1)).min(1),
   /** Half credit: right meaning, wrong form (demo v1's 2.5 of 5). */
   half: z.array(z.string().min(1)).optional(),
@@ -98,16 +121,58 @@ export const WritingItemSchema = z.strictObject({
         cues: z.array(z.string().min(1)).min(1),
       }),
     )
-    .min(3)
+    .min(1)
     .max(15),
-  /** Statements + questions together. */
-  minSentences: z.number().int().min(5),
+  /** Statements + questions together (`torfl`: ≥ 5 and ≥ 3 bullets; `ukr-state`: ≥ 1). */
+  minSentences: z.number().int().min(1),
   minQuestions: z.number().int().min(0).default(0),
   maxQuestions: z.number().int().optional(),
+  /** `ukr-state` word limits (task 44: 20–50 at B1; task 45: ≥ 100). Absent = not word-limited. */
+  minWords: z.number().int().positive().optional(),
+  maxWords: z.number().int().positive().optional(),
   /** The model letter (a story in the pack, narrated). */
   model: StoryRefSchema.optional(),
 });
 export type WritingItem = z.infer<typeof WritingItemSchema>;
+
+/**
+ * A picture for a photo-description speaking item (UT16, UKR_EXAM_PREP §5,
+ * task 46): a pack-relative image file. The pack `files` list ships it; the
+ * in-app display waits for UT16b-exam-item-images.
+ */
+export const ExamImageSchema = z.strictObject({
+  file: RelativePathSchema.refine((f) => /\.(png|jpe?g|webp)$/i.test(f), {
+    message: 'an exam image is a .png, .jpg, .jpeg or .webp file',
+  }),
+  /** Plain-text description (accessibility + what a speaker should mention). */
+  alt: z.string().min(1),
+});
+export type ExamImage = z.infer<typeof ExamImageSchema>;
+
+/**
+ * Matching (UT16, UKR_EXAM_PREP §5): `left[i]` ↔ `right[key[i]]`. Headings
+ * (n of m — `right` has unused extras: 5-of-7 at B1) and question↔answer
+ * (6↔6) are the same shape. One point per correct pair (partial credit); an
+ * item's `points` overrides the default `pointsPerItem × left.length`.
+ */
+export const MatchingItemSchema = z.strictObject({
+  ...ItemBase,
+  kind: z.literal('matching'),
+  variant: z.enum(['headings', 'qa']).optional(),
+  stem: z.string().min(1),
+  stemEn: z.string().optional(),
+  left: z.array(z.string().min(1)).min(2).max(10),
+  right: z.array(z.string().min(1)).min(2).max(12),
+  /** `key[i]` = index into `right` that `left[i]` matches (0-based; injective). */
+  key: z.array(z.number().int().min(0)).min(2).max(10),
+  passage: StoryRefSchema.optional(),
+});
+export type MatchingItem = z.infer<typeof MatchingItemSchema>;
+
+/** Scoring tasks an item stands for: a matching item = one per pair, everything else 1. */
+export function examItemTasks(item: ExamItem): number {
+  return item.kind === 'matching' ? item.left.length : 1;
+}
 
 /** Говорение task 1 (reply) and task 2 (situation: the candidate starts). */
 export const SpeakingTurnItemSchema = z.strictObject({
@@ -117,6 +182,8 @@ export const SpeakingTurnItemSchema = z.strictObject({
   prompt: StoryRefSchema,
   /** Situation text shown on screen (task 2 only; the real tester reads it aloud — both). */
   situation: LocalizedTextSchema.optional(),
+  /** Optional picture (photo description). */
+  image: ExamImageSchema.optional(),
   /** Reuses M17 verbatim: slots + accept paraphrases; accept[0] is the model answer. */
   expect: ExpectationSchema,
   /** «да / нет / не знаю» is not a full answer: minimum content tokens for full credit. */
@@ -140,12 +207,15 @@ export const SpeakingMonologueItemSchema = z.strictObject({
   prepSec: z.number().int().default(480),
   answerSec: z.number().int().default(120),
   model: StoryRefSchema.optional(),
+  /** `ukr-state` photo description (task 46): the picture to describe. */
+  image: ExamImageSchema.optional(),
 });
 export type SpeakingMonologueItem = z.infer<typeof SpeakingMonologueItemSchema>;
 
 export const ExamItemSchema = z.discriminatedUnion('kind', [
   ChoiceItemSchema,
   TypedItemSchema,
+  MatchingItemSchema,
   WritingItemSchema,
   SpeakingTurnItemSchema,
   SpeakingMonologueItemSchema,
@@ -155,7 +225,7 @@ export type ExamItemKind = ExamItem['kind'];
 
 export const ExamPartSchema = z.strictObject({
   id: StableIdSchema,
-  /** The official-style instruction («Задания 1–24. Выберите один вариант ответа.»). */
+  /** The official-style instruction («Завдання 1–12. Оберіть правильну відповідь.»). */
   instructions: LocalizedTextSchema,
   items: z.array(ExamItemSchema).min(1),
   /** Speaking: part time budget (task 1 = 300, task 2 = 300, task 3 = 600). */
@@ -187,7 +257,7 @@ export type ExamSubtest = z.infer<typeof ExamSubtestSchema>;
 /** Item kinds each subtest kind may hold (§3.2 invariant 2). */
 const KINDS_BY_SUBTEST: Record<ExamSubtestKind, readonly ExamItemKind[]> = {
   lexgram: ['choice', 'typed'],
-  reading: ['choice', 'typed'],
+  reading: ['choice', 'typed', 'matching'],
   listening: ['choice', 'typed'],
   writing: ['writing'],
   speaking: ['speaking-reply', 'speaking-situation', 'speaking-monologue'],
@@ -201,14 +271,15 @@ export function countStemGaps(stem: string): number {
   return stem.match(GAP_RE)?.length ?? 0;
 }
 
-/** Option normalization for the uniqueness check: NFC, lower-case, ё → е, collapsed spaces. */
+/** Option normalization for the uniqueness check: NFC, lower-case, collapsed spaces. */
 function normalizeOption(text: string): string {
-  return text.normalize('NFC').toLowerCase().replaceAll('ё', 'е').replace(/\s+/g, ' ').trim();
+  return text.normalize('NFC').toLowerCase().replace(/\s+/g, ' ').trim();
 }
 
 /** Points an objective item is worth: its own `points`, else the subtest's `pointsPerItem`, else 0. */
 export function itemPoints(subtest: Pick<ExamSubtest, 'pointsPerItem'>, item: ExamItem): number {
-  return item.points ?? subtest.pointsPerItem ?? 0;
+  if (item.points !== undefined) return item.points;
+  return (subtest.pointsPerItem ?? 0) * examItemTasks(item);
 }
 
 /**
@@ -265,6 +336,8 @@ export function examStoryRefs(exam: Exam): ExamStoryRef[] {
         if (item.kind === 'choice' || item.kind === 'typed') {
           push('passage', item.passage);
           push('audio', item.audio);
+        } else if (item.kind === 'matching') {
+          push('passage', item.passage);
         } else if (item.kind === 'writing' || item.kind === 'speaking-monologue') {
           push('model', item.model);
         } else {
@@ -296,11 +369,11 @@ function walkStrings(
 /** The raw (pre-refinement) exam shape. */
 const ExamShape = z.strictObject({
   id: StableIdSchema,
-  /** Future: 'tbu' / 'trki-1' via a new literal. */
-  format: z.literal('torfl'),
+  /** `torfl` (Sumrak's engine, kept parseable) or `ukr-state` (UT16: the Ukrainian state exam). */
+  format: ExamFormatSchema,
   level: CefrLevelSchema,
   mode: z.enum(['mock', 'drill']),
-  /** «Вариант 1» / «Падежи: предложный» */
+  /** «Зразок 1» / «Місцевий відмінок» */
   title: LocalizedTextSchema,
   /** Drills: a one-line EN description for the hub card. */
   blurb: z.string().optional(),
@@ -329,6 +402,11 @@ const ExamShape = z.strictObject({
  *    cue (writing bullets, monologue questions, speaking `expect` slot forms)
  *    passes the M17 slot-form rule (NFC, punctuation-free, trailing-`*` only).
  *
+ * UT16 additions: 3b matching keys are one-to-one into `right` (extras allowed);
+ * `choice.variant` fixes the option/gap count; a `ukr-state` mock has no
+ * lexgram subtest; the TORFL-only writing floors (≥ 3 bullets, ≥ 5 sentences)
+ * apply to `format: 'torfl'` only.
+ *
  * Invariant 7 (refs resolve) lives in `PackSchema`; invariant 10 (official
  * shape) is the non-fatal {@link officialShapeIssues}.
  */
@@ -350,6 +428,12 @@ export const ExamSchema = ExamShape.superRefine((exam, ctx) => {
     if (subtestIds.has(subtest.id)) issue([...sp, 'id'], `duplicate subtest id "${subtest.id}"`);
     subtestIds.add(subtest.id);
 
+    if (exam.format === 'ukr-state' && exam.mode === 'mock' && subtest.kind === 'lexgram') {
+      issue(
+        [...sp, 'kind'],
+        `a ukr-state mock has no lexgram part (Слухання · Читання · Письмо · Говоріння) — lexical-grammar drills are study-only`,
+      );
+    }
     const objective = OBJECTIVE_SUBTEST_KINDS.includes(subtest.kind);
     const allowed = KINDS_BY_SUBTEST[subtest.kind];
     const partIds = new Set<string>();
@@ -400,8 +484,63 @@ export const ExamSchema = ExamShape.superRefine((exam, ctx) => {
           );
         }
 
+        // --- 3b. matching (UT16) ------------------------------------------------
+        if (item.kind === 'matching') {
+          if (item.key.length !== item.left.length) {
+            issue(
+              [...ip, 'key'],
+              `matching key has ${item.key.length} entries but left has ${item.left.length} — one right-index per left item`,
+            );
+          }
+          const used = new Set<number>();
+          item.key.forEach((k, ki) => {
+            if (k >= item.right.length) {
+              issue(
+                [...ip, 'key', ki],
+                `key ${k} is out of range for ${item.right.length} right items (0-based)`,
+              );
+            } else if (used.has(k)) {
+              issue([...ip, 'key', ki], `right item ${k} is matched twice — keys are one-to-one`);
+            }
+            used.add(k);
+          });
+          if (item.right.length < item.left.length) {
+            issue(
+              [...ip, 'right'],
+              `right has ${item.right.length} items for ${item.left.length} left items — extras are allowed, a shortage is not`,
+            );
+          }
+          const seenSides = new Map<string, number>();
+          item.right.forEach((r, ri) => {
+            const norm = normalizeOption(r);
+            const prev = seenSides.get(norm);
+            if (prev !== undefined) {
+              issue([...ip, 'right', ri], `right item "${r}" duplicates right item ${prev}`);
+            }
+            seenSides.set(norm, ri);
+          });
+        }
+
         // --- 3. choice --------------------------------------------------------
         if (item.kind === 'choice') {
+          if (item.variant === 'true-false' && item.options.length !== 2) {
+            issue(
+              [...ip, 'options'],
+              `a true-false item has exactly 2 options (found ${item.options.length})`,
+            );
+          }
+          if (item.variant === 'true-false-ns' && item.options.length !== 3) {
+            issue(
+              [...ip, 'options'],
+              `a true-false-ns item has exactly 3 options (found ${item.options.length})`,
+            );
+          }
+          if (
+            (item.variant === 'gap-word' || item.variant === 'gap-form') &&
+            countStemGaps(item.stem) !== 1
+          ) {
+            issue([...ip, 'stem'], `a ${item.variant} item's stem has exactly one gap`);
+          }
           if (item.answer >= item.options.length) {
             issue(
               [...ip, 'answer'],
@@ -483,6 +622,24 @@ export const ExamSchema = ExamShape.superRefine((exam, ctx) => {
 
         // --- 9. writing -------------------------------------------------------
         if (item.kind === 'writing') {
+          if (exam.format === 'torfl') {
+            if (item.bullets.length < 3) {
+              issue([...ip, 'bullets'], `a torfl writing item needs at least 3 bullets`);
+            }
+            if (item.minSentences < 5) {
+              issue([...ip, 'minSentences'], `a torfl writing item needs minSentences ≥ 5`);
+            }
+          }
+          if (
+            item.minWords !== undefined &&
+            item.maxWords !== undefined &&
+            item.minWords > item.maxWords
+          ) {
+            issue(
+              [...ip, 'minWords'],
+              `minWords ${item.minWords} exceeds maxWords ${item.maxWords}`,
+            );
+          }
           if (item.maxQuestions !== undefined && item.minQuestions > item.maxQuestions) {
             issue(
               [...ip, 'minQuestions'],
@@ -543,6 +700,312 @@ export const ExamSchema = ExamShape.superRefine((exam, ctx) => {
   }
 });
 export type Exam = z.infer<typeof ExamSchema>;
+
+/**
+ * The shape of one `ukr-state` level (UT16, UKR_EXAM_PREP §2). Sections are
+ * ORDERED (`sections` array order = the order of a mock's subtests); a level
+ * may omit any kind (no `ukr-state` shape has `lexgram`). `items` counts
+ * scoring TASKS: a `matching` item counts one per pair ({@link examItemTasks}),
+ * so reading B1 = 31 tasks over 6 texts. Percentages, not raw points, decide
+ * the verdict (UT17): `weights` and `pass` are data only here.
+ */
+export interface UkrStateSection {
+  kind: ExamSubtestKind;
+  /** Scoring tasks (matching pairs counted individually). */
+  items: number;
+  /** Objective: Σ points (1 per task); rubric: the official rubric maximum. */
+  maxPoints: number;
+  durationMin: number;
+  dictionary: boolean;
+  navigation: 'free' | 'linear';
+  /** Listening: plays per recording [exam-doc p1]. */
+  audioPlays?: number;
+  /** Section weight in the final percentage. */
+  weightPct: number;
+  /** Writing / speaking: the number of parts (one task each). */
+  parts?: number;
+  /** Writing / speaking: per-part time budget in seconds, in part order. */
+  partTimes?: readonly number[];
+  /** Writing: per-part word limits (a part's single writing item must carry them). */
+  words?: readonly { min: number; max?: number }[];
+  /** Speaking: the three tasks in part order — photo · monologue · dialogue. */
+  speakingTasks?: {
+    photoPhrases: number;
+    monologuePhrases: { min: number; max: number };
+    dialogueReplies: number;
+  };
+}
+
+export interface ExamOfficialShape {
+  /** Which instrument the numbers describe. */
+  form: 'citizenship' | 'officials';
+  /** True where UKR_EXAM_PREP §2 says the level is modelled («за зразком державного іспиту»). */
+  modelled: boolean;
+  sections: readonly UkrStateSection[];
+  pass: { totalPct: number; perSectionMinPct?: number };
+  /** Total time cap [reg409 п.36] (informational; Σ section minutes ≤ it). */
+  capMin: number;
+}
+
+/**
+ * B1 — the official citizenship form (UKR_EXAM_PREP §2 B1). Provenance:
+ * counts [exam-doc p1–6]; points [reg20 IV.1]; minutes [reg20 III.7]; weights
+ * 25 % [exam-doc p1] [reg20 IV.4]; pass ≥ 70 %, no per-part minimum
+ * [reg20 IV.4–5] [roz §5]; cap 150 min [reg409 п.36]. Dictionary / navigation
+ * are NOT stated in §2: [modelled: computer exam — listening and speaking
+ * linear, reading and writing free, no dictionary].
+ */
+export const UKR_STATE_B1_SHAPE = {
+  form: 'citizenship',
+  modelled: false,
+  capMin: 150, // [reg409 п.36]
+  pass: { totalPct: 70 }, // [reg20 IV.4–5] [roz §5] — no perSectionMinPct
+  sections: [
+    {
+      kind: 'listening',
+      items: 12, // [exam-doc p1] tasks 1–12
+      maxPoints: 12, // [reg20 IV.1] 1 per task
+      durationMin: 15, // [reg20 III.7]
+      dictionary: false, // [modelled: not stated]
+      navigation: 'linear', // [modelled: not stated]
+      audioPlays: 2, // [exam-doc p1] each recording heard twice
+      weightPct: 25, // [exam-doc p1] [reg20 IV.4]
+    },
+    {
+      kind: 'reading',
+      items: 31, // [exam-doc p2–4] tasks 13–43; [prep] 31 items
+      maxPoints: 31, // [reg20 IV.1] 1 per correspondence / item
+      durationMin: 60, // [reg20 III.7]
+      dictionary: false, // [modelled: not stated]
+      navigation: 'free', // [modelled: not stated]
+      weightPct: 25,
+    },
+    {
+      kind: 'writing',
+      items: 2, // [exam-doc p4–5] tasks 44–45
+      maxPoints: 33, // [reg20 IV.1] 44 = 10, 45 = 23
+      durationMin: 40, // [reg20 III.7] = 15 + 25
+      dictionary: false, // [modelled: not stated]
+      navigation: 'free', // [modelled: not stated]
+      weightPct: 25,
+      parts: 2,
+      partTimes: [900, 1500], // [reg20 III.7] 15 min + 25 min
+      words: [{ min: 20, max: 50 }, { min: 100 }], // [exam-doc p4–5] 44: 20–50; [prog §Письмо] 45: ≥ 100
+    },
+    {
+      kind: 'speaking',
+      items: 3, // [exam-doc p5–6] tasks 46–48
+      maxPoints: 38, // [reg20 IV.1] 14 + 10 + 14
+      durationMin: 35, // [reg20 III.7] = 10 + 10 + 15
+      dictionary: false, // [modelled: not stated]
+      navigation: 'linear', // [modelled: not stated]
+      weightPct: 25,
+      parts: 3,
+      // part order photo · monologue · dialogue: 46 = 10 min, 47 = 15 min, 48 = 10 min [reg20 III.7]
+      partTimes: [600, 900, 600],
+      speakingTasks: {
+        photoPhrases: 10, // [exam-doc p5–6] task 46: 10 phrases
+        monologuePhrases: { min: 20, max: 25 }, // task 47: 20–25 phrases
+        dialogueReplies: 5, // task 48: 5 answers
+      },
+    },
+  ],
+} as const satisfies ExamOfficialShape;
+
+/**
+ * A2 — modelled («за зразком державного іспиту»), UKR_EXAM_PREP §2 A2: the B1
+ * form scaled by the Standard's descriptor ratios. Rubric maxima as B1; pass
+ * 70 % [modelled: B1 rule applied]. Speaking part times: B1 ratio ≈ 0.65 in
+ * the B1 time order (46, 48, 47 = 6 + 7 + 10 = 23 min) → in part order
+ * photo · monologue · dialogue = 6 / 10 / 7 min [modelled: §2 lists
+ * "6 + 7 + 10" in B1's 46·48·47 order].
+ */
+export const UKR_STATE_A2_SHAPE = {
+  form: 'citizenship',
+  modelled: true,
+  capMin: 150, // [reg409 п.36]
+  pass: { totalPct: 70 }, // [modelled: same instrument form]
+  sections: [
+    {
+      kind: 'listening',
+      items: 10, // [modelled: 4 MC3 + 6 Правда/Неправда]
+      maxPoints: 10,
+      durationMin: 11, // [modelled: 15 × 10/12]
+      dictionary: false, // [modelled]
+      navigation: 'linear', // [modelled]
+      audioPlays: 2, // [modelled: as B1]
+      weightPct: 25, // [modelled: as B1]
+    },
+    {
+      kind: 'reading',
+      items: 22, // [modelled: 3 headings + 4 T/F + 5 Q↔A + 5 gap-word + 5 gap-form]
+      maxPoints: 22,
+      durationMin: 45, // [modelled: 60 × 22/31 ≈ 43 → 45]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 25,
+    },
+    {
+      kind: 'writing',
+      items: 2, // [modelled]
+      maxPoints: 33, // [modelled: rubric weights as B1]
+      durationMin: 25, // [modelled: 40 × 0.6]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 25,
+      parts: 2,
+      partTimes: [600, 900], // [modelled: 10 + 15]
+      words: [
+        { min: 15, max: 35 },
+        { min: 50, max: 70 },
+      ], // [modelled: 44: 15–35; 45: 50–70]
+    },
+    {
+      kind: 'speaking',
+      items: 3,
+      maxPoints: 38, // [modelled: rubric weights as B1]
+      durationMin: 23, // [modelled: 6 + 7 + 10]
+      dictionary: false, // [modelled]
+      navigation: 'linear', // [modelled]
+      weightPct: 25,
+      parts: 3,
+      partTimes: [360, 600, 420], // [modelled: photo 6, monologue 10, dialogue 7 min]
+      speakingTasks: {
+        photoPhrases: 7, // [modelled]
+        monologuePhrases: { min: 12, max: 15 }, // [modelled]
+        dialogueReplies: 4, // [modelled: 8–10 turns ↔ 4 replies]
+      },
+    },
+  ],
+} as const satisfies ExamOfficialShape;
+
+/**
+ * A1 — modelled («за зразком державного іспиту»), UKR_EXAM_PREP §2 A1.
+ * Total ≈ 76 min [modelled]. Speaking part times photo 5 · dialogue 5 ·
+ * monologue 8 (§2 "5 + 5 + 8 = 18" in B1's 46·48·47 order) → part order
+ * photo · monologue · dialogue = 5 / 8 / 5 min [modelled].
+ */
+export const UKR_STATE_A1_SHAPE = {
+  form: 'citizenship',
+  modelled: true,
+  capMin: 150, // [reg409 п.36]
+  pass: { totalPct: 70 }, // [modelled: B1 rule applied to the same instrument form]
+  sections: [
+    {
+      kind: 'listening',
+      items: 8, // [modelled: 4 MC3 + 4 Правда/Неправда]
+      maxPoints: 8,
+      durationMin: 8, // [modelled]
+      dictionary: false, // [modelled]
+      navigation: 'linear', // [modelled]
+      audioPlays: 2, // [modelled: "each recording twice"]
+      weightPct: 25,
+    },
+    {
+      kind: 'reading',
+      items: 16, // [modelled: 3 headings + 4 T/F + 4 Q↔A + 3 gap + 2 MC4]
+      maxPoints: 16,
+      durationMin: 30, // [modelled: 60 × 16/31 ≈ 31]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 25,
+    },
+    {
+      kind: 'writing',
+      items: 2, // [modelled]
+      maxPoints: 33, // [modelled: rubric weights as B1]
+      durationMin: 20, // [modelled: 40 × 0.5]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 25,
+      parts: 2,
+      partTimes: [480, 720], // [modelled: 8 + 12]
+      words: [
+        { min: 10, max: 25 },
+        { min: 30, max: 50 },
+      ], // [modelled: 44: 10–25; 45: 30–50]
+    },
+    {
+      kind: 'speaking',
+      items: 3,
+      maxPoints: 38, // [modelled: rubric weights as B1]
+      durationMin: 18, // [modelled: 5 + 5 + 8]
+      dictionary: false, // [modelled]
+      navigation: 'linear', // [modelled]
+      weightPct: 25,
+      parts: 3,
+      partTimes: [300, 480, 300], // [modelled: photo 5, monologue 8, dialogue 5 min]
+      speakingTasks: {
+        photoPhrases: 5, // [modelled]
+        monologuePhrases: { min: 8, max: 10 }, // [modelled]
+        dialogueReplies: 3, // [modelled: 4–6 turns ↔ 3 replies]
+      },
+    },
+  ],
+} as const satisfies ExamOfficialShape;
+
+/**
+ * B2 — the *officials'* instrument seen as a score band, NOT the citizenship
+ * form (UKR_EXAM_PREP §2 B2/C1): written block 60 min = 30 min tests + 20 min
+ * open writing + 10 min oral [off-form 2024] [reg20 III.7]; weights 40 / 30 /
+ * 30 [reg20 IV.6]; tests 30 tasks 1 point each [reg20 IV.1]; writing rubric 37,
+ * oral rubric 18. Level by total: 60–69 % = B2 [reg20 IV.7–12]. The shelf is
+ * empty (ADR-0011); the constant exists so the level profile can state the
+ * threshold. The `reading` section stands for the combined tests block.
+ */
+export const UKR_STATE_B2_SHAPE = {
+  form: 'officials',
+  modelled: false,
+  capMin: 60, // [off-form 2024]
+  pass: { totalPct: 60 }, // [reg20 IV.7–12] B2 band floor
+  sections: [
+    {
+      kind: 'reading',
+      items: 30, // [off-form 2024] tests 1–30
+      maxPoints: 30, // [reg20 IV.1]
+      durationMin: 30, // [off-form 2024]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 40, // [reg20 IV.6]
+    },
+    {
+      kind: 'writing',
+      items: 1, // [off-form 2024] listen ≤ 4 min ×2, write 100–150 words
+      maxPoints: 37, // [reg20 IV.1]
+      durationMin: 20, // [off-form 2024]
+      dictionary: false, // [modelled]
+      navigation: 'free', // [modelled]
+      weightPct: 30, // [reg20 IV.6]
+      parts: 1,
+      partTimes: [1200],
+      words: [{ min: 100, max: 150 }], // [off-form 2024]
+    },
+    {
+      kind: 'speaking',
+      items: 1, // [off-form 2024] monologue on one of two themes, ≥ 20 sentences
+      maxPoints: 18, // [reg20 IV.1]
+      durationMin: 10, // [off-form 2024]
+      dictionary: false, // [modelled]
+      navigation: 'linear', // [modelled]
+      weightPct: 30, // [reg20 IV.6]
+    },
+  ],
+} as const satisfies ExamOfficialShape;
+
+/** C1 — as B2; band 70–89 % = C1 [reg20 IV.7–12]. */
+export const UKR_STATE_C1_SHAPE = {
+  ...UKR_STATE_B2_SHAPE,
+  pass: { totalPct: 70 }, // [reg20 IV.7–12] C1 band floor
+} as const satisfies ExamOfficialShape;
+
+/** Level → `ukr-state` shape. Every level has one (B2/C1 are the officials' bands, shelves empty). */
+export const UKR_STATE_SHAPES: Readonly<Record<Exam['level'], ExamOfficialShape>> = {
+  A1: UKR_STATE_A1_SHAPE,
+  A2: UKR_STATE_A2_SHAPE,
+  B1: UKR_STATE_B1_SHAPE,
+  B2: UKR_STATE_B2_SHAPE,
+  C1: UKR_STATE_C1_SHAPE,
+};
 
 /** The shape one TORFL level is checked against (T75). Writing `parts` = writing parts, each one writing item. */
 export interface TorflOfficialShape {
@@ -640,7 +1103,9 @@ export const TORFL_SHAPES: Readonly<Partial<Record<Exam['level'], TorflOfficialS
  * a drill, another format, or a level without a shape. Pure; never throws.
  */
 export function officialShapeIssues(exam: Exam): string[] {
-  if (exam.mode !== 'mock' || exam.format !== 'torfl') return [];
+  if (exam.mode !== 'mock') return [];
+  if (exam.format === 'ukr-state') return ukrStateShapeIssues(exam);
+  if (exam.format !== 'torfl') return [];
   const shape = TORFL_SHAPES[exam.level];
   if (!shape) return [];
   const out: string[] = [];
@@ -722,6 +1187,97 @@ export function officialShapeIssues(exam: Exam): string[] {
           }
         }
         break;
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * The `ukr-state` branch of invariant 10 (UT16): the mock's subtests must be the
+ * level's sections in order, with the §2 task counts, points, minutes, plays,
+ * navigation, part times, word limits and speaking-task phrase counts.
+ */
+function ukrStateShapeIssues(exam: Exam): string[] {
+  const shape = UKR_STATE_SHAPES[exam.level];
+  const out: string[] = [];
+  const warn = (msg: string) => out.push(`⚠ official-shape: ${msg}`);
+  const want = shape.sections.map((s) => s.kind);
+  const kinds = exam.subtests.map((s) => s.kind);
+  if (kinds.join(',') !== want.join(',')) {
+    warn(`subtests are [${kinds.join(', ')}] — the official order is [${want.join(', ')}]`);
+  }
+  for (const subtest of exam.subtests) {
+    const sec = shape.sections.find((s) => s.kind === subtest.kind);
+    if (!sec) continue;
+    const label = `${subtest.kind} "${subtest.id}"`;
+    const tasks = subtest.parts.reduce(
+      (n, p) => n + p.items.reduce((m, i) => m + examItemTasks(i), 0),
+      0,
+    );
+    const check = (what: string, got: unknown, wantVal: unknown) => {
+      if (got !== wantVal) warn(`${label} ${what} ${String(got)} — official ${String(wantVal)}`);
+    };
+    const objective = OBJECTIVE_SUBTEST_KINDS.includes(subtest.kind);
+    if (objective) check('has items', tasks, sec.items);
+    check('maxPoints', subtest.maxPoints, sec.maxPoints);
+    check('durationMin', subtest.durationMin, sec.durationMin);
+    check('dictionary', subtest.dictionary, sec.dictionary);
+    check('navigation', subtest.navigation, sec.navigation);
+    if (sec.audioPlays !== undefined) check('audioPlays', subtest.audioPlays, sec.audioPlays);
+    if (sec.parts !== undefined) check('has parts', subtest.parts.length, sec.parts);
+    if (sec.partTimes !== undefined && subtest.kind === 'speaking') {
+      const times = subtest.parts.map((p) => p.timeSec ?? '—');
+      if (times.join('/') !== sec.partTimes.join('/')) {
+        warn(
+          `${label} part times are ${times.join('/')} s — official ${sec.partTimes.join('/')} s`,
+        );
+      }
+    }
+    if (sec.partTimes !== undefined && subtest.kind === 'writing') {
+      const times = subtest.parts.map((p) => p.timeSec ?? '—');
+      if (times.join('/') !== sec.partTimes.join('/')) {
+        warn(
+          `${label} part times are ${times.join('/')} s — official ${sec.partTimes.join('/')} s`,
+        );
+      }
+    }
+    if (subtest.kind === 'writing' && sec.words) {
+      sec.words.forEach((w, pi) => {
+        const item = subtest.parts[pi]?.items[0];
+        if (item?.kind !== 'writing') return;
+        const range = (min?: number, max?: number) => `${min ?? '—'}–${max ?? '∞'}`;
+        if (item.minWords !== w.min || item.maxWords !== (w as { max?: number }).max) {
+          warn(
+            `${label} part ${pi + 1} words ${range(item.minWords, item.maxWords)} — official ${range(w.min, (w as { max?: number }).max)}`,
+          );
+        }
+      });
+    }
+    if (subtest.kind === 'speaking' && sec.speakingTasks) {
+      const t = sec.speakingTasks;
+      const photo = subtest.parts[0]?.items[0];
+      if (photo?.kind !== 'speaking-monologue' || photo.image === undefined) {
+        warn(`${label} task 1 (photo description) needs a speaking-monologue item with an image`);
+      } else if (photo.minSentences !== t.photoPhrases) {
+        warn(
+          `${label} photo description minSentences ${photo.minSentences} — official ${t.photoPhrases} phrases`,
+        );
+      }
+      const mono = subtest.parts[1]?.items[0];
+      if (mono?.kind !== 'speaking-monologue') {
+        warn(`${label} task 2 (monologue) needs a speaking-monologue item`);
+      } else if (
+        mono.minSentences !== t.monologuePhrases.min ||
+        mono.maxSentences !== t.monologuePhrases.max
+      ) {
+        warn(
+          `${label} monologue phrases ${mono.minSentences}–${mono.maxSentences} — official ${t.monologuePhrases.min}–${t.monologuePhrases.max}`,
+        );
+      }
+      const replies = subtest.parts[2]?.items.length ?? 0;
+      if (replies !== t.dialogueReplies) {
+        warn(`${label} dialogue has ${replies} replies — official ${t.dialogueReplies}`);
       }
     }
   }

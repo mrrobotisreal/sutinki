@@ -7,7 +7,9 @@ import { parsePack, type Pack } from '@sutinki/schema';
 import {
   annotateDrafts,
   DraftError,
+  EXAM_THEME_SLUGS,
   EXAM_TOPICS,
+  packFileList,
   parseExamDraft,
   parseIssuePath,
   renderMatrixMap,
@@ -27,25 +29,32 @@ import {
 
 const pkgDir = join(__dirname, '..');
 const fixture = (...p: string[]) => join(pkgDir, 'fixtures', ...p);
-const fxDir = fixture('exam-fixture');
+const fxDir = fixture('ukr-exam-fixture');
 const fixturePackPath = join(
   pkgDir,
   '..',
   'schema',
   'fixtures',
   'packs',
-  'a1-exam-fixture',
+  'a1-ukrexam-fixture',
   'pack.json',
 );
 const read = (path: string) => ({ path, source: readFileSync(path, 'utf8') });
 
-/** The fixture drafts in the CLI's glob order (`exam-fixture/*.md`). */
+/** The fixture drafts in the CLI's glob order (`ukr-exam-fixture/*.md`). */
 const fixtureFiles = () =>
   readdirSync(fxDir)
     .filter((f) => f.endsWith('.md'))
     .sort()
     .map((f) => read(join(fxDir, f)));
 const storyFiles = () => [read(join(fxDir, 'rd-01.draft.md')), read(join(fxDir, 'ls-01.draft.md'))];
+/** The published fixture pack ships Piper audio for ls-01 / ex-01; the drafts carry none. */
+const withoutAudio = (pack: Pack): Pack => ({
+  ...pack,
+  stories: pack.stories.map((st) => {
+    return { ...st, audio: [] };
+  }),
+});
 
 function issuesOf(fn: () => unknown) {
   try {
@@ -64,30 +73,30 @@ function lineOf(source: string, pred: (line: string) => boolean): number {
 }
 
 const PACK_META = `pack:
-  id: a1-exam-mini
+  id: a1-ukrexam-mini
   version: 1
   type: exam
-  title: { uk: 'Мини', en: 'Mini' }
+  title: { uk: 'Міні', en: 'Mini' }
   level: A1
-  tags: ['torfl']
-  category: torfl
+  tags: ['ukr-exam']
+  category: ukr-exam-a1
 `;
 
 const miniDrill = (
   pack = PACK_META,
-  items = `            - { id: q1, kind: choice, topic: conj, stem: 'Я дома, … ты на работе.', options: ['а', 'и'], answer: 0 }\n`,
+  items = `            - { id: q1, kind: choice, topic: g19, stem: 'Я живу … Києві.', options: ['в', 'на'], answer: 0 }\n`,
 ) => `---
 ${pack}exam:
   id: mini
-  format: torfl
+  format: ukr-state
   level: A1
   mode: drill
-  title: { uk: 'Мини', en: 'Mini' }
+  title: { uk: 'Міні', en: 'Mini' }
   subtests:
     - id: lexgram
       kind: lexgram
       title: { uk: 'Лексика', en: 'Lexis' }
-      instructions: { uk: 'Выберите.', en: 'Choose.' }
+      instructions: { uk: 'Оберіть.', en: 'Choose.' }
       durationMin: 5
       dictionary: false
       navigation: free
@@ -95,10 +104,10 @@ ${pack}exam:
       maxPoints: 1
       parts:
         - id: p1
-          instructions: { uk: 'Задание 1.', en: 'Item 1.' }
+          instructions: { uk: 'Завдання 1.', en: 'Item 1.' }
           items:
 ${items}---
-Author notes are ignored.
+Нотатки автора ігноруються.
 `;
 
 describe('exam drafts — sniffing + parsing', () => {
@@ -112,14 +121,14 @@ describe('exam drafts — sniffing + parsing', () => {
   it('parses the frontmatter through ExamSchema; the body is author notes', () => {
     const d = parseExamDraft('mini.exam.md', miniDrill());
     expect(d.exam.id).toBe('mini');
-    expect(d.pack?.id).toBe('a1-exam-mini');
+    expect(d.pack?.id).toBe('a1-ukrexam-mini');
     expect(d.exam.subtests[0]!.parts[0]!.items[0]!.kind).toBe('choice');
   });
 
   it('reports schema issues at the line of the offending YAML node', () => {
     const source = miniDrill(
       PACK_META,
-      `            - id: q1\n              kind: choice\n              topic: conj\n              stem: 'Я дома.'\n              options: ['а', 'и']\n              answer: 5\n`,
+      `            - id: q1\n              kind: choice\n              topic: g19\n              stem: 'Я вдома.'\n              options: ['а', 'и']\n              answer: 5\n`,
     );
     const issues = issuesOf(() => parseExamDraft('mini.exam.md', source));
     expect(issues).toHaveLength(1);
@@ -129,8 +138,8 @@ describe('exam drafts — sniffing + parsing', () => {
 
   it('reports YAML syntax errors with a line, and rejects unknown frontmatter keys', () => {
     const bad = miniDrill().replace(
-      "title: { uk: 'Мини', en: 'Mini' }\n  subtests",
-      "title: { uk: 'Мини'\n  subtests",
+      "title: { uk: 'Міні', en: 'Mini' }\n  subtests",
+      "title: { uk: 'Міні'\n  subtests",
     );
     expect(issuesOf(() => parseExamDraft('x.exam.md', bad))[0]!.message).toContain(
       'not valid YAML',
@@ -161,7 +170,7 @@ describe('exam drafts — assembly', () => {
   it('a story-less exam pack assembles from an exam draft carrying pack: (no refs)', () => {
     const pack = annotateDrafts([{ path: 'mini.exam.md', source: miniDrill() }]);
     expect(pack.type).toBe('exam');
-    expect(pack.category).toBe('torfl');
+    expect(pack.category).toBe('ukr-exam-a1');
     expect(pack.stories).toEqual([]);
     expect(pack.exams!.map((e) => e.id)).toEqual(['mini']);
   });
@@ -174,7 +183,7 @@ describe('exam drafts — assembly', () => {
 
     const withRef = miniDrill(
       PACK_META,
-      `            - { id: q1, kind: choice, topic: read-detail, passage: { storyId: rd-01 }, stem: 'Анна живёт в …', options: ['Москве', 'Сочи'], answer: 0 }\n`,
+      `            - { id: q1, kind: choice, topic: rd-detail, passage: { storyId: rd-01 }, stem: 'Оксана живе в …', options: ['Києві', 'Львові'], answer: 0 }\n`,
     );
     const issues = issuesOf(() => annotateDrafts([{ path: 'mini.exam.md', source: withRef }]));
     expect(issues[0]!.message).toContain(
@@ -192,7 +201,7 @@ describe('exam drafts — assembly', () => {
   });
 
   it('an exam draft’s pack: must match the story drafts byte-for-byte', () => {
-    const differing = miniDrill(PACK_META.replace('a1-exam-mini', 'a1-exam-fixture'));
+    const differing = miniDrill(PACK_META.replace('a1-ukrexam-mini', 'a1-ukrexam-fixture'));
     const issues = issuesOf(() =>
       annotateDrafts([...storyFiles(), { path: 'mini.exam.md', source: differing }]),
     );
@@ -218,122 +227,87 @@ describe('exam drafts — assembly', () => {
 
   it('exams keep the CLI order of their drafts', () => {
     const pack = annotateDrafts(fixtureFiles());
-    expect(pack.exams!.map((e) => e.id)).toEqual(['a1-drill-fx', 'a1-mock-fx']);
-  });
-});
-
-describe('a1-exam-fixture round-trip', () => {
-  it('annotate on exam-fixture/*.md deep-equals the schema fixture pack', () => {
-    const pack = annotateDrafts(fixtureFiles());
-    const sample = JSON.parse(readFileSync(fixturePackPath, 'utf8'));
-    expect(pack).toEqual(sample);
-  });
-
-  it('is a torfl exam pack with both stories, the mock and the drill — and stays out of the app manifest', () => {
-    const pack = JSON.parse(readFileSync(fixturePackPath, 'utf8')) as Pack;
-    expect(pack).toMatchObject({ id: 'a1-exam-fixture', type: 'exam', category: 'torfl' });
-    expect(pack.stories.map((s) => s.id).sort()).toEqual(['ls-01', 'rd-01']);
-    const manifest = JSON.parse(
-      readFileSync(join(pkgDir, '..', 'schema', 'fixtures', 'manifest.json'), 'utf8'),
-    ) as { packs: { id: string }[] };
-    expect(manifest.packs.map((p) => p.id)).not.toContain('a1-exam-fixture');
-  });
-});
-
-describe('a2-exam-fixture round-trip (T75)', () => {
-  const a2Dir = fixture('a2-exam-fixture');
-  const a2PackPath = join(
-    pkgDir,
-    '..',
-    'schema',
-    'fixtures',
-    'packs',
-    'a2-exam-fixture',
-    'pack.json',
-  );
-  const a2Files = () =>
-    readdirSync(a2Dir)
-      .filter((f) => f.endsWith('.md'))
-      .sort()
-      .map((f) => read(join(a2Dir, f)));
-  const a2Pack = () => parsePack(JSON.parse(readFileSync(a2PackPath, 'utf8')));
-  const a2Mock = () => a2Pack().exams!.find((e) => e.id === 'a2-mock-fx')!;
-
-  it('annotate on a2-exam-fixture/*.md deep-equals the schema fixture pack', () => {
-    const pack = annotateDrafts(a2Files());
-    const sample = JSON.parse(readFileSync(a2PackPath, 'utf8'));
-    expect(pack).toEqual(sample);
-  });
-
-  it('is a torfl-a2 exam pack at level A2 with four stories, three exams — and stays out of the app manifest', () => {
-    const pack = a2Pack();
-    expect(pack).toMatchObject({
-      id: 'a2-exam-fixture',
-      type: 'exam',
-      category: 'torfl-a2',
-      level: 'A2',
-    });
     expect(pack.exams!.map((e) => e.id)).toEqual([
-      'a2-drill-fx-time',
-      'a2-drill-fx-info',
-      'a2-mock-fx',
+      'lg-g19',
+      'ls-liudyna',
+      'rd-liudyna',
+      'sp-photo',
+      'wr-message',
+      'a1-mock-fx',
     ]);
-    for (const exam of pack.exams!) expect(exam.level).toBe('A2');
-    expect(pack.stories.map((s) => s.id).sort()).toEqual(['ex-01', 'ls-01', 'md-note', 'rd-01']);
+  });
+});
+
+describe('a1-ukrexam-fixture round-trip (UT16)', () => {
+  it('annotate on ukr-exam-fixture/*.md deep-equals the schema fixture pack (minus the rendered Piper audio)', () => {
+    const pack = annotateDrafts(fixtureFiles());
+    const sample = JSON.parse(readFileSync(fixturePackPath, 'utf8')) as Pack;
+    expect(pack).toEqual(withoutAudio(sample));
+  });
+
+  it('is a ukr-state exam pack with three stories, the mock and five drills — and stays out of the app manifest', () => {
+    const pack = JSON.parse(readFileSync(fixturePackPath, 'utf8')) as Pack;
+    expect(pack).toMatchObject({
+      id: 'a1-ukrexam-fixture',
+      type: 'exam',
+      category: 'ukr-exam-a1',
+      level: 'A1',
+    });
+    expect(pack.stories.map((s) => s.id).sort()).toEqual(['ex-01', 'ls-01', 'rd-01']);
+    expect(pack.exams!.every((e) => e.format === 'ukr-state')).toBe(true);
     const manifest = JSON.parse(
       readFileSync(join(pkgDir, '..', 'schema', 'fixtures', 'manifest.json'), 'utf8'),
     ) as { packs: { id: string }[] };
-    expect(manifest.packs.map((p) => p.id)).not.toContain('a2-exam-fixture');
+    expect(manifest.packs.map((p) => p.id)).not.toContain('a1-ukrexam-fixture');
   });
 
-  it('the mock: writing has 2 parts (2nd item write-note); speaking ends in one ungrouped 600/300 monologue; reading points at the 9-sentence rd-01', () => {
-    const mock = a2Mock();
-    const writing = mock.subtests.find((s) => s.kind === 'writing')!;
-    expect(writing.parts).toHaveLength(2);
-    expect(writing.parts[1]!.items[0]).toMatchObject({ kind: 'writing', topic: 'write-note' });
-
-    const speaking = mock.subtests.find((s) => s.kind === 'speaking')!;
-    const last = speaking.parts[speaking.parts.length - 1]!;
-    expect(last.items).toHaveLength(1);
-    expect(last.items[0]).toMatchObject({
-      kind: 'speaking-monologue',
-      prepSec: 600,
-      answerSec: 300,
-    });
-    expect((last.items[0] as { group?: string }).group).toBeUndefined();
-
-    const reading = mock.subtests.find((s) => s.kind === 'reading')!;
-    const readItems = reading.parts.flatMap((p) => p.items);
-    expect(readItems.length).toBeGreaterThanOrEqual(5);
-    for (const item of readItems) {
-      expect((item as { passage?: { storyId: string } }).passage?.storyId).toBe('rd-01');
-    }
-    expect(a2Pack().stories.find((s) => s.id === 'rd-01')!.sentences).toHaveLength(9);
+  it('covers the new kinds: matching (headings + qa), true-false, gap-word/gap-form, a photo image, a typed half-credit item', () => {
+    const pack = parsePack(JSON.parse(readFileSync(fixturePackPath, 'utf8')));
+    const items = pack.exams!.flatMap((e) =>
+      e.subtests.flatMap((st) => st.parts.flatMap((pt) => pt.items)),
+    );
+    const kinds = new Set(items.map((i) => i.kind));
+    expect([...kinds].sort()).toEqual([
+      'choice',
+      'matching',
+      'speaking-monologue',
+      'speaking-reply',
+      'typed',
+      'writing',
+    ]);
+    const variants = new Set(
+      items.flatMap((i) =>
+        (i.kind === 'choice' || i.kind === 'matching') && i.variant ? [i.variant] : [],
+      ),
+    );
+    expect([...variants].sort()).toEqual(['gap-form', 'gap-word', 'headings', 'qa', 'true-false']);
+    expect(items.some((i) => i.kind === 'speaking-monologue' && i.image !== undefined)).toBe(true);
+    expect(items.find((i) => i.kind === 'typed')).toMatchObject({ half: ['парк'] });
   });
 
-  it('the info drill: a typed listen-info item with half credit; subtest pointsPerItem 6', () => {
-    const info = a2Pack().exams!.find((e) => e.id === 'a2-drill-fx-info')!;
-    const listening = info.subtests[0]!;
-    expect(listening.pointsPerItem).toBe(6);
-    const typed = listening.parts[0]!.items.find((i) => i.kind === 'typed');
-    expect(typed).toMatchObject({ topic: 'listen-info' });
-    expect((typed as { half?: string[] }).half?.length).toBeGreaterThan(0);
+  it('the mock: four parts in order, 25 % shape, no lexgram, conforming to the A1 shape (zero deviations)', () => {
+    const mock = parsePack(JSON.parse(readFileSync(fixturePackPath, 'utf8'))).exams!.find(
+      (e) => e.id === 'a1-mock-fx',
+    )!;
+    expect(mock.subtests.map((st) => st.kind)).toEqual([
+      'listening',
+      'reading',
+      'writing',
+      'speaking',
+    ]);
+    expect(renderOfficialShape(mock)).toBe(
+      'Official shape — a1-mock-fx: ✓ official shape (ukr-state A1 mock, modelled «за зразком державного іспиту»)',
+    );
   });
 
-  it('reports: the matrix map has no ✗ and the ref table has zero broken refs', () => {
-    expect(renderMatrixMap(a2Mock())).not.toContain('✗');
-    expect(renderRefTable(a2Mock(), a2Pack()).broken).toBe(0);
-  });
-
-  it('official shape: reduced counts by design — only the six count ⚠ lines, every A2 structure check passes', () => {
-    expect(renderOfficialShape(a2Mock()).split('\n')).toEqual([
-      'Official shape — a2-mock-fx: 6 deviations',
-      '  ⚠ official-shape: lexgram "lexgram" has items 10 — official 100',
-      '  ⚠ official-shape: lexgram "lexgram" maxPoints 10 — official 100',
-      '  ⚠ official-shape: reading "reading" has items 5 — official 30',
-      '  ⚠ official-shape: reading "reading" maxPoints 30 — official 180',
-      '  ⚠ official-shape: listening "listening" has items 3 — official 25',
-      '  ⚠ official-shape: listening "listening" maxPoints 18 — official 150',
+  it('ships the Piper audio and the photo image in the publish file list', () => {
+    const dir = join(fixturePackPath, '..');
+    const pack = parsePack(JSON.parse(readFileSync(fixturePackPath, 'utf8')));
+    expect(packFileList(pack, dir).sort()).toEqual([
+      'audio/ex-01.opus',
+      'audio/ls-01.opus',
+      'images/photo-01.png',
+      'pack.json',
     ]);
   });
 });
@@ -342,70 +316,82 @@ describe('exam reports', () => {
   const pack = () => parsePack(JSON.parse(readFileSync(fixturePackPath, 'utf8')));
   const mock = () => pack().exams!.find((e) => e.id === 'a1-mock-fx')!;
 
-  it('matrix map: every subtest with Σ ✓ (objective) or rubric', () => {
+  it('matrix map: every subtest with Σ ✓ (objective) or rubric; matching counts pairs', () => {
     const text = renderMatrixMap(mock());
-    expect(text).toContain('Matrix map — «Вариант ФХ» (a1-mock-fx, torfl A1 mock)');
+    expect(text).toContain('Matrix map — «Зразок A1 (тест)» (a1-mock-fx, ukr-state A1 mock)');
     expect(text).toContain(
-      'lexgram — lexgram «Лексика. Грамматика» · 40 min · no dictionary · free · Σ 5 / 5 ✓',
+      'ls — listening «Слухання» · 8 min · no dictionary · linear · audio ×2 · Σ 8 / 8 ✓',
     );
-    expect(text).toContain('Σ 12 / 12 ✓');
-    expect(text).toContain('audio ×2 · Σ 15 / 15 ✓');
-    expect(text).toContain('writing «Письмо» · 30 min · dictionary · free · rubric % of 100');
-    expect(text).toMatch(/sp03\s+speaking-monologue speak-monologue\s+rubric group m1/);
+    expect(text).toContain('rd — reading «Читання» · 30 min · no dictionary · free · Σ 16 / 16 ✓');
+    expect(text).toContain(
+      'wr — writing «Письмо» · 20 min · no dictionary · free · rubric % of 33',
+    );
+    expect(text).toMatch(/rd06\s+matching\s+rd-qa\s+4 pt 4 pairs/);
+    expect(text).toMatch(/ls05\s+choice\s+ls-tf\s+1 pt true-false/);
+    expect(text).toMatch(/sp44\s+speaking-monologue\s+sp-photo\s+rubric/);
     expect(text).not.toContain('✗');
   });
 
-  it('topic census counts items per slug and flags unknown / misplaced slugs with ?', () => {
-    expect(renderTopicCensus(mock())).toMatch(/read-detail\s+3\s+reading$/m);
+  it('topic census counts items per slug; unknown / misplaced slugs get ?; theme slugs are valid anywhere', () => {
+    expect(renderTopicCensus(mock())).toMatch(/rd-tf\s+4\s+reading$/m);
     expect(renderTopicCensus(mock())).not.toContain('?');
     const exam = structuredClone(mock());
-    (exam.subtests[1]!.parts[0]!.items[0] as { topic: string }).topic = 'case-locative';
-    (exam.subtests[1]!.parts[0]!.items[1] as { topic: string }).topic = 'read-signs';
+    const rd = exam.subtests.find((x) => x.kind === 'reading')!;
+    (rd.parts[1]!.items[0] as { topic: string }).topic = 'case-locative';
+    (rd.parts[1]!.items[1] as { topic: string }).topic = 'ls-mc3';
+    (rd.parts[1]!.items[2] as { topic: string }).topic = 'dim';
     const text = renderTopicCensus(exam);
-    expect(text).toMatch(/case-locative\s+1\s+lexgram\s+\?\s+\(not a TORFL §3\.4 slug/);
-    expect(text).toContain('(§3.4 lists it under reading)');
-    expect(Object.values(EXAM_TOPICS).flat()).toHaveLength(38);
+    expect(text).toMatch(/case-locative\s+1\s+reading\s+\?\s+\(not a UKR_EXAM_PREP §4 slug/);
+    expect(text).toContain('(§4 lists it under listening)');
+    expect(text).toMatch(/^ {2}dim\s+1\s+reading$/m);
+    expect(Object.values(EXAM_TOPICS).flat()).toHaveLength(38 + 6 + 2 + 2 + 3);
+    expect(EXAM_THEME_SLUGS).toHaveLength(12);
   });
 
-  it('official shape: the fixture mock prints its six ⚠ lines; a drill is not checked', () => {
-    expect(renderOfficialShape(mock()).split('\n')).toEqual([
-      'Official shape — a1-mock-fx: 6 deviations',
-      '  ⚠ official-shape: lexgram "lexgram" has items 5 — official 70',
-      '  ⚠ official-shape: lexgram "lexgram" maxPoints 5 — official 70',
-      '  ⚠ official-shape: reading "reading" has items 3 — official 25',
-      '  ⚠ official-shape: reading "reading" maxPoints 12 — official 100',
-      '  ⚠ official-shape: listening "listening" has items 3 — official 20',
-      '  ⚠ official-shape: listening "listening" maxPoints 15 — official 100',
+  it('official shape: a drill is not checked; the conforming mock prints ✓', () => {
+    expect(renderOfficialShape(pack().exams!.find((e) => e.id === 'lg-g19')!)).toContain(
+      'not checked (drill',
+    );
+    expect(renderOfficialShape(mock())).toContain('✓ official shape (ukr-state A1 mock');
+  });
+
+  it('official shape: a mutated mock prints ⚠ lines and the deviation count', () => {
+    const bad = structuredClone(mock());
+    const ls = bad.subtests.find((x) => x.kind === 'listening')!;
+    ls.audioPlays = 1;
+    ls.durationMin = 12;
+    expect(renderOfficialShape(bad).split('\n')).toEqual([
+      'Official shape — a1-mock-fx: 2 deviations',
+      '  ⚠ official-shape: listening "ls" durationMin 12 — official 8',
+      '  ⚠ official-shape: listening "ls" audioPlays 1 — official 2',
     ]);
-    expect(renderOfficialShape(pack().exams![0]!)).toContain('not checked (drill');
   });
 
-  it('official shape (T75): an A2 clone of the fixture mock is checked against the A2 numbers', () => {
-    const a2 = structuredClone(mock());
-    a2.level = 'A2';
-    const text = renderOfficialShape(a2);
-    expect(text.split('\n')[0]).toMatch(/^Official shape — a1-mock-fx: \d+ deviations$/);
-    expect(text).toContain('official 100');
-    expect(text).toContain('has parts 1 — official 2');
-  });
-
-  it('official shape (T75): a B1 clone is not checked', () => {
+  it('official shape: B1 / B2 / C1 clones are checked against their own shapes (B2/C1 have no citizenship form)', () => {
     const b1 = structuredClone(mock());
     b1.level = 'B1';
-    expect(renderOfficialShape(b1)).toBe(
-      'Official shape — a1-mock-fx: not checked (mock, torfl B1 — only A1 / A2 TORFL mocks are)',
+    expect(renderOfficialShape(b1).split('\n')[0]).toMatch(
+      /^Official shape — a1-mock-fx: \d+ deviations$/,
+    );
+    expect(renderOfficialShape(b1)).toContain('listening "ls" has items 8 — official 12');
+  });
+
+  it('official shape: a torfl mock at B1 is still not checked', () => {
+    const t = structuredClone(mock());
+    t.format = 'torfl';
+    t.level = 'B1';
+    expect(renderOfficialShape(t)).toBe(
+      'Official shape — a1-mock-fx: not checked (mock, torfl B1 — only mocks with a shape are)',
     );
   });
 
   it('ref table: every ref ✓, inherited listening audio marked ↑', () => {
     const { text, broken } = renderRefTable(mock(), pack());
     expect(broken).toBe(0);
-    expect(text).toContain('Ref table — a1-mock-fx (8 refs, all ✓; ↑ = inherited');
-    expect(text).toMatch(
-      /✓ reading\/rd01\s+passage\s+→ rd-01 · tfa1fx01r01-s01…tfa1fx01r01-s02 \(2\) · no audio/,
-    );
-    expect(text).toMatch(/✓ listening\/ls02\s+audio↑\s+→ ls-01 · all 5 sentences/);
-    expect(text).toMatch(/✓ speaking\/sp02\s+prompt\s+→ ls-01 · tfa1fx01l01-s03/);
+    expect(text).toContain('Ref table — a1-mock-fx (22 refs, all ✓; ↑ = inherited');
+    expect(text).toMatch(/✓ rd\/rd02\s+passage\s+→ rd-01 · uxa1fx01r01-s02 · no audio/);
+    expect(text).toMatch(/✓ ls\/ls02\s+audio↑\s+→ ls-01 · all 4 sentences · piper-lada/);
+    expect(text).toMatch(/✓ sp\/sp46\s+prompt\s+→ ex-01 · uxa1fx01e01-s01 · piper-lada/);
   });
 });
 
@@ -430,7 +416,7 @@ describe('broken exam fixtures — path-precise, file:line errors', () => {
       'exam-noncontiguous-span.exam.md',
       'passage.sentenceIds[1]',
       'contiguous run in story order',
-      'sentenceIds: [tfa1fx01r01-s01, tfa1fx01r01-s03]',
+      'sentenceIds: [uxa1fx01r01-s01, uxa1fx01r01-s03]',
     ],
     [
       'exam-points-sum.exam.md',
@@ -447,7 +433,7 @@ describe('broken exam fixtures — path-precise, file:line errors', () => {
     [
       'exam-speaking-in-reading.exam.md',
       'items.1.kind',
-      'a reading subtest holds only choice / typed items (item "sp01" is speaking-reply)',
+      'a reading subtest holds only choice / typed / matching items (item "sp01" is speaking-reply)',
       'kind: speaking-reply',
     ],
     [
@@ -462,6 +448,18 @@ describe('broken exam fixtures — path-precise, file:line errors', () => {
       'cue "живу!" must be letters/digits/spaces/hyphens only',
       "cues: ['живу!']",
     ],
+    [
+      'exam-matching-key.exam.md',
+      'items.0.key.2',
+      'right item 1 is matched twice',
+      'key: [0, 1, 1]',
+    ],
+    [
+      'exam-true-false-options.exam.md',
+      'items.0.options',
+      'a true-false item has exactly 2 options (found 3)',
+      'variant: true-false',
+    ],
   ])('%s', (name, pathPart, message, lineNeedle) => {
     const { issues, source, path } = broken(name);
     const hit = issues.find((i) => i.message.includes(pathPart) && i.message.includes(message));
@@ -474,11 +472,11 @@ describe('broken exam fixtures — path-precise, file:line errors', () => {
     const result = runValidate(fixture('broken', 'exam-half-voiced.pack.json'));
     expect(result.ok).toBe(false);
     if (result.ok) return;
-    expect(result.issues.map((i) => `${i.path}: ${i.message}`)).toEqual([
-      'exams[1].subtests[3].parts[0].items[0].audio.storyId: pack ships audio but story "ls-01" (item "ls01" audio) has none — every audio/prompt story needs a track once any story has one',
-      'exams[1].subtests[4].parts[0].items[0].prompt.storyId: pack ships audio but story "ls-01" (item "sp01" prompt) has none — every audio/prompt story needs a track once any story has one',
-      'exams[1].subtests[4].parts[1].items[0].prompt.storyId: pack ships audio but story "ls-01" (item "sp02" prompt) has none — every audio/prompt story needs a track once any story has one',
-    ]);
+    const lines = result.issues.map((i) => `${i.path}: ${i.message}`);
+    // ls-01 has no track; every audio ref to it is named — listening (mock + drill) AND speaking prompts none (ex-01 is voiced).
+    expect(lines).toHaveLength(4);
+    expect(lines.every((l) => l.includes('story "ls-01"') && l.includes('has none'))).toBe(true);
+    expect(lines.map((l) => l.match(/item "(\w+)"/)![1])).toEqual(['ls01', 'ls05', 'ls01', 'ls05']);
   });
 });
 
@@ -500,14 +498,15 @@ describe('CLI + publish on the exam fixture', () => {
     }
   };
 
-  it('validate prints the four reports and exits 0 despite the ⚠ official-shape lines', () => {
+  it('validate prints the four reports; the fixture mock has zero ⚠ and exits 0', () => {
     const result = cli(['validate', fixturePackPath]);
     expect(result.code).toBe(0);
-    expect(result.out).toContain('valid pack "a1-exam-fixture" v1');
-    expect(result.out).toContain('Matrix map — «Вариант ФХ»');
-    expect(result.out).toContain('Topic census — a1-mock-fx (12 topics)');
-    expect(result.out).toContain('⚠ official-shape: lexgram "lexgram" has items 5 — official 70');
-    expect(result.out).toContain('Ref table — a1-mock-fx (8 refs, all ✓');
+    expect(result.out).toContain('valid pack "a1-ukrexam-fixture" v1');
+    expect(result.out).toContain('Matrix map — «Зразок A1 (тест)»');
+    expect(result.out).toContain('Topic census — a1-mock-fx (13 topics)');
+    expect(result.out).toContain('✓ official shape (ukr-state A1 mock, modelled');
+    expect(result.out).not.toContain('⚠');
+    expect(result.out).toContain('Ref table — a1-mock-fx (22 refs, all ✓');
   });
 
   it('annotate prints the exam count + reports; a broken draft exits 1 with file:line', () => {
@@ -515,8 +514,8 @@ describe('CLI + publish on the exam fixture', () => {
     try {
       const drafts = fixtureFiles().map((f) => f.path);
       const result = cli(['annotate', ...drafts, '-o', join(dir, 'pack.json')]);
-      expect(result.out).toContain('2 stories, 11 sentences, 63 tokens + 2 exams — schema-valid');
-      expect(result.out).toContain('Official shape — a1-drill-fx: not checked');
+      expect(result.out).toMatch(/3 stories, 11 sentences, \d+ tokens \+ 6 exams — schema-valid/);
+      expect(result.out).toContain('Official shape — lg-g19: not checked');
       const bad = fixture('broken', 'exam-dangling-story.exam.md');
       const fail = cli(
         [
@@ -538,7 +537,7 @@ describe('CLI + publish on the exam fixture', () => {
     }
   });
 
-  it('publish against a scratch content repo: type exam + category torfl; pack.json only', () => {
+  it('publish against a scratch content repo: type exam + category ukr-exam-a1; pack.json, audio and the photo', () => {
     const dir = mkdtempSync(join(tmpdir(), 't67-publish-'));
     try {
       const git = (...args: string[]) =>
@@ -555,16 +554,21 @@ describe('CLI + publish on the exam fixture', () => {
 
       const summary = runPublish(join(fixturePackPath, '..'), dir);
       expect(summary.outcome).toBe('published');
-      expect(summary.files.map((f) => f.path)).toEqual(['pack.json']);
+      expect(summary.files.map((f) => f.path).sort()).toEqual([
+        'audio/ex-01.opus',
+        'audio/ls-01.opus',
+        'images/photo-01.png',
+        'pack.json',
+      ]);
       const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
       expect(Object.keys(manifest.packs[0]).sort()).toEqual(
         ['bytes', 'category', 'files', 'id', 'level', 'title', 'type', 'version'].sort(),
       );
       expect(manifest.packs[0]).toMatchObject({
-        id: 'a1-exam-fixture',
+        id: 'a1-ukrexam-fixture',
         version: 1,
         type: 'exam',
-        category: 'torfl',
+        category: 'ukr-exam-a1',
         level: 'A1',
       });
       expect(runPublish(join(fixturePackPath, '..'), dir).outcome).toBe('unchanged');

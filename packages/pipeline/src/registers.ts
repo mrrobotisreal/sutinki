@@ -124,6 +124,12 @@ export const CATEGORY_DEFAULT_REGISTER: Record<string, RegisterSlug> = {
   torfl: 'lecturer',
   /** M19 (T75): the «ТРКИ-А2» shelf — same register as A1. */
   'torfl-a2': 'lecturer',
+  /** UT16 (ADR-0011): the «Іспит» shelf, one category per level — same register as TORFL. */
+  'ukr-exam-a1': 'lecturer',
+  'ukr-exam-a2': 'lecturer',
+  'ukr-exam-b1': 'lecturer',
+  'ukr-exam-b2': 'lecturer',
+  'ukr-exam-c1': 'lecturer',
 };
 
 /** A voice direction after register resolution: `voice` and `style` are always present. */

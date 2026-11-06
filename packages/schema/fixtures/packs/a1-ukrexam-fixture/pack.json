@@ -1,0 +1,1945 @@
+{
+  "id": "a1-ukrexam-fixture",
+  "version": 1,
+  "type": "exam",
+  "title": {
+    "uk": "Іспит A1: тестовий пакет",
+    "en": "Exam A1: fixture pack"
+  },
+  "level": "A1",
+  "tags": [
+    "ukr-exam",
+    "ukr-exam:fixture"
+  ],
+  "stories": [
+    {
+      "id": "ex-01",
+      "title": {
+        "uk": "Питання екзаменатора",
+        "en": "Examiner lines"
+      },
+      "level": "A1",
+      "sentences": [
+        {
+          "id": "uxa1fx01e01-s01",
+          "uk": "Як вас звати?",
+          "en": "What is your name?",
+          "tokens": [
+            {
+              "text": "Як",
+              "lemma": "як",
+              "translation": "how",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "вас",
+              "lemma": "ви",
+              "translation": "you",
+              "pos": "pron",
+              "grammar": "acc. (formal)",
+              "level": "A1"
+            },
+            {
+              "text": "звати",
+              "lemma": "звати",
+              "translation": "to call",
+              "pos": "verb",
+              "grammar": "inf.",
+              "level": "A1"
+            },
+            {
+              "text": "?",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01e01-s02",
+          "uk": "Де ви живете?",
+          "en": "Where do you live?",
+          "tokens": [
+            {
+              "text": "Де",
+              "lemma": "де",
+              "translation": "where",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "ви",
+              "lemma": "ви",
+              "translation": "you",
+              "pos": "pron",
+              "grammar": "nom. (formal)",
+              "level": "A1"
+            },
+            {
+              "text": "живете",
+              "lemma": "жити",
+              "translation": "live",
+              "pos": "verb",
+              "grammar": "2pl. pres.",
+              "level": "A1"
+            },
+            {
+              "text": "?",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01e01-s03",
+          "uk": "Що ви любите робити?",
+          "en": "What do you like to do?",
+          "tokens": [
+            {
+              "text": "Що",
+              "lemma": "що",
+              "translation": "what",
+              "pos": "pron",
+              "level": "A1"
+            },
+            {
+              "text": "ви",
+              "lemma": "ви",
+              "translation": "you",
+              "pos": "pron",
+              "grammar": "nom. (formal)",
+              "level": "A1"
+            },
+            {
+              "text": "любите",
+              "lemma": "любити",
+              "translation": "like",
+              "pos": "verb",
+              "grammar": "2pl. pres.",
+              "level": "A1"
+            },
+            {
+              "text": "робити",
+              "lemma": "робити",
+              "translation": "to do",
+              "pos": "verb",
+              "grammar": "inf.",
+              "level": "A1"
+            },
+            {
+              "text": "?",
+              "isPunct": true
+            }
+          ]
+        }
+      ],
+      "audio": [
+        {
+          "id": "piper-lada",
+          "voice": "piper:uk_UA-lada-x_low",
+          "style": "neutral",
+          "file": "audio/ex-01.opus",
+          "durationMs": 4320,
+          "timestamps": []
+        }
+      ]
+    },
+    {
+      "id": "ls-01",
+      "title": {
+        "uk": "Розмова",
+        "en": "Conversation"
+      },
+      "level": "A1",
+      "sentences": [
+        {
+          "id": "uxa1fx01l01-s01",
+          "uk": "Привіт, Тарасе! Де ти зараз?",
+          "en": "Hi, Taras! Where are you now?",
+          "tokens": [
+            {
+              "text": "Привіт",
+              "lemma": "привіт",
+              "translation": "hi",
+              "pos": "intj",
+              "level": "A1"
+            },
+            {
+              "text": ",",
+              "isPunct": true
+            },
+            {
+              "text": "Тарасе",
+              "lemma": "Тарас",
+              "translation": "Taras",
+              "pos": "noun",
+              "grammar": "m.sg. voc.",
+              "level": "A1"
+            },
+            {
+              "text": "!",
+              "isPunct": true
+            },
+            {
+              "text": "Де",
+              "lemma": "де",
+              "translation": "where",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "ти",
+              "lemma": "ти",
+              "translation": "you",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "зараз",
+              "lemma": "зараз",
+              "translation": "now",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "?",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01l01-s02",
+          "uk": "Привіт, Оксано! Я вдома.",
+          "en": "Hi, Oksana! I am at home.",
+          "tokens": [
+            {
+              "text": "Привіт",
+              "lemma": "привіт",
+              "translation": "hi",
+              "pos": "intj",
+              "level": "A1"
+            },
+            {
+              "text": ",",
+              "isPunct": true
+            },
+            {
+              "text": "Оксано",
+              "lemma": "Оксана",
+              "translation": "Oksana",
+              "pos": "noun",
+              "grammar": "f.sg. voc.",
+              "level": "A1"
+            },
+            {
+              "text": "!",
+              "isPunct": true
+            },
+            {
+              "text": "Я",
+              "lemma": "я",
+              "translation": "I",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "вдома",
+              "lemma": "вдома",
+              "translation": "at home",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01l01-s03",
+          "uk": "Ти сьогодні працюєш?",
+          "en": "Do you work today?",
+          "tokens": [
+            {
+              "text": "Ти",
+              "lemma": "ти",
+              "translation": "you",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "сьогодні",
+              "lemma": "сьогодні",
+              "translation": "today",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "працюєш",
+              "lemma": "працювати",
+              "translation": "work",
+              "pos": "verb",
+              "grammar": "2sg. pres.",
+              "level": "A1"
+            },
+            {
+              "text": "?",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01l01-s04",
+          "uk": "Ні, сьогодні я відпочиваю.",
+          "en": "No, today I am resting.",
+          "tokens": [
+            {
+              "text": "Ні",
+              "lemma": "ні",
+              "translation": "no",
+              "pos": "part",
+              "level": "A1"
+            },
+            {
+              "text": ",",
+              "isPunct": true
+            },
+            {
+              "text": "сьогодні",
+              "lemma": "сьогодні",
+              "translation": "today",
+              "pos": "adv",
+              "level": "A1"
+            },
+            {
+              "text": "я",
+              "lemma": "я",
+              "translation": "I",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "відпочиваю",
+              "lemma": "відпочивати",
+              "translation": "rest",
+              "pos": "verb",
+              "grammar": "1sg. pres.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        }
+      ],
+      "audio": [
+        {
+          "id": "piper-lada",
+          "voice": "piper:uk_UA-lada-x_low",
+          "style": "neutral",
+          "file": "audio/ls-01.opus",
+          "durationMs": 8387,
+          "timestamps": []
+        }
+      ]
+    },
+    {
+      "id": "rd-01",
+      "title": {
+        "uk": "Про себе",
+        "en": "About me"
+      },
+      "level": "A1",
+      "sentences": [
+        {
+          "id": "uxa1fx01r01-s01",
+          "uk": "Мене звати Оксана.",
+          "en": "My name is Oksana.",
+          "tokens": [
+            {
+              "text": "Мене",
+              "lemma": "я",
+              "translation": "me",
+              "pos": "pron",
+              "grammar": "acc.",
+              "level": "A1"
+            },
+            {
+              "text": "звати",
+              "lemma": "звати",
+              "translation": "to call",
+              "pos": "verb",
+              "grammar": "inf.",
+              "level": "A1"
+            },
+            {
+              "text": "Оксана",
+              "lemma": "Оксана",
+              "translation": "Oksana",
+              "pos": "noun",
+              "grammar": "f.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01r01-s02",
+          "uk": "Я живу в Києві.",
+          "en": "I live in Kyiv.",
+          "tokens": [
+            {
+              "text": "Я",
+              "lemma": "я",
+              "translation": "I",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "живу",
+              "lemma": "жити",
+              "translation": "live",
+              "pos": "verb",
+              "grammar": "1sg. pres.",
+              "level": "A1"
+            },
+            {
+              "text": "в",
+              "lemma": "в",
+              "translation": "in",
+              "pos": "prep",
+              "grammar": "+ loc.",
+              "level": "A1"
+            },
+            {
+              "text": "Києві",
+              "lemma": "Київ",
+              "translation": "Kyiv",
+              "pos": "noun",
+              "grammar": "m.sg. loc.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01r01-s03",
+          "uk": "Я працюю в банку.",
+          "en": "I work at a bank.",
+          "tokens": [
+            {
+              "text": "Я",
+              "lemma": "я",
+              "translation": "I",
+              "pos": "pron",
+              "grammar": "nom.",
+              "level": "A1"
+            },
+            {
+              "text": "працюю",
+              "lemma": "працювати",
+              "translation": "work",
+              "pos": "verb",
+              "grammar": "1sg. pres.",
+              "level": "A1"
+            },
+            {
+              "text": "в",
+              "lemma": "в",
+              "translation": "in",
+              "pos": "prep",
+              "grammar": "+ loc.",
+              "level": "A1"
+            },
+            {
+              "text": "банку",
+              "lemma": "банк",
+              "translation": "bank",
+              "pos": "noun",
+              "grammar": "m.sg. loc.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        },
+        {
+          "id": "uxa1fx01r01-s04",
+          "uk": "Це моя сім'я.",
+          "en": "This is my family.",
+          "tokens": [
+            {
+              "text": "Це",
+              "lemma": "це",
+              "translation": "this",
+              "pos": "pron",
+              "level": "A1"
+            },
+            {
+              "text": "моя",
+              "lemma": "мій",
+              "translation": "my",
+              "pos": "det",
+              "grammar": "f.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": "сім'я",
+              "lemma": "сім'я",
+              "translation": "family",
+              "pos": "noun",
+              "grammar": "f.sg. nom.",
+              "level": "A1"
+            },
+            {
+              "text": ".",
+              "isPunct": true
+            }
+          ]
+        }
+      ],
+      "audio": []
+    }
+  ],
+  "exams": [
+    {
+      "id": "lg-g19",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "drill",
+      "title": {
+        "uk": "Місцевий відмінок",
+        "en": "Locative case"
+      },
+      "blurb": "Де? в / на + місцевий відмінок — шість вправ.",
+      "subtests": [
+        {
+          "id": "lexgram",
+          "kind": "lexgram",
+          "title": {
+            "uk": "Лексика. Граматика",
+            "en": "Vocabulary. Grammar"
+          },
+          "instructions": {
+            "uk": "Оберіть одну відповідь.",
+            "en": "Choose one answer."
+          },
+          "durationMin": 6,
+          "dictionary": false,
+          "navigation": "free",
+          "pointsPerItem": 1,
+          "maxPoints": 4,
+          "parts": [
+            {
+              "id": "p1",
+              "instructions": {
+                "uk": "Завдання 1–3.",
+                "en": "Items 1–3."
+              },
+              "items": [
+                {
+                  "id": "lg01",
+                  "topic": "g19",
+                  "explain": "Де? в + місцевий: Київ → у Києві.",
+                  "kind": "choice",
+                  "stem": "Я живу в … .",
+                  "options": [
+                    "Київ",
+                    "Києві",
+                    "Києвом"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "lg02",
+                  "topic": "g19",
+                  "explain": "на пошті — «на» + місцевий.",
+                  "kind": "choice",
+                  "stem": "Оксана працює на … .",
+                  "options": [
+                    "пошта",
+                    "пошті",
+                    "пошту"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "lg03",
+                  "topic": "g19",
+                  "kind": "choice",
+                  "stem": "Ми були в … .",
+                  "options": [
+                    "школа",
+                    "школі",
+                    "школу"
+                  ],
+                  "answer": 1
+                }
+              ]
+            },
+            {
+              "id": "p2",
+              "instructions": {
+                "uk": "Завдання 4.",
+                "en": "Item 4."
+              },
+              "items": [
+                {
+                  "id": "lg04",
+                  "topic": "g19",
+                  "explain": "У парку — закінчення -у.",
+                  "kind": "typed",
+                  "prompt": "Тарас у (парк).",
+                  "accept": [
+                    "парку",
+                    "парці"
+                  ],
+                  "half": [
+                    "парк"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ls-liudyna",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "drill",
+      "title": {
+        "uk": "Слухання: розмова",
+        "en": "Listening: a conversation"
+      },
+      "blurb": "Вибір А/Б/В і Правда/Неправда.",
+      "subtests": [
+        {
+          "id": "listening",
+          "kind": "listening",
+          "title": {
+            "uk": "Слухання",
+            "en": "Listening"
+          },
+          "instructions": {
+            "uk": "Прослухайте запис.",
+            "en": "Listen."
+          },
+          "durationMin": 8,
+          "dictionary": false,
+          "navigation": "linear",
+          "pointsPerItem": 1,
+          "maxPoints": 8,
+          "parts": [
+            {
+              "id": "ls-p1",
+              "instructions": {
+                "uk": "Прослухайте запис. Оберіть правильну відповідь (А, Б або В). Ви прослухаєте кожен запис двічі.",
+                "en": "Listen. Choose the correct answer (A, B or C). You hear each recording twice."
+              },
+              "items": [
+                {
+                  "id": "ls01",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Тарас і Оксана говорять про…",
+                  "options": [
+                    "дім",
+                    "роботу",
+                    "погоду"
+                  ],
+                  "answer": 0,
+                  "audio": {
+                    "storyId": "ls-01"
+                  }
+                },
+                {
+                  "id": "ls02",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Де зараз Оксана?",
+                  "options": [
+                    "вдома",
+                    "на роботі",
+                    "у Києві"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls03",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Хто говорить першим?",
+                  "options": [
+                    "Тарас",
+                    "Оксана",
+                    "екзаменатор"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls04",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Що Оксана робить сьогодні?",
+                  "options": [
+                    "відпочиває",
+                    "працює",
+                    "вчиться"
+                  ],
+                  "answer": 0
+                }
+              ]
+            },
+            {
+              "id": "ls-p2",
+              "instructions": {
+                "uk": "Прослухайте запис. Оберіть: Правда чи Неправда. Ви прослухаєте кожен запис двічі.",
+                "en": "Listen. True or false. You hear each recording twice."
+              },
+              "items": [
+                {
+                  "id": "ls05",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана зараз удома.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "audio": {
+                    "storyId": "ls-01"
+                  }
+                },
+                {
+                  "id": "ls06",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Тарас питає про роботу.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls07",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана сьогодні працює.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "ls08",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Вони говорять уранці.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rd-liudyna",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "drill",
+      "title": {
+        "uk": "Читання: про себе",
+        "en": "Reading: about myself"
+      },
+      "blurb": "Заголовки, Правда/Неправда, питання й відповіді, пропуски.",
+      "subtests": [
+        {
+          "id": "reading",
+          "kind": "reading",
+          "title": {
+            "uk": "Читання",
+            "en": "Reading"
+          },
+          "instructions": {
+            "uk": "Оберіть правильну відповідь.",
+            "en": "Choose the correct answer."
+          },
+          "durationMin": 12,
+          "dictionary": false,
+          "navigation": "free",
+          "pointsPerItem": 1,
+          "maxPoints": 14,
+          "parts": [
+            {
+              "id": "rd-p1",
+              "instructions": {
+                "uk": "Завдання 1–3. Доберіть заголовки.",
+                "en": "Items 1–3. Match headings."
+              },
+              "items": [
+                {
+                  "id": "rd01",
+                  "topic": "rd-heading",
+                  "explain": "Заголовки відповідають змісту речень.",
+                  "kind": "matching",
+                  "variant": "headings",
+                  "stem": "Доберіть до кожного тексту заголовок. Два заголовки зайві.",
+                  "left": [
+                    "Текст 1",
+                    "Текст 2",
+                    "Текст 3"
+                  ],
+                  "right": [
+                    "Мене звати",
+                    "Робота",
+                    "Родина",
+                    "Погода",
+                    "Місто"
+                  ],
+                  "key": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "passage": {
+                    "storyId": "rd-01"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p2",
+              "instructions": {
+                "uk": "Завдання 4–7. Правда чи Неправда?",
+                "en": "Items 4–7. True or false?"
+              },
+              "items": [
+                {
+                  "id": "rd02",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана живе в Києві.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd03",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана працює в школі.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s03"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd04",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана має родину.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s04"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd05",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана живе у Львові.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p3",
+              "instructions": {
+                "uk": "Завдання 8–11. Питання та відповіді.",
+                "en": "Items 8–11. Questions and answers."
+              },
+              "items": [
+                {
+                  "id": "rd06",
+                  "topic": "rd-qa",
+                  "kind": "matching",
+                  "variant": "qa",
+                  "stem": "Доберіть до кожного питання відповідь.",
+                  "left": [
+                    "Як вас звати?",
+                    "Де ви живете?",
+                    "Де ви працюєте?",
+                    "Хто це?"
+                  ],
+                  "right": [
+                    "Це моя родина.",
+                    "Я працюю в банку.",
+                    "Мене звати Оксана.",
+                    "Я живу в Києві.",
+                    "Я не знаю."
+                  ],
+                  "key": [
+                    2,
+                    3,
+                    1,
+                    0
+                  ],
+                  "passage": {
+                    "storyId": "rd-01"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p4",
+              "instructions": {
+                "uk": "Завдання 12–14. Оберіть слово або форму.",
+                "en": "Items 12–14. Word or form."
+              },
+              "items": [
+                {
+                  "id": "rd07",
+                  "topic": "rd-gap-word",
+                  "kind": "choice",
+                  "variant": "gap-word",
+                  "stem": "Я … в Києві.",
+                  "options": [
+                    "живу",
+                    "їм",
+                    "п’ю"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd08",
+                  "topic": "rd-gap-word",
+                  "kind": "choice",
+                  "variant": "gap-word",
+                  "stem": "Я працюю в … .",
+                  "options": [
+                    "банку",
+                    "хлібом",
+                    "водою"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s03"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd09",
+                  "topic": "rd-gap-form",
+                  "kind": "choice",
+                  "variant": "gap-form",
+                  "stem": "Мене … Оксана.",
+                  "options": [
+                    "звати",
+                    "звуть",
+                    "зову"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s01"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sp-photo",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "drill",
+      "title": {
+        "uk": "Говоріння: фото",
+        "en": "Speaking: photo"
+      },
+      "blurb": "Опишіть фото (5 фраз).",
+      "subtests": [
+        {
+          "id": "speaking",
+          "kind": "speaking",
+          "title": {
+            "uk": "Говоріння",
+            "en": "Speaking"
+          },
+          "instructions": {
+            "uk": "Опишіть фото.",
+            "en": "Describe the photo."
+          },
+          "durationMin": 5,
+          "dictionary": false,
+          "navigation": "linear",
+          "maxPoints": 38,
+          "parts": [
+            {
+              "id": "sp-p1",
+              "instructions": {
+                "uk": "Завдання 46.",
+                "en": "Task 46."
+              },
+              "items": [
+                {
+                  "id": "sp01",
+                  "topic": "sp-photo",
+                  "kind": "speaking-monologue",
+                  "topicTitle": {
+                    "uk": "Фото: родина в парку",
+                    "en": "Photo: a family in the park"
+                  },
+                  "questions": [
+                    {
+                      "uk": "Хто на фото?",
+                      "cues": [
+                        "люди"
+                      ]
+                    },
+                    {
+                      "uk": "Де вони?",
+                      "cues": [
+                        "парк"
+                      ]
+                    },
+                    {
+                      "uk": "Що вони роблять?",
+                      "cues": [
+                        "гуляють"
+                      ]
+                    },
+                    {
+                      "uk": "Який настрій?",
+                      "cues": [
+                        "радість"
+                      ]
+                    }
+                  ],
+                  "minSentences": 5,
+                  "maxSentences": 7,
+                  "prepSec": 480,
+                  "answerSec": 120,
+                  "image": {
+                    "file": "images/photo-01.png",
+                    "alt": "Родина гуляє в парку"
+                  }
+                }
+              ],
+              "timeSec": 300
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wr-message",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "drill",
+      "title": {
+        "uk": "Письмо: записка",
+        "en": "Writing: a note"
+      },
+      "blurb": "Коротка записка (10–25 слів).",
+      "subtests": [
+        {
+          "id": "writing",
+          "kind": "writing",
+          "title": {
+            "uk": "Письмо",
+            "en": "Writing"
+          },
+          "instructions": {
+            "uk": "Напишіть записку.",
+            "en": "Write a note."
+          },
+          "durationMin": 8,
+          "dictionary": false,
+          "navigation": "free",
+          "maxPoints": 33,
+          "parts": [
+            {
+              "id": "wr-p1",
+              "instructions": {
+                "uk": "Завдання 44.",
+                "en": "Task 44."
+              },
+              "items": [
+                {
+                  "id": "wr01",
+                  "topic": "wr-message",
+                  "kind": "writing",
+                  "task": {
+                    "uk": "Напишіть другові записку про себе.",
+                    "en": "Write a friend a note about yourself."
+                  },
+                  "bullets": [
+                    {
+                      "id": "b1",
+                      "text": {
+                        "uk": "хто ви",
+                        "en": "who you are"
+                      },
+                      "cues": [
+                        "мене"
+                      ]
+                    },
+                    {
+                      "id": "b2",
+                      "text": {
+                        "uk": "де ви живете",
+                        "en": "where you live"
+                      },
+                      "cues": [
+                        "живу"
+                      ]
+                    }
+                  ],
+                  "minSentences": 1,
+                  "minQuestions": 0,
+                  "minWords": 10,
+                  "maxWords": 25
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "a1-mock-fx",
+      "format": "ukr-state",
+      "level": "A1",
+      "mode": "mock",
+      "title": {
+        "uk": "Зразок A1 (тест)",
+        "en": "Fixture mock A1"
+      },
+      "subtests": [
+        {
+          "id": "ls",
+          "kind": "listening",
+          "title": {
+            "uk": "Слухання",
+            "en": "Listening"
+          },
+          "instructions": {
+            "uk": "Час виконання — 8 хвилин.",
+            "en": "8 minutes."
+          },
+          "durationMin": 8,
+          "dictionary": false,
+          "navigation": "linear",
+          "pointsPerItem": 1,
+          "maxPoints": 8,
+          "audioPlays": 2,
+          "parts": [
+            {
+              "id": "ls-p1",
+              "instructions": {
+                "uk": "Прослухайте запис. Оберіть правильну відповідь (А, Б або В). Ви прослухаєте кожен запис двічі.",
+                "en": "Listen. Choose the correct answer (A, B or C). You hear each recording twice."
+              },
+              "items": [
+                {
+                  "id": "ls01",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Тарас і Оксана говорять про…",
+                  "options": [
+                    "дім",
+                    "роботу",
+                    "погоду"
+                  ],
+                  "answer": 0,
+                  "audio": {
+                    "storyId": "ls-01"
+                  }
+                },
+                {
+                  "id": "ls02",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Де зараз Оксана?",
+                  "options": [
+                    "вдома",
+                    "на роботі",
+                    "у Києві"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls03",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Хто говорить першим?",
+                  "options": [
+                    "Тарас",
+                    "Оксана",
+                    "екзаменатор"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls04",
+                  "topic": "ls-mc3",
+                  "kind": "choice",
+                  "stem": "Що Оксана робить сьогодні?",
+                  "options": [
+                    "відпочиває",
+                    "працює",
+                    "вчиться"
+                  ],
+                  "answer": 0
+                }
+              ]
+            },
+            {
+              "id": "ls-p2",
+              "instructions": {
+                "uk": "Прослухайте запис. Оберіть: Правда чи Неправда. Ви прослухаєте кожен запис двічі.",
+                "en": "Listen. True or false. You hear each recording twice."
+              },
+              "items": [
+                {
+                  "id": "ls05",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана зараз удома.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "audio": {
+                    "storyId": "ls-01"
+                  }
+                },
+                {
+                  "id": "ls06",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Тарас питає про роботу.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0
+                },
+                {
+                  "id": "ls07",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана сьогодні працює.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1
+                },
+                {
+                  "id": "ls08",
+                  "topic": "ls-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Вони говорять уранці.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rd",
+          "kind": "reading",
+          "title": {
+            "uk": "Читання",
+            "en": "Reading"
+          },
+          "instructions": {
+            "uk": "Час виконання — 30 хвилин.",
+            "en": "30 minutes."
+          },
+          "durationMin": 30,
+          "dictionary": false,
+          "navigation": "free",
+          "pointsPerItem": 1,
+          "maxPoints": 16,
+          "parts": [
+            {
+              "id": "rd-p1",
+              "instructions": {
+                "uk": "Завдання 1–3. Доберіть заголовки.",
+                "en": "Items 1–3. Match headings."
+              },
+              "items": [
+                {
+                  "id": "rd01",
+                  "topic": "rd-heading",
+                  "explain": "Заголовки відповідають змісту речень.",
+                  "kind": "matching",
+                  "variant": "headings",
+                  "stem": "Доберіть до кожного тексту заголовок. Два заголовки зайві.",
+                  "left": [
+                    "Текст 1",
+                    "Текст 2",
+                    "Текст 3"
+                  ],
+                  "right": [
+                    "Мене звати",
+                    "Робота",
+                    "Родина",
+                    "Погода",
+                    "Місто"
+                  ],
+                  "key": [
+                    0,
+                    1,
+                    2
+                  ],
+                  "passage": {
+                    "storyId": "rd-01"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p2",
+              "instructions": {
+                "uk": "Завдання 4–7. Правда чи Неправда?",
+                "en": "Items 4–7. True or false?"
+              },
+              "items": [
+                {
+                  "id": "rd02",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана живе в Києві.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd03",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана працює в школі.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s03"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd04",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана має родину.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s04"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd05",
+                  "topic": "rd-tf",
+                  "kind": "choice",
+                  "variant": "true-false",
+                  "stem": "Оксана живе у Львові.",
+                  "options": [
+                    "Правда",
+                    "Неправда"
+                  ],
+                  "answer": 1,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p3",
+              "instructions": {
+                "uk": "Завдання 8–11. Питання та відповіді.",
+                "en": "Items 8–11. Questions and answers."
+              },
+              "items": [
+                {
+                  "id": "rd06",
+                  "topic": "rd-qa",
+                  "kind": "matching",
+                  "variant": "qa",
+                  "stem": "Доберіть до кожного питання відповідь.",
+                  "left": [
+                    "Як вас звати?",
+                    "Де ви живете?",
+                    "Де ви працюєте?",
+                    "Хто це?"
+                  ],
+                  "right": [
+                    "Це моя родина.",
+                    "Я працюю в банку.",
+                    "Мене звати Оксана.",
+                    "Я живу в Києві.",
+                    "Я не знаю."
+                  ],
+                  "key": [
+                    2,
+                    3,
+                    1,
+                    0
+                  ],
+                  "passage": {
+                    "storyId": "rd-01"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p4",
+              "instructions": {
+                "uk": "Завдання 12–14. Оберіть слово або форму.",
+                "en": "Items 12–14. Word or form."
+              },
+              "items": [
+                {
+                  "id": "rd07",
+                  "topic": "rd-gap-word",
+                  "kind": "choice",
+                  "variant": "gap-word",
+                  "stem": "Я … в Києві.",
+                  "options": [
+                    "живу",
+                    "їм",
+                    "п’ю"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s02"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd08",
+                  "topic": "rd-gap-word",
+                  "kind": "choice",
+                  "variant": "gap-word",
+                  "stem": "Я працюю в … .",
+                  "options": [
+                    "банку",
+                    "хлібом",
+                    "водою"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s03"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd09",
+                  "topic": "rd-gap-form",
+                  "kind": "choice",
+                  "variant": "gap-form",
+                  "stem": "Мене … Оксана.",
+                  "options": [
+                    "звати",
+                    "звуть",
+                    "зову"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s01"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "rd-p5",
+              "instructions": {
+                "uk": "Завдання 15–16. Оберіть одну відповідь.",
+                "en": "Items 15–16. Choose one answer."
+              },
+              "items": [
+                {
+                  "id": "rd10",
+                  "topic": "rd-detail",
+                  "kind": "choice",
+                  "stem": "Де працює Оксана?",
+                  "options": [
+                    "у школі",
+                    "у банку",
+                    "у крамниці",
+                    "у лікарні"
+                  ],
+                  "answer": 1,
+                  "passage": {
+                    "storyId": "rd-01",
+                    "sentenceIds": [
+                      "uxa1fx01r01-s03"
+                    ]
+                  }
+                },
+                {
+                  "id": "rd11",
+                  "topic": "rd-detail",
+                  "kind": "choice",
+                  "stem": "Що це за текст?",
+                  "options": [
+                    "розповідь про себе",
+                    "оголошення",
+                    "меню",
+                    "розклад"
+                  ],
+                  "answer": 0,
+                  "passage": {
+                    "storyId": "rd-01"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "wr",
+          "kind": "writing",
+          "title": {
+            "uk": "Письмо",
+            "en": "Writing"
+          },
+          "instructions": {
+            "uk": "Час виконання — 20 хвилин.",
+            "en": "20 minutes."
+          },
+          "durationMin": 20,
+          "dictionary": false,
+          "navigation": "free",
+          "maxPoints": 33,
+          "parts": [
+            {
+              "id": "wr-p1",
+              "instructions": {
+                "uk": "Завдання 44. Напишіть коротку записку.",
+                "en": "Task 44. Write a short note."
+              },
+              "items": [
+                {
+                  "id": "wr44",
+                  "topic": "wr-message",
+                  "kind": "writing",
+                  "task": {
+                    "uk": "Напишіть другові записку про себе.",
+                    "en": "Write a friend a note about yourself."
+                  },
+                  "bullets": [
+                    {
+                      "id": "b1",
+                      "text": {
+                        "uk": "хто ви",
+                        "en": "who you are"
+                      },
+                      "cues": [
+                        "мене"
+                      ]
+                    },
+                    {
+                      "id": "b2",
+                      "text": {
+                        "uk": "де ви живете",
+                        "en": "where you live"
+                      },
+                      "cues": [
+                        "живу"
+                      ]
+                    }
+                  ],
+                  "minSentences": 1,
+                  "minQuestions": 0,
+                  "minWords": 10,
+                  "maxWords": 25
+                }
+              ],
+              "timeSec": 480
+            },
+            {
+              "id": "wr-p2",
+              "instructions": {
+                "uk": "Завдання 45. Напишіть текст про себе.",
+                "en": "Task 45. Write a text about yourself."
+              },
+              "items": [
+                {
+                  "id": "wr45",
+                  "topic": "wr-text",
+                  "kind": "writing",
+                  "task": {
+                    "uk": "Напишіть текст про себе та свою родину.",
+                    "en": "Write a text about yourself and your family."
+                  },
+                  "bullets": [
+                    {
+                      "id": "b1",
+                      "text": {
+                        "uk": "хто ви",
+                        "en": "who you are"
+                      },
+                      "cues": [
+                        "мене"
+                      ]
+                    },
+                    {
+                      "id": "b2",
+                      "text": {
+                        "uk": "де ви живете",
+                        "en": "where you live"
+                      },
+                      "cues": [
+                        "живу"
+                      ]
+                    }
+                  ],
+                  "minSentences": 3,
+                  "minQuestions": 0,
+                  "minWords": 30,
+                  "maxWords": 50
+                }
+              ],
+              "timeSec": 720
+            }
+          ]
+        },
+        {
+          "id": "sp",
+          "kind": "speaking",
+          "title": {
+            "uk": "Говоріння",
+            "en": "Speaking"
+          },
+          "instructions": {
+            "uk": "Час виконання — 18 хвилин.",
+            "en": "18 minutes."
+          },
+          "durationMin": 18,
+          "dictionary": false,
+          "navigation": "linear",
+          "maxPoints": 38,
+          "parts": [
+            {
+              "id": "sp-p1",
+              "instructions": {
+                "uk": "Завдання 46. Опишіть фото.",
+                "en": "Task 46. Describe the photo."
+              },
+              "items": [
+                {
+                  "id": "sp44",
+                  "topic": "sp-photo",
+                  "kind": "speaking-monologue",
+                  "topicTitle": {
+                    "uk": "Фото: родина в парку",
+                    "en": "Photo: a family in the park"
+                  },
+                  "questions": [
+                    {
+                      "uk": "Хто на фото?",
+                      "cues": [
+                        "люди"
+                      ]
+                    },
+                    {
+                      "uk": "Де вони?",
+                      "cues": [
+                        "парк"
+                      ]
+                    },
+                    {
+                      "uk": "Що вони роблять?",
+                      "cues": [
+                        "гуляють"
+                      ]
+                    },
+                    {
+                      "uk": "Який настрій?",
+                      "cues": [
+                        "радість"
+                      ]
+                    }
+                  ],
+                  "minSentences": 5,
+                  "maxSentences": 7,
+                  "prepSec": 480,
+                  "answerSec": 120,
+                  "image": {
+                    "file": "images/photo-01.png",
+                    "alt": "Родина гуляє в парку"
+                  }
+                }
+              ],
+              "timeSec": 300
+            },
+            {
+              "id": "sp-p2",
+              "instructions": {
+                "uk": "Завдання 47. Розкажіть про себе.",
+                "en": "Task 47. Tell about yourself."
+              },
+              "items": [
+                {
+                  "id": "sp45",
+                  "topic": "sp-monologue",
+                  "kind": "speaking-monologue",
+                  "topicTitle": {
+                    "uk": "Про себе",
+                    "en": "About myself"
+                  },
+                  "questions": [
+                    {
+                      "uk": "Як вас звати?",
+                      "cues": [
+                        "звати"
+                      ]
+                    },
+                    {
+                      "uk": "Де ви живете?",
+                      "cues": [
+                        "живу"
+                      ]
+                    },
+                    {
+                      "uk": "Що ви любите робити?",
+                      "cues": [
+                        "люблю"
+                      ]
+                    },
+                    {
+                      "uk": "Де ви працюєте?",
+                      "cues": [
+                        "працюю"
+                      ]
+                    }
+                  ],
+                  "minSentences": 8,
+                  "maxSentences": 10,
+                  "prepSec": 480,
+                  "answerSec": 120
+                }
+              ],
+              "timeSec": 480
+            },
+            {
+              "id": "sp-p3",
+              "instructions": {
+                "uk": "Завдання 48. Дайте відповіді.",
+                "en": "Task 48. Answer."
+              },
+              "items": [
+                {
+                  "id": "sp46",
+                  "topic": "sp-dialogue",
+                  "kind": "speaking-reply",
+                  "prompt": {
+                    "storyId": "ex-01",
+                    "sentenceIds": [
+                      "uxa1fx01e01-s01"
+                    ]
+                  },
+                  "expect": {
+                    "slots": [
+                      {
+                        "kind": "free",
+                        "id": "a1",
+                        "required": true,
+                        "minTokens": 2,
+                        "cues": [
+                          "звати"
+                        ]
+                      }
+                    ],
+                    "accept": [
+                      "Мене звати Оксана."
+                    ]
+                  },
+                  "minTokens": 4
+                },
+                {
+                  "id": "sp47",
+                  "topic": "sp-dialogue",
+                  "kind": "speaking-reply",
+                  "prompt": {
+                    "storyId": "ex-01",
+                    "sentenceIds": [
+                      "uxa1fx01e01-s02"
+                    ]
+                  },
+                  "expect": {
+                    "slots": [
+                      {
+                        "kind": "free",
+                        "id": "a2",
+                        "required": true,
+                        "minTokens": 2,
+                        "cues": [
+                          "живу"
+                        ]
+                      }
+                    ],
+                    "accept": [
+                      "Я живу в Києві."
+                    ]
+                  },
+                  "minTokens": 4
+                },
+                {
+                  "id": "sp48",
+                  "topic": "sp-dialogue",
+                  "kind": "speaking-reply",
+                  "prompt": {
+                    "storyId": "ex-01",
+                    "sentenceIds": [
+                      "uxa1fx01e01-s03"
+                    ]
+                  },
+                  "expect": {
+                    "slots": [
+                      {
+                        "kind": "free",
+                        "id": "a3",
+                        "required": true,
+                        "minTokens": 2,
+                        "cues": [
+                          "люблю"
+                        ]
+                      }
+                    ],
+                    "accept": [
+                      "Я люблю читати."
+                    ]
+                  },
+                  "minTokens": 4
+                }
+              ],
+              "timeSec": 300
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "category": "ukr-exam-a1"
+}

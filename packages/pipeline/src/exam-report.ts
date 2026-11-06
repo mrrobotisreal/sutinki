@@ -4,14 +4,16 @@ import {
   officialShapeIssues,
   resolveItemAudio,
   TORFL_SHAPES,
+  UKR_STATE_SHAPES,
+  examItemTasks,
   type Exam,
   type Pack,
   type StoryRef,
 } from '@sutinki/schema';
-import { EXAM_TOPIC_KIND } from './exam-topics.ts';
+import { EXAM_THEME_SET, EXAM_TOPIC_KIND } from './exam-topics.ts';
 
 /**
- * The four `validate` / `annotate` reports for an exam (T67, TORFL §3.3):
+ * The four `validate` / `annotate` reports for an exam (T67, TORFL §3.3; UT16: ukr-state):
  * matrix map, topic census, official-shape check, ref table.
  *
  * AUTHORING AIDS ONLY — deterministic (declaration order) so they can be
@@ -53,9 +55,13 @@ export function renderMatrixMap(exam: Exam): string {
         const extra =
           item.kind === 'speaking-monologue' && item.group !== undefined
             ? ` group ${item.group}`
-            : '';
+            : item.kind === 'matching'
+              ? ` ${examItemTasks(item)} pairs`
+              : item.kind === 'choice' && item.variant !== undefined
+                ? ` ${item.variant}`
+                : '';
         body.push(
-          `      ${item.id.padEnd(8)} ${item.kind.padEnd(18)} ${item.topic.padEnd(16)} ${pts !== undefined ? `${fmt(pts)} pt` : 'rubric'}${extra}`,
+          `      ${item.id.padEnd(8)} ${item.kind.padEnd(19)} ${item.topic.padEnd(16)} ${pts !== undefined ? `${fmt(pts)} pt` : 'rubric'}${extra}`,
         );
       }
     }
@@ -71,7 +77,7 @@ export function renderMatrixMap(exam: Exam): string {
   return out.join('\n');
 }
 
-/** Topic census: items per topic slug; slugs outside TORFL §3.4 (or under another subtest kind) flagged. */
+/** Topic census: items per topic slug; slugs outside UKR_EXAM_PREP §4 (or under another subtest kind) flagged. */
 export function renderTopicCensus(exam: Exam): string {
   const counts = new Map<string, { n: number; kinds: Set<string> }>();
   for (const subtest of exam.subtests) {
@@ -88,12 +94,13 @@ export function renderTopicCensus(exam: Exam): string {
   for (const [topic, { n, kinds }] of counts) {
     const known = EXAM_TOPIC_KIND.get(topic);
     const where = [...kinds].join(', ');
-    const flag =
-      known === undefined
-        ? '?  (not a TORFL §3.4 slug — renders raw in the app)'
+    const flag = EXAM_THEME_SET.has(topic)
+      ? ''
+      : known === undefined
+        ? '?  (not a UKR_EXAM_PREP §4 slug — renders raw in the app)'
         : kinds.size === 1 && kinds.has(known)
           ? ''
-          : `?  (§3.4 lists it under ${known})`;
+          : `?  (§4 lists it under ${known})`;
     out.push(`  ${topic.padEnd(16)} ${String(n).padStart(3)}  ${where}${flag ? `  ${flag}` : ''}`);
   }
   return out.join('\n');
@@ -101,12 +108,17 @@ export function renderTopicCensus(exam: Exam): string {
 
 /** Official-shape check: the non-fatal invariant-10 lines, or the ✓ line. */
 export function renderOfficialShape(exam: Exam): string {
-  if (exam.mode !== 'mock' || exam.format !== 'torfl' || !TORFL_SHAPES[exam.level]) {
-    return `Official shape — ${exam.id}: not checked (${exam.mode}, ${exam.format} ${exam.level} — only A1 / A2 TORFL mocks are)`;
+  const torfl = exam.format === 'torfl' && TORFL_SHAPES[exam.level] !== undefined;
+  if (exam.mode !== 'mock' || (exam.format === 'torfl' && !torfl)) {
+    return `Official shape — ${exam.id}: not checked (${exam.mode}, ${exam.format} ${exam.level} — only mocks with a shape are)`;
   }
+  const label =
+    exam.format === 'ukr-state'
+      ? `ukr-state ${exam.level} mock${UKR_STATE_SHAPES[exam.level].modelled ? ', modelled «за зразком державного іспиту»' : ''}`
+      : `TORFL ${exam.level} mock`;
   const lines = officialShapeIssues(exam);
   return lines.length === 0
-    ? `Official shape — ${exam.id}: ✓ official shape (TORFL ${exam.level} mock)`
+    ? `Official shape — ${exam.id}: ✓ official shape (${label})`
     : [
         `Official shape — ${exam.id}: ${lines.length} deviation${lines.length === 1 ? '' : 's'}`,
         ...lines.map((l) => `  ${l}`),
@@ -145,7 +157,9 @@ export function renderRefTable(exam: Exam, pack: Pack): { text: string; broken: 
     for (const part of subtest.parts) {
       part.items.forEach((item, ii) => {
         const refs: [string, StoryRef | undefined, boolean][] = [];
-        if (item.kind === 'choice' || item.kind === 'typed') {
+        if (item.kind === 'matching') {
+          refs.push(['passage', item.passage, false]);
+        } else if (item.kind === 'choice' || item.kind === 'typed') {
           refs.push(['passage', item.passage, false]);
           const own = item.audio;
           const resolved = resolveItemAudio(part, ii);

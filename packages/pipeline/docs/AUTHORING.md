@@ -60,14 +60,14 @@ voice:
       Evening-bulletin pace; each sentence is its own item.
 ```
 
-| register    | `style` label in-app | default for `category` | `stability / similarityBoost / style / speed / useSpeakerBoost` | `stylePrompt` (sent as `previous_text`)                                                                                             |
-| ----------- | -------------------- | ---------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `narrator`  | Оповідач             | `stories`              | `0.50 / 0.75 / 0.00 / 1.00 / true` (No End House §5.6, CT011e)  | «Я розповідаю цю історію повільно, тихо, ніби згадую те, чого не хотів би пам’ятати.»                                               |
-| `anchor`    | Диктор               | `news`                 | `0.70 / 0.80 / 0.15 / 1.05 / true`                              | «Добрий вечір. В ефірі вечірній випуск новин. Коротко про головне.»                                                                 |
-| `lecturer`  | Лектор               | `education`, `torfl`   | `0.65 / 0.80 / 0.20 / 0.97 / true`                              | «Отже, продовжимо лекцію. Сьогодні ми розберемо цю тему спокійно й по порядку. Зверніть увагу на приклади.»                         |
-| `host`      | Ведучий              | `podcast`              | `0.35 / 0.75 / 0.50 / 1.05 / true`                              | «Привіт-привіт! Ви слухаєте наш подкаст. Влаштовуйтеся зручніше — сьогодні буде цікаво, і я, чесно кажучи, сам не можу дочекатися.» |
-| `voiceover` | Закадровий голос     | `documentary`          | `0.60 / 0.80 / 0.25 / 0.95 / true`                              | «Тут, далеко від міст, природа живе за своїми законами. Щороку тут повторюється та сама історія.»                                   |
-| `guide`     | Гід                  | `travel`               | `0.40 / 0.75 / 0.45 / 1.02 / true`                              | «Дивіться, ми щойно приїхали, і я зараз усе вам покажу. Це місце — одне з моїх улюблених.»                                          |
+| register    | `style` label in-app | default for `category`             | `stability / similarityBoost / style / speed / useSpeakerBoost` | `stylePrompt` (sent as `previous_text`)                                                                                             |
+| ----------- | -------------------- | ---------------------------------- | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `narrator`  | Оповідач             | `stories`                          | `0.50 / 0.75 / 0.00 / 1.00 / true` (No End House §5.6, CT011e)  | «Я розповідаю цю історію повільно, тихо, ніби згадую те, чого не хотів би пам’ятати.»                                               |
+| `anchor`    | Диктор               | `news`                             | `0.70 / 0.80 / 0.15 / 1.05 / true`                              | «Добрий вечір. В ефірі вечірній випуск новин. Коротко про головне.»                                                                 |
+| `lecturer`  | Лектор               | `education`, `torfl`, `ukr-exam-*` | `0.65 / 0.80 / 0.20 / 0.97 / true`                              | «Отже, продовжимо лекцію. Сьогодні ми розберемо цю тему спокійно й по порядку. Зверніть увагу на приклади.»                         |
+| `host`      | Ведучий              | `podcast`                          | `0.35 / 0.75 / 0.50 / 1.05 / true`                              | «Привіт-привіт! Ви слухаєте наш подкаст. Влаштовуйтеся зручніше — сьогодні буде цікаво, і я, чесно кажучи, сам не можу дочекатися.» |
+| `voiceover` | Закадровий голос     | `documentary`                      | `0.60 / 0.80 / 0.25 / 0.95 / true`                              | «Тут, далеко від міст, природа живе за своїми законами. Щороку тут повторюється та сама історія.»                                   |
+| `guide`     | Гід                  | `travel`                           | `0.40 / 0.75 / 0.45 / 1.02 / true`                              | «Дивіться, ми щойно приїхали, і я зараз усе вам покажу. Це місце — одне з моїх улюблених.»                                          |
 
 Precedence (`packages/pipeline/src/registers.ts`, `applyRegister`):
 
@@ -209,7 +209,7 @@ pack:
     }
   level: A1 # A1 | A2 | B1 | B2 | C1  (no C2)
   tags: ['creepypasta', 'horror', 'grammar:genitive']
-  category: stories # OPTIONAL (M14): stories | news | education | podcast | documentary | travel | torfl (M18)
+  category: stories # OPTIONAL (M14): stories | news | education | podcast | documentary | travel | torfl (M18) | ukr-exam-a1…c1 (UT16)
   genre: horror # OPTIONAL (M14): fiction genre — horror | mystery | scifi | fantasy | action |
   #   comedy | romance | drama | family | slice-of-life | absurd | fairy-tale
 story:
@@ -904,153 +904,164 @@ They also print the **glossary coverage report**: every **content lemma the cast
 - **Cost gate**: every run prints `N scenario line(s), M scenario coach render(s) — R ElevenLabs request(s), ~C characters` and asks to proceed; `--yes` for scripted runs; an unconfirmed run makes zero calls. **Cost expectations** (fixture «Проверка связи», 54 lines + 2 coach, 1,115 chars): the 2-take audition = 6 requests / 150 chars in 12 s; the full finalize = 56 requests / 1,115 chars in 89 s → 90 s of audio, 444 KB of Opus. A real A1 rung (~120 lines, ~3,000 chars) is therefore ≈ 3 min and ≈ 3 k characters of the plan.
 - **`scene/` ships wholesale.** `publish` copies `pack.json`, every line/coach `audio/…opus`, and **every file under `<pack-dir>/scene/`** (any depth, dotfiles skipped) — the PNG layers the portraits/backdrop reference. The size line reports `scene/` separately («of which scene/ 4.68 MB (Wi-Fi-gated PNG layers)»): the app's sync gate treats `scene/` + `.png` like large audio (T58). The CT session copies Mitch's art in from `Stories/scenarios/<family>/art/sized/` — `backdrop.png` → `scene/backdrop.png`, `body.png` → `scene/<host-id>/body.png`, `eyelids2.png` → `scene/<host-id>/eyelids.png` (≈ 4.7 MB per family) — and sets the portrait's `body`/`eyelids`/`mouthAnchor`; **`mouthAnchor` fractions are measured with T61's anchor picker** (dev screen) once it lands; until then keep `placeholder`.
 
-## Exam drafts (`*.exam.md` — M18, T67)
+## Exam drafts (`*.exam.md` — M18, T67; re-targeted to the Ukrainian state exam in UT16)
 
-An **exam pack** (`type: exam`, design `docs/design/TORFL_EXAM_PREP.md` §3 at the workspace root, ADR-0020) holds one or more structured tests — **exam → subtests → parts → items** — in `mock` mode (a faithful timed ТРКИ) or `drill` mode (practice with instant feedback). It is authored as two kinds of file given to `annotate` **together**:
+An **exam pack** (`type: exam`; design `docs/design/UKR_EXAM_PREP.md` at the workspace root — **every number in this section comes from its §2**; ADR-0011) holds one or more structured tests — **exam → subtests → parts → items** — in `mock` mode (a shape-faithful timed paper) or `drill` mode (practice with instant feedback). The format is `ukr-state`: the Ukrainian state-language exam («іспит на рівень володіння державною мовою», citizenship form). It is authored as two kinds of file given to `annotate` **together**:
 
-1. **Story drafts** (ordinary `*.draft.md`, everything above applies unchanged) for every reading passage, listening script, examiner line and model answer — full 7-column token tables, `pack:` byte-identical across the pack, `voice:` directions for `pipeline audio` (multi-voice listening dialogues via `sentenceVoices`). **Exam audio is story audio**: no other audio exists or is rendered.
+1. **Story drafts** (ordinary `*.draft.md`, everything above applies unchanged) for every reading text, listening script, examiner line and model answer — full 7-column token tables, `pack:` byte-identical across the pack, `voice:` directions for `pipeline audio` (multi-voice listening dialogues via `sentenceVoices`). **Exam audio is story audio**: no other audio exists or is rendered.
 2. **One exam draft per exam** (`*.exam.md`): **YAML frontmatter only** — a single `exam:` key (+ an optional `pack:`). The markdown body below the closing `---` is author notes; `annotate` ignores it. The pipeline recognizes an exam draft by the `exam:` key, never by filename.
 
 ```bash
-pnpm pipeline annotate stories/*.draft.md mock-01.exam.md drills.exam.md -o packs/a1-torfl-mock-001/pack.json
-pnpm pipeline validate packs/a1-torfl-mock-001/pack.json     # the four exam reports (below)
-pnpm pipeline audio  packs/a1-torfl-mock-001/pack.json stories/*.draft.md …   # renders the STORIES, exactly as for a story pack
+pnpm pipeline annotate stories/*.draft.md mock-00.exam.md -o packs/a1-ukrexam-mock-000/pack.json
+pnpm pipeline validate packs/a1-ukrexam-mock-000/pack.json     # the four exam reports (below)
+pnpm pipeline audio  packs/a1-ukrexam-mock-000/pack.json stories/*.draft.md …   # renders the STORIES, exactly as for a story pack
 ```
 
-`pack:` in an exam draft follows the extras precedent: **optional next to story drafts** (it must then match them byte-for-byte), **required when the pack has no story drafts** (a lexgram-only drill bank, CT028) — and such a story-less pack's items may carry **no** story refs. Exams appear in `pack.exams` in the order their drafts are given on the command line. Use `type: exam` and `category: torfl` for A1 (the «ТРКИ-А1» shelf) or `category: torfl-a2` for A2 (the «ТРКИ-А2» shelf, M19); both default to register `lecturer`.
+`pack:` in an exam draft follows the extras precedent: **optional next to story drafts** (it must then match them byte-for-byte), **required when the pack has no story drafts** (a grammar-drill bank) — and such a story-less pack's items may carry **no** story refs. Exams appear in `pack.exams` in the order their drafts are given on the command line.
+
+**Pack metadata** (the `pack:` block, top-level sibling of `exam:` in the same frontmatter; `version` is an **integer**, `version: 1`; required keys `id`, `version`, `type`, `title`, `level`, `tags`, `category`). `type: exam`; `category` = the level's shelf: **`ukr-exam-a1` · `ukr-exam-a2` · `ukr-exam-b1` · `ukr-exam-b2` · `ukr-exam-c1`** (default register `lecturer`); `tags` = `ukr-exam` plus exactly the stack tag(s) of the pack — `ukr-exam:lexgram` · `:lexicon` · `:reading` · `:listening` · `:speaking` · `:writing` · `:mock` · `:gate` (`:gate` is reserved for the hotel gate mock and consumed by UT17 — never put it on a drill pack) — and `ukr-exam:<topic>` theme tags. **Pack ids:** `a1-ukrexam-lexgram-001`, `a1-ukrexam-lexicon-001`, `a1-ukrexam-reading-001`, `a1-ukrexam-listening-001`, `a1-ukrexam-writing-speaking-001`, `a1-ukrexam-prompts-001`, `a1-ukrexam-mock-000…004`; A2 `a2-ukrexam-*`; B1 `b1-ukrexam-mock-000`.
 
 ### The exam object
 
 ```yaml
 ---
 exam:
-  id: a1-mock-01 # unique within the pack
-  format: torfl # the only format today
-  level: A1
+  id: a1-mock-00 # unique within the pack: a1-mock-NN (mock) or <kind>-<topic> (drill: lg-, rd-, ls-, wr-, sp- + topic)
+  format: ukr-state # ukr-state (this section) | torfl (Sumrak's Russian engine, kept parseable, never authored here)
+  level: A1 # A1 | A2 | B1 (B2 / C1 have profiles but empty shelves)
   mode: mock # mock | drill
-  title: { ru: 'Вариант 1', en: 'Mock exam 1' }
+  title: { uk: 'Зразок A1 · 0', en: 'Mock A1 · 0' }
   blurb: 'One line for a drill card.' # OPTIONAL, drills
-  subtests: # mocks: writing → lexgram → reading → listening → speaking (official order)
-    - id: lexgram # unique within the exam
-      kind: lexgram # writing | lexgram | reading | listening | speaking
-      title: { ru: 'Лексика. Грамматика', en: 'Vocabulary. Grammar' }
-      instructions: { ru: 'Время выполнения теста — 40 минут. …', en: '40 minutes · …' }
-      durationMin: 40
-      dictionary: false # the SPbU dictionary rule: reading + writing true, the rest false
-      navigation: free # free (paper subtests) | linear (listening, speaking)
+  subtests: # mocks: listening → reading → writing → speaking (the official order); NO lexgram
+    - id: ls # unique within the exam: ls | rd | wr | sp
+      kind: listening # listening | reading | writing | speaking   (lexgram: drills only, study-only)
+      title: { uk: 'Слухання', en: 'Listening' }
+      instructions: { uk: 'Час виконання — 8 хвилин.', en: '8 minutes.' }
+      durationMin: 8
+      dictionary: false
+      navigation: linear # linear (listening, speaking) | free (reading, writing)
       pointsPerItem: 1 # objective subtests: this, or `points` on every item
-      maxPoints: 70 # objective: MUST equal Σ item points; rubric subtests: 100
-      audioPlays: 2 # listening subtests of mock exams: REQUIRED (official 2)
+      maxPoints: 8 # objective: MUST equal Σ item points (a matching item = one point per pair)
+      audioPlays: 2 # listening subtests of MOCK exams: REQUIRED (official: each recording twice)
       parts:
-        - id: p1 # unique within the subtest
+        - id: ls-p1 # unique within the subtest
           instructions:
             {
-              ru: 'Задания 1–24. Выберите один вариант ответа.',
-              en: 'Items 1–24. Choose one answer.',
+              uk: 'Прослухайте запис. Оберіть правильну відповідь (А, Б або В). Ви прослухаєте кожен запис двічі.',
+              en: 'Listen. Choose the correct answer (A, B or C). You hear each recording twice.',
             }
-          timeSec: 300 # OPTIONAL — speaking parts: 300 / 300 / 600
+          timeSec: 300 # OPTIONAL — writing / speaking parts: the per-task time budget
           items: […] # ≥ 1
 ---
 ```
 
-**Required vs optional — the same for mocks and drills:** an exam needs `id`, `format`, `level`, `mode`, `title`, `subtests` (`blurb` optional). Every subtest needs `id`, `kind`, `title`, `instructions`, `durationMin`, `dictionary`, `navigation`, `maxPoints` and `parts`; `pointsPerItem` is optional (objective subtests need it **or** per-item `points`) and `audioPlays` is optional except on a mock's listening subtest. Every part needs `id`, `instructions`, `items`; `timeSec` is optional. A drill's `durationMin` is the exam-pace budget the app may show, not an enforced timer.
+**Required vs optional — the same for mocks and drills:** an exam needs `id`, `format`, `level`, `mode`, `title`, `subtests` (`blurb` optional). Every subtest needs `id`, `kind`, `title`, `instructions`, `durationMin`, `dictionary`, `navigation`, `maxPoints` and `parts`; `pointsPerItem` is optional (objective subtests need it **or** per-item `points`) and `audioPlays` is optional except on a mock's listening subtest. Every part needs `id`, `instructions`, `items`; `timeSec` is optional. A drill's `durationMin` is the exam-pace budget the app may show, not an enforced timer. **Texts are Ukrainian** (`uk` side of every `{ uk, en }`), UTF-8 NFC, apostrophe as authored; no russisms or surzhyk.
 
-Every item has `id` (**unique per exam**, across subtests; never a sentence id — the two namespaces are separate), `kind`, `topic` (a TORFL §3.4 slug — see the census below), optional `explain` (English, may quote Russian; shown after answering in drills and in review after a mock) and, on objective items only, optional `points` (overrides `pointsPerItem`).
+Every item has `id` (**unique per exam**, across subtests; **the official continuous task number** in mocks — `ls01…`, then reading, then `wr44`, `wr45`, `sp46`…; never a sentence id — the two namespaces are separate), `kind`, `topic` (a slug from the taxonomy below — unknown slugs warn, never fail), optional `explain` (shown after answering in drills and in review after a mock) and, on objective items only, optional `points` (overrides `pointsPerItem`).
 
-**Which kinds go where:** `lexgram` / `reading` / `listening` parts hold only `choice` and `typed`; a `writing` part holds **exactly one** `writing` item; `speaking` parts hold only the three speaking kinds.
+**Which kinds go where:** `listening` parts hold `choice` / `typed`; `reading` parts hold `choice` / `typed` / `matching`; a `writing` part holds **exactly one** `writing` item (one part per task); `speaking` parts hold only the speaking kinds; `lexgram` (study drills only) holds `choice` / `typed`. **A `ukr-state` mock refuses a `lexgram` subtest** — the real exam has none.
 
-**`choice`** — A–Г single choice. `options` 2–4 (unique after lower-casing, ё → е and space-collapsing), `answer` = the **0-based** index. The `stem` has **at most one gap**: «…» (U+2026), ASCII `...` or `___` all count as a gap. `stemEn` (optional) is the drill-only translation.
+**`choice`** — single choice. `options` 2–4 (unique after lower-casing and space-collapsing), `answer` = the **0-based** index. The `stem` has **at most one gap**: «…» (U+2026), ASCII `...` or `___`. `stemEn` (optional) is the drill-only translation. `variant` (optional display hint — **no new scoring**): `true-false` (**exactly 2** options: Правда / Неправда), `true-false-ns` (exactly 3), `gap-word` / `gap-form` (the cloze kinds of reading tasks 29–38: the stem has **exactly one** gap; word choice / word form).
 
 ```yaml
-- {
-    id: lg01,
-    kind: choice,
-    topic: case-prep,
-    stem: 'Нина любит играть … компьютере.',
-    options: ['в', 'на'],
-    answer: 1,
-    explain: 'играть на компьютере — «на» + prepositional.',
-  }
-- id: rd05
+- id: ls01 # listening MC3 — the first item of a part carries the audio; the rest inherit it
   kind: choice
-  topic: read-detail
-  passage: { storyId: rd-02, sentenceIds: [tfa1m01r02-s03, tfa1m01r02-s04] } # optional span
-  stem: 'Анна работает в …'
-  options: ['школе', 'банке', 'магазине']
-  answer: 1
+  topic: ls-mc3
+  audio: { storyId: ls-01 }
+  stem: 'Тарас і Оксана говорять про…'
+  options: ['дім', 'роботу', 'погоду']
+  answer: 0
+- id: ls05 # Правда/Неправда
+  kind: choice
+  variant: true-false
+  topic: ls-tf
+  stem: 'Оксана зараз удома.'
+  options: ['Правда', 'Неправда']
+  answer: 0
+- id: rd07 # a gap = word choice
+  kind: choice
+  variant: gap-word
+  topic: rd-gap-word
+  passage: { storyId: rd-01, sentenceIds: [uxa1rd01-s02] }
+  stem: 'Я … в Києві.'
+  options: ['живу', 'їм', 'п’ю']
+  answer: 0
+  explain: 'жити → я живу; «їсти» і «пити» не підходять за змістом.'
 ```
 
-**`typed`** — free text. `prompt`, `accept` (full credit; ё/е-tolerant, trailing-`*` stem globs allowed), optional `half` (half credit — right meaning, wrong form). Same `passage` / `audio` refs as `choice`.
+**`matching`** (UT16) — reading tasks «доберіть заголовки» (n of m, extras unused: 5-of-7 at B1, 3-of-5 at A1) and «питання ↔ відповіді» (6↔6 at B1). `left` (2–10 items, each a point), `right` (≥ `left` items; extras allowed), `key[i]` = the 0-based index in `right` that `left[i]` matches (**one-to-one**; out-of-range, duplicate or short keys are errors). `variant: headings | qa` is a display hint. Scoring is **per pair** (partial credit): the item is worth `pointsPerItem × left.length` unless it carries `points`; reading's `items` count in the shape check is tasks, i.e. pairs.
 
 ```yaml
-- {
-    id: dr06,
-    kind: typed,
-    topic: case-prep,
-    prompt: 'Громов отдыхает в (парк).',
-    accept: ['парке'],
-    half: ['парк', 'парку'],
-  }
+- id: rd06
+  kind: matching
+  variant: qa
+  topic: rd-qa
+  passage: { storyId: rd-01 }
+  stem: 'Доберіть до кожного питання відповідь.'
+  left: ['Як вас звати?', 'Де ви живете?', 'Де ви працюєте?', 'Хто це?']
+  right:
+    ['Це моя родина.', 'Я працюю в банку.', 'Мене звати Оксана.', 'Я живу в Києві.', 'Я не знаю.']
+  key: [2, 3, 1, 0] # Як вас звати? → «Мене звати Оксана.» …
 ```
 
-**`writing`** — the letter. `task` (the situation, `{ru, en}`), `bullets` (3–15 of `{ id, text: {ru, en}, cues: [...] }` — the points to cover; **`bullets`, not `points`**, which is the score field), `minSentences` (≥ 5), `minQuestions` (default 0), optional `maxQuestions` (≥ `minQuestions`), optional `model` (the model letter — a story ref).
+**`typed`** — free text (grammar drills; the real exam has no typed-answer part). `prompt`, `accept` (full credit; normalised through the app's Ukrainian fold, trailing-`*` stem globs allowed), optional `half` (half credit — right meaning, wrong form). Same `passage` / `audio` refs as `choice`.
 
 ```yaml
-- id: wr01
+- id: lg04
+  kind: typed
+  topic: g19
+  prompt: 'Тарас у (парк).'
+  accept: ['парку', 'парці']
+  half: ['парк']
+  explain: 'У парку — закінчення -у (місцевий відмінок).'
+```
+
+**`writing`** — one task of Письмо. `task` (`{ uk, en }`), `bullets` (≥ 1 of `{ id, text: { uk, en }, cues: [...] }` — the points to cover; **`bullets`, not `points`**, which is the score field), `minSentences` (≥ 1), optional `minWords` / `maxWords` (the official limits: task 44 = a short message 20–50 words at B1 (A2 15–35, A1 10–25); task 45 = a detailed text ≥ 100 words at B1 with **five mandatory points** (A2 50–70, A1 30–50 with 3–4 points)), optional `minQuestions` / `maxQuestions`, optional `model` (the model answer — a story ref, voiced by Obsidian). Mocks: **two writing parts** (`wr-p1` task 44, `wr-p2` task 45) with `timeSec` 900 / 1500 at B1 (A2 600 / 900, A1 480 / 720).
+
+```yaml
+- id: wr44
   kind: writing
-  topic: write-letter
-  task: { ru: 'Напишите письмо другу о своей жизни.', en: 'Write to a friend about your life.' }
+  topic: wr-message
+  task: { uk: 'Напишіть другові записку про себе.', en: 'Write a friend a note about yourself.' }
   bullets:
-    - { id: b1, text: { ru: 'как вас зовут', en: 'your name' }, cues: ['зовут'] }
-    - { id: b2, text: { ru: 'где вы живёте', en: 'where you live' }, cues: ['живу', 'живём'] }
-    - { id: b3, text: { ru: 'где вы работаете', en: 'where you work' }, cues: ['работа*'] }
-  minSentences: 13
-  minQuestions: 4
-  maxQuestions: 5
-  model: { storyId: md-letter-01 }
+    - { id: b1, text: { uk: 'хто ви', en: 'who you are' }, cues: ['мене'] }
+    - { id: b2, text: { uk: 'де ви живете', en: 'where you live' }, cues: ['живу', 'живемо'] }
+  minSentences: 2
+  minWords: 10
+  maxWords: 25
+  model: { storyId: md-note }
 ```
 
-**`speaking-reply`** (task 1) / **`speaking-situation`** (task 2) — `prompt` (**required** story ref: the examiner's line or the read-aloud situation), `situation` (`{ru, en}`, **required** on `speaking-situation`), `expect` (**the M17 expectation, verbatim** — `slots` + `accept`, `accept[0]` is the model answer; same slot kinds and form rules as a scenario's `EXPECT:`, written as YAML), `minTokens` (default 4 — «да / нет / не знаю» is not a full answer).
+**`speaking-reply`** / **`speaking-situation`** — the dialogue task (task 48 = the examiner's situation, N candidate replies — **one item per expected reply**, N = 5 at B1, 4 at A2, 3 at A1). `prompt` (**required** story ref: the examiner's line, voiced by Solomiia), `situation` (`{ uk, en }`, **required** on `speaking-situation`), `expect` (**the M17 expectation, verbatim** — `slots` + `accept`, `accept[0]` is the model answer; same slot kinds and form rules as a scenario's `EXPECT:`, written as YAML), `minTokens` (default 4), optional `image`.
 
 ```yaml
-- id: sp01
+- id: sp46
   kind: speaking-reply
-  topic: speak-reply
-  prompt: { storyId: ex-01, sentenceIds: [tfa1m01e01-s01] }
+  topic: sp-dialogue
+  prompt: { storyId: ex-01, sentenceIds: [uxa1ex01-s01] }
   expect:
-    slots:
-      - kind: forms
-        id: city
-        required: true
-        options: [{ key: city, lemma: 'город', forms: ['москв*', 'казан*'] }]
-    accept: ['Я живу в Москве.']
-- id: sp06
-  kind: speaking-situation
-  topic: speak-situation
-  prompt: { storyId: ex-02, sentenceIds: [tfa1m01e02-s01] }
-  situation: { ru: 'Вы в кафе. Закажите чай.', en: 'You are in a café. Order tea.' }
-  expect:
-    slots: [{ kind: free, id: order, required: true, minTokens: 2, cues: ['чай'] }]
-    accept: ['Дайте, пожалуйста, чай.']
+    slots: [{ kind: free, id: a1, required: true, minTokens: 2, cues: ['звати'] }]
+    accept: ['Мене звати Оксана.']
 ```
 
-**`speaking-monologue`** (task 3) — `topicTitle` (`{ru, en}`), `questions` (4–12 of `{ ru, cues: [...] }`), `group` (two items sharing a group = «choose one of two topics»; a group has **exactly 2** members), `minSentences` / `maxSentences` (defaults 10 / 12), `prepSec` / `answerSec` (defaults 480 / 120), optional `model`.
+**`speaking-monologue`** — the photo description (task 46) and the monologue (task 47). `topicTitle` (`{ uk, en }`), `questions` (4–12 of `{ uk, cues: [...] }`), `minSentences` / `maxSentences` = the **phrase targets** (photo: 10 at B1 / 7 at A2 / 5 at A1; monologue: 20–25 at B1 / 12–15 at A2 / 8–10 at A1), `group` (two items sharing a group = «choose one of two topics»; **exactly 2** members — the official B1 monologue is one theme, ungrouped), `prepSec` / `answerSec`, optional `model`. **`image: { file, alt }`** marks a photo-description item: `file` is a pack-relative `.png/.jpg/.jpeg/.webp` (published with the pack; `publish` lists it), `alt` is the plain-text description a speaker should cover. A photo task **without** `image` is flagged by the shape check; the in-app display of the picture waits for the `UT16b-exam-item-images` ticket (the images themselves are a separate sourcing task).
 
 ```yaml
-- id: sp11
+- id: sp44 # task 46 — photo description (first speaking part)
   kind: speaking-monologue
-  topic: speak-monologue
-  group: m1
-  topicTitle: { ru: 'О себе', en: 'About myself' }
+  topic: sp-photo
+  topicTitle: { uk: 'Фото: родина в парку', en: 'Photo: a family in the park' }
   questions:
-    - { ru: 'Как вас зовут?', cues: ['зовут'] }
-    - { ru: 'Откуда вы?', cues: ['из'] }
-    - { ru: 'Где вы живёте?', cues: ['живу'] }
-    - { ru: 'Что вы любите делать?', cues: ['люблю', 'нравится'] }
-  model: { storyId: md-self }
+    - { uk: 'Хто на фото?', cues: ['люди'] }
+    - { uk: 'Де вони?', cues: ['парк'] }
+    - { uk: 'Що вони роблять?', cues: ['гуляють'] }
+    - { uk: 'Який настрій?', cues: ['радість'] }
+  minSentences: 5
+  maxSentences: 7
+  image: { file: images/photo-01.png, alt: 'Родина гуляє в парку' }
 ```
 
-**Cues** (writing bullets, monologue questions, speaking slot forms) follow the M17 slot-form rule: NFC, letters/digits/spaces/in-word hyphens only, **no punctuation**, a glob is a single **trailing** `*` (`работа*`).
+**Cues** (writing bullets, monologue questions, speaking slot forms) follow the M17 slot-form rule: NFC, letters/digits/spaces/in-word hyphens only, **no punctuation** (the apostrophe is a letter here), a glob is a single **trailing** `*` (`працю*`).
 
 ### Story refs
 
@@ -1059,51 +1070,52 @@ Every item has `id` (**unique per exam**, across subtests; never a sentence id �
 - `storyId` must be a story **in this pack** (one of the story drafts given to the same `annotate` run).
 - `sentenceIds` (optional) must exist in that story and be a **contiguous run in story order** (`[s03, s04]`, never `[s04, s03]` or `[s01, s03]`). Absent = the whole story.
 - `trackId` (optional) must be one of that story's audio track ids — so it only validates **after** `pipeline audio` has rendered the story; leave it out while drafting (absent = the story's first track).
-- **Listening inheritance:** in a listening part, items after the first may omit `audio` and inherit **the part's first item's** `audio` (one dialogue → several questions). The first item must carry one.
+- **Listening inheritance:** in a listening part, items after the first may omit `audio` and inherit **the part's first item's** `audio` (one recording → several questions). The first item must carry one.
 - **Audio is all-or-nothing:** once any story in the pack has a track, every story referenced by an `audio` or `prompt` ref needs one too. Passages and models may stay silent.
 
 ### Points arithmetic
 
-Objective subtests (`lexgram`, `reading`, `listening`): each item is worth its `points` or the subtest's `pointsPerItem`, and **Σ must equal `maxPoints`** (±0.001) — the official A1 matrix is lexgram 70 × 1 = 70, reading 25 × 4 = 100, listening 20 × 5 = 100. Writing and speaking are **rubric %**: their items never carry `points`; set `maxPoints: 100`.
+Objective subtests (`listening`, `reading`, and study-only `lexgram`): each item is worth its `points`, else the subtest's `pointsPerItem` (× pairs for `matching`), and **Σ must equal `maxPoints`** (±0.001). The official matrix is **1 point per task**: B1 listening 12, reading 31 (maxPoints 12 / 31); A2 10 / 22; A1 8 / 16. Writing and speaking are **rubric %** of the official rubric maximum — items never carry `points`; set `maxPoints` to the rubric total (B1 Письмо 33 = 10 + 23, Говоріння 38 = 14 + 10 + 14; A1/A2 modelled with the same rubric weights). The verdict itself works in percentages (each part × 25 %, **pass = total ≥ 70 %**, no per-part floor — UT17).
 
 ### The four reports
 
 `annotate` and `validate` print, for every exam:
 
-- **Matrix map** — subtest → parts → items with kind / topic / points and `Σ x / maxPoints ✓`; rubric subtests show `rubric % of 100`.
-- **Topic census** — items per topic slug. A slug outside TORFL §3.4, or listed there under a different subtest kind, is flagged `?` — a warning, never an error (the app renders unknown slugs raw). The §3.4 slugs (data in `src/exam-topics.ts`):
-  - lexgram — `lex-verbs` · `lex-family` · `lex-negation` · `agr` · `pron` · `case-prep` · `case-acc` · `case-gen` · `case-dat` · `case-instr` · `verb-forms` · `verb-aspect` · `verb-motion` · `conj`
-  - reading — `read-continue` · `read-signs` · `read-topic` · `read-detail`
-  - listening — `listen-where` · `listen-who` · `listen-phrase` · `listen-detail` · `listen-info`
-  - writing — `write-letter` · speaking — `speak-reply` · `speak-situation` · `speak-monologue`
-  - A2 additions (TORFL_A2 §4): lexgram — `lex-phrases` · `case-plural` · `case-time` · `numerals` · `comparative` · `verb-motion-prefix` · `clauses`; reading — `read-match`; listening — `listen-goal` · `listen-monologue`; writing — `write-note`
-- **Official-shape check** — for a `mock` with `format: torfl`, `level: A1` **and A2** (the two levels with a shape, `TORFL_SHAPES`): `⚠ official-shape:` lines for every deviation from the official numbers (five subtests in the SPbU order; dictionary and navigation per subtest). A1: lexgram 70 items / 70 points / 40 min / no dictionary / free; reading 25 / 100 / 40 / dictionary / free; listening 20 / 100 / 30 / no dictionary / linear / `audioPlays: 2`; writing 30 min with dictionary, in 1 part; speaking 20 min, linear, parts 300 / 300 / 600 s. A2: lexgram 100 / 100 / 50 min / no dictionary / free; reading 30 / 180 / 50 / dictionary / free; listening 25 / 150 / 30 / no dictionary / linear / `audioPlays: 2`; writing 50 min with dictionary in **2 parts**, the second item topic `write-note`; speaking 25 min, linear, parts 300 / 300 / 900 s with task 3 = **one** ungrouped monologue, `prepSec: 600`, `answerSec: 300`. Conforming output is `✓ official shape (TORFL A1 mock)` or `(TORFL A2 mock)`. Drills and other levels print «not checked». **Warnings never change the exit code** — a short practice mock is legal.
+- **Matrix map** — subtest → parts → items with kind / topic / points (`matching` prints its pair count, `choice` its variant) and `Σ x / maxPoints ✓`; rubric subtests show `rubric % of N`.
+- **Topic census** — items per topic slug. A slug outside the taxonomy below, or listed there under a different subtest kind, is flagged `?` — a warning, never an error (the app renders unknown slugs raw). **Theme slugs are valid under any subtest.**
+- **Official-shape check** — for a `mock` with `format: ukr-state`: `⚠ official-shape:` lines for every deviation from `UKR_STATE_<level>_SHAPE` (constants in `packages/schema/src/exam.ts`, each number tagged with its source in `UKR_EXAM_PREP` §2): the four subtests in the order Слухання · Читання · Письмо · Говоріння; per section the task count, `maxPoints`, `durationMin`, `dictionary`, `navigation`, `audioPlays`; writing: two parts, part times, word limits; speaking: three parts, part times, a photo item **with an image**, the monologue phrase targets, the number of dialogue replies. The numbers (items · minutes): **B1** 12·15 / 31·60 / 2·40 / 3·35 (official, `[exam-doc]` `[reg20]`); **A2** 10·11 / 22·45 / 2·25 / 3·23 and **A1** 8·8 / 16·30 / 2·20 / 3·18 are **modelled** — the report says «modelled «за зразком державного іспиту»», and the app shows that label too. Conforming output is `✓ official shape (ukr-state A1 mock, modelled …)`. Drills and `torfl` exams without a shape print «not checked». **Warnings never change the exit code.**
 - **Ref table** — every ref → story · sentence span · track, `✓` / `✗`; inherited listening audio is marked `audio↑`.
 
 Schema errors (everything in this section that says "must") fail `annotate` with exit 1 and a `file:line:` pointing at the offending YAML node in the exam draft — ref errors included.
 
-### Ids (the TORFL convention)
+### Taxonomy (slugs; the app owns the labels)
 
-Story ids: `rd-<NN>` reading texts · `ls-<NN>` listening scripts · `ex-<NN>` examiner lines · `md-<slug>` model answers · `lx-<topic>` lexicon topics. Sentence ids: `tf<level><pack-code><NN>-sNN`, e.g. `tfa1m01r01-s01` = A1, mock 01 (`m01`; drill and study packs take the code the CT bible assigns — e.g. `lx` for the lexicon, `fx` for the T67 fixture), story kind + number `r01` (`r` reading, `l` listening, `e` examiner, `d` model answer), sentence 01. It is a convention the pipeline does not enforce (sentence ids only have to be unique pack-wide), so follow the bible. Exam ids: `a1-mock-NN`, drill ids per the CT bible. The CT bible `sutinki-content/series/torfl/TORFL.md` is the canonical id table.
+- **Themes** (Standard Catalogue Б, A1 3.1–3.12 `[std §2.4.1.3]`; valid under any subtest): `liudyna` · `dim` · `misto` · `pobut` · `diialnist` · `dozvillia` · `podorozhi` · `kupivlia` · `iidalnia` · `zdorovia` · `pryroda` · `sviata`.
+- **Skills:** listening `ls-mc3` · `ls-tf`; reading `rd-heading` · `rd-tf` · `rd-qa` · `rd-gap-word` · `rd-gap-form` · `rd-detail`; writing `wr-message` · `wr-text`; speaking `sp-photo` · `sp-monologue` · `sp-dialogue`.
+- **Grammar** (study-only `lexgram` drills): `g01…g38` = the grammar ids of `uk-a1-grammar.md` (e.g. `g19` locative).
 
-### A2 (ТБУ) mocks (M19, T75)
+### Ids
 
-An A2 mock (`level: A2`, `category: torfl-a2`, pack ids `a2-torfl-*`) follows demo v2 (2022) — design `docs/design/TORFL_A2_EXAM_PREP.md` §2.1 at the workspace root:
+Story ids: `rd-<NN>` reading texts · `ls-<NN>` listening scripts · `ex-<NN>` examiner lines · `md-<slug>` model answers · `lx-<topic>` lexicon topics. Sentence ids: **`ux<level><kind><NN>-sNN`** with level `a1` / `a2` / `b1` and kind `lg rd ls ws lx pr m<NN>` — e.g. `uxa1rd01-s01` = A1 reading text 01, sentence 01 (the pipeline only enforces pack-wide uniqueness; follow `UKR_EXAM_PREP` §4). Mock part ids are the official blocks: `ls-p1` (MC3) · `ls-p2` (Правда/Неправда) · `rd-p1` (headings) · `rd-p2` (T/F) · `rd-p3` (Q↔A) · `rd-p4` (gap-word) · `rd-p5` (gap-form) · `rd-p6` (MC4).
 
-- **Письмо = two parts**, one `writing` item each: task 1 a letter (`write-letter`, `minSentences: 10`, `minQuestions: 3`, `maxQuestions: 5`), task 2 the messenger message / note (`write-note`, `minSentences: 5`, four bullets — reason · date · time · place). The app splits the subtest's 100 points equally between the two.
-- **Говорение task 3 = one topic, no choice:** a single `speaking-monologue` with **no `group`**, `minSentences: 12`, `maxSentences: 15` and the windows written explicitly — `prepSec: 600`, `answerSec: 300` (the schema defaults 480 / 120 are A1's); part `timeSec: 900`. Tasks 1–2: five items each, `timeSec: 300` + `300`.
-- **Points:** lexgram 100 × 1, reading 30 × 6 = 180, listening 25 × 6 = 150 (a `typed` item's half credit = 3).
-- **Option-count pattern:** copy demo v2's (§2.1 table — 2-option «неполное соответствие» blocks repeat their shared options on every item, in the same order).
-- Drafts under `Stories/education/TORFL/<pack-id>/`; sentence ids `tfa2<code><NN>-sNN`.
+### Voices (ADR-0012, `docs/design/VOICE_CAST.md`)
+
+Examiner lines — **Solomiia**; instructions and lecturer-style reading texts — **Mr. Wintrow**; model answers (`md-*`) — **Obsidian**; listening speakers rotate the character voices, fixed per item (`sentenceVoices`). Fixture and test packs use Piper `uk_UA` only. Rendering follows `docs/design/RENDER_BUDGET.md`.
+
+### Modelled mocks and the label rule
+
+Only the B1 citizenship form is an official shape; **A1 and A2 mocks are modelled** from it. Every A1/A2 mock row and the hub badge say **«за зразком державного іспиту»** — never imply an official paper. Put a sentence to that effect in the mock's `title.en`/blurb or the pack card when authoring (e.g. `title: { uk: 'Зразок A1 · 0', … }`). A B1 mock is labelled by its pack (a shape-faithful original, not a literal replica).
 
 ### Exam gotchas
 
-1. **`answer` is 0-based.** А = 0, Б = 1, В = 2, Г = 3.
-2. **Quote YAML strings with `:`, `#`, `«»` or a leading `-`/`[`/`{`** — `stem: 'Он сказал: «…»'`. Single quotes are safest; a single quote inside is doubled (`'it''s'`).
+1. **`answer` is 0-based.** А = 0, Б = 1, В = 2.
+2. **Quote YAML strings with `:`, `#`, `«»`, an apostrophe or a leading `-`/`[`/`{`** — `stem: 'Він сказав: «…»'`. Single quotes are safest; a single quote inside is doubled (`'it''s'`) — prefer the typographic apostrophe `’` only if the story text uses it too (one apostrophe style per sentence).
 3. **Stems with two blanks are refused** — split the item, or reword one blank into the text.
 4. **`bullets` is the writing list; `points` is the score.** A writing or speaking item with `points` is an error.
 5. **Give the story drafts in the same `annotate` call** as the exam drafts; an exam draft given alone may carry no story refs.
 6. **`trackId` waits for audio** — add it (if at all) after `pipeline audio`; until then omit it.
 7. **Mock listening needs `audioPlays`;** drill listening does not (drills replay freely).
-8. **Item ids are per exam, not per subtest** — prefix by subtest (`lg01`, `rd01`, `ls01`, `wr01`, `sp01`).
-9. **The body is ignored** — anything below the closing `---` (a key, the answer table you derived, notes) never reaches the pack.
+8. **Item ids are per exam, not per subtest** — mocks use the official task numbers; drills prefix by subtest (`lg01`, `rd01`, `ls01`, `wr01`, `sp01`).
+9. **No `lexgram` in a mock.** Grammar drills are separate `drill` exams in `ukr-exam:lexgram` packs.
+10. **A photo item needs its `image` file in the pack directory** — `publish` ships it, and the importer ignores unknown files on older builds.
+11. **The body is ignored** — anything below the closing `---` (a key, the answer table you derived, notes) never reaches the pack.
