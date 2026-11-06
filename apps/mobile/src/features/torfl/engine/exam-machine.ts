@@ -396,6 +396,9 @@ function enterGroup(
 
 // --- speaking (T73) ----------------------------------------------------------------------------
 
+/** UT17b: grace past a speaking part's time before a running recording is hard-stopped (part time + 30 s). */
+export const PART_GRACE_MS = 30_000;
+
 /** Seconds a speaking window really gets: the authored value, or the dev override when shorter. */
 function windowSec(ctx: ExamCtx, authored: number | undefined, fallback: number): number {
   const sec = authored ?? fallback;
@@ -520,8 +523,10 @@ function speakingTick(
   const sp = state.speaking;
   if (!sp) return NOOP(state);
   const recording = sp.phase === 'recording' || sp.phase === 'answer';
-  // The part's time budget ran out.
-  if (sp.partDeadlineAt !== undefined && now >= sp.partDeadlineAt && !sp.partExpired) {
+  // The part's time budget ran out. UT17b (you start, you stop): a recording already running gets
+  // `PART_GRACE_MS` more before the hard stop — the printed window is a guide, the hard cap = part time + 30 s.
+  const partGrace = recording ? PART_GRACE_MS : 0;
+  if (sp.partDeadlineAt !== undefined && now >= sp.partDeadlineAt + partGrace && !sp.partExpired) {
     if (recording) {
       return {
         state: { ...state, speaking: { ...sp, phase: 'processing', partExpired: true } },

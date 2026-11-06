@@ -193,7 +193,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                 points: null,
                 maxPoints:
                   item.kind === 'writing'
-                    ? writingShare(subtest)
+                    ? writingShare(subtest, item)
                     : speakingKind
                       ? responseShare(subtest, item)
                       : (subtest.pointsPerItem ?? item.points ?? 1),
@@ -315,7 +315,7 @@ export function useExamRun(attemptId: string, devDurationSecParam?: string): Exa
                     const given = answers[item.id];
                     const text = given?.kind === 'writing' ? given.text : '';
                     const grade = gradeWritingOffline(item, text);
-                    const share = writingShare(subtest);
+                    const share = writingShare(subtest, item);
                     const score = offlineItemScore(grade, share);
                     const grading: ExamGrading = {
                       v: 1,

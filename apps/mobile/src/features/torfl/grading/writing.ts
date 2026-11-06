@@ -2,54 +2,49 @@ import type { WritingItem } from '@sutinki/schema';
 
 import { matchesPattern, normalizeAnswer, roundPct, type ItemScore } from '../scoring';
 import type { ExamCriterion } from '../model';
+import {
+  WRITING_RUBRICS,
+  WRITING_TASK_POINTS,
+  aiOnlyIdsOf,
+  anyCriterionLabel,
+  offlineMaxOf,
+  type RubricCriterion,
+  type WritingKind,
+} from './rubrics';
 
 /**
- * The offline (provisional) writing grader (T72, TORFL_EXAM_PREP §6.2) —
- * PURE. Scores the three criteria a machine can judge without a model:
+ * The offline (provisional) writing grader (UT17b, UKR_EXAM_PREP §2 Письмо rubrics via `rubrics.ts`) — PURE.
+ * Scores the criteria a machine can judge without a model:
  *
- *   task-points  30  bullet points covered (cue stem globs over normalized tokens)
- *   task-length  15  sentences ≥ minSentences (10) + questions within [min, max] (5)
- *   letter-form  10  a greeting on the first line (5) + a sign-off near the end (5)
+ *   зміст   `content`  bullet points covered (cue stem globs over normalized tokens)
+ *   форма   `form`     a greeting / sign-off (message) or paragraphs (text)
+ *   обсяг   `volume`   the word limit of the task
  *
- * …and leaves `vocabulary` (20) and `grammar` (25) to the AI rubric. The
- * 55 offline-scorable points are RESCALED to a provisional 0–100 % so the
- * results card can show a number straight after «Сдать»; the AI (or the
- * «Самопроверка» sheet) later supplies the full 100. Every number here is
- * deliberately simple and explainable — Mitch reads it as "what the
- * machine could check", never as the exam's opinion of his Russian.
+ * …and leaves the language criteria (нормативність, логічність, багатство, відповідність умові) to the AI rubric
+ * or the «Самоперевірка». The offline points are RESCALED to a provisional 0–100 % so the results card can show
+ * a number straight after «Здати»; the AI later supplies the full 100 (Σ max = 100 per response, the Commission's
+ * per-task point split rescaled — see `rubrics.ts`). Honest, explainable numbers: "what the machine could
+ * check", never the exam's opinion.
  */
 
-export const WRITING_CRITERIA = [
-  { id: 'task-points', max: 30, uk: 'Задание: пункты', en: 'Task: points covered' },
-  { id: 'task-length', max: 15, uk: 'Объём и вопросы', en: 'Length & questions' },
-  { id: 'letter-form', max: 10, uk: 'Форма письма', en: 'Letter form' },
-  { id: 'vocabulary', max: 20, uk: 'Лексика', en: 'Vocabulary' },
-  { id: 'grammar', max: 25, uk: 'Грамматика', en: 'Grammar' },
-] as const;
-export type WritingCriterionId = (typeof WRITING_CRITERIA)[number]['id'];
-export const WRITING_CRITERION_IDS = WRITING_CRITERIA.map((c) => c.id) as WritingCriterionId[];
-export const OFFLINE_CRITERION_IDS: readonly WritingCriterionId[] = [
-  'task-points',
-  'task-length',
-  'letter-form',
-];
-export const AI_ONLY_CRITERION_IDS: readonly WritingCriterionId[] = ['vocabulary', 'grammar'];
-/** Σ max over the offline-scorable criteria (30 + 15 + 10). */
-export const OFFLINE_MAX = 55;
-/** Σ max over every criterion — the AI grade's denominator. */
-export const WRITING_MAX = 100;
+export type { WritingKind } from './rubrics';
 
-export function criterionMax(id: WritingCriterionId): number {
-  return WRITING_CRITERIA.find((c) => c.id === id)!.max;
+/** Writing task kind: task 45-style («text») vs task 44-style («message»). */
+export function writingKindOf(item: Pick<WritingItem, 'topic' | 'minWords'>): WritingKind {
+  if (item.topic === 'wr-text') return 'text';
+  if (item.topic === 'wr-message') return 'message';
+  return (item.minWords ?? 0) >= 50 ? 'text' : 'message';
 }
 
-export function criterionLabel(id: string, topic?: string): { uk: string; en: string } {
-  // T76: the messenger note's form row reads «Форма записки» (letters keep «Форма письма»).
-  if (id === 'letter-form' && topic === 'write-note') {
-    return { uk: 'Форма записки', en: 'Note form' };
-  }
-  const hit = WRITING_CRITERIA.find((c) => c.id === id);
-  return hit ? { uk: hit.uk, en: hit.en } : { uk: id, en: id };
+export function writingRubric(kind: WritingKind): readonly RubricCriterion[] {
+  return WRITING_RUBRICS[kind];
+}
+export function writingTaskPoints(kind: WritingKind): number {
+  return WRITING_TASK_POINTS[kind];
+}
+
+export function criterionLabel(id: string, _topic?: string): { uk: string; en: string } {
+  return anyCriterionLabel(id);
 }
 
 // --- text analysis -----------------------------------------------------------------------
@@ -143,9 +138,9 @@ function cueMatches(cue: string, tokens: readonly string[], joined: string): boo
 }
 
 const GREETING =
-  /^(здравствуй|привет|дорог|добрый\s+(день|вечер)|доброе\s+утро|уважаем|милая|милый)/u;
+  /^(вітаю|привіт|добрий\s+(день|вечір|ранок)|доброго\s+(дня|ранку|вечора)|здрастуй|здрастуйте|шановн|дорог|любий|люба|вітання)/u;
 const SIGN_OFF =
-  /(^|\s)(пока|до\s+свидания|до\s+встречи|до\s+скорого|твой|твоя|ваш|ваша|целую|обнимаю|с\s+уважением|с\s+любовью|жду\s+ответа|всего\s+доброго|всего\s+хорошего|будь\s+здоров)(\s|$)/u;
+  /(^|\s)(бувай|бувайте|до\s+побачення|до\s+зустрічі|до\s+скорого|твій|твоя|ваш|ваша|цілую|обіймаю|з\s+повагою|з\s+любов'ю|з\s+любовʼю|чекаю\s+на\s+відповідь|щиро|усього\s+найкращого|всього\s+найкращого|на\s+все\s+добре|гарного\s+дня|на\s+зв'язку|на\s+звʼязку)(\s|$)/u;
 /** How far from the end (in normalized characters) a sign-off may sit. */
 const SIGN_OFF_WINDOW = 160;
 
@@ -157,7 +152,7 @@ export interface LetterForm {
 /**
  * Greeting = the first non-empty line starts with a greeting word; sign-off
  * = one of the farewell formulas appears in the last ~160 normalized
- * characters (the last two or three short lines of an A1 letter).
+ * characters.
  */
 export function letterForm(text: string): LetterForm {
   const lines = text
@@ -173,116 +168,155 @@ export function letterForm(text: string): LetterForm {
   return { greeting, signOff };
 }
 
+/** Non-empty lines (paragraph proxy for the «text» form criterion). */
+export function paragraphCount(text: string): number {
+  return text
+    .normalize('NFC')
+    .split(/\r?\n/)
+    .filter((l) => l.trim().length > 0).length;
+}
+
 // --- the grade -------------------------------------------------------------------------------
 
 export interface OfflineWritingDetails {
+  kind: WritingKind;
   sentences: number;
   questions: number;
+  words: number;
   pointsCovered: number;
   pointsTotal: number;
   coveredIds: string[];
   missingIds: string[];
   greeting: boolean;
   signOff: boolean;
+  paragraphs: number;
   minSentences: number;
   minQuestions: number;
   maxQuestions: number | null;
+  minWords: number | null;
+  maxWords: number | null;
 }
 
 export interface OfflineWritingGrade {
+  kind: WritingKind;
   criteria: ExamCriterion[];
-  /** Σ over the three offline criteria (0–55). */
+  /** Σ over the offline criteria. */
   offlinePoints: number;
-  offlineMax: typeof OFFLINE_MAX;
-  /** `offlinePoints / 55 × 100`, one decimal. */
+  offlineMax: number;
+  /** `offlinePoints / offlineMax × 100`, one decimal. */
   pct: number;
   provisional: true;
   details: OfflineWritingDetails;
 }
 
-/** Points-length share of `task-length` (the rest is the questions share). */
-const LENGTH_POINTS = 10;
-const QUESTIONS_POINTS = 5;
-
 function half(n: number): number {
   return Math.round(n * 2) / 2;
 }
 
+/** Volume share 0..1: inside [min, max] full; below min proportional; far above max (> +25 %) half. */
+export function volumeShare(
+  words: number,
+  limits: {
+    minWords: number | null;
+    maxWords: number | null;
+    minSentences: number;
+    sentences: number;
+  },
+): number {
+  if (words === 0) return 0;
+  const { minWords, maxWords } = limits;
+  if (minWords === null && maxWords === null) {
+    return Math.min(1, limits.sentences / Math.max(1, limits.minSentences));
+  }
+  if (minWords !== null && words < minWords) return words / minWords;
+  if (maxWords !== null && words > maxWords) return words <= maxWords * 1.25 ? 1 : 0.5;
+  return 1;
+}
+
 /**
- * Grade a letter offline. Partial credit is linear and rounded to halves:
- * covered / total of the 30; `min(1, sentences / minSentences)` of the 10;
- * questions: full 5 inside [minQuestions, maxQuestions], proportional below,
- * 2.5 above the maximum (the exam wants questions, not a questionnaire);
- * greeting 5 + sign-off 5. An empty letter scores 0 everywhere.
+ * Grade a text offline. Partial credit is linear and rounded to halves:
+ * content = covered / total bullets; form = (message) a greeting OR a sign-off earns the whole row, (text)
+ * paragraphs ≥ 2 (a single block earns half when it is ≥ 3 sentences); volume per `volumeShare`. An empty
+ * text scores 0 everywhere.
  */
 export function gradeWritingOffline(
   item: Pick<WritingItem, 'bullets' | 'minSentences' | 'minQuestions' | 'maxQuestions'> & {
     topic?: string;
+    minWords?: number;
+    maxWords?: number;
   },
   text: string,
 ): OfflineWritingGrade {
+  const kind = writingKindOf({ topic: item.topic ?? '', minWords: item.minWords });
+  const rubric = WRITING_RUBRICS[kind];
+  const max = (id: string) => rubric.find((c) => c.id === id)!.max;
   const split = sentenceSplit(text);
   const coverage = bulletCoverage(text, item.bullets);
   const form = letterForm(text);
+  const words = letterTokens(text).length;
+  const paragraphs = paragraphCount(text);
   const empty = split.sentences.length === 0;
 
-  const taskPoints = empty
+  const content = empty
     ? 0
     : coverage.total > 0
-      ? half((coverage.covered.length / coverage.total) * criterionMax('task-points'))
+      ? half((coverage.covered.length / coverage.total) * max('content'))
       : 0;
-
-  const lengthShare = empty
+  const formShare = empty
     ? 0
-    : half(Math.min(1, split.sentences.length / Math.max(1, item.minSentences)) * LENGTH_POINTS);
-  const minQ = item.minQuestions;
-  const maxQ = item.maxQuestions ?? null;
-  let questionShare: number;
-  if (empty) questionShare = 0;
-  else if (split.questions < minQ) {
-    questionShare = minQ > 0 ? half((split.questions / minQ) * QUESTIONS_POINTS) : QUESTIONS_POINTS;
-  } else if (maxQ !== null && split.questions > maxQ) questionShare = QUESTIONS_POINTS / 2;
-  else questionShare = QUESTIONS_POINTS;
-
-  // T76 (A2-8): a note (`write-note`) needs a greeting OR a sign-off — either earns the whole
-  // form row; a letter still earns 5 + 5 separately. Its content rides the four bullets.
-  const formPoints = empty
-    ? 0
-    : item.topic === 'write-note'
+    : kind === 'message'
       ? form.greeting || form.signOff
-        ? 10
+        ? 1
         : 0
-      : (form.greeting ? 5 : 0) + (form.signOff ? 5 : 0);
-
+      : paragraphs >= 2
+        ? 1
+        : split.sentences.length >= 3
+          ? 0.5
+          : 0;
+  const volume = half(
+    volumeShare(words, {
+      minWords: item.minWords ?? null,
+      maxWords: item.maxWords ?? null,
+      minSentences: item.minSentences,
+      sentences: split.sentences.length,
+    }) * max('volume'),
+  );
   const criteria: ExamCriterion[] = [
-    { id: 'task-points', score: taskPoints, max: criterionMax('task-points') },
-    { id: 'task-length', score: lengthShare + questionShare, max: criterionMax('task-length') },
-    { id: 'letter-form', score: formPoints, max: criterionMax('letter-form') },
+    { id: 'content', score: content, max: max('content') },
+    { id: 'form', score: half(formShare * max('form')), max: max('form') },
+    { id: 'volume', score: volume, max: max('volume') },
   ];
   const offlinePoints = criteria.reduce((n, c) => n + c.score, 0);
+  const offlineMax = offlineMaxOf(rubric);
   return {
+    kind,
     criteria,
     offlinePoints,
-    offlineMax: OFFLINE_MAX,
-    pct: roundPct((offlinePoints / OFFLINE_MAX) * 100),
+    offlineMax,
+    pct: roundPct((offlinePoints / offlineMax) * 100),
     provisional: true,
     details: {
+      kind,
       sentences: split.sentences.length,
       questions: split.questions,
+      words,
       pointsCovered: coverage.covered.length,
       pointsTotal: coverage.total,
       coveredIds: coverage.covered,
       missingIds: coverage.missing,
       greeting: form.greeting,
       signOff: form.signOff,
+      paragraphs,
       minSentences: item.minSentences,
       minQuestions: item.minQuestions,
-      maxQuestions: maxQ,
+      maxQuestions: item.maxQuestions ?? null,
+      minWords: item.minWords ?? null,
+      maxWords: item.maxWords ?? null,
     },
   };
 }
 
-/** The response-row points of a provisional grade over a subtest worth `maxPoints` (100 in the official shape). */
+/** The response-row points of a provisional grade over a response worth `maxPoints`. */
 export function offlineItemScore(grade: OfflineWritingGrade, maxPoints: number): ItemScore {
   return {
     points: Math.round((grade.pct / 100) * maxPoints * 10) / 10,
@@ -292,9 +326,8 @@ export function offlineItemScore(grade: OfflineWritingGrade, maxPoints: number):
 }
 
 /**
- * The percent a full criteria set (AI or self: every id present, Σ max =
- * 100) is worth: Σ score / Σ max × 100, one decimal. Tolerates a partial
- * set by using its own Σ max as the denominator.
+ * The percent a full criteria set (AI or self: Σ max = 100) is worth: Σ score / Σ max × 100, one decimal.
+ * Tolerates a partial set by using its own Σ max as the denominator.
  */
 export function criteriaPercent(criteria: readonly ExamCriterion[]): number {
   const max = criteria.reduce((n, c) => n + c.max, 0);
@@ -303,68 +336,85 @@ export function criteriaPercent(criteria: readonly ExamCriterion[]): number {
   return Math.min(100, roundPct((score / max) * 100));
 }
 
-// --- «Самопроверка» ------------------------------------------------------------------------------
+// --- «Самоперевірка» ------------------------------------------------------------------------------
 
-/**
- * The four self-check questions Mitch answers against the model letter when
- * the AI never grades (§6.2 «Самопроверка»). They split the 45 AI-only
- * points: two under `vocabulary` (10 + 10), two under `grammar` (12 + 13).
- * Each answer is 0 / ½ / 1 of its points.
- */
-export const SELF_CHECKS = [
-  {
-    id: 'vocab-range',
-    criterion: 'vocabulary' as const,
-    max: 10,
-    uk: 'Слов хватило: я сказал всё, что хотел, без английского и пропусков',
-    en: 'Enough words: I said everything I meant, no English, no gaps',
-  },
-  {
-    id: 'vocab-fit',
-    criterion: 'vocabulary' as const,
-    max: 10,
-    uk: 'Слова подходят: как в образце — простые, точные, по теме',
-    en: 'Words fit: like the model letter — simple, precise, on topic',
-  },
-  {
-    id: 'grammar-cases',
-    criterion: 'grammar' as const,
-    max: 12,
-    uk: 'Падежи и согласование: окончания существительных и прилагательных как в образце',
-    en: 'Cases & agreement: noun and adjective endings match the model',
-  },
-  {
-    id: 'grammar-verbs',
-    criterion: 'grammar' as const,
-    max: 13,
-    uk: 'Глаголы: формы, время и порядок слов как в образце',
-    en: 'Verbs: forms, tense and word order match the model',
-  },
-] as const;
-export type SelfCheckId = (typeof SELF_CHECKS)[number]['id'];
+export interface SelfCheck {
+  id: string;
+  criterion: string;
+  max: number;
+  uk: string;
+  en: string;
+}
+export type SelfCheckId = string;
 export type SelfCheckValue = 0 | 0.5 | 1;
 
+const SELF_TEXT: Record<string, { uk: string; en: string }> = {
+  'norms-forms': {
+    uk: 'Закінчення, відмінки й узгодження: як в зразку',
+    en: 'Endings, cases & agreement match the model',
+  },
+  'norms-verbs': {
+    uk: 'Дієслова, час і порядок слів: як в зразку',
+    en: 'Verbs, tense & word order match the model',
+  },
+  fit: {
+    uk: 'Текст відповідає темі й жанру завдання',
+    en: 'The text answers the theme and genre of the task',
+  },
+  coherence: {
+    uk: 'Думки йдуть послідовно, є сполучники, немає суперечностей',
+    en: 'Ideas follow in order, connectors link them, no contradictions',
+  },
+  richness: {
+    uk: 'Слова й конструкції різноманітні, не повторюються',
+    en: 'Varied words and structures, no heavy repetition',
+  },
+};
+
 /**
- * Fold the four answers into the two AI-only criteria and merge them with the
- * offline criteria into a full five-criterion set (Σ max = 100).
+ * The self-check questions of a writing kind: one per AI-only criterion (the language norms criterion is split
+ * into two halves: forms · verbs). Each answer is 0 / ½ / 1 of its points; Σ max = Σ AI-only max.
+ */
+export function selfChecksFor(kind: WritingKind): SelfCheck[] {
+  const out: SelfCheck[] = [];
+  for (const c of WRITING_RUBRICS[kind].filter((x) => !x.offline)) {
+    if (c.id === 'norms') {
+      const a = Math.ceil(c.max / 2);
+      out.push({ id: 'norms-forms', criterion: 'norms', max: a, ...SELF_TEXT['norms-forms']! });
+      out.push({
+        id: 'norms-verbs',
+        criterion: 'norms',
+        max: c.max - a,
+        ...SELF_TEXT['norms-verbs']!,
+      });
+    } else {
+      out.push({ id: c.id, criterion: c.id, max: c.max, ...SELF_TEXT[c.id]! });
+    }
+  }
+  return out;
+}
+
+export function aiOnlyIds(kind: WritingKind): string[] {
+  return aiOnlyIdsOf(WRITING_RUBRICS[kind]);
+}
+
+/**
+ * Fold the answers into the AI-only criteria and merge them with the offline criteria into a full
+ * criteria set (Σ max = 100).
  */
 export function selfCheckCriteria(
   offline: readonly ExamCriterion[],
   answers: Record<SelfCheckId, SelfCheckValue>,
+  kind: WritingKind,
 ): ExamCriterion[] {
-  const byCriterion = new Map<WritingCriterionId, number>();
-  for (const check of SELF_CHECKS) {
+  const byCriterion = new Map<string, number>();
+  for (const check of selfChecksFor(kind)) {
     const v = answers[check.id] ?? 0;
     byCriterion.set(check.criterion, (byCriterion.get(check.criterion) ?? 0) + v * check.max);
   }
-  const out: ExamCriterion[] = [];
-  for (const c of WRITING_CRITERIA) {
-    if (AI_ONLY_CRITERION_IDS.includes(c.id)) {
-      out.push({ id: c.id, score: half(byCriterion.get(c.id) ?? 0), max: c.max });
-    } else {
-      const off = offline.find((o) => o.id === c.id);
-      out.push({ id: c.id, score: off?.score ?? 0, max: c.max });
-    }
-  }
-  return out;
+  return WRITING_RUBRICS[kind].map((c) => {
+    if (!c.offline) return { id: c.id, score: half(byCriterion.get(c.id) ?? 0), max: c.max };
+    const off = offline.find((o) => o.id === c.id);
+    return { id: c.id, score: off?.score ?? 0, max: c.max };
+  });
 }

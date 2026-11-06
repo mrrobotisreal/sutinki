@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   groupAnswers,
-  isTorflPrompt,
+  isExamPrompt,
   promptLevel,
   promptsForLevel,
   promptTopic,
@@ -13,14 +13,14 @@ import {
   type AnswerPrompt,
 } from '../answers/answers-model';
 
-/** T74 — «Мои ответы» pure model (TORFL §9). */
+/** T74 — «Мої відповіді» pure model (TORFL §9). */
 
 function prompt(
   id: string,
   tags: string[] | null,
-  packId = 'a1-torfl-prompts-inline',
+  packId = 'a1-ukrexam-prompts-001',
 ): AnswerPrompt {
-  return { packId, id, promptUk: `Вопрос ${id}`, promptEn: `Prompt ${id}`, tags };
+  return { packId, id, promptUk: `Запитання ${id}`, promptEn: `Prompt ${id}`, tags };
 }
 
 function entry(
@@ -32,7 +32,7 @@ function entry(
   return {
     id,
     promptId,
-    uk: 'Меня зовут Митч. Мне тридцать шесть лет.',
+    uk: 'Мене звати Мітч. Мені тридцять шість років.',
     aiFeedback: null,
     feedbackStatus: 'none',
     createdAt,
@@ -41,33 +41,34 @@ function entry(
   };
 }
 
-describe('promptTopic / isTorflPrompt', () => {
+describe('promptTopic / isExamPrompt', () => {
   it('reads the torfl:<topic> slug and falls back to other', () => {
-    expect(promptTopic(['torfl', 'torfl:sp-monologue'])).toBe('sp-monologue');
-    expect(promptTopic(['torfl'])).toBe('other');
+    expect(promptTopic(['ukr-exam:writing', 'ukr-exam:sp-monologue'])).toBe('sp-monologue');
+    expect(promptTopic(['ukr-exam', 'ukr-exam:speaking'])).toBe('other');
     expect(promptTopic(null)).toBe('other');
-    expect(promptTopic(['torfl:'])).toBe('other');
+    expect(promptTopic(['ukr-exam:'])).toBe('other');
   });
 
-  it('a prompt is in the bank only with the torfl tag', () => {
-    expect(isTorflPrompt(prompt('a', ['torfl', 'torfl:wr-text']))).toBe(true);
-    expect(isTorflPrompt(prompt('b', ['torfl:wr-text']))).toBe(false);
-    expect(isTorflPrompt(prompt('c', ['daily-life']))).toBe(false);
-    expect(isTorflPrompt(prompt('d', null))).toBe(false);
+  it('a prompt is in the bank only with an ukr-exam:speaking|writing tag', () => {
+    expect(isExamPrompt(prompt('a', ['ukr-exam:writing', 'ukr-exam:wr-text']))).toBe(true);
+    expect(isExamPrompt(prompt('b', ['ukr-exam:wr-text']))).toBe(false);
+    expect(isExamPrompt(prompt('b2', ['ukr-exam', 'ukr-exam:mock']))).toBe(false);
+    expect(isExamPrompt(prompt('c', ['daily-life']))).toBe(false);
+    expect(isExamPrompt(prompt('d', null))).toBe(false);
   });
 });
 
 describe('groupAnswers', () => {
   const prompts = [
-    prompt('tf-other-01', ['torfl']),
-    prompt('tf-mono-01', ['torfl', 'torfl:sp-monologue']),
-    prompt('tf-letter-01', ['torfl', 'torfl:wr-text']),
-    prompt('tf-letter-02', ['torfl', 'torfl:wr-text']),
-    prompt('tf-coined-01', ['torfl', 'torfl:zzz-new-topic']),
+    prompt('tf-other-01', ['ukr-exam:speaking']),
+    prompt('tf-mono-01', ['ukr-exam:writing', 'ukr-exam:sp-monologue']),
+    prompt('tf-letter-01', ['ukr-exam:writing', 'ukr-exam:wr-text']),
+    prompt('tf-letter-02', ['ukr-exam:writing', 'ukr-exam:wr-text']),
+    prompt('tf-coined-01', ['ukr-exam:writing', 'ukr-exam:zzz-new-topic']),
     prompt('moy-den', ['daily-life']),
   ];
 
-  it('groups torfl prompts by topic in taxonomy order, unknown slugs after, other last; non-torfl dropped', () => {
+  it('groups exam prompts by topic in taxonomy order, unknown slugs after, other last; non-exam dropped', () => {
     const groups = groupAnswers(prompts, []);
     expect(groups.map((g) => g.topic)).toEqual([
       'wr-text',
@@ -77,7 +78,7 @@ describe('groupAnswers', () => {
     ]);
     expect(groups[0]!.labelUk).toBe('Розгорнутий текст');
     expect(groups[2]!.labelUk).toBe('zzz-new-topic');
-    expect(groups[3]!.labelUk).toBe('Другие темы');
+    expect(groups[3]!.labelUk).toBe('Інші теми');
     expect(groups[0]!.prompts.map((p) => p.prompt.id)).toEqual(['tf-letter-01', 'tf-letter-02']);
   });
 
@@ -98,7 +99,7 @@ describe('groupAnswers', () => {
     expect(groups.find((g) => g.topic === 'sp-monologue')!.entryCount).toBe(0);
   });
 
-  it('no torfl prompts → empty', () => {
+  it('no exam prompts → empty', () => {
     expect(groupAnswers([prompt('moy-den', ['daily-life'])], [entry('e', 'moy-den', 1)])).toEqual(
       [],
     );
@@ -109,7 +110,7 @@ describe('rehearsalText', () => {
   it("splits Mitch's own text into sentences when there is no feedback", () => {
     const t = rehearsalText(entry('e', null, 1));
     expect(t).toEqual({
-      sentences: ['Меня зовут Митч.', 'Мне тридцать шесть лет.'],
+      sentences: ['Мене звати Мітч.', 'Мені тридцять шість років.'],
       corrected: false,
     });
   });
@@ -117,20 +118,20 @@ describe('rehearsalText', () => {
   it('prefers the stored AI correction and says so', () => {
     const aiFeedback = JSON.stringify({
       v: 1,
-      sourceUk: 'Я живу в Колорадо уже тринадцать год.',
+      sourceUk: 'Я живу в Колорадо вже тринадцять рік.',
       model: 'anthropic/claude-opus-5.5',
       createdAt: 1,
-      corrected: 'Я живу в Колорадо уже тринадцать лет. Моя невеста Алина — украинка!',
+      corrected: 'Я живу в Колорадо вже тринадцять років. Моя наречена Аліна — українка!',
       changes: [],
-      summary: 'Хорошо.',
+      summary: 'Добре.',
     });
     const t = rehearsalText(
-      entry('e', null, 1, { uk: 'Я живу в Колорадо уже тринадцать год.', aiFeedback }),
+      entry('e', null, 1, { uk: 'Я живу в Колорадо вже тринадцять рік.', aiFeedback }),
     );
     expect(t.corrected).toBe(true);
     expect(t.sentences).toEqual([
-      'Я живу в Колорадо уже тринадцать лет.',
-      'Моя невеста Алина — украинка!',
+      'Я живу в Колорадо вже тринадцять років.',
+      'Моя наречена Аліна — українка!',
     ]);
   });
 
@@ -196,22 +197,22 @@ describe('the level rule for prompts (T75)', () => {
     expect(promptLevel({ packLevel: 'B3' })).toBe('A1');
   });
 
-  it('promptsForLevel keeps only torfl-tagged prompts of that level', () => {
+  it('promptsForLevel keeps only exam-tagged prompts of that level', () => {
     const prompts = [
-      { ...prompt('a1-t', ['torfl']), packLevel: 'A1' },
-      { ...prompt('a2-t', ['torfl']), packLevel: 'A2' },
+      { ...prompt('a1-t', ['ukr-exam:speaking']), packLevel: 'A1' },
+      { ...prompt('a2-t', ['ukr-exam:speaking']), packLevel: 'A2' },
       { ...prompt('a1-plain', ['journal']), packLevel: 'A1' },
       { ...prompt('a2-plain', null), packLevel: 'A2' },
-      { ...prompt('legacy-t', ['torfl', 'torfl:wr-text']), packLevel: undefined },
+      { ...prompt('legacy-t', ['ukr-exam:writing', 'ukr-exam:wr-text']), packLevel: undefined },
     ];
     expect(promptsForLevel(prompts, 'A1').map((p) => p.id)).toEqual(['a1-t', 'legacy-t']);
     expect(promptsForLevel(prompts, 'A2').map((p) => p.id)).toEqual(['a2-t']);
   });
 
   it('B1 and C1 prompts are filtered by their own level', () => {
-    const b1 = { ...prompt('b1', ['torfl']), packLevel: 'B1' };
-    const c1 = { ...prompt('c1', ['torfl']), packLevel: 'C1' };
-    const a1 = { ...prompt('a1', ['torfl']), packLevel: null };
+    const b1 = { ...prompt('b1', ['ukr-exam:speaking']), packLevel: 'B1' };
+    const c1 = { ...prompt('c1', ['ukr-exam:speaking']), packLevel: 'C1' };
+    const a1 = { ...prompt('a1', ['ukr-exam:speaking']), packLevel: null };
     expect(promptsForLevel([a1, b1, c1], 'B1')).toEqual([b1]);
     expect(promptsForLevel([a1, b1, c1], 'C1')).toEqual([c1]);
     expect(promptsForLevel([a1, b1, c1], 'A1')).toEqual([a1]);
@@ -219,8 +220,8 @@ describe('the level rule for prompts (T75)', () => {
   });
 
   it('A1 and A2 are isolated in both directions', () => {
-    const a1 = { ...prompt('a1', ['torfl']), packLevel: 'A1' };
-    const a2 = { ...prompt('a2', ['torfl']), packLevel: 'A2' };
+    const a1 = { ...prompt('a1', ['ukr-exam:speaking']), packLevel: 'A1' };
+    const a2 = { ...prompt('a2', ['ukr-exam:speaking']), packLevel: 'A2' };
     const all = [a1, a2];
     expect(promptsForLevel(all, 'A1')).toEqual([a1]);
     expect(promptsForLevel(all, 'A2')).toEqual([a2]);

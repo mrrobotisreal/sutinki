@@ -1,0 +1,23 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "task": "reply",
+    "promptUk": "Де ви зараз живете?",
+    "transcript": "я зараз живу в колорадо з моя наречена вона українка",
+    "assistTranscript": "Я зараз живу в Колорадо з моя наречена, вона українка.",
+    "modelAnswer": "Я зараз живу в Києві.",
+    "level": "A1"
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 29,\n      \"max\": 29,\n      \"comment\": \"The reply gives the asked-for information: where he lives.\"\n    },\n    {\n      \"id\": \"accuracy\",\n      \"score\": 14,\n      \"max\": 21,\n      \"comment\": \"The place is named, but the answer adds an unasked detail and the fiancée phrase has case errors.\"\n    },\n    {\n      \"id\": \"fullness\",\n      \"score\": 36,\n      \"max\": 36,\n      \"comment\": \"A full sentence with the content words.\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 3,\n      \"max\": 7,\n      \"comment\": \"«з моя наречена» should be instrumental: «з моєю нареченою».\"\n    },\n    {\n      \"id\": \"range\",\n      \"score\": 4,\n      \"max\": 7,\n      \"comment\": \"Simple but adequate A1 range.\"\n    }\n  ],\n  \"corrected\": \"Я зараз живу в Колорадо з моєю нареченою. Вона українка.\",\n  \"changes\": [\n    {\n      \"before\": \"з моя наречена\",\n      \"after\": \"з моєю нареченою\",\n      \"explanation\": \"The preposition «з» takes the instrumental: possessive and noun both change.\"\n    }\n  ],\n  \"tips\": [\n    \"After «з» (with), use the instrumental: з моєю нареченою.\",\n    \"Answer the question first, then add one extra detail.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

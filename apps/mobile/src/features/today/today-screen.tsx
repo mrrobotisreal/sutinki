@@ -310,7 +310,7 @@ export function TodayScreen() {
       )}
 
       {/* M18 / UT16b (T70/T75): one row per ACTIVE level (exam date set or deck items due), nearest exam date first, no date → A1 → C1 order; each → its hub */}
-      {!ukPending('exam') && activeLevels.length > 0 && (
+      {activeLevels.length > 0 && (
         <View
           className="gap-3 rounded-xl border border-border bg-surface p-4"
           testID="today-torfl-card"

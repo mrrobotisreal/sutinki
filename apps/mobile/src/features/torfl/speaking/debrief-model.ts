@@ -4,10 +4,11 @@ import type { ExamResponse } from '@/db/repositories/exams';
 import type { ScenarioFamily } from '@/db/repositories/scenarios';
 
 import {
-  SPEAKING_MONOLOGUE_CRITERIA,
-  SPEAKING_TURN_CRITERIA,
+  speakingCriteria,
+  speakingRubricKind,
   speakingTaskOf,
   type OfflineSpeakingDetails,
+  type SpeakingRubricKind,
   type SpeakingTask,
 } from '../grading/speaking';
 import { findExamItem, type ExamCriterion, type SpeakingAnswer } from '../model';
@@ -28,6 +29,8 @@ export interface MergedSpeakingCriterion extends ExamCriterion {
 export interface SpeakingDebriefEntry {
   item: SpeakingTurnItem | SpeakingMonologueItem;
   task: SpeakingTask;
+  /** The rubric kind (photo · monologue · dialogue). */
+  rubric: SpeakingRubricKind;
   /** Position among the subtest's speaking items (1-based). */
   number: number;
   response: ExamResponse | null;
@@ -43,10 +46,10 @@ export interface SpeakingDebriefEntry {
 }
 
 export function mergedSpeakingCriteria(
-  task: SpeakingTask,
+  rubric: SpeakingRubricKind,
   response: Pick<ExamResponse, 'grading' | 'gradingStatus'> | null,
 ): MergedSpeakingCriterion[] {
-  const defs = task === 3 ? SPEAKING_MONOLOGUE_CRITERIA : SPEAKING_TURN_CRITERIA;
+  const defs = speakingCriteria(rubric);
   const g = response?.grading;
   const pick = (list: ExamCriterion[] | undefined, source: 'ai' | 'offline') =>
     new Map((list ?? []).map((c) => [c.id, { ...c, source, pending: false }]));
@@ -125,7 +128,8 @@ function entryFor(
   const answer = response && isSpeakingAnswer(response.answer) ? response.answer : null;
   const details =
     (response?.grading?.offline?.details as OfflineSpeakingDetails | undefined) ?? null;
-  const criteria = mergedSpeakingCriteria(task, response);
+  const rubric = speakingRubricKind(item as never) ?? 'dialogue';
+  const criteria = mergedSpeakingCriteria(rubric, response);
   const pct =
     response && response.points !== null && response.maxPoints > 0
       ? Math.round((response.points / response.maxPoints) * 1000) / 10
@@ -133,6 +137,7 @@ function entryFor(
   return {
     item,
     task,
+    rubric,
     number,
     response,
     answer,
@@ -151,7 +156,7 @@ export function transcriptChips(answer: SpeakingAnswer | null): string[] {
   return answer.transcript.split(/\s+/).filter((w) => w.length > 0);
 }
 
-/** The «Экзамен» scenario rung (CT033 `a1-scn-exam-001`) when installed — tasks 1–2 practice. */
+/** The «Іспит» scenario rung (CT033 `a1-scn-exam-001`) when installed — tasks 1–2 practice. */
 export function examScenarioRung(
   families: readonly ScenarioFamily[] | undefined,
 ): { packId: string; scenarioId: string } | null {

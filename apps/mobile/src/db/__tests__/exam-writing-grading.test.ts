@@ -1,5 +1,5 @@
 import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
-import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -22,6 +22,8 @@ import {
   offlineItemScore,
   selfCheckCriteria,
 } from '@/features/torfl/grading/writing';
+import { writingShare } from '@/features/torfl/writing/writing-model';
+import { parseExamGrade } from '@/features/ai/schemas';
 import { writingGrader } from '@/features/torfl/grading/writing-grader';
 import type { ExamAnswer, ExamGrading } from '@/features/torfl/model';
 
@@ -46,7 +48,8 @@ const EXAM = ExamSchema.parse(PACK.exams!.find((e) => e.id === 'a1-mock-fx')) as
 const PACK_ID = PACK.id;
 const T0 = 1_790_000_000_000;
 const WRITING = EXAM.subtests.find((s) => s.kind === 'writing')!;
-const ITEM = WRITING.parts[0]!.items[0]!;
+const ITEM = WRITING.parts[0]!.items[0]!; // wr44, the short message (10 of 33 points)
+const TEXT_ITEM = WRITING.parts[1]!.items[0]!; // wr45, the detailed text (23 of 33)
 const FIXTURES = path.join(
   path.dirname(fileURLToPath(import.meta.url)),
   '../../features/ai/__tests__/__fixtures__',
@@ -56,7 +59,11 @@ const fixture = (name: string) =>
     input: { letter: string };
     choices: { message: { content: string } }[];
   };
-const GOOD = fixture('exam-writing-good-claude');
+const GOOD = fixture('exam-uk-writing-a1-message-strong-synthetic');
+const GOOD_PCT = criteriaPercent(parseExamGrade(GOOD.choices[0]!.message.content)!.criteria);
+/** A letter that earns 100 % offline on both tasks. */
+const FULL_MESSAGE =
+  'Привіт, Оксано!\nМене звати Мітч. Я живу в Колорадо і працюю вдома.\nДо зустрічі!';
 const RUN: ResolvedRun = {
   profile: { provider: 'anthropic', quality: 'normal', effort: 'high' },
   model: 'anthropic/claude-opus-5.5',
@@ -110,13 +117,14 @@ async function sitFullMock(letter: string, online: boolean) {
       if (item.kind === 'writing') {
         // the executor's SCORE_SUBTEST writing branch
         const grade = gradeWritingOffline(item, letter);
+        const share = writingShare(subtest, item);
         await repos.exams.recordResponse({
           attemptId: attempt.id,
           subtestId: subtest.id,
           itemId: item.id,
           answer,
-          points: offlineItemScore(grade, subtest.maxPoints).points,
-          maxPoints: subtest.maxPoints,
+          points: offlineItemScore(grade, share).points,
+          maxPoints: share,
           gradingStatus: online ? 'pending-ai' : 'provisional',
           grading: { v: 1, offline: { criteria: grade.criteria, details: { ...grade.details } } },
         });
@@ -207,7 +215,7 @@ async function injectSpeaking(attemptId: string, points: number) {
   await db.run(
     (await import('drizzle-orm'))
       .sql`INSERT INTO exam_responses (id, attempt_id, subtest_id, item_id, answer_json, points, max_points, grading_status, grading_json, created_at, updated_at)
-     VALUES (${`sp-inject-${attemptId}`}, ${attemptId}, ${speaking.id}, ${sp.id}, ${JSON.stringify({ kind: 'speaking-reply', transcript: 'я из колорадо', recordingPath: null, durationMs: 1200 })}, ${points}, ${speaking.maxPoints}, 'scored', ${JSON.stringify({ v: 1, ai: { criteria: [], tips: [] } })}, ${T0}, ${T0})`,
+     VALUES (${`sp-inject-${attemptId}`}, ${attemptId}, ${speaking.id}, ${sp.id}, ${JSON.stringify({ kind: 'speaking-reply', transcript: 'я з колорадо', recordingPath: null, durationMs: 1200 })}, ${points}, ${speaking.maxPoints}, 'scored', ${JSON.stringify({ v: 1, ai: { criteria: [], tips: [] } })}, ${T0}, ${T0})`,
   );
   const d = (await repos.exams.getAttempt(attemptId))!;
   const r = recomputeResults(EXAM, d.results, d.responses, d.scope);
@@ -215,79 +223,79 @@ async function injectSpeaking(attemptId: string, points: number) {
   return r;
 }
 
-describe('T72 end to end on the real schema', () => {
-  it('finish → writing provisional (offline), verdict null (speaking missing); queue → AI pct, gradedBy ai; speaking injected → the FIVE-subtest verdict', async () => {
-    const { attempt, out } = await sitFullMock(GOOD.input.letter, true);
-    expect(out.results.writing).toMatchObject({ pct: 100, provisional: true, gradedBy: 'offline' });
+describe('UT17b end to end on the real schema (four sections, Ukrainian rubrics)', () => {
+  it('finish → writing provisional (offline), verdict null (speaking missing); queue → AI pct, gradedBy ai; speaking injected → the FOUR-section verdict', async () => {
+    const { attempt, out } = await sitFullMock(FULL_MESSAGE, true);
+    expect(out.results.wr).toMatchObject({ maxPoints: 33, provisional: true, gradedBy: 'offline' });
     expect(out.verdict).toBeNull();
     expect(out.finish.verdict?.missing).toEqual(['speaking']);
     const stored = (await repos.exams.getAttempt(attempt.id))!;
     expect(stored.status).toBe('finished');
     expect(stored.responses.find((r) => r.itemId === ITEM.id)).toMatchObject({
       gradingStatus: 'pending-ai',
-      points: 100,
+      maxPoints: 10,
+    });
+    expect(stored.responses.find((r) => r.itemId === TEXT_ITEM.id)).toMatchObject({
+      maxPoints: 23,
     });
 
-    // the AI queue
-    expect(await processGradingQueue(queueDeps())).toBe(1);
+    // the AI queue grades both writing rows
+    expect(await processGradingQueue(queueDeps())).toBe(2);
     const graded = (await repos.exams.getAttempt(attempt.id))!;
     const wr = graded.responses.find((r) => r.itemId === ITEM.id)!;
     expect(wr.gradingStatus).toBe('scored');
-    expect(wr.points).toBe(94.5);
-    expect(wr.grading!.ai!.criteria).toHaveLength(5);
+    expect(wr.points).toBeCloseTo((GOOD_PCT / 100) * 10, 1);
+    expect(wr.grading!.ai!.criteria.map((c) => c.id)).toEqual([
+      'content',
+      'form',
+      'norms',
+      'volume',
+    ]);
     expect(wr.grading!.ai!.model).toBe('anthropic/claude-opus-5.5');
     expect(wr.grading!.offline).toBeDefined();
-    expect(graded.results!.writing).toEqual({
-      points: 94.5,
-      maxPoints: 100,
-      pct: 94.5,
-      provisional: false,
-      gradedBy: 'ai',
-    });
+    expect(graded.results!.wr).toMatchObject({ maxPoints: 33, provisional: false, gradedBy: 'ai' });
+    expect(graded.results!.wr!.pct).toBeCloseTo(GOOD_PCT, 0);
     expect(graded.verdict).toBeNull(); // speaking still missing
     expect(await repos.exams.pendingGrading()).toEqual([]);
 
-    // T73 lands speaking → the first five-subtest verdict
-    const r = await injectSpeaking(attempt.id, 70);
-    expect(r.results.speaking).toMatchObject({ pct: 70, gradedBy: 'ai', provisional: false });
+    // speaking lands (30 of 38) → the first four-section verdict: (100 + 100 + ~GOOD + 78.9) / 4 ≥ 70
+    const r = await injectSpeaking(attempt.id, 30);
+    expect(r.results.sp).toMatchObject({ pct: 78.9, gradedBy: 'ai', provisional: false });
     expect(r.verdict).toBe('pass');
     expect(r.provisional).toBe(false);
     const final = (await repos.exams.getAttempt(attempt.id))!;
     expect(final.verdict).toBe('pass');
-    expect(Object.keys(final.results!).sort()).toEqual(
-      ['writing', 'lexgram', 'reading', 'listening', 'speaking'].sort(),
-    );
+    expect(Object.keys(final.results!).sort()).toEqual(['ls', 'rd', 'sp', 'wr']);
   });
 
-  it('a 62 % writing is carried by the total (no per-section floor); a weak total fails', async () => {
-    const { attempt } = await sitFullMock('Пока.', true);
-    // The weak-gpt fixture scores 74.5; make the chat return a 62 % grade instead.
-    const sixtyTwo = JSON.stringify({
+  it('no per-section floor: a weak writing is carried by the total (70 %); a weak total fails', async () => {
+    const { attempt } = await sitFullMock('Бувай.', true);
+    // Message 10 pts → 40 %, text 23 pts → 40 %: writing 40 % of 33.
+    const forty = JSON.stringify({
       criteria: [
-        { id: 'task-points', score: 20, max: 30 },
-        { id: 'task-length', score: 5, max: 15 },
-        { id: 'letter-form', score: 7, max: 10 },
-        { id: 'vocabulary', score: 14, max: 20 },
-        { id: 'grammar', score: 16, max: 25 },
+        { id: 'content', score: 16, max: 40 },
+        { id: 'form', score: 4, max: 10 },
+        { id: 'norms', score: 16, max: 40 },
+        { id: 'volume', score: 4, max: 10 },
       ],
-      corrected: 'Пока.',
+      corrected: 'Бувай.',
       changes: [],
       tips: ['Write more.'],
     });
-    await processGradingQueue(queueDeps({ chat: async () => ({ content: sixtyTwo, model: 'm' }) }));
-    let r = await injectSpeaking(attempt.id, 80);
-    expect(r.results.writing!.pct).toBe(62);
+    await processGradingQueue(queueDeps({ chat: async () => ({ content: forty, model: 'm' }) }));
+    let r = await injectSpeaking(attempt.id, 38);
+    expect(r.results.wr!.pct).toBe(40);
+    // (100 + 100 + 40 + 100) / 4 = 85
     expect(r.verdict).toBe('pass');
 
-    // and a second attempt where speaking fails too
-    const second = await sitFullMock('Пока.', true);
-    await processGradingQueue(queueDeps({ chat: async () => ({ content: sixtyTwo, model: 'm' }) }));
-    r = await injectSpeaking(second.attempt.id, 10);
+    const second = await sitFullMock('Бувай.', true);
+    await processGradingQueue(queueDeps({ chat: async () => ({ content: forty, model: 'm' }) }));
+    r = await injectSpeaking(second.attempt.id, 4); // (100 + 100 + 40 + 10.5) / 4 = 62.6
     expect(r.verdict).toBe('fail');
   });
 
   it('offline sitting (no key): writing stays provisional; later queueing it grades it', async () => {
-    const { attempt } = await sitFullMock(GOOD.input.letter, false);
+    const { attempt } = await sitFullMock(FULL_MESSAGE, false);
     const d = (await repos.exams.getAttempt(attempt.id))!;
     const wr = d.responses.find((r) => r.itemId === ITEM.id)!;
     expect(wr.gradingStatus).toBe('provisional');
@@ -299,11 +307,12 @@ describe('T72 end to end on the real schema', () => {
       grading: wr.grading,
     });
     expect(await processGradingQueue(queueDeps())).toBe(1);
-    expect((await repos.exams.getAttempt(attempt.id))!.results!.writing!.gradedBy).toBe('ai');
+    // the second writing row (wr45) was never queued offline → still provisional here
+    expect((await repos.exams.getAttempt(attempt.id))!.results!.wr!.gradedBy).toBe('offline');
   });
 
   it('three transport failures → ai-failed with the code, provisional points + offline grading kept; results stay provisional', async () => {
-    const { attempt } = await sitFullMock(GOOD.input.letter, true);
+    const { attempt } = await sitFullMock(FULL_MESSAGE, true);
     await processGradingQueue(
       queueDeps({
         chat: async () => {
@@ -314,10 +323,10 @@ describe('T72 end to end on the real schema', () => {
     const d = (await repos.exams.getAttempt(attempt.id))!;
     const wr = d.responses.find((r) => r.itemId === ITEM.id)!;
     expect(wr.gradingStatus).toBe('ai-failed');
-    expect(wr.points).toBe(100);
+    expect(wr.points).toBe(10);
     expect(wr.grading!.error).toEqual({ code: 'http-server', attempts: 3 });
     expect(wr.grading!.offline).toBeDefined();
-    expect(d.results!.writing).toMatchObject({ provisional: true, gradedBy: 'offline' });
+    expect(d.results!.wr).toMatchObject({ provisional: true, gradedBy: 'offline' });
     // retry: back to pending-ai (error cleared) → scored
     const { error: _e, ...kept } = wr.grading!;
     void _e;
@@ -327,36 +336,44 @@ describe('T72 end to end on the real schema', () => {
       grading: kept,
     });
     expect(await processGradingQueue(queueDeps())).toBe(1);
-    expect((await repos.exams.getAttempt(attempt.id))!.results!.writing!.provisional).toBe(false);
+    // the other writing row (wr45) also failed → grade it too (a second pass), then the section is final
+    for (const r of d.responses.filter((x) => x.gradingStatus === 'ai-failed' && x.id !== wr.id)) {
+      const { error: _e2, ...k } = r.grading!;
+      void _e2;
+      await repos.exams.setGrading(r.id, {
+        points: r.points,
+        gradingStatus: 'pending-ai',
+        grading: k,
+      });
+    }
+    expect(await processGradingQueue(queueDeps())).toBe(1);
+    expect((await repos.exams.getAttempt(attempt.id))!.results!.wr!.provisional).toBe(false);
   });
 
-  it('Самопроверка: the self-check criteria → self-graded, gradedBy self, final', async () => {
-    const { attempt } = await sitFullMock(GOOD.input.letter, false);
+  it('Самоперевірка: the self-check criteria → self-graded, gradedBy self, final', async () => {
+    const { attempt } = await sitFullMock(FULL_MESSAGE, false);
     const d = (await repos.exams.getAttempt(attempt.id))!;
-    const wr = d.responses.find((r) => r.itemId === ITEM.id)!;
-    const criteria = selfCheckCriteria(wr.grading!.offline!.criteria, {
-      'vocab-range': 1,
-      'vocab-fit': 1,
-      'grammar-cases': 0.5,
-      'grammar-verbs': 1,
-    });
-    const pct = criteriaPercent(criteria);
-    expect(pct).toBe(94);
-    await repos.exams.setGrading(wr.id, {
-      points: Math.round((pct / 100) * WRITING.maxPoints * 10) / 10,
-      gradingStatus: 'self-graded',
-      grading: { ...wr.grading!, self: { criteria } },
-    });
+    // both writing rows self-graded: message norms 1/1 (40), text answers (fit 1, coherence 1, norms 1/1, richness 1)
+    for (const r of d.responses.filter((x) => x.subtestId === WRITING.id)) {
+      const kind = r.itemId === ITEM.id ? 'message' : 'text';
+      const answers =
+        kind === 'message'
+          ? { 'norms-forms': 1, 'norms-verbs': 1 }
+          : { fit: 1, coherence: 1, 'norms-forms': 1, 'norms-verbs': 1, richness: 1 };
+      const criteria = selfCheckCriteria(r.grading!.offline!.criteria, answers as never, kind);
+      const pct = criteriaPercent(criteria);
+      expect(criteria.reduce((n, c) => n + c.max, 0)).toBe(100);
+      await repos.exams.setGrading(r.id, {
+        points: Math.round((pct / 100) * r.maxPoints * 10) / 10,
+        gradingStatus: 'self-graded',
+        grading: { ...r.grading!, self: { criteria } },
+      });
+    }
     const after = (await repos.exams.getAttempt(attempt.id))!;
     const r = recomputeResults(EXAM, after.results, after.responses, after.scope);
     await repos.exams.updateResults(attempt.id, r.results, r.verdict);
-    expect(r.results.writing).toEqual({
-      points: 94,
-      maxPoints: 100,
-      pct: 94,
-      provisional: false,
-      gradedBy: 'self',
-    });
+    // FULL_MESSAGE as the text answer is short (offline content/volume low) but self-check adds the AI-only parts
+    expect(r.results.wr).toMatchObject({ maxPoints: 33, provisional: false, gradedBy: 'self' });
     // the queue leaves a self-graded row alone
     expect(await processGradingQueue(queueDeps())).toBe(0);
   });

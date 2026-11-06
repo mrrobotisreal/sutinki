@@ -60,9 +60,9 @@ type Phase =
  * task cap (T77: no silence endpointing — a pause never ends the recording), the answer is recorded / transcribed / scored offline at once
  * and shown with the model answer through the debrief card, then the AI
  * grade through the queue. A `drill`-scope attempt finished immediately
- * (10 XP, the drill rule). «Ещё раз» records a new attempt.
+ * (10 XP, the drill rule). «Ще раз» records a new attempt.
  *
- * Task 3 practice is «Билеты» (`/torfl/tickets`): the monologue needs the
+ * Task 3 practice is «Білети» (`/torfl/tickets`): the monologue needs the
  * prep / answer windows, which that screen runs.
  */
 export function SpeakingPracticeScreen() {

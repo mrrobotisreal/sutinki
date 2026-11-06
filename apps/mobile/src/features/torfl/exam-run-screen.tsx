@@ -32,7 +32,7 @@ import { useInstructionLang } from './instruction-lang';
  * gesture disabled. A thin switch over `useExamRun`: it renders the phase the
  * pure engine is in (instructions → objective / writing / speaking runner →
  * break) and forwards user intent as engine events. Quit = confirm →
- * «Сохранить и выйти» (stays resumable) / «Завершить попытку» (abandon).
+ * «Зберегти й вийти» (stays resumable) / «Завершити спробу» (abandon).
  *
  * T73 gates (TORFL §12): a speaking subtest's instruction screen is BLOCKED
  * without the ASR model or with the mic denied (the M17 hub gates), with

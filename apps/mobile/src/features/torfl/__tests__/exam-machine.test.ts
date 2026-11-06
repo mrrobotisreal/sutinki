@@ -652,15 +652,16 @@ describe('speaking (T73): three tasks, parts, windows, recordings', () => {
     expect(r.state.speaking).toMatchObject({ phase: 'answer', phaseDeadlineAt: T0 + 160_000 });
   });
 
-  it('the part budget: when task 1 runs out mid-recording the mic stops, the answer still lands, then task 2 opens', () => {
+  it('the part budget (UT17b): a running recording survives the printed part time (+30 s grace); the answer cap or the grace ends it, the answer lands, the next part opens', () => {
     const r = run(['speaking']);
     begin(r);
     r.send({ type: 'AUDIO_ENDED', now: T0 + 1000 });
-    r.send({ type: 'TAP_REC', now: T0 + 280_000 }); // cap would end at +310 s; the part budget ends first
-    const fx = r.send({ type: 'TICK', now: T0 + 300_000 });
+    r.send({ type: 'TAP_REC', now: T0 + 299_000 }); // answer cap ends it at +329 s; the part grace at +330 s
+    expect(r.send({ type: 'TICK', now: T0 + 300_500 })).toEqual([]); // the printed window is a guide, not a cut-off
+    const fx = r.send({ type: 'TICK', now: T0 + 330_500 });
     expect(types(fx)).toEqual(['STOP_REC', 'PERSIST_STATE']);
-    expect(r.state.speaking).toMatchObject({ phase: 'processing', partExpired: true });
-    expect(r.send({ type: 'TICK', now: T0 + 301_000 })).toEqual([]); // waits for the hook
+    expect(r.state.speaking).toMatchObject({ phase: 'processing' });
+    expect(r.send({ type: 'TICK', now: T0 + 331_000 })).toEqual([]); // waits for the hook
     r.send(spoken('sp01', 'speaking-reply'));
     expect(r.state.answers.sp01).toBeDefined();
     expect(r.state.speaking).toMatchObject({ task: 2, phase: 'prompt', partIdx: 1 });

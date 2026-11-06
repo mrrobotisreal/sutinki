@@ -1941,5 +1941,31 @@
       ]
     }
   ],
-  "category": "ukr-exam-a1"
+  "category": "ukr-exam-a1",
+  "prompts": [
+    {
+      "id": "fx-wr-message",
+      "level": "A1",
+      "prompt": {
+        "uk": "Напиши другові коротке повідомлення: подякуй за запрошення і скажи, що прийдеш.",
+        "en": "Write a short message to a friend: thank them for the invitation and say you will come."
+      },
+      "tags": [
+        "ukr-exam:writing",
+        "ukr-exam:liudyna"
+      ]
+    },
+    {
+      "id": "fx-sp-family",
+      "level": "A1",
+      "prompt": {
+        "uk": "Розкажи про свою родину: хто в ній, де вони живуть, що роблять.",
+        "en": "Tell about your family: who is in it, where they live, what they do."
+      },
+      "tags": [
+        "ukr-exam:speaking",
+        "ukr-exam:liudyna"
+      ]
+    }
+  ]
 }

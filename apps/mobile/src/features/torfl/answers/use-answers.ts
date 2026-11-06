@@ -14,7 +14,7 @@ import {
 import type { TorflLevel } from '../level-profile';
 
 /**
- * «Мои ответы» data (T74, TORFL §9): the installed `torfl` prompts joined to
+ * «Мої відповіді» data (T74, TORFL §9): the installed `ukr-exam:speaking|writing` prompts joined to
  * Mitch's journal entries for them, grouped by topic. The query key hangs
  * under `journal-entries` so the editor's existing invalidation (a new or
  * edited entry, feedback landing) refreshes the bank too.

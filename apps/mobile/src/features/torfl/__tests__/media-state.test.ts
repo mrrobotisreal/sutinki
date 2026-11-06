@@ -1,3 +1,4 @@
+import { mediaFileName } from '@/features/backup/naming';
 import { describe, expect, it } from 'vitest';
 
 import { planPrune } from '@/features/scenario/recordings/prune-core';
@@ -36,6 +37,17 @@ describe('parseExamMediaLedger', () => {
     expect(parseExamMediaLedger(null)).toEqual(DEFAULT_EXAM_MEDIA_LEDGER);
     expect(parseExamMediaLedger('nope')).toEqual(DEFAULT_EXAM_MEDIA_LEDGER);
     expect(parseExamMediaLedger({ v: 2, attempts: [] })).toEqual(DEFAULT_EXAM_MEDIA_LEDGER);
+  });
+});
+
+describe('exam bundle names vs the SutinkiAPI regex (UT17b)', () => {
+  // SutinkiAPI internal/naming/naming.go:24 — copied verbatim; `go run` of the same regex accepted the name below.
+  const API_RE = /^sutinki-media-([a-z0-9][a-z0-9-]{3,79})\.json$/;
+  it('accepts sutinki-media-exam-<attemptid>.json (lowercased) and refuses uppercase', () => {
+    const name = mediaFileName(examBundleStem('MKXY1ABC-Q7z'));
+    expect(name).toBe('sutinki-media-exam-mkxy1abc-q7z.json');
+    expect(API_RE.test(name)).toBe(true);
+    expect(API_RE.test('sutinki-media-exam-MKXY.json')).toBe(false);
   });
 });
 

@@ -3553,7 +3553,7 @@ export const a1LexiconPack = {
         en: 'Topic 2',
       },
       source: {
-        name: 'Сумрак',
+        name: 'Сутінки',
       },
       level: 'A1',
       sentences: [
@@ -3967,7 +3967,7 @@ export const a1PromptsPack = {
         uk: 'Напиши письмо родителям Алин\u044b: расскажи о себе — как тебя зовут, сколько тебе лет, откуда т\u044b, где т\u044b жив\u0451шь и работаешь.',
         en: "Write a letter to Alina's parents: introduce yourself — your name, age, where you are from, where you live and work.",
       },
-      tags: ['torfl', 'torfl:write-letter'],
+      tags: ['ukr-exam:writing', 'ukr-exam:write-letter'],
     },
     {
       id: 'tf-fx-mono-01',
@@ -3976,7 +3976,7 @@ export const a1PromptsPack = {
         uk: 'Расскажи о своей семье: кто твоя невеста, откуда она, кто е\u0451 родители, что в\u044b любите делать вместе.',
         en: 'Talk about your family: who your fiancée is, where she is from, who her parents are, what you like doing together.',
       },
-      tags: ['torfl', 'torfl:speak-monologue'],
+      tags: ['ukr-exam:speaking', 'ukr-exam:speak-monologue'],
     },
     {
       id: 'tf-fx-mono-02',
@@ -3985,7 +3985,7 @@ export const a1PromptsPack = {
         uk: 'Расскажи бабушке Алин\u044b о сво\u0451м городе: где он, какая там погода, что там есть.',
         en: "Tell Alina's grandmother about your city: where it is, what the weather is like, what is there.",
       },
-      tags: ['torfl', 'torfl:speak-monologue'],
+      tags: ['ukr-exam:speaking', 'ukr-exam:speak-monologue'],
     },
     {
       id: 'tf-fx-other-01',
@@ -3994,7 +3994,7 @@ export const a1PromptsPack = {
         uk: 'Что т\u044b об\u044bчно делаешь вечером? Напиши пять предложений.',
         en: 'What do you usually do in the evening? Write five sentences.',
       },
-      tags: ['torfl'],
+      tags: ['ukr-exam:speaking'],
     },
   ],
 };
@@ -4019,7 +4019,7 @@ export const a2PromptsPack = {
         uk: 'Напиши сообщение Арт\u0451му, брату Алин\u044b: предложи встретиться в субботу. Укажи причину, день, время и место.',
         en: "Write a message to Artem, Alina's brother: propose meeting on Saturday. Give the reason, the day, the time and the place.",
       },
-      tags: ['torfl', 'torfl:write-note'],
+      tags: ['ukr-exam:writing', 'ukr-exam:write-note'],
     },
     {
       id: 'tf2-fx-mono-01',
@@ -4028,7 +4028,7 @@ export const a2PromptsPack = {
         uk: 'Расскажи о сво\u0451м любимом фильме: как он наз\u044bвается, о ч\u0451м он, кто в н\u0451м играет, почему он тебе нравится. Скажи 12–15 предложений.',
         en: 'Talk about your favourite film: what it is called, what it is about, who acts in it, why you like it. Say 12–15 sentences.',
       },
-      tags: ['torfl', 'torfl:speak-monologue'],
+      tags: ['ukr-exam:speaking', 'ukr-exam:speak-monologue'],
     },
   ],
 };

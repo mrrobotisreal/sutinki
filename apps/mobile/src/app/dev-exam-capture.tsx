@@ -4,7 +4,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 
 import { Text } from '@/components/ui/text';
 import { hasApiKey } from '@/features/ai/config';
-import { A2_CAPTURE_CASES } from '@/features/ai/dev/exam-a2-cases';
+import { UK_CAPTURE_CASES } from '@/features/ai/dev/exam-uk-cases';
 import { buildExamSpeakingMessages } from '@/features/ai/prompts/exam-speaking';
 import { buildExamWritingMessages } from '@/features/ai/prompts/exam-writing';
 import { getModelTable, resolveRun } from '@/features/ai/run-profile';
@@ -14,9 +14,9 @@ import { criteriaPercent } from '@/features/torfl/grading/writing';
 import { speakingCriteriaPercent } from '@/features/torfl/grading/speaking';
 
 /**
- * DEV ONLY (T76) — captures the ten A2 exam-grading fixtures (five cases × Opus 5.5 @ high + GPT-6
+ * DEV ONLY (UT17b) — captures the nine Ukrainian exam-grading fixtures (`UK_CAPTURE_CASES` × Opus 5.5 @ high + GPT-6
  * Sol Pro @ high) THROUGH THE APP'S OWN AI PATH: Mitch's configured OpenRouter key (never read by an
- * agent), the run-profile table, `runChat`. Output JSON lands in `<documents>/a2-fixtures/` in the
+ * agent), the run-profile table, `runChat`. Output JSON lands in `<documents>/uk-fixtures/` in the
  * committed fixture shape and is pulled with `run-as cat`. Writes nothing to the SQLite DB except the
  * ordinary `ai_request_*` analytics rows (restored with the pre-state DB).
  */
@@ -39,13 +39,13 @@ export default function DevExamCaptureScreen() {
         log('no OpenRouter key on this device');
         return;
       }
-      const dir = new Directory(Paths.document, 'a2-fixtures');
+      const dir = new Directory(Paths.document, 'uk-fixtures');
       if (!dir.exists) dir.create();
       const table = await getModelTable();
       for (const { tag, provider } of PROFILES) {
         const resolved = resolveRun({ provider, quality: 'normal', effort: 'high' }, table);
-        for (const c of A2_CAPTURE_CASES) {
-          const name = `exam-${c.kind === 'writing' ? 'writing' : 'speaking'}-${c.name}-${tag}`;
+        for (const c of UK_CAPTURE_CASES) {
+          const name = `exam-uk-${c.kind === 'writing' ? 'writing' : 'speaking'}-${c.name}-${tag}`;
           if (only && !name.includes(only)) continue;
           log(`… ${name} (${resolved.model})`);
           const startedAt = Date.now();
@@ -105,14 +105,14 @@ export default function DevExamCaptureScreen() {
 
   return (
     <ScrollView contentContainerClassName="gap-3 p-4" testID="dev-exam-capture">
-      <Text className="font-ui-bold text-lg">A2 exam-grading fixture capture (dev)</Text>
+      <Text className="font-ui-bold text-lg">Ukrainian exam-grading fixture capture (dev)</Text>
       <Pressable
         onPress={() => void run()}
         disabled={busy}
         testID="capture-all"
         className="items-center rounded-full bg-accent px-5 py-3.5"
       >
-        <Text className="font-ui-bold text-bg">{busy ? 'Running…' : 'Capture all 10'}</Text>
+        <Text className="font-ui-bold text-bg">{busy ? 'Running…' : 'Capture all 18'}</Text>
       </Pressable>
       <View className="gap-1">
         {lines.map((l, i) => (

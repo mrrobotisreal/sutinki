@@ -10,13 +10,15 @@ import { recomputeAttemptResults } from './queue';
 import {
   criteriaPercent,
   selfCheckCriteria,
+  writingKindOf,
+  type WritingKind,
   type SelfCheckId,
   type SelfCheckValue,
 } from './writing';
 
 /**
- * «Самопроверка» write path (T72, TORFL §6.2): fold the four answers with
- * the response's offline criteria into a full five-criterion set, store it
+ * «Самоперевірка» write path (T72, TORFL §6.2): fold the four answers with
+ * the response's offline criteria into a full full set, store it
  * as `grading.self`, mark the row `self-graded` with the new points, then
  * recompute the attempt (gradedBy 'self', final). Returns the pct.
  *
@@ -30,7 +32,9 @@ export async function applySelfCheck(
   meta: { task: number; topic: string } = { task: 0, topic: 'none' },
 ): Promise<number> {
   const prev: ExamGrading = response.grading ?? { v: 1 };
-  const criteria = selfCheckCriteria(prev.offline?.criteria ?? [], answers);
+  const storedKind = (prev.offline?.details as { kind?: WritingKind } | undefined)?.kind;
+  const kind: WritingKind = storedKind ?? writingKindOf({ topic: meta.topic, minWords: undefined });
+  const criteria = selfCheckCriteria(prev.offline?.criteria ?? [], answers, kind);
   const pct = criteriaPercent(criteria);
   const { error: _error, ...kept } = prev;
   void _error;

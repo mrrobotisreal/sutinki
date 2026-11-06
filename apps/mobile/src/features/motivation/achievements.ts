@@ -19,7 +19,7 @@ export interface AchievementDef {
   kicker?: string;
 }
 
-/** UT16b: the four level-scoped «Іспит» achievements of each level (hidden while `UK_PENDING.exam`). */
+/** UT16b: the four level-scoped «Іспит» achievements of each level. */
 const EXAM_LEVEL_ACHIEVEMENTS: AchievementDef[] = (['A1', 'A2', 'B1', 'B2', 'C1'] as const).flatMap(
   (level) => {
     const l = level.toLowerCase();

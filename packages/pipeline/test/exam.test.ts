@@ -242,7 +242,10 @@ describe('a1-ukrexam-fixture round-trip (UT16)', () => {
   it('annotate on ukr-exam-fixture/*.md deep-equals the schema fixture pack (minus the rendered Piper audio)', () => {
     const pack = annotateDrafts(fixtureFiles());
     const sample = JSON.parse(readFileSync(fixturePackPath, 'utf8')) as Pack;
-    expect(pack).toEqual(withoutAudio(sample));
+    // UT17b: the hand-written journal `prompts` (the «Мої відповіді» bank) have no draft; the annotate path never emits them.
+    const { prompts: _prompts, ...rest } = withoutAudio(sample) as Pack & { prompts?: unknown };
+    void _prompts;
+    expect(pack).toEqual(rest);
   });
 
   it('is a ukr-state exam pack with three stories, the mock and five drills — and stays out of the app manifest', () => {

@@ -46,7 +46,7 @@ function typed(partial: Partial<TypedItem>): TypedItem {
     id: 't',
     topic: 'case-prep',
     kind: 'typed',
-    prompt: 'Мать артистки была (кем?)',
+    prompt: 'Мати артистки була (ким?)',
     accept: ['художником'],
     half: ['художник'],
     ...partial,
@@ -164,7 +164,7 @@ describe('itemMaxPoints / scoreItem', () => {
       'wrong',
     );
     const wr = mock.subtests.find((s) => s.kind === 'writing')!;
-    expect(scoreItem(wr.parts[0]!.items[0]!, { text: 'Привет' }, wr)).toBeNull();
+    expect(scoreItem(wr.parts[0]!.items[0]!, { text: 'Привіт' }, wr)).toBeNull();
     // mismatched answer shape for the kind
     expect(scoreItem(lg, { text: 'x' }, lex)).toBeNull();
   });

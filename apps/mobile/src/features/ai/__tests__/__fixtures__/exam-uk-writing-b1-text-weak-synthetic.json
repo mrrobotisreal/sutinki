@@ -1,0 +1,49 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Напишіть текст «Чому важливо знати державну мову». Обовʼязково напишіть про такі пункти.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "чому ви вчите українську"
+      },
+      {
+        "id": "b2",
+        "uk": "де ви вже користуєтеся мовою"
+      },
+      {
+        "id": "b3",
+        "uk": "що вам дається найважче"
+      },
+      {
+        "id": "b4",
+        "uk": "як ви вчитеся"
+      },
+      {
+        "id": "b5",
+        "uk": "що ви плануєте далі"
+      }
+    ],
+    "minSentences": 8,
+    "minQuestions": 0,
+    "maxQuestions": null,
+    "minWords": 100,
+    "maxWords": 150,
+    "taskTopic": "wr-text",
+    "level": "B1",
+    "modelLetter": null,
+    "letter": "Я учу украінську мову потому що я живу в Україні. Я використовую мову в магазині. Мені тяжко давається відмінки. Я слідуючий рік хочу здати екзамен. Дякую."
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 9,\n      \"max\": 22,\n      \"comment\": \"Only 3 of 5 points are touched and none is developed; «що ви плануєте далі» is one clause.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 1,\n      \"max\": 4,\n      \"comment\": \"No real structure; «Дякую.» is a bare closing.\"\n    },\n    {\n      \"id\": \"fit\",\n      \"score\": 4,\n      \"max\": 9,\n      \"comment\": \"On the theme, but too thin to meet the task.\"\n    },\n    {\n      \"id\": \"coherence\",\n      \"score\": 9,\n      \"max\": 26,\n      \"comment\": \"Short isolated sentences with no connectors besides «потому що».\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 9,\n      \"max\": 26,\n      \"comment\": \"Russianisms «потому що», «слідуючий», «екзамен» (spelling: «іспит»), wrong «українську» spelling («украінську»), case error «Мені тяжко давається відмінки».\"\n    },\n    {\n      \"id\": \"richness\",\n      \"score\": 2,\n      \"max\": 9,\n      \"comment\": \"Very limited range for B1.\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 1,\n      \"max\": 4,\n      \"comment\": \"About 32 words, far under the 100-word minimum.\"\n    }\n  ],\n  \"corrected\": \"Я вчу українську мову, тому що живу в Україні. Я користуюся мовою в магазині. Мені важко даються відмінки. Наступного року я хочу скласти іспит. Дякую.\",\n  \"changes\": [\n    {\n      \"before\": \"учу украінську\",\n      \"after\": \"вчу українську\",\n      \"explanation\": \"Verb «вчити» in Ukrainian; adjective spelling «українську».\"\n    },\n    {\n      \"before\": \"потому що\",\n      \"after\": \"тому що\",\n      \"explanation\": \"Russianism: Ukrainian «тому що» / «бо».\"\n    },\n    {\n      \"before\": \"слідуючий\",\n      \"after\": \"наступного\",\n      \"explanation\": \"Surzhyk: «слідуючий» is not literary; use «наступний».\"\n    },\n    {\n      \"before\": \"тяжко давається відмінки\",\n      \"after\": \"важко даються відмінки\",\n      \"explanation\": \"Plural subject «відмінки» needs plural verb «даються»; «важко» is the Ukrainian adverb.\"\n    },\n    {\n      \"before\": \"екзамен\",\n      \"after\": \"іспит\",\n      \"explanation\": \"Preferred Ukrainian «іспит».\"\n    }\n  ],\n  \"tips\": [\n    \"Develop each point with at least two sentences — the task asks for 100+ words.\",\n    \"Use connectors (тому що, але, а також, тоді) to link your ideas.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

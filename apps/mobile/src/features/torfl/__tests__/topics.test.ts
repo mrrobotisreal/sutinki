@@ -80,7 +80,7 @@ describe('topics (Іспит taxonomy, UT16b)', () => {
   it('no authored label carries Russian-only letters', () => {
     for (const slug of TOPIC_ORDER) {
       const l = topicLabel(slug);
-      expect(l.uk, slug).not.toMatch(/[ёыэъ]/i);
+      expect(l.uk, slug).not.toMatch(/[\u0451\u044B\u044D\u044A]/i);
     }
   });
 

@@ -39,7 +39,6 @@ import {
   type DailyItem,
   type DailyTorflItem,
 } from './session';
-import { ukPending } from '@/config/flags';
 import { torflSegmentEnabled } from './prefs';
 
 /** The daily session serves card items, then (M18, T70) the TORFL deck block. */
@@ -71,7 +70,7 @@ export function DailySessionScreen() {
       focusItemIds,
     });
     // M18 (T70): the optional TORFL block — default on iff an exam date is set; never in a focused session.
-    if (focusItemIds || ukPending('exam')) return cards;
+    if (focusItemIds) return cards;
     const dates = await getExamDates();
     if (!torflSegmentEnabled(prefs, dates)) return cards;
     const segment = await buildTorflSegment(repos, { levels: levelOrder(dates) });

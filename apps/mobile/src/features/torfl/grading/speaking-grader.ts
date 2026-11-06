@@ -16,7 +16,7 @@ export const EXAM_SPEAKING_MAX_TOKENS = 6_144;
 /**
  * The `speaking` grader of the kind-agnostic queue (T73): registered once
  * at module load (`registerGrader`), nothing else in the queue changes.
- * `buildRequest` renders the TORFL §6.2 prompt for the item's task from
+ * `buildRequest` renders the UKR_EXAM_PREP §2 prompt for the item's rubric kind from
  * the stored transcript(s) (+ the model answer when the pack has one);
  * `fold` turns a parsed `ExamGrade` into the response row: `points` =
  * pct × the response's share (`maxPoints` on the row), `grading.ai` =
@@ -63,8 +63,9 @@ export const speakingGrader: KindGrader = {
         ? await ctx.storyText(item.model.storyId, item.model.sentenceIds)
         : null;
       input = {
-        task: 'monologue',
+        task: item.image ? 'photo' : 'monologue',
         promptUk: item.topicTitle.uk,
+        imageAlt: item.image?.alt ?? null,
         questionsUk: item.questions.map((q) => q.uk),
         minSentences: item.minSentences,
         maxSentences: item.maxSentences,
