@@ -7,31 +7,31 @@ import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/cn';
 import { useAppTheme } from '@/theme/use-app-theme';
 
-import { SELF_CHECKS, type SelfCheckId, type SelfCheckValue } from '../grading/writing';
+import {
+  selfChecksFor,
+  type SelfCheckId,
+  type SelfCheckValue,
+  type WritingKind,
+} from '../grading/writing';
 
 export type SelfCheckAnswers = Record<SelfCheckId, SelfCheckValue>;
 
-const EMPTY: SelfCheckAnswers = {
-  'vocab-range': 0,
-  'vocab-fit': 0,
-  'grammar-cases': 0,
-  'grammar-verbs': 0,
-};
-
 /**
- * «Самопроверка» (T72, TORFL §6.2): when the AI never grades (offline for
+ * «Самоперевірка» (UT17b): when the AI never grades (offline for
  * good, no key), Mitch rates the four AI-only questions 0 / ½ / 1 against
  * the model letter shown above them. The host folds the answers with the
  * offline criteria (`selfCheckCriteria`) → `gradedBy: 'self'`, final.
  */
 export function SelfCheckSheet({
   open,
+  kind,
   letter,
   modelLetter,
   onClose,
   onSubmit,
 }: {
   open: boolean;
+  kind: WritingKind;
   letter: string;
   modelLetter: string | null;
   onClose: () => void;
@@ -39,6 +39,7 @@ export function SelfCheckSheet({
 }) {
   return open ? (
     <SelfCheckBody
+      kind={kind}
       letter={letter}
       modelLetter={modelLetter}
       onClose={onClose}
@@ -48,11 +49,13 @@ export function SelfCheckSheet({
 }
 
 function SelfCheckBody({
+  kind,
   letter,
   modelLetter,
   onClose,
   onSubmit,
 }: {
+  kind: WritingKind;
   letter: string;
   modelLetter: string | null;
   onClose: () => void;
@@ -60,12 +63,13 @@ function SelfCheckBody({
 }) {
   const { tokens } = useAppTheme();
   const insets = useSafeAreaInsets();
-  const [answers, setAnswers] = React.useState<SelfCheckAnswers>(EMPTY);
+  const checks = React.useMemo(() => selfChecksFor(kind), [kind]);
+  const [answers, setAnswers] = React.useState<SelfCheckAnswers>({});
   const [showModel, setShowModel] = React.useState(true);
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View
         // A FIXED height (not max-h) so the ScrollView is bounded and the save button never
         // overlaps the last visible row (S25 finding: a «½» tap hit «Сохранить»).
@@ -75,14 +79,14 @@ function SelfCheckBody({
       >
         <View className="mb-2 flex-row items-center gap-2">
           <Ionicons name="checkbox-outline" size={18} color={tokens.accent} />
-          <Text className="flex-1 font-ui-medium text-lg">Самопроверка</Text>
+          <Text className="flex-1 font-ui-medium text-lg">Самоперевірка</Text>
           <Pressable onPress={onClose} hitSlop={8} accessibilityRole="button">
             <Ionicons name="close" size={22} color={tokens.textMuted} />
           </Pressable>
         </View>
         <Text variant="caption" className="mb-3">
-          ИИ не оценил письмо. Сравни своё письмо с образцом и оцени четыре пункта честно — 0, ½ или
-          1. Оценка станет окончательной.
+          ШІ не оцінив текст. Порівняй свій текст зі зразком і чесно оціни пункти — 0, ½ або 1.
+          Оцінка стане остаточною.
         </Text>
         <ScrollView className="flex-1" contentContainerClassName="gap-3 pb-3">
           {modelLetter ? (
@@ -92,7 +96,7 @@ function SelfCheckBody({
                 accessibilityRole="button"
                 className="flex-row items-center gap-2"
               >
-                <Text className="flex-1 font-ui-medium text-sm">Образец письма</Text>
+                <Text className="flex-1 font-ui-medium text-sm">Зразок тексту</Text>
                 <Ionicons
                   name={showModel ? 'chevron-up' : 'chevron-down'}
                   size={16}
@@ -107,14 +111,14 @@ function SelfCheckBody({
             </View>
           ) : (
             <Text variant="caption">
-              У этого задания нет образца письма — оцени по памяти о правилах.
+              У цього завдання немає зразка — оціни за правилами, які пам’ятаєш.
             </Text>
           )}
           <View className="rounded-2xl border border-border bg-bg px-4 py-3">
-            <Text className="mb-1 font-ui-medium text-sm">Твоё письмо</Text>
+            <Text className="mb-1 font-ui-medium text-sm">Твій текст</Text>
             <RNText className="font-reading text-base leading-6 text-text">{letter}</RNText>
           </View>
-          {SELF_CHECKS.map((check) => (
+          {checks.map((check) => (
             <View
               key={check.id}
               className="gap-2 rounded-2xl border border-border bg-bg px-4 py-3"
@@ -158,7 +162,7 @@ function SelfCheckBody({
           testID="self-check-submit"
           className="mt-2 items-center rounded-full bg-accent px-5 py-3.5 active:opacity-80"
         >
-          <Text className="font-ui-bold text-bg">Сохранить оценку</Text>
+          <Text className="font-ui-bold text-bg">Зберегти оцінку</Text>
         </Pressable>
       </View>
     </Modal>

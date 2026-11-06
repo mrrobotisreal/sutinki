@@ -1,6 +1,7 @@
 import type { Exam, WritingItem } from '@sutinki/schema';
 
 import type { ExamSummaryLike } from '../hub-model';
+import { isNoteTopic } from './writing-model';
 
 /**
  * Writing practice catalog (T72, TORFL §8.3 practice mode) — PURE: every
@@ -55,8 +56,8 @@ export function writingPracticeHref(e: Pick<WritingPracticeEntry, 'packId' | 'ex
 }
 
 /**
- * The Письмо practice list grouped by text type (T76): «Письмо» (letters) then
- * «Записка» (`write-note` messenger tasks). The hub is already level-scoped
+ * The Письмо practice list grouped by text type (T76): «Розгорнутий текст» (task 45-style) then
+ * «Коротке повідомлення» (`wr-message`, task 44-style). The hub is already level-scoped
  * (its exams come from `useExams({level})`, THE LEVEL RULE), so a group only
  * ever holds one level's items. A header is shown for the note group always
  * and for the letter group only when notes exist (A1 stays a flat list).
@@ -70,12 +71,16 @@ export interface WritingPracticeGroup {
 export function writingPracticeGroups(
   entries: readonly WritingPracticeEntry[],
 ): WritingPracticeGroup[] {
-  const notes = entries.filter((e) => e.item.topic === 'write-note');
-  const letters = entries.filter((e) => e.item.topic !== 'write-note');
+  const notes = entries.filter((e) => isNoteTopic(e.item.topic));
+  const letters = entries.filter((e) => !isNoteTopic(e.item.topic));
   const out: WritingPracticeGroup[] = [];
   if (letters.length > 0) {
-    out.push({ key: 'letter', titleUk: notes.length > 0 ? 'Письмо' : null, entries: letters });
+    out.push({
+      key: 'letter',
+      titleUk: notes.length > 0 ? 'Розгорнутий текст' : null,
+      entries: letters,
+    });
   }
-  if (notes.length > 0) out.push({ key: 'note', titleUk: 'Записка', entries: notes });
+  if (notes.length > 0) out.push({ key: 'note', titleUk: 'Коротке повідомлення', entries: notes });
   return out;
 }

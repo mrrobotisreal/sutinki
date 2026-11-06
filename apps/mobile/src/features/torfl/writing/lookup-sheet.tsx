@@ -16,7 +16,7 @@ import type { TorflLevel } from '../level-profile';
  * The writing screen's dictionary (T72, TORFL decision 8: a bilingual
  * dictionary is allowed in Письмо). The letter is free text with no token
  * rows behind it, so lookup is a search over every installed pack's tokens
- * (the T24 token FTS, ё/е-tolerant): the word selected in the editor is
+ * (the T24 token FTS, Ukrainian-fold-tolerant): the word selected in the editor is
  * pre-filled, distinct lemma → translation rows come back. Read-only: no
  * banking from an exam sheet (the reader does that).
  */
@@ -77,7 +77,7 @@ function LookupBody({
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрыть" />
+      <Pressable className="flex-1 bg-scrim/50" onPress={onClose} accessibilityLabel="Закрити" />
       <View
         className="max-h-[70%] rounded-t-2xl border-t border-border bg-surface px-5 pt-4"
         style={{ paddingBottom: insets.bottom + 16 }}
@@ -113,7 +113,7 @@ function LookupBody({
         >
           {hits === null ? (
             <Text variant="caption" className="pt-4 text-center">
-              Ищет по словам всех установленных историй — как бумажный словарь на экзамене.
+              Шукає за словами всіх установлених історій — як паперовий словник на іспиті.
             </Text>
           ) : hits.length === 0 ? (
             <Text variant="caption" className="pt-4 text-center">

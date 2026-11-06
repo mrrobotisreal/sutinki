@@ -15,7 +15,7 @@ const sentence = (id: string, uk: string): SentenceWithTokens =>
     grammarTopics: null,
     tokens: [],
   }) as SentenceWithTokens;
-const SENTENCES = [sentence('a', 'Привет!'), sentence('b', 'Где ты?'), sentence('c', 'Я дома.')];
+const SENTENCES = [sentence('a', 'Привіт!'), sentence('b', 'Де ти?'), sentence('c', 'Я вдома.')];
 const track = (id: string, localUri: string | null): AudioTrackRow =>
   ({
     packId: 'p',
@@ -81,7 +81,7 @@ describe('buildExamAudio', () => {
     });
     expect(a).toMatchObject({
       synthetic: true,
-      source: { kind: 'tts', text: 'Привет! Где ты?' },
+      source: { kind: 'tts', text: 'Привіт! Де ти?' },
       stamps: [],
     });
   });

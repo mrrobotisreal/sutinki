@@ -1,0 +1,45 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Напишіть розповідь про свій вихідний день. Обовʼязково напишіть про такі пункти.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "де ви були"
+      },
+      {
+        "id": "b2",
+        "uk": "з ким ви були"
+      },
+      {
+        "id": "b3",
+        "uk": "що ви робили"
+      },
+      {
+        "id": "b4",
+        "uk": "що вам сподобалося"
+      }
+    ],
+    "minSentences": 6,
+    "minQuestions": 0,
+    "maxQuestions": null,
+    "minWords": 50,
+    "maxWords": 70,
+    "taskTopic": "wr-text",
+    "level": "A2",
+    "modelLetter": null,
+    "letter": "В воскресенье я був в парк з друг. Ми гуляли і кушали морозиво. Мені нравилось погода. Потом ми ходили в магазин і купили подарок."
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 14,\n      \"max\": 22,\n      \"comment\": \"Where, with whom and what are mentioned; «що сподобалося» is only «погода», thin.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 2,\n      \"max\": 4,\n      \"comment\": \"One block of text; no real opening or closing.\"\n    },\n    {\n      \"id\": \"fit\",\n      \"score\": 6,\n      \"max\": 9,\n      \"comment\": \"On topic, but the account is a list of short facts.\"\n    },\n    {\n      \"id\": \"coherence\",\n      \"score\": 12,\n      \"max\": 26,\n      \"comment\": \"Mostly «і … і»; «Потом» is Russian and breaks the flow.\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 10,\n      \"max\": 26,\n      \"comment\": \"Many Russianisms: «В воскресенье», «кушали», «нравилось», «Потом», «подарок», plus case errors («в парк», «з друг»).\"\n    },\n    {\n      \"id\": \"richness\",\n      \"score\": 3,\n      \"max\": 9,\n      \"comment\": \"Very limited vocabulary, repetition of «ми».\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 2,\n      \"max\": 4,\n      \"comment\": \"About 27 words, well under the 50-word minimum.\"\n    }\n  ],\n  \"corrected\": \"У неділю я був у парку з другом. Ми гуляли й їли морозиво. Мені подобалася погода. Потім ми ходили до магазину й купили подарунок.\",\n  \"changes\": [\n    {\n      \"before\": \"В воскресенье\",\n      \"after\": \"У неділю\",\n      \"explanation\": \"Russianism: «неділя» is Sunday in Ukrainian; accusative after «у».\"\n    },\n    {\n      \"before\": \"в парк з друг\",\n      \"after\": \"у парку з другом\",\n      \"explanation\": \"Locative after «у» for a place you are in, instrumental «з другом» after «з».\"\n    },\n    {\n      \"before\": \"кушали\",\n      \"after\": \"їли\",\n      \"explanation\": \"«Кушати» is a Russianism; use «їсти».\"\n    },\n    {\n      \"before\": \"нравилось\",\n      \"after\": \"подобалася\",\n      \"explanation\": \"«Подобатися» is the Ukrainian verb; it agrees with «погода» (feminine).\"\n    },\n    {\n      \"before\": \"Потом\",\n      \"after\": \"Потім\",\n      \"explanation\": \"Russianism: Ukrainian «потім».\"\n    },\n    {\n      \"before\": \"подарок\",\n      \"after\": \"подарунок\",\n      \"explanation\": \"Russianism: Ukrainian «подарунок».\"\n    }\n  ],\n  \"tips\": [\n    \"List the Russian-looking words you use and learn their Ukrainian twins.\",\n    \"Write at least 50 words: add where, who, what and what you liked in full sentences.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

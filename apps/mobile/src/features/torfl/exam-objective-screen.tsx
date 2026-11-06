@@ -36,7 +36,7 @@ const TIMER_TONE_CLASS = {
 /**
  * The objective mock runner (T71, TORFL §8.2) for Лексика. Грамматика, Чтение
  * and Аудирование. Top bar = title · timer (amber ≤ 5:00, red ≤ 1:00) ·
- * «Матрица»; body = the part instruction + the item (reading adds the passage
+ * «Матриця»; body = the part instruction + the item (reading adds the passage
  * with tap lookup per the dictionary rule; listening adds the engine-driven
  * exam player and shows the audio group's questions together); bottom = «‹ ›»
  * free navigation (listening: «Дальше» to the next text, never back) and ⚑.
@@ -128,7 +128,7 @@ export function ExamObjectiveScreen({
           onPress={onQuit}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Выйти из экзамена"
+          accessibilityLabel="Вийти з іспиту"
           testID="exam-quit"
           className="h-10 w-10 items-center justify-center rounded-full active:bg-surface-2"
         >
@@ -139,14 +139,14 @@ export function ExamObjectiveScreen({
             {SUBTEST_LABELS[subtest.kind].short}
           </Text>
           <Text variant="caption" className="text-xs">
-            {linear ? `Задание ${flat + 1}–${group.end + 1}` : `Задание ${flat + 1}`} из{' '}
+            {linear ? `Завдання ${flat + 1}–${group.end + 1}` : `Завдання ${flat + 1}`} з{' '}
             {layout.items.length}
           </Text>
         </View>
         <Text
           className={cn('font-ui-bold text-lg tabular-nums', TIMER_TONE_CLASS[tone])}
           testID="exam-timer"
-          accessibilityLabel={`Осталось ${formatClock(remainingMs)}`}
+          accessibilityLabel={`Залишилось ${formatClock(remainingMs)}`}
         >
           {formatClock(remainingMs)}
         </Text>
@@ -157,7 +157,7 @@ export function ExamObjectiveScreen({
           className="flex-row items-center gap-1.5 rounded-full border border-border px-3 py-2 active:bg-surface-2"
         >
           <Ionicons name="grid-outline" size={15} color={tokens.accent} />
-          <Text className="font-ui-medium text-sm text-accent">Матрица</Text>
+          <Text className="font-ui-medium text-sm text-accent">Матриця</Text>
         </Pressable>
       </View>
 
@@ -213,7 +213,7 @@ export function ExamObjectiveScreen({
         {linear ? (
           <>
             <Text variant="caption" className="flex-1">
-              Назад нельзя
+              Назад не можна
             </Text>
             <Pressable
               onPress={lastGroup ? () => setMatrixOpen(true) : onNext}
@@ -229,7 +229,7 @@ export function ExamObjectiveScreen({
           <>
             <NavButton
               icon="chevron-back"
-              label="Предыдущее задание"
+              label="Попереднє завдання"
               disabled={flat === 0}
               onPress={() => onGoto(flat - 1)}
               testID="exam-prev"
@@ -251,7 +251,7 @@ export function ExamObjectiveScreen({
             ) : (
               <NavButton
                 icon="chevron-forward"
-                label="Следующее задание"
+                label="Наступне завдання"
                 onPress={() => onGoto(flat + 1)}
                 testID="exam-forward"
               />
@@ -344,13 +344,13 @@ function MockItem({
   return (
     <View className="gap-3" testID={`mock-item-${item.id}`}>
       <View className="flex-row items-center justify-between px-1">
-        {showHeader ? <Text className="font-ui-bold">Задание {number}</Text> : <View />}
+        {showHeader ? <Text className="font-ui-bold">Завдання {number}</Text> : <View />}
         <Pressable
           onPress={onFlag}
           hitSlop={8}
           accessibilityRole="button"
           accessibilityState={{ selected: flagged }}
-          accessibilityLabel={flagged ? 'Снять флажок' : 'Поставить флажок'}
+          accessibilityLabel={flagged ? 'Зняти позначку' : 'Поставити позначку'}
           testID={`flag-${item.id}`}
           className={cn(
             'flex-row items-center gap-1.5 rounded-full border px-3 py-1.5',
@@ -368,7 +368,7 @@ function MockItem({
               flagged ? 'text-track-warm' : 'text-text-muted',
             )}
           >
-            флажок
+            позначка
           </Text>
         </Pressable>
       </View>

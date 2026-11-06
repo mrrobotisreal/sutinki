@@ -125,7 +125,7 @@ export function useExamTexts(level: TorflLevel = 'A1'): {
   total: number;
   isPending: boolean;
 } {
-  const exams = useExams({ level });
+  const exams = useExams({ level, scope: 'practice' });
   const stories = useStories();
   const packs = usePacks();
   const examPackIds = React.useMemo(

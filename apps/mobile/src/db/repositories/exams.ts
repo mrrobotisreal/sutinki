@@ -40,7 +40,7 @@ import type { TorflLevel } from '@/features/torfl/level-profile';
 import { track } from '@/services/analytics';
 
 import { newId } from '../ids';
-import { examAttempts, examItemCards, examResponses, exams } from '../schema';
+import { examAttempts, examItemCards, examResponses, exams, packs } from '../schema';
 import type { SutinkiDB } from '../types';
 import { getReviewScheduler } from './reviews';
 
@@ -80,6 +80,8 @@ export interface ExamSummary {
   mode: ExamMode;
   titleUk: string;
   titleEn: string;
+  /** The owning pack's tags (UT17: `ukr-exam:gate` hides a pack until attempted). */
+  packTags: string[];
   exam: Exam | null;
 }
 
@@ -279,7 +281,7 @@ export function createExamsRepo(db: SutinkiDB) {
     return exam;
   }
 
-  function toSummary(row: ExamRow): ExamSummary {
+  function toSummary(row: ExamRow, packTags: string[] = []): ExamSummary {
     return {
       packId: row.packId,
       examId: row.examId,
@@ -289,6 +291,7 @@ export function createExamsRepo(db: SutinkiDB) {
       mode: row.mode,
       titleUk: row.titleUk,
       titleEn: row.titleEn,
+      packTags,
       exam: parseExamRow(row),
     };
   }
@@ -546,7 +549,30 @@ export function createExamsRepo(db: SutinkiDB) {
         .from(exams)
         .where(where.length > 0 ? and(...where) : undefined)
         .orderBy(asc(exams.packId), asc(exams.orderIdx));
-      return rows.map(toSummary);
+      const tagRows =
+        rows.length > 0
+          ? await db
+              .select({ id: packs.id, tags: packs.tags })
+              .from(packs)
+              .where(inArray(packs.id, [...new Set(rows.map((r) => r.packId))]))
+          : [];
+      const tagsOf = new Map(tagRows.map((r) => [r.id, r.tags ?? []]));
+      return rows.map((r) => toSummary(r, tagsOf.get(r.packId) ?? []));
+    },
+
+    /** Pack ids with ≥ 1 attempt row of any state (the hidden-gate rule's «attempted»). */
+    async attemptedPackIds(): Promise<string[]> {
+      const rows = await db.selectDistinct({ packId: examAttempts.packId }).from(examAttempts);
+      return rows.map((r) => r.packId);
+    },
+
+    /** `${packId}/${examId}` of exams with a finished MOCK attempt (practice-surfacing rule). */
+    async finishedMockKeys(): Promise<string[]> {
+      const rows = await db
+        .selectDistinct({ packId: examAttempts.packId, examId: examAttempts.examId })
+        .from(examAttempts)
+        .where(and(eq(examAttempts.mode, 'mock'), eq(examAttempts.status, 'finished')));
+      return rows.map((r) => `${r.packId}/${r.examId}`);
     },
 
     /** One exam, Zod-parsed; null when missing or unreadable. */

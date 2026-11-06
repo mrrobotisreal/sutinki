@@ -15,27 +15,28 @@ import { drillHref } from './drill/drill-model';
 import { useGradingQueue } from './grading/queue';
 import { MODE_LABELS } from './hub-model';
 import { BAND_BAR_CLASS, BAND_TEXT_CLASS, bandFor } from './readiness';
-import { BORDERLINE_PCT, PASS_PCT } from './verdict';
 import {
   buildResultRows,
   formatUsed,
   missingVerdictLine,
+  pendingCountLine,
   pctsFromRows,
   provisionalFromRows,
   topicBreakdown,
   type ResultRow,
 } from './results-model';
-import { torflLevelOf } from './level-profile';
+import { MODELLED_BADGE, RELATIVE_NOTE, profileFor, torflLevelOf } from './level-profile';
 import { PinButton } from './speaking/pin-button';
 import { SUBTEST_LABELS, topicLabel } from './topics';
-import { verdict as computeVerdict, verdictHeadline } from './verdict';
+import { marginLabel, verdict as computeVerdict, verdictHeadline } from './verdict';
 
 /**
- * The mock results (T71, TORFL §8.2) — route `/exam/results/[attemptId]`: the
- * verdict card in SPbU terms (or «Вердикт — после …» while a subtest is
- * missing), the five subtest rows with 60 / 66 ticks, points / max, time used
- * and «пропущено» for skipped ones, the topic breakdown with «Тренировать»
- * links into T70's drill, and «Разбор» into the item review.
+ * The mock results (T71, UT17) — route `/exam/results/[attemptId]`: the
+ * verdict card under the state pass rule (total ≥ threshold, no per-section
+ * floor; or «Вердикт — після …» while a section is missing) with the weighted
+ * total and the margin, one row per section of the level with the threshold
+ * tick, points / max, time used and «пропущено» for skipped ones, the topic
+ * breakdown with «Тренувати» links into the drill, and «Розбір» into the review.
  */
 export function ExamResultsScreen({ attemptId }: { attemptId: string }) {
   const { tokens } = useAppTheme();
@@ -60,7 +61,7 @@ export function ExamResultsScreen({ attemptId }: { attemptId: string }) {
   if (!attempt.data || !exam.data) {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <QueryError message="Результат не найден." onRetry={() => router.back()} />
+        <QueryError message="Результат не знайдено." onRetry={() => router.back()} />
       </View>
     );
   }
@@ -94,9 +95,11 @@ function ResultsBody({
   const { tokens } = useAppTheme();
   const router = useRouter();
   const rows = buildResultRows(exam, attempt);
+  const level = torflLevelOf(exam.level);
+  const profile = profileFor(exam.level);
   const pcts = pctsFromRows(rows);
   const full = attempt.scope === 'full';
-  const v = full ? computeVerdict(pcts, provisionalFromRows(rows), torflLevelOf(exam.level)) : null;
+  const v = full ? computeVerdict(pcts, provisionalFromRows(rows), level) : null;
   const scoredIds = rows.filter((r) => r.status === 'scored').map((r) => r.subtestId);
   const responses = attempt.responses;
   const answers = React.useMemo(() => {
@@ -143,8 +146,8 @@ function ResultsBody({
           </Text>
           <Text variant="caption">
             {MODE_LABELS[attempt.mode]} · {when}
-            {attempt.status === 'abandoned' ? ' · прервана' : ''}
-            {attempt.pinned ? ' · закреплена' : ''}
+            {attempt.status === 'abandoned' ? ' · перервана' : ''}
+            {attempt.pinned ? ' · закріплена' : ''}
           </Text>
         </View>
         {hasRecordings ? (
@@ -152,16 +155,24 @@ function ResultsBody({
             attemptId={attemptId}
             pinned={attempt.pinned}
             onChanged={onPinChanged}
-            level={torflLevelOf(exam.level)}
+            level={level}
           />
         ) : null}
       </View>
 
-      {full && v ? <VerdictCard v={v} xp={attempt.xpAwarded} /> : null}
+      {full && v ? (
+        <VerdictCard v={v} xp={attempt.xpAwarded} sectionCount={profile.sections.length} />
+      ) : null}
+      {full ? (
+        <Text variant="caption" className="px-1" testID="results-note">
+          {profile.modelled && exam.format === 'ukr-state' ? `${MODELLED_BADGE} · ` : ''}
+          {RELATIVE_NOTE}
+        </Text>
+      ) : null}
       {!full ? (
         <View className="rounded-2xl border border-border bg-surface px-4 py-3">
           <Text variant="muted">
-            Один субтест — вердикт СПбГУ считается по всем пяти, поэтому здесь только проценты.
+            Один розділ — «склав чи ні» рахується за сумою всіх розділів, тому тут лише відсотки.
           </Text>
           {attempt.xpAwarded > 0 ? (
             <Text className="mt-1 font-ui-medium text-accent">+{attempt.xpAwarded} XP</Text>
@@ -170,12 +181,13 @@ function ResultsBody({
       ) : null}
 
       <View className="gap-3">
-        <SectionTitle>Субтесты</SectionTitle>
+        <SectionTitle>Розділи</SectionTitle>
         <View className="gap-4 rounded-2xl border border-border bg-surface px-4 py-4">
           {rows.map((r) => (
             <SubtestRow
               key={r.subtestId}
               row={r}
+              passPct={profile.passPct}
               onOpen={
                 r.status === 'scored' && !active && (r.kind === 'writing' || r.kind === 'speaking')
                   ? () =>
@@ -204,13 +216,14 @@ function ResultsBody({
           ))}
         </View>
         <Text variant="caption" className="px-1">
-          Черточки на полосе — 60 % (один субтест может быть здесь) и 66 % (порог сдачи).
+          Риска на смузі — {profile.passPct} %: поріг для суми всіх розділів. Окремого мінімуму за
+          розділ немає.
         </Text>
       </View>
 
       {weak.length > 0 && (
         <View className="gap-3">
-          <SectionTitle>Слабые темы</SectionTitle>
+          <SectionTitle>Слабкі теми</SectionTitle>
           <View className="overflow-hidden rounded-2xl border border-border bg-surface">
             {weak.map((t, i) => (
               <View
@@ -223,7 +236,7 @@ function ResultsBody({
                 <View className="flex-1">
                   <Text className="font-ui-medium">{topicLabel(t.topic).uk}</Text>
                   <Text variant="caption">
-                    {SUBTEST_LABELS[t.kind].short} · {t.correct} из {t.total} верно
+                    {SUBTEST_LABELS[t.kind].short} · {t.correct} з {t.total} правильно
                   </Text>
                 </View>
                 <Pressable
@@ -241,14 +254,13 @@ function ResultsBody({
                   testID={`train-${t.topic}`}
                   className="rounded-full border border-accent px-3 py-1.5 active:bg-accent-soft"
                 >
-                  <Text className="font-ui-medium text-sm text-accent">Тренировать</Text>
+                  <Text className="font-ui-medium text-sm text-accent">Тренувати</Text>
                 </Pressable>
               </View>
             ))}
           </View>
           <Text variant="caption" className="px-1">
-            «Тренировать» открывает задания этой темы из тренировочных наборов, если они
-            установлены.
+            «Тренувати» відкриває завдання цієї теми з тренувальних наборів, якщо вони встановлені.
           </Text>
         </View>
       )}
@@ -263,11 +275,11 @@ function ResultsBody({
           className="flex-row items-center justify-center gap-2 rounded-full bg-accent px-5 py-3.5 active:opacity-80"
         >
           <Ionicons name="list-outline" size={18} color={tokens.bg} />
-          <Text className="font-ui-bold text-bg">Разбор заданий</Text>
+          <Text className="font-ui-bold text-bg">Розбір завдань</Text>
         </Pressable>
       )}
       <Text variant="caption" className="px-1 text-center">
-        Ошибки уже в «Работе над ошибками» — повторяй их в хабе ТРКИ.
+        Помилки вже в колоді «Робота над помилками» — повторюй їх у розділі «Іспит».
       </Text>
     </ScrollView>
   );
@@ -281,7 +293,15 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function VerdictCard({ v, xp }: { v: ReturnType<typeof computeVerdict>; xp: number }) {
+function VerdictCard({
+  v,
+  xp,
+  sectionCount,
+}: {
+  v: ReturnType<typeof computeVerdict>;
+  xp: number;
+  sectionCount: number;
+}) {
   const { tokens } = useAppTheme();
   if (v.verdict === null) {
     return (
@@ -295,14 +315,12 @@ function VerdictCard({ v, xp }: { v: ReturnType<typeof computeVerdict>; xp: numb
             {missingVerdictLine(v.missing)}
           </Text>
         </View>
-        <Text variant="muted">
-          СПбГУ выдаёт вердикт по всем пяти субтестам. Проценты по трём уже готовы — ниже.
-        </Text>
+        <Text variant="muted">{pendingCountLine(sectionCount, v.missing.length)}</Text>
         {xp > 0 ? <Text className="font-ui-medium text-accent">+{xp} XP</Text> : null}
       </View>
     );
   }
-  const pass = v.verdict !== 'fail';
+  const pass = v.verdict === 'pass';
   return (
     <View
       className={cn(
@@ -318,18 +336,22 @@ function VerdictCard({ v, xp }: { v: ReturnType<typeof computeVerdict>; xp: numb
           color={pass ? tokens.success : tokens.danger}
         />
         <Text className="flex-1 font-ui-bold text-lg" testID="verdict-headline">
-          {verdictHeadline(v.verdict, v.retake)}
+          {verdictHeadline(v.verdict)}
         </Text>
       </View>
-      {v.verdict === 'fail' && v.retake.length > 0 ? (
+      <Text testID="verdict-total">
+        Сума: {(Math.floor(v.total * 10 + 1e-9) / 10).toLocaleString('uk-UA')} % · поріг {v.passPct}{' '}
+        % · {marginLabel(v.margin)}
+      </Text>
+      {v.retake.length > 0 ? (
         <Text testID="verdict-retake">
-          Пересдать: {v.retake.map((k) => SUBTEST_LABELS[k].uk).join(', ')}
+          Перездати: {v.retake.map((k) => SUBTEST_LABELS[k].uk).join(', ')}
         </Text>
       ) : null}
       {v.provisional ? (
         <View className="self-start rounded-full bg-track-warm-soft px-2.5 py-0.5">
           <Text className="font-ui-medium text-xs text-track-warm">
-            предварительно — ждёт оценки ИИ
+            попередньо — чекає на оцінку ШІ
           </Text>
         </View>
       ) : null}
@@ -340,11 +362,13 @@ function VerdictCard({ v, xp }: { v: ReturnType<typeof computeVerdict>; xp: numb
 
 function SubtestRow({
   row,
+  passPct,
   onOpen,
   pending = false,
   failed = false,
 }: {
   row: ResultRow;
+  passPct: number;
   /** T72: the writing row opens its review. */
   onOpen?: () => void;
   /** T72: an AI grade is on its way / failed (the row says so under the badge). */
@@ -352,7 +376,7 @@ function SubtestRow({
   failed?: boolean;
 }) {
   const { tokens } = useAppTheme();
-  const band = row.pct !== null ? bandFor(row.pct, PASS_PCT) : null;
+  const band = row.pct !== null ? bandFor(row.pct, passPct) : null;
   const used = row.status === 'scored' ? formatUsed(row.timeUsedSec) : '';
   const Wrap = onOpen ? Pressable : View;
   return (
@@ -364,7 +388,7 @@ function SubtestRow({
             onPress: onOpen,
             accessibilityRole: 'button' as const,
             accessibilityHint:
-              row.kind === 'speaking' ? 'Открыть разбор говорения' : 'Открыть разбор письма',
+              row.kind === 'speaking' ? 'Відкрити розбір говоріння' : 'Відкрити розбір письма',
           }
         : {})}
     >
@@ -378,28 +402,28 @@ function SubtestRow({
           </Text>
         ) : (
           <Text variant="caption" testID={`result-${row.kind}-skipped`}>
-            {row.status === 'skipped' ? 'пропущено' : 'не сдано'}
+            {row.status === 'skipped' ? 'пропущено' : 'не складено'}
           </Text>
         )}
       </View>
-      <Bar pct={row.pct} band={band} />
+      <Bar pct={row.pct} band={band} passPct={passPct} />
       <View className="flex-row items-center justify-between">
         <Text variant="caption" className="text-xs" testID={`result-${row.kind}-points`}>
           {row.status === 'scored' && row.points !== null
-            ? `${Math.round(row.points * 10) / 10} из ${row.maxPoints} б.`
+            ? `${Math.round(row.points * 10) / 10} з ${row.maxPoints} б.`
             : `${row.maxPoints} б.`}
           {row.provisional
             ? pending
-              ? ' · предварительно · ждёт оценки ИИ'
+              ? ' · попередньо · чекає на оцінку ШІ'
               : failed
-                ? ' · предварительно · оценка ИИ не удалась'
-                : ' · предварительно'
+                ? ' · попередньо · оцінка ШІ не вдалася'
+                : ' · попередньо'
             : ''}
         </Text>
         <View className="flex-row items-center gap-1">
           <Text variant="caption" className="text-xs">
             {used}
-            {row.autoSubmitted ? ' · сдано по таймеру' : ''}
+            {row.autoSubmitted ? ' · здано за таймером' : ''}
           </Text>
           {onOpen ? <Ionicons name="chevron-forward" size={14} color={tokens.textMuted} /> : null}
         </View>
@@ -408,7 +432,15 @@ function SubtestRow({
   );
 }
 
-function Bar({ pct, band }: { pct: number | null; band: ReturnType<typeof bandFor> | null }) {
+function Bar({
+  pct,
+  band,
+  passPct,
+}: {
+  pct: number | null;
+  band: ReturnType<typeof bandFor> | null;
+  passPct: number;
+}) {
   return (
     <View className="h-2 overflow-hidden rounded-full bg-surface-2">
       {pct !== null && (
@@ -420,13 +452,10 @@ function Bar({ pct, band }: { pct: number | null; band: ReturnType<typeof bandFo
           style={{ width: `${Math.max(0, Math.min(100, pct))}%` }}
         />
       )}
-      {[BORDERLINE_PCT, PASS_PCT].map((t) => (
-        <View
-          key={t}
-          className="absolute bottom-0 top-0 w-px bg-text-muted"
-          style={{ left: `${t}%` }}
-        />
-      ))}
+      <View
+        className="absolute bottom-0 top-0 w-px bg-text-muted"
+        style={{ left: `${passPct}%` }}
+      />
     </View>
   );
 }

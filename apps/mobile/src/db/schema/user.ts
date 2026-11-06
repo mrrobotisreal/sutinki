@@ -607,8 +607,8 @@ export const examAttempts = sqliteTable(
     finishedAt: integer('finished_at'),
     /** `{ [subtestId]: ExamSubtestResult }` — written at finish (and upgraded by AI grading). */
     resultsJson: text('results_json'),
-    /** 'pass' | 'pass-borderline' | 'fail' | null (non-full scopes). */
-    verdict: text('verdict').$type<'pass' | 'pass-borderline' | 'fail'>(),
+    /** 'pass' | 'fail' | null (non-full scopes). */
+    verdict: text('verdict').$type<'pass' | 'fail'>(),
     xpAwarded: integer('xp_awarded').notNull().default(0),
     /** Keeps recordings from pruning (§8.5). */
     pinned: integer('pinned', { mode: 'boolean' }).notNull().default(false),

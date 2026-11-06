@@ -9,7 +9,7 @@ import type { TorflLevel } from '../level-profile';
  *
  * - `speakingPracticeEntries`: every task-1 / task-2 item of every installed
  *   exam (drill sets first, then mocks) for the untimed one-by-one drill.
- * - `monologueTickets`: every `speaking-monologue` item — the «Билеты»
+ * - `monologueTickets`: every `speaking-monologue` item — the «Білети»
  *   pool — with how often it has been answered, so `drawTicket` can weight
  *   the draw to the least practised (weight = 1 / (1 + answered)).
  */
@@ -68,7 +68,8 @@ export function monologueTickets(
     for (const subtest of s.exam.subtests) {
       if (subtest.kind !== 'speaking') continue;
       for (const item of subtest.parts.flatMap((p) => p.items)) {
-        if (item.kind !== 'speaking-monologue') continue;
+        // «Білети» = the task-47 theme cards; a photo item (task 46, carries an image) is not a ticket.
+        if (item.kind !== 'speaking-monologue' || item.image) continue;
         out.push({
           packId: s.packId,
           examId: s.examId,
@@ -102,7 +103,7 @@ export function drawTicket(
   return tickets[tickets.length - 1]!;
 }
 
-/** «Билеты» for one level; A1 keeps the bare route (back-compat). */
+/** «Білети» for one level; A1 keeps the bare route (back-compat). */
 export function ticketHref(level: TorflLevel = 'A1'): {
   pathname: '/torfl/tickets';
   params?: { level: TorflLevel };

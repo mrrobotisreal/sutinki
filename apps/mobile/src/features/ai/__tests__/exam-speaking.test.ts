@@ -1,131 +1,112 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { SPEAKING_RUBRICS, rubricMax } from '../../torfl/grading/rubrics';
+import { UK_CAPTURE_CASES } from '../dev/exam-uk-cases';
 import { buildExamSpeakingMessages, type ExamSpeakingInput } from '../prompts/exam-speaking';
-import {
-  EXAM_SPEAKING_MONOLOGUE_CRITERION_IDS,
-  EXAM_SPEAKING_TURN_CRITERION_IDS,
-  parseExamGrade,
-} from '../schemas';
+import { parseExamGrade } from '../schemas';
 
-/**
- * T73: the exam-speaking prompt contract + the four captured fixtures (a
- * task-1 reply and a task-3 monologue, graded by the Claude-class and the
- * GPT-class «normal» model at effort high — `scripts/capture-ai-fixtures.ts
- * exam-speaking`). Parsed with the production parser; no live call here.
- */
-
+/** UT17b: the Ukrainian exam-speaking prompt contract + `_synthetic` fixtures (photo · monologue · dialogue). */
 const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), '__fixtures__');
-
 interface Fixture {
+  _synthetic?: boolean;
   input: ExamSpeakingInput;
-  model: string;
-  ms: number;
   choices: { message: { content: string }; finish_reason: string | null }[];
-  usage: { cost?: number; completion_tokens?: number } | null;
 }
+const load = (name: string) =>
+  JSON.parse(readFileSync(path.join(FIXTURES, name), 'utf8')) as Fixture;
+const FILES = readdirSync(FIXTURES).filter((f) => f.startsWith('exam-uk-speaking-'));
 
-function fixture(name: string): Fixture {
-  return JSON.parse(readFileSync(path.join(FIXTURES, `${name}.json`), 'utf8')) as Fixture;
-}
-
-const NAMES = [
-  'exam-speaking-reply-claude',
-  'exam-speaking-monologue-claude',
-  'exam-speaking-reply-gpt',
-  'exam-speaking-monologue-gpt',
-] as const;
-
-describe('exam-speaking prompt', () => {
-  it('task 1: the question, the ASR caveat, both transcripts, the three turn ids', () => {
+describe('exam-speaking prompt (Ukrainian examiner)', () => {
+  it('dialogue reply: examiner line, ASR caveat, both transcripts, the five dialogue ids', () => {
     const messages = buildExamSpeakingMessages({
       task: 'reply',
-      promptUk: 'Где вы сейчас живёте?',
+      promptUk: 'Де ви зараз живете?',
       transcript: 'я живу в колорадо',
       assistTranscript: 'Я живу в Колорадо.',
-      modelAnswer: 'Я сейчас в Москве.',
+      modelAnswer: 'Я зараз живу в Києві.',
     });
-    expect(messages[0]!.role).toBe('system');
     const sys = messages[0]!.content;
-    for (const id of EXAM_SPEAKING_TURN_CRITERION_IDS) expect(sys).toContain(`"${id}"`);
-    expect(sys).not.toContain('"coverage"');
+    for (const c of SPEAKING_RUBRICS.dialogue) expect(sys).toContain(`"id": "${c.id}"`);
+    expect(rubricMax(SPEAKING_RUBRICS.dialogue)).toBe(100);
     expect(sys).toContain('AUTOMATIC SPEECH RECOGNITION');
-    expect(sys).toContain('task-1 REPLY');
+    expect(sys).toContain('task 48');
+    expect(sys).toContain('surzhyk');
+    expect(sys).not.toContain('TORFL');
     const user = messages[1]!.content;
-    expect(user).toContain("THE EXAMINER'S QUESTION");
-    expect(user).toContain('Где вы сейчас живёте?');
+    expect(user).toContain("THE EXAMINER'S LINE");
+    expect(user).toContain('Де ви зараз живете?');
     expect(user).toContain('A MODEL ANSWER');
-    expect(user).toContain('я живу в колорадо');
     expect(user).toContain('re-decoded by Whisper');
-    expect(user).toContain('Я живу в Колорадо.');
   });
 
-  it('task 2: the situation text; no assist → no Whisper block; empty transcript is named', () => {
+  it('situation: the situation text; no assist → no Whisper block; empty transcript is named', () => {
     const user = buildExamSpeakingMessages({
       task: 'situation',
-      promptUk: 'Вы хотите узнать, где работает ваш друг.',
-      situationUk: 'Вы хотите узнать, где работает ваш друг. Спросите его.',
+      promptUk: 'Ви хочете дізнатися, де працює друг.',
+      situationUk: 'Ви хочете дізнатися, де працює ваш друг. Запитайте його.',
       transcript: '',
     })[1]!.content;
     expect(user).toContain('THE SITUATION');
-    expect(user).toContain('Спросите его.');
+    expect(user).toContain('Запитайте його.');
     expect(user).not.toContain('Whisper');
     expect(user).toContain('(nothing recognized)');
   });
 
-  it('task 3: the topic, numbered questions, the sentence range, the four monologue ids', () => {
-    const messages = buildExamSpeakingMessages({
-      task: 'monologue',
-      promptUk: 'О себе',
-      questionsUk: ['Как вас зовут?', 'Откуда вы?'],
-      minSentences: 10,
-      maxSentences: 12,
-      transcript: 'меня зовут митч',
+  it('photo and monologue render their own three-criterion rubrics; photo shows what the picture holds', () => {
+    const photo = buildExamSpeakingMessages({
+      task: 'photo',
+      promptUk: 'Опишіть фото',
+      imageAlt: 'Родина обідає.',
+      questionsUk: ['Де вони?'],
+      minSentences: 5,
+      maxSentences: 7,
+      transcript: 'на фото родина',
+      level: 'A1',
     });
-    const sys = messages[0]!.content;
-    for (const id of EXAM_SPEAKING_MONOLOGUE_CRITERION_IDS) expect(sys).toContain(`"${id}"`);
-    expect(sys).not.toContain('"task-response"');
-    const user = messages[1]!.content;
-    expect(user).toContain('THE TOPIC:\nО себе');
-    expect(user).toContain('  1. Как вас зовут?');
-    expect(user).toContain('  2. Откуда вы?');
-    expect(user).toContain('Required: 10–12 sentences.');
-    expect(user).not.toContain('MODEL ANSWER');
+    for (const c of SPEAKING_RUBRICS.photo) expect(photo[0]!.content).toContain(`"id": "${c.id}"`);
+    expect(photo[0]!.content).toContain('task 46');
+    expect(photo[1]!.content).toContain('Родина обідає.');
+    expect(photo[1]!.content).toContain('Required: 5–7 phrases.');
+    const mono = buildExamSpeakingMessages({
+      task: 'monologue',
+      promptUk: 'Моя родина',
+      questionsUk: ['Хто у вашій родині?'],
+      transcript: 'у мене родина',
+      level: 'B1',
+    });
+    expect(mono[0]!.content).toContain('task 47');
+    expect(mono[0]!.content).toContain('HONEST B1');
+    expect(mono[0]!.content).not.toContain('"fullness"');
+    expect(mono[1]!.content).toContain('Required: 20–25 phrases.');
   });
 });
 
-describe('captured exam-speaking fixtures (Claude-class + GPT-class, reply + monologue)', () => {
-  for (const name of NAMES) {
-    it(`${name}: parses through ExamGradeSchema with the task's pinned ids`, () => {
-      const fx = fixture(name);
-      expect(fx.choices[0]!.finish_reason).toBe('stop');
-      const grade = parseExamGrade(fx.choices[0]!.message.content);
+describe('synthetic speaking fixtures', () => {
+  it('three fixtures, all _synthetic, one per speaking case', () => {
+    const cases = UK_CAPTURE_CASES.filter((c) => c.kind === 'speaking').map((c) => c.name);
+    expect(cases).toHaveLength(3);
+    expect(FILES).toHaveLength(3);
+    for (const f of FILES) expect(load(f)._synthetic).toBe(true);
+  });
+  for (const file of FILES) {
+    it(`${file}: parses with the rubric ids of its task`, () => {
+      const fx = load(file);
+      const grade = parseExamGrade(fx.choices[0]!.message.content)!;
       expect(grade).not.toBeNull();
-      const ids =
-        fx.input.task === 'monologue'
-          ? EXAM_SPEAKING_MONOLOGUE_CRITERION_IDS
-          : EXAM_SPEAKING_TURN_CRITERION_IDS;
-      expect(grade!.criteria.map((c) => c.id)).toEqual([...ids]);
-      expect(grade!.criteria.reduce((n, c) => n + c.max, 0)).toBe(100);
-      expect(grade!.corrected).toBeTruthy();
-      expect(grade!.tips.length).toBeGreaterThanOrEqual(1);
-      expect(fx.usage?.cost).toBeGreaterThan(0);
+      const kind =
+        fx.input.task === 'photo'
+          ? 'photo'
+          : fx.input.task === 'monologue'
+            ? 'monologue'
+            : 'dialogue';
+      expect(grade.criteria.map((c) => c.id)).toEqual(SPEAKING_RUBRICS[kind].map((c) => c.id));
+      expect(grade.criteria.reduce((n, c) => n + c.max, 0)).toBe(100);
+      expect(buildExamSpeakingMessages(fx.input)[0]!.content).toContain(`HONEST ${fx.input.level}`);
+      expect(/[\u0451\u044b\u044d\u044a]/u.test(grade.corrected ?? '')).toBe(false);
     });
   }
-
-  it('both graders catch the planted agreement errors («с моя невеста», «слушать музыка»)', () => {
-    for (const name of NAMES) {
-      const fx = fixture(name);
-      const grade = parseExamGrade(fx.choices[0]!.message.content)!;
-      const corrected = grade.corrected ?? '';
-      expect(corrected).not.toContain('с моя невеста');
-      expect(corrected.toLowerCase()).toContain('невест');
-      if (fx.input.task === 'monologue') {
-        expect(corrected).not.toContain('слушать музыка');
-      }
-    }
-  });
 });

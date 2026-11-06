@@ -55,7 +55,7 @@ const ANSWER_WARN_MS = 10_000;
  *   `ready-answer`: «Начать ответ» (the window starts at his tap);
  *   `answer`: the fixed window with the mic ring, a 10 s warning, «Готово».
  * - **T77:** every INSTRUCTION string flips RU ⇄ EN with the header toggle;
- *   examiner lines, situations, topics and questions stay Russian.
+ *   examiner lines, situations, topics and questions stay Ukrainian.
  * - the top bar shows the subtest timer; the part / window clock sits in
  *   the body (both wall-clock, from the engine).
  *

@@ -33,8 +33,8 @@ export type ExamMode = z.infer<typeof ExamModeSchema>;
 export const ExamAttemptStatusSchema = z.enum(['active', 'finished', 'abandoned']);
 export type ExamAttemptStatus = z.infer<typeof ExamAttemptStatusSchema>;
 
-/** The SPbU verdict (§6.3); null on non-full scopes. */
-export const ExamVerdictSchema = z.enum(['pass', 'pass-borderline', 'fail']);
+/** The state-exam mock verdict (UT17); null on non-full scopes. */
+export const ExamVerdictSchema = z.enum(['pass', 'fail']);
 export type ExamVerdict = z.infer<typeof ExamVerdictSchema>;
 
 export const EXAM_GRADING_STATUSES = [

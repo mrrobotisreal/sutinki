@@ -1,5 +1,5 @@
 import type { Exam } from '@sutinki/schema';
-import { useLocalSearchParams, useRouter, Redirect } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as React from 'react';
 import { Alert } from 'react-native';
 
@@ -13,14 +13,13 @@ import { practiceRouteFor } from '@/features/torfl/practice-route';
 import { ExamIntroScreen, type ExamStartScope } from '@/features/torfl/exam-intro-screen';
 import { trackTorfl } from '@/services/analytics';
 import { logError } from '@/services/error-log';
-import { ukPending } from '@/config/flags';
 
 /**
  * Exam intro route (T69 + T70 drills + T71 mocks). A mock start creates the
  * attempt (single-active rule) and opens the full-screen runner; an existing
- * active attempt offers «Продолжить» / «Начать заново» (the latter abandons).
+ * active attempt offers «Продовжити» / «Почати спочатку» (the latter abandons).
  */
-function ExamIntroRoute() {
+export default function ExamIntroRoute() {
   const router = useRouter();
   const { packId, examId } = useLocalSearchParams<{ packId: string; examId: string }>();
 
@@ -49,13 +48,13 @@ function ExamIntroRoute() {
       } catch (err) {
         if (err instanceof ExamAttemptActiveError) {
           Alert.alert(
-            'Есть незаконченная попытка',
-            'Сначала закончи её или начни новую — старая будет прервана.',
+            'Є незавершена спроба',
+            'Спершу заверши її або почни нову — стару буде перервано.',
             [
               { text: 'Отмена', style: 'cancel' },
-              { text: 'Продолжить её', onPress: () => open(err.activeAttemptId) },
+              { text: 'Продовжити її', onPress: () => open(err.activeAttemptId) },
               {
-                text: 'Начать заново',
+                text: 'Почати спочатку',
                 style: 'destructive',
                 onPress: () => void begin(exam, pack, scope, true),
               },
@@ -64,7 +63,7 @@ function ExamIntroRoute() {
           return;
         }
         logError('manual', err);
-        Alert.alert('Не удалось начать экзамен', 'Попробуй ещё раз.');
+        Alert.alert('Не вдалося почати іспит', 'Спробуй ще раз.');
       }
     },
     [open],
@@ -85,9 +84,4 @@ function ExamIntroRoute() {
       onRestartMock={(exam, pack, scope) => void begin(exam, pack, scope, true)}
     />
   );
-}
-
-/** UP04: hidden behind `UK_PENDING.exam` in release builds until UT16/UT17 (docs/SUTINKI_UPSTREAM.md §3). */
-export default function GuardedExamIntroRoute() {
-  return ukPending('exam') ? <Redirect href="/" /> : <ExamIntroRoute />;
 }

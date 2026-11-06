@@ -732,8 +732,8 @@ for» / «Storage cap» policy for both, «Prune now», the trash = both roots):
 Pruning deletes files only; the rows (transcript, points, AI comments) stay.
 **Media bundles**: after a finished attempt's transcodes, its dir is packed as
 `SMB1`, sealed with the backup key (`kind: 'media'`) and uploaded to both
-targets as **`sumrak-media-exam-<attemptid>.json`** — the attempt id
-**lowercased**, because syncd's `MediaFileRe` (SumrakAPI
+targets as **`sutinki-media-exam-<attemptid>.json`** — the attempt id
+**lowercased**, because syncd's `MediaFileRe` (SutinkiAPI
 `internal/naming/naming.go:24`) accepts lowercase stems only; no API change.
 State lives in the **`torfl.media`** settings row (`{ v:1, attempts: { id: {
 state, name } } }` — `exam_attempts` has no bundle columns and T74 shipped no
@@ -745,13 +745,12 @@ media line reads «Записи в резервной копии» with **«Ск
 first, then GitHub; sha-verified; the answers are re-pointed by item). The
 Backup card's media line counts scenario runs + exam attempts together.
 
-### 9.6 «Мои ответы» and rehearsal
+### 9.6 «Мої відповіді» and rehearsal
 
-Hub → **Мои ответы** (`/torfl/answers`): every installed journal prompt
-tagged `torfl` (the `a1-torfl-prompts-001` pack; `torfl:<topic>` = the §3.4
-topic label) with Mitch's entries for it, newest first. **«Написать ответ»**
+Hub → **Мої відповіді** (`/torfl/answers`): every installed journal prompt
+tagged `ukr-exam:speaking` / `ukr-exam:writing` (the `a1-ukrexam-prompts-001` pack; `ukr-exam:<topic>` = the topic label) with Mitch's entries for it, newest first. **«Написать ответ»**
 opens the ordinary journal editor pre-filled with the prompt (same AI
-feedback). Each entry has **«Отрепетировать вслух»** (`/torfl/rehearse`): the
+feedback). Each entry has **«Відрепетирувати вголос»** (`/torfl/rehearse`): the
 AI-corrected text when present (labelled «исправленный текст»), else his
 own, split into sentences — pass 1 **«С текстом»** (read → record → per-word
 ✓/✗ + score, the T12 loop; «Ещё раз» is free, best counts), pass 2 **«Без
@@ -929,3 +928,11 @@ output file has no lemmas or text.
   summaries); no lemmas, no review text.
 - Weights are checked against ts-fsrs's own bounds before the file is
   written, so an out-of-range fit fails loudly instead of being written.
+
+### 9.11 UT17b — Ukrainian grading, «Білети», bundles, the flag flip
+
+- **Rubrics are data** (`features/torfl/grading/rubrics.ts`, UKR_EXAM_PREP §2 `[reg20 IV.1]`): Письмо message (10 pts) / text (23 pts) = 33; Говоріння photo 14 / monologue 10 / dialogue 14 = 38. Each response's AI grade is Σ max = 100 (the Commission split rescaled), its row carries its share of the section's 33 / 38 points, so a section % is exactly Σ points / 33 (38).
+- **AI prompts** (`ai/prompts/exam-{writing,speaking}.ts`) are English system text that render the rubric table; output is Ukrainian corrections with English explanations. Fixtures `ai/__tests__/__fixtures__/exam-uk-*-synthetic.json` are `_synthetic` (hand-written). **Live capture (ready-for-human):** dev client → `/dev-exam-capture` → "Capture all 18" with your OpenRouter key; `run-as io.winapps.sutinki cat files/uk-fixtures/*.json` → replace the synthetic files (drop `_synthetic`), run `pnpm test`.
+- **Speaking** records on `uk` ASR (Whisper assist `language: 'uk'`); you start, you stop; cap = part time + 30 s. **«Білети»** draws a monologue topic (button «Витягнути білет»).
+- **Bundles:** `sutinki-media-exam-<attemptid>.json` (lowercased id) is accepted by SutinkiAPI `MediaFileRe` (checked 2026-11-06 with the same regex in Go: accepted; uppercase refused). Retention/pins as §9.5.
+- **Flag:** `UK_PENDING.exam` is deleted; `config/__tests__/exam-visible.test.ts` pins that no `torfl` category/tab exists and no exam surface consults the flag.

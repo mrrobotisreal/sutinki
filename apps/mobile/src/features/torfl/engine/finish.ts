@@ -58,19 +58,18 @@ export interface SubtestScore {
   missed: MissedItem[];
 }
 
-/** The provisional writing result of a subtest: each writing item is worth an equal share of `maxPoints`. */
+/** The provisional writing result of a subtest: each writing item is worth its Commission share of `maxPoints` (`writingShare`). */
 export function scoreWritingSubtest(
   subtest: Exam['subtests'][number],
   answers: Record<string, ExamAnswer>,
 ): ExamResults[string] {
   const items = subtest.parts.flatMap((p) => p.items).filter((i) => i.kind === 'writing');
-  const share = items.length > 0 ? writingShare(subtest) : 0;
   let points = 0;
   for (const item of items) {
     if (item.kind !== 'writing') continue;
     const a = answers[item.id];
     const text = a?.kind === 'writing' ? a.text : '';
-    points += (gradeWritingOffline(item, text).pct / 100) * share;
+    points += (gradeWritingOffline(item, text).pct / 100) * writingShare(subtest, item);
   }
   points = Math.round(points * 10) / 10;
   return {

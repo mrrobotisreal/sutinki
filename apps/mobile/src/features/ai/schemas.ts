@@ -226,29 +226,12 @@ export const RescueVerdictSchema = z.object({
 });
 export type RescueVerdict = z.infer<typeof RescueVerdictSchema>;
 
-// --- TORFL exam grading (T72, TORFL_EXAM_PREP §6.2) --------------------------
+// --- TORFL exam grading (UT17b, UKR_EXAM_PREP §2) --------------------------
 
-/** The five writing criteria the prompt pins (Σ max = 100; ids = `WRITING_CRITERIA` in features/torfl/grading/writing.ts). */
-export const EXAM_WRITING_CRITERION_IDS = [
-  'task-points',
-  'task-length',
-  'letter-form',
-  'vocabulary',
-  'grammar',
-] as const;
-
-/** T73: the speaking criteria per task (Σ max = 100; ids = `SPEAKING_*_CRITERIA` in features/torfl/grading/speaking.ts). */
-export const EXAM_SPEAKING_TURN_CRITERION_IDS = [
-  'task-response',
-  'completeness',
-  'grammar',
-] as const;
-export const EXAM_SPEAKING_MONOLOGUE_CRITERION_IDS = [
-  'coverage',
-  'length',
-  'fluency',
-  'lexis-grammar',
-] as const;
+/**
+ * UT17b: the criteria ids are DATA per rubric kind (`features/torfl/grading/rubrics.ts`, Σ max = 100); the schema
+ * accepts any slug list that sums to 100 (`ExamGradeSchema`), so there is no id enum here.
+ */
 
 export const ExamGradeCriterionSchema = z
   .object({

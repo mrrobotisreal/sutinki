@@ -48,7 +48,7 @@ export function PinButton({
       hitSlop={8}
       disabled={busy}
       accessibilityRole="button"
-      accessibilityLabel={pinned ? 'Открепить попытку' : 'Закрепить попытку (записи не удаляются)'}
+      accessibilityLabel={pinned ? 'Відкріпити спробу' : 'Закріпити спробу (записи не видаляються)'}
       accessibilityState={{ selected: pinned }}
       testID="exam-pin"
       className="h-9 w-9 items-center justify-center rounded-full bg-surface-2 active:bg-border"

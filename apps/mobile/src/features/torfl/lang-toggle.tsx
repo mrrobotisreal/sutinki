@@ -12,7 +12,7 @@ import {
 import type { TorflLevel } from './level-profile';
 
 /**
- * The «RU | EN» header toggle (T77): one tap flips every INSTRUCTION string on
+ * The «UK | EN» header toggle (T77): one tap flips every INSTRUCTION string on
  * the screen (never the examiner / topic / passage content). Persisted.
  */
 export function LangToggle({
@@ -29,7 +29,7 @@ export function LangToggle({
       hitSlop={8}
       accessibilityRole="button"
       accessibilityLabel={instructionCopy(lang).toggleA11y}
-      accessibilityValue={{ text: lang === 'uk' ? 'Русский' : 'English' }}
+      accessibilityValue={{ text: lang === 'uk' ? 'Українська' : 'English' }}
       testID="lang-toggle"
       className="flex-row overflow-hidden rounded-full border border-border bg-surface"
     >

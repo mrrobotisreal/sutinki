@@ -31,7 +31,6 @@ import type { DialogueListItem } from '@/db/repositories/dialogues';
 import { readStateOf, type StoryProgressRow } from '@/db/repositories/reading';
 import { DialogueRow } from '@/features/dialogue/dialogues-list-screen';
 import { useImportedPackMeta } from '@/features/import/hooks';
-import { ukPending } from '@/config/flags';
 import { ChipRow } from '@/features/library/category-chips';
 import { ListenRow } from '@/features/library/listen-row';
 import {
@@ -192,9 +191,7 @@ export function LibraryScreen() {
   const listenNowPlaying = useListenNowPlaying();
   // M14 (T45): the persisted shelf selection — category chips + genre sub-row.
   const storedCategory = useLibraryPrefs((s) => s.category);
-  // UP04: «ТРКИ» is hidden while `UK_PENDING.exam`; a persisted torfl shelf falls back to «Історії».
-  const category =
-    ukPending('exam') && isTorflCategory(storedCategory) ? 'stories' : storedCategory;
+  const category = storedCategory;
   const genre = useLibraryPrefs((s) => s.genre);
   const setCategory = useLibraryPrefs((s) => s.setCategory);
   const setGenre = useLibraryPrefs((s) => s.setGenre);
@@ -338,10 +335,7 @@ export function LibraryScreen() {
   // only when ≥2 distinct genre values are installed under «Історії».
   // Memoized so a chip tap re-renders the header without remounting the list.
   const categoryItems = React.useMemo(
-    () =>
-      categoryChipItems(categoryCounts(packs.data ?? []), category).filter(
-        (item) => !(ukPending('exam') && isTorflCategory(item.key)),
-      ),
+    () => categoryChipItems(categoryCounts(packs.data ?? []), category),
     [packs.data, category],
   );
   const genreItems = React.useMemo(
@@ -664,7 +658,7 @@ export function LibraryScreen() {
         {/* M18 (T69) / M19 (T75): the pinned hub card — under each «ТРКИ» chip
             (A1 / A2), parameterised by level, above the sections AND inside
             the empty state (the hub works before sync). */}
-        {isTorflCategory(category) && !ukPending('exam') && (
+        {isTorflCategory(category) && (
           <View className="px-4">
             <TorflHubCard key={category} level={levelForCategory(category) ?? 'A1'} />
           </View>

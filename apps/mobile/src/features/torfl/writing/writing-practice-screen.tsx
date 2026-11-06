@@ -34,6 +34,7 @@ import { torflLevelOf, type TorflLevel } from '../level-profile';
 import { pumpGradingQueue, requestGrading, storyText, useGradingQueue } from '../grading/queue';
 import {
   criterionLabel,
+  writingKindOf,
   gradeWritingOffline,
   offlineItemScore,
   type OfflineWritingGrade,
@@ -266,7 +267,8 @@ function PracticeResult({
       : status === 'self-graded' && response?.points !== null && response
         ? Math.round((response.points / response.maxPoints) * 1000) / 10
         : offline.pct;
-  const criteria = response ? mergedCriteria(response) : [];
+  const kind = writingKindOf(item);
+  const criteria = response ? mergedCriteria(response, kind) : [];
 
   return (
     <View className="flex-1 bg-bg" style={{ paddingTop: top + 4 }} testID="writing-practice-result">
@@ -444,6 +446,7 @@ function PracticeResult({
       {response && (
         <SelfCheckSheet
           open={selfOpen}
+          kind={kind}
           letter={letter}
           modelLetter={modelLetter}
           onClose={() => setSelfOpen(false)}

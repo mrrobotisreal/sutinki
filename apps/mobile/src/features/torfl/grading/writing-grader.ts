@@ -12,7 +12,7 @@ export const EXAM_WRITING_MAX_TOKENS = 8_192;
 
 /**
  * The `writing` grader of the kind-agnostic queue (T72). `buildRequest`
- * renders the TORFL §6.2 prompt from the item as printed + the stored
+ * renders the UKR_EXAM_PREP §2 prompt from the item as printed + the stored
  * letter (+ the model letter's text when the pack has one); `fold` turns a
  * parsed `ExamGrade` into the response row: `points` = pct × maxPoints,
  * `grading.ai` = criteria / corrected / changes / tips + the receipt, the
@@ -38,6 +38,8 @@ export const writingGrader: KindGrader = {
         minSentences: item.minSentences,
         minQuestions: item.minQuestions,
         maxQuestions: item.maxQuestions ?? null,
+        minWords: item.minWords ?? null,
+        maxWords: item.maxWords ?? null,
         letter: job.answer.text,
         modelLetter,
         level: torflLevelOf(exam.level),

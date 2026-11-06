@@ -1,0 +1,41 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "taskUk": "Ваш друг запросив вас на день народження. Напишіть йому коротке повідомлення: подякуйте, скажіть, чи прийдете, і запитайте, що принести.",
+    "bullets": [
+      {
+        "id": "b1",
+        "uk": "подякуйте за запрошення"
+      },
+      {
+        "id": "b2",
+        "uk": "скажіть, що ви прийдете"
+      },
+      {
+        "id": "b3",
+        "uk": "запитайте, що принести"
+      }
+    ],
+    "minSentences": 3,
+    "minQuestions": 1,
+    "maxQuestions": 2,
+    "minWords": 10,
+    "maxWords": 25,
+    "taskTopic": "wr-message",
+    "level": "A1",
+    "modelLetter": null,
+    "letter": "Привіт, Оксано!\nДякую за запрошення! Я обовʼязково прийду на твій день народження.\nЩо мені принести? Можу купити торт.\nДо зустрічі!"
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 40,\n      \"max\": 40,\n      \"comment\": \"All three points are there: thanks («Дякую за запрошення»), coming («Я обовʼязково прийду») and the question about what to bring.\"\n    },\n    {\n      \"id\": \"form\",\n      \"score\": 10,\n      \"max\": 10,\n      \"comment\": \"A greeting and a friendly sign-off fit a message to a friend.\"\n    },\n    {\n      \"id\": \"norms\",\n      \"score\": 37,\n      \"max\": 40,\n      \"comment\": \"Correct and natural; «обовʼязково» keeps its apostrophe. No real errors for A1.\"\n    },\n    {\n      \"id\": \"volume\",\n      \"score\": 10,\n      \"max\": 10,\n      \"comment\": \"About 20 words, inside the 10–25 limit.\"\n    }\n  ],\n  \"corrected\": \"Привіт, Оксано!\\nДякую за запрошення! Я обовʼязково прийду на твій день народження.\\nЩо мені принести? Можу купити торт.\\nДо зустрічі!\",\n  \"changes\": [],\n  \"tips\": [\n    \"Keep the apostrophe in «обовʼязково» exactly as authored.\",\n    \"You could add the time or place you will arrive for a fuller message.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}

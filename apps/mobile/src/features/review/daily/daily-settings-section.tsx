@@ -8,7 +8,6 @@ import { useAppTheme } from '@/theme/use-app-theme';
 
 import { useExamDates } from '@/features/torfl/hooks';
 
-import { ukPending } from '@/config/flags';
 import { DAILY_LENGTH_OPTIONS, torflSegmentEnabled, type DailyWeights } from './prefs';
 
 const WEIGHT_ROWS: { key: keyof DailyWeights; label: string; hint: string }[] = [
@@ -121,7 +120,7 @@ export function DailySettingsSection() {
         })}
 
         {/* M18 (T70) / UT16b: the exam-deck block — auto-on once any exam date (A1…C1) is set */}
-        {!ukPending('exam') && (
+        {
           <View className="flex-row items-center justify-between border-t border-border px-4 py-3">
             <View className="flex-1 gap-0.5 pr-3">
               <Text className="font-ui-medium">Іспит: робота над помилками</Text>
@@ -139,7 +138,7 @@ export function DailySettingsSection() {
               testID="daily-torfl-switch"
             />
           </View>
-        )}
+        }
       </View>
     </>
   );

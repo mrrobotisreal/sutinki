@@ -38,7 +38,7 @@ describe('practiceRouteFor (ISS-004)', () => {
     expect(s.pathname).toBe('/torfl/speak');
   });
 
-  it('monologues -> Билеты', () => {
+  it('monologues -> Білети', () => {
     expect(practiceRouteFor(only('speaking', 'speaking-monologue'), 'pk')!.pathname).toBe(
       '/torfl/tickets',
     );

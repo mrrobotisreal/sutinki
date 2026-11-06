@@ -235,7 +235,7 @@ describe('topic tiles', () => {
   });
 });
 
-describe('«Тексты» grouping', () => {
+describe('«Тексти» grouping', () => {
   const stories = PACK.stories.map((s, i) => ({
     packId: PACK.id,
     id: s.id,

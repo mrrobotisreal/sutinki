@@ -126,7 +126,7 @@ export function overallPct(results: ExamResults | null): number | null {
   return max > 0 ? Math.round((points / max) * 1000) / 10 : null;
 }
 
-const VERDICT_RANK: Record<ExamVerdict, number> = { fail: 0, 'pass-borderline': 1, pass: 2 };
+const VERDICT_RANK: Record<ExamVerdict, number> = { fail: 0, pass: 1 };
 
 /**
  * Library / hub rows, one per exam with readable JSON (an unreadable row

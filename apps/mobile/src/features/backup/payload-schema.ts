@@ -337,7 +337,7 @@ const examAttemptRow = z.strictObject({
   startedAt: int,
   finishedAt: int.nullable(),
   resultsJson: z.string().nullable(),
-  verdict: z.enum(['pass', 'pass-borderline', 'fail']).nullable(),
+  verdict: z.enum(['pass', 'fail']).nullable(),
   xpAwarded: int,
   pinned: z.boolean(),
 });

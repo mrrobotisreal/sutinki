@@ -23,12 +23,12 @@ import {
 } from './answers-model';
 import { useAnswers, useRefreshAnswersOnFocus } from './use-answers';
 
-const ANSWERS = ['ответ', 'ответа', 'ответов'] as const;
-const SENTENCES = ['предложение', 'предложения', 'предложений'] as const;
+const ANSWERS = ['відповідь', 'відповіді', 'відповідей'] as const;
+const SENTENCES = ['речення', 'речення', 'речень'] as const;
 
 /**
- * «Мои ответы» (T74, TORFL §9) — route `/torfl/answers`: every installed
- * `torfl` journal prompt grouped by topic, each with Mitch's own entries
+ * «Мої відповіді» (T74, UKR_EXAM_PREP) — route `/torfl/answers`: every installed
+ * `ukr-exam:speaking|writing` journal prompt grouped by topic, each with Mitch's own entries
  * (newest first). «Написать ответ» opens the ordinary journal editor
  * pre-filled with the prompt (unchanged flow + AI feedback); every entry
  * has «Отрепетировать вслух» → the rehearsal screen. No prompts installed
@@ -87,14 +87,14 @@ export function AnswersScreen({ level = 'A1' }: { level?: TorflLevel }) {
       testID="torfl-answers"
     >
       <View className="gap-1 rounded-2xl border border-border bg-surface px-4 py-4">
-        <Text className="font-ui-bold text-lg">Мои ответы</Text>
+        <Text className="font-ui-bold text-lg">Мої відповіді</Text>
         <Text variant="caption">
-          Свои настоящие ответы на темы экзамена: напиши в журнале, получи правку, а потом
-          отрепетируй вслух — с текстом и без.
+          Твої справжні відповіді на теми іспиту: напиши в журналі, отримай правку, а потім
+          відрепетируй вголос — з текстом і без.
         </Text>
         {promptCount > 0 ? (
           <Text variant="caption" className="mt-1">
-            {promptCount} {pluralUk(promptCount, ['тема', 'темы', 'тем'])} · {entryCount}{' '}
+            {promptCount} {pluralUk(promptCount, ['тема', 'теми', 'тем'])} · {entryCount}{' '}
             {pluralUk(entryCount, ANSWERS)}
           </Text>
         ) : null}
@@ -104,7 +104,8 @@ export function AnswersScreen({ level = 'A1' }: { level?: TorflLevel }) {
         <View className="flex-row items-start gap-3 rounded-xl border border-border bg-surface px-4 py-3">
           <Ionicons name="cloud-download-outline" size={18} color={tokens.textMuted} />
           <Text variant="muted" className="flex-1">
-            Темы для ответов появятся после синхронизации (пакет «Мои ответы» с подсказками ТРКИ).
+            Теми для відповідей з’являться після синхронізації (пакет «Мої відповіді» з підказками
+            для іспиту).
           </Text>
         </View>
       ) : (
@@ -193,13 +194,13 @@ function PromptCard({
       <Pressable
         onPress={onWrite}
         accessibilityRole="button"
-        accessibilityLabel={`Написать ответ: ${prompt.promptUk}`}
+        accessibilityLabel={`Написати відповідь: ${prompt.promptUk}`}
         testID={`answers-write-${prompt.id}`}
         className="flex-row items-center justify-center gap-2 self-start rounded-full border border-border px-3 py-1.5 active:bg-surface-2"
       >
         <Ionicons name="create-outline" size={14} color={tokens.accent} />
         <Text className="font-ui-medium text-sm text-accent">
-          {entries.length === 0 ? 'Написать ответ' : 'Написать ещё'}
+          {entries.length === 0 ? 'Написати відповідь' : 'Написати ще'}
         </Text>
       </Pressable>
     </View>
@@ -227,14 +228,14 @@ function EntryRow({
       className="gap-2 rounded-xl border border-border bg-bg px-3 py-3"
       testID={`answers-entry-${entry.id}`}
     >
-      <Pressable onPress={onOpen} accessibilityRole="button" accessibilityLabel="Открыть запись">
+      <Pressable onPress={onOpen} accessibilityRole="button" accessibilityLabel="Відкрити запис">
         <Text className="font-reading text-base leading-6" numberOfLines={3}>
           {text.sentences.join(' ') || entry.uk}
         </Text>
         <View className="mt-1.5 flex-row flex-wrap items-center gap-2">
           <Text variant="caption">
             {when} · {n} {pluralUk(n, SENTENCES)}
-            {text.corrected ? ' · исправленный текст' : ''}
+            {text.corrected ? ' · виправлений текст' : ''}
           </Text>
           <FeedbackBadge status={entry.feedbackStatus as FeedbackStatus} />
         </View>

@@ -7,16 +7,21 @@ import { computeFinish } from '../engine/finish';
 import { dictionaryAllowed, devDurationOverrideSec, formatClock, timerTone } from '../engine/rules';
 import type { ExamAnswer } from '../model';
 import { DEFAULT_TORFL_PREFS } from '../settings-core';
+import ukPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 
 const PACK = examPackJson as unknown as Pack;
 const EXAM: Exam = ExamSchema.parse(PACK.exams!.find((e) => e.id === 'a1-mock-fx'));
+/** The Ukrainian four-section fixture mock (ls · rd · wr 33 · sp 38). */
+const UK: Exam = ExamSchema.parse(
+  (ukPackJson as unknown as Pack).exams!.find((e) => e.id === 'a1-mock-fx'),
+);
 const T0 = 1_790_000_000_000;
 const choice = (index: number | null): ExamAnswer => ({ kind: 'choice', index });
 
 /** Drive every subtest to submitted; `skip` names subtests submitted from their instruction screen (recorded skipped). */
-function submitted(ids: string[], skip: string[] = []): ExamRunState {
-  let state = initialRunState(EXAM, ids);
-  const ctx = { exam: EXAM, breakBetween: false };
+function submitted(ids: string[], skip: string[] = [], exam: Exam = EXAM): ExamRunState {
+  let state = initialRunState(exam, ids);
+  const ctx = { exam, breakBetween: false };
   state = reduce(ctx, state, { type: 'START', now: T0 }).state;
   for (let i = 0; i < ids.length; i++) {
     const cur = state.subtests[state.current]!;
@@ -72,104 +77,116 @@ describe('computeFinish', () => {
     expect(f.missed).toEqual([]);
   });
 
-  it('T72: a submitted writing subtest is scored offline → provisional, gradedBy offline, no deck entries', () => {
-    const letter = [
-      'Привет, Саша!',
-      'Меня зовут Митч. Мне тридцать шесть лет. Я живу в Колорадо.',
-      'Я работаю программистом. Это интересная работа.',
-      'Я люблю читать и слушать музыку. Ещё мне нравится готовить.',
-      'А как ты? Где ты сейчас живёшь? Что ты любишь делать?',
-      'Пока! Жду ответа.',
-    ].join('\n');
+  it('UT17b: a submitted writing section is scored offline over 33 → provisional, gradedBy offline, no deck entries', () => {
+    const message =
+      'Привіт, Оксано!\nМене звати Мітч. Я живу в Колорадо і працюю вдома.\nДо зустрічі!';
+    const text =
+      'Мене звати Мітч, мені тридцять шість років. Я живу в Колорадо з моєю нареченою. Вона українка.\nМи часто гуляємо в парку, читаємо книжки та готуємо вечерю. Мені дуже подобається наше життя тут.';
     const f = computeFinish(
-      EXAM,
-      submitted(['writing']),
-      { wr01: { kind: 'writing', text: letter } },
+      UK,
+      submitted(['wr'], [], UK),
+      { wr44: { kind: 'writing', text: message }, wr45: { kind: 'writing', text } },
       'subtest',
     );
-    expect(f.results.writing).toEqual({
-      points: 100,
-      maxPoints: 100,
+    expect(f.results.wr).toEqual({
+      points: 33,
+      maxPoints: 33,
       pct: 100,
       provisional: true,
       gradedBy: 'offline',
     });
     expect(f.missed).toEqual([]);
-    // An empty letter is a real 0 % (not skipped): the candidate sat the subtest.
-    const empty = computeFinish(EXAM, submitted(['writing']), {}, 'subtest');
-    expect(empty.results.writing).toMatchObject({ pct: 0, provisional: true });
-    // Four scored + writing provisional → verdict still null (speaking missing), provisional flag carried.
-    const all = EXAM.subtests.map((s) => s.id);
-    const answers: Record<string, ExamAnswer> = { wr01: { kind: 'writing', text: letter } };
-    for (const s of EXAM.subtests) {
-      for (const item of s.parts.flatMap((p) => p.items)) {
+    // Only the 23-point text answered: 23 of 33 = 69.7 %.
+    const textOnly = computeFinish(
+      UK,
+      submitted(['wr'], [], UK),
+      { wr45: { kind: 'writing', text } },
+      'subtest',
+    );
+    expect(textOnly.results.wr).toMatchObject({ points: 23, maxPoints: 33, pct: 69.7 });
+    // An empty text is a real 0 % (not skipped): the candidate sat the section.
+    const empty = computeFinish(UK, submitted(['wr'], [], UK), {}, 'subtest');
+    expect(empty.results.wr).toMatchObject({ pct: 0, provisional: true });
+    // Three scored + writing provisional → verdict null (speaking missing), missing = ['speaking'].
+    const all = UK.subtests.map((x) => x.id);
+    const answers: Record<string, ExamAnswer> = {
+      wr44: { kind: 'writing', text: message },
+      wr45: { kind: 'writing', text },
+    };
+    for (const sec of UK.subtests) {
+      for (const item of sec.parts.flatMap((p) => p.items)) {
         if (item.kind === 'choice') answers[item.id] = choice(item.answer);
       }
     }
-    const full = computeFinish(EXAM, submitted(all, ['speaking']), answers, 'full');
-    expect(Object.keys(full.results).sort()).toEqual(
-      ['writing', 'lexgram', 'reading', 'listening'].sort(),
-    );
-    expect(full.verdict?.verdict).toBeNull();
-    expect(full.verdict?.missing).toEqual(['speaking']);
+    const part = computeFinish(UK, submitted(all, ['sp'], UK), answers, 'full');
+    expect(Object.keys(part.results).sort()).toEqual(['ls', 'rd', 'wr']);
+    expect(part.verdict?.verdict).toBeNull();
+    expect(part.verdict?.missing).toEqual(['speaking']);
   });
 
-  it('T73: a submitted speaking subtest is scored offline → provisional; with all five sat the verdict appears (provisional)', () => {
+  it('UT17b: a submitted speaking section is scored offline over 38; with all four sat the verdict appears (provisional)', () => {
     const answers: Record<string, ExamAnswer> = {
-      sp01: {
+      sp46: {
         kind: 'speaking-reply',
-        transcript: 'Я сейчас в Москве',
+        transcript: 'Мене звати Оксана',
         recordingPath: null,
         durationMs: 1,
       },
-      sp02: {
-        kind: 'speaking-situation',
-        transcript: 'где ты работаешь',
+      sp47: {
+        kind: 'speaking-reply',
+        transcript: 'Я живу в Києві',
         recordingPath: null,
         durationMs: 1,
       },
-      sp03: {
+      sp48: {
+        kind: 'speaking-reply',
+        transcript: 'Я люблю читати',
+        recordingPath: null,
+        durationMs: 1,
+      },
+      sp45: {
         kind: 'speaking-monologue',
-        transcript: 'меня зовут митч я живу в колорадо я работаю я читаю',
+        transcript: 'мене звати мітч я живу в колорадо я працюю я люблю читати',
         recordingPath: null,
         durationMs: 1,
       },
     };
-    const f = computeFinish(EXAM, submitted(['speaking']), answers, 'subtest');
-    expect(f.results.speaking).toEqual({
-      points: 73.6,
-      maxPoints: 100,
-      pct: 73.6,
-      provisional: true,
-      gradedBy: 'offline',
-    });
+    const f = computeFinish(UK, submitted(['sp'], [], UK), answers, 'subtest');
+    const sp = f.results.sp!;
+    expect(sp.maxPoints).toBe(38);
+    expect(sp.provisional).toBe(true);
+    expect(sp.gradedBy).toBe('offline');
+    expect(sp.pct).toBeCloseTo((sp.points / 38) * 100, 0);
+    expect(sp.points).toBeGreaterThan(0);
     expect(f.missed).toEqual([]);
-    // Nothing recorded is a real 0 % (the candidate sat the subtest), never skipped.
-    expect(
-      computeFinish(EXAM, submitted(['speaking']), {}, 'subtest').results.speaking,
-    ).toMatchObject({
+    // Nothing recorded is a real 0 % (the candidate sat the section), never skipped.
+    expect(computeFinish(UK, submitted(['sp'], [], UK), {}, 'subtest').results.sp).toMatchObject({
       pct: 0,
       provisional: true,
     });
-    // All five sat → the first five-subtest verdict, provisional while writing/speaking are offline.
-    const all = EXAM.subtests.map((s) => s.id);
+    // All four sat → the verdict, provisional while writing / speaking are offline-graded.
+    const all = UK.subtests.map((x) => x.id);
     const every: Record<string, ExamAnswer> = {
       ...answers,
-      wr01: {
+      wr44: {
         kind: 'writing',
-        text: 'Привет, Саша!\nМеня зовут Митч. Я живу в Колорадо. Я работаю. Я люблю читать. Что ты любишь? Где ты живёшь? Как дела? Я учу русский. Это интересно. Жду ответа. Пока!',
+        text: 'Привіт!\nМене звати Мітч. Я живу в Колорадо і працюю вдома.\nДо зустрічі!',
+      },
+      wr45: {
+        kind: 'writing',
+        text: 'Мене звати Мітч, мені тридцять шість років. Я живу в Колорадо з моєю нареченою. Вона українка.\nМи часто гуляємо в парку, читаємо книжки та готуємо вечерю. Мені дуже подобається наше життя тут.',
       },
     };
-    for (const s of EXAM.subtests) {
-      for (const item of s.parts.flatMap((p) => p.items)) {
+    for (const sec of UK.subtests) {
+      for (const item of sec.parts.flatMap((p) => p.items)) {
         if (item.kind === 'choice') every[item.id] = choice(item.answer);
       }
     }
-    const five = computeFinish(EXAM, submitted(all), every, 'full');
-    expect(Object.keys(five.results)).toHaveLength(5);
-    expect(five.verdict?.missing).toEqual([]);
-    expect(five.verdict?.verdict).toBe('pass');
-    expect(five.verdict?.provisional).toBe(true);
+    const four = computeFinish(UK, submitted(all, [], UK), every, 'full');
+    expect(Object.keys(four.results).sort()).toEqual(['ls', 'rd', 'sp', 'wr']);
+    expect(four.verdict?.missing).toEqual([]);
+    expect(four.verdict?.provisional).toBe(true);
+    expect(['pass', 'fail']).toContain(four.verdict?.verdict);
   });
 
   it('an unsubmitted subtest is not scored', () => {

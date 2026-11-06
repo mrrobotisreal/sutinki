@@ -1,11 +1,12 @@
 import { ExamSchema, type Exam, type Pack } from '@sutinki/schema';
-import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
+import examPackJson from '@sutinki/schema/fixtures/packs/a1-ukrexam-fixture/pack.json';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 
 import { AiError } from '@/features/ai/errors';
+import { parseExamGrade } from '@/features/ai/schemas';
 import type { ResolvedRun } from '@/features/ai/run-profile';
 
 import {
@@ -16,7 +17,7 @@ import {
   type GradingJobInput,
   type GradingQueueDeps,
 } from '../grading/queue-core';
-import { gradeWritingOffline, offlineItemScore } from '../grading/writing';
+import { criteriaPercent, gradeWritingOffline, offlineItemScore } from '../grading/writing';
 import { writingGrader } from '../grading/writing-grader';
 import type { ExamResults } from '../model';
 
@@ -41,9 +42,13 @@ const fixtureContent = (name: string) =>
       input: { letter: string };
     }
   ).choices[0]!.message.content;
-const GOOD = JSON.parse(
-  readFileSync(path.join(FIXTURES, 'exam-writing-good-claude.json'), 'utf8'),
-) as { input: { letter: string } };
+/** `_synthetic` fixtures (UT17b): hand-written until Mitch captures live grades. */
+const STRONG = 'exam-uk-writing-a1-message-strong-synthetic';
+const WEAK = 'exam-uk-writing-a1-message-weak-synthetic';
+const GOOD = JSON.parse(readFileSync(path.join(FIXTURES, `${STRONG}.json`), 'utf8')) as {
+  input: { letter: string };
+};
+const pctOf = (name: string) => criteriaPercent(parseExamGrade(fixtureContent(name))!.criteria);
 
 const RUN: ResolvedRun = {
   profile: { provider: 'anthropic', quality: 'normal', effort: 'high' },
@@ -62,8 +67,8 @@ function job(letter: string, over: Partial<GradingJobInput> = {}): GradingJobInp
     itemId: ITEM.id,
     answer: { kind: 'writing', text: letter },
     grading: { v: 1, offline: { criteria: offline.criteria, details: { ...offline.details } } },
-    points: offlineItemScore(offline, WRITING.maxPoints).points,
-    maxPoints: WRITING.maxPoints,
+    points: offlineItemScore(offline, 10).points,
+    maxPoints: 10,
     ...over,
   };
 }
@@ -74,7 +79,7 @@ function makeDeps(over: Partial<GradingQueueDeps> = {}) {
   const recomputed: string[] = [];
   const sleeps: number[] = [];
   const chat = vi.fn(async () => ({
-    content: fixtureContent('exam-writing-good-claude'),
+    content: fixtureContent(STRONG),
     model: 'anthropic/claude-opus-5.5',
     usage: { costUsd: 0.03 },
   }));
@@ -123,8 +128,8 @@ describe('processGradingQueue (writing registered)', () => {
     expect(run).toBe(RUN);
     expect(graded).toHaveLength(1);
     const w = graded[0]!.write;
-    expect(w.pct).toBe(94.5);
-    expect(w.points).toBe(94.5);
+    expect(w.pct).toBe(pctOf(STRONG));
+    expect(w.points).toBeCloseTo((pctOf(STRONG) / 100) * 10, 1);
     expect(w.grading.offline).toBeDefined();
     expect(w.grading.ai).toMatchObject({
       provider: 'anthropic',
@@ -133,7 +138,7 @@ describe('processGradingQueue (writing registered)', () => {
       effort: 'high',
       costUsd: 0.03,
     });
-    expect(w.grading.ai!.criteria).toHaveLength(5);
+    expect(w.grading.ai!.criteria.map((c) => c.id)).toEqual(['content', 'form', 'norms', 'volume']);
     expect(recomputed).toEqual(['a1']);
   });
 
@@ -166,14 +171,14 @@ describe('processGradingQueue (writing registered)', () => {
         calls++;
         if (calls === 1) throw new AiError('timeout', 'slow');
         return {
-          content: fixtureContent('exam-writing-weak-gpt'),
+          content: fixtureContent(WEAK),
           model: 'openai/gpt-6-sol-pro',
         };
       }),
     });
     expect(await processGradingQueue(deps)).toBe(1);
     expect(failed).toEqual([]);
-    expect(graded[0]!.write.pct).toBe(74.5);
+    expect(graded[0]!.write.pct).toBe(pctOf(WEAK));
   });
 
   it('an invalid completion counts as retriable (the journal rule) → the two retries, then ai-failed invalid-response', async () => {
@@ -238,82 +243,91 @@ describe('processGradingQueue (writing registered)', () => {
             },
       ),
     };
-    const storyText = vi.fn(async () => 'Анна живёт в Москве.');
+    const storyText = vi.fn(async () => 'Анна живе в Києві.');
     const { deps, chat } = makeDeps({ loadExam: async () => withModel, storyText });
     await processGradingQueue(deps);
     expect(storyText).toHaveBeenCalledWith(PACK.id, 'rd-01', undefined);
     const req = (chat.mock.calls[0] as unknown as [string, { messages: { content: string }[] }])[1];
-    expect(req.messages[1]!.content).toContain('Анна живёт в Москве.');
+    expect(req.messages[1]!.content).toContain('Анна живе в Києві.');
+    expect(req.messages[0]!.content).toContain('Ukrainian state-language exam');
+    expect(req.messages[1]!.content).toContain('A MODEL TEXT');
   });
 });
 
-describe('recomputeResults', () => {
+describe('recomputeResults (four sections: ls · rd · wr · sp; pass ≥ 70 %)', () => {
   const objective: ExamResults = {
-    lexgram: { points: 5, maxPoints: 5, pct: 100, provisional: false, gradedBy: 'offline' },
-    reading: { points: 12, maxPoints: 12, pct: 100, provisional: false, gradedBy: 'offline' },
-    listening: { points: 15, maxPoints: 15, pct: 100, provisional: false, gradedBy: 'offline' },
+    ls: { points: 8, maxPoints: 8, pct: 100, provisional: false, gradedBy: 'offline' },
+    rd: { points: 16, maxPoints: 16, pct: 100, provisional: false, gradedBy: 'offline' },
   };
   const offline = {
-    subtestId: 'writing',
-    points: 57.3,
+    subtestId: 'wr',
+    points: 19,
     gradingStatus: 'provisional',
     grading: { v: 1 as const, offline: { criteria: [] } },
   };
 
-  it('a provisional writing response → writing row provisional/offline; no verdict while speaking is missing', () => {
+  it('a provisional writing response → writing row provisional/offline over 33; no verdict while speaking is missing', () => {
     const r = recomputeResults(EXAM, objective, [offline], 'full');
-    expect(r.results.writing).toEqual({
-      points: 57.3,
-      maxPoints: 100,
-      pct: 57.3,
+    expect(r.results.wr).toEqual({
+      points: 19,
+      maxPoints: 33,
+      pct: 57.6,
       provisional: true,
       gradedBy: 'offline',
     });
     expect(r.verdict).toBeNull();
-    expect(r.results.lexgram).toEqual(objective.lexgram);
+    expect(r.results.ls).toEqual(objective.ls);
   });
 
   it('AI-graded writing → gradedBy ai, not provisional; with speaking present the verdict appears', () => {
     const ai = {
       ...offline,
-      points: 94.5,
+      points: 31,
       gradingStatus: 'scored',
       grading: { v: 1 as const, ai: { criteria: [], tips: [] } },
     };
     const speaking = {
-      subtestId: 'speaking',
-      points: 70,
+      subtestId: 'sp',
+      points: 30,
       gradingStatus: 'scored',
       grading: { v: 1 as const, ai: { criteria: [], tips: [] } },
     };
     const r = recomputeResults(EXAM, objective, [ai, speaking], 'full');
-    expect(r.results.writing).toMatchObject({ pct: 94.5, provisional: false, gradedBy: 'ai' });
-    expect(r.results.speaking).toMatchObject({ pct: 70, provisional: false, gradedBy: 'ai' });
+    expect(r.results.wr).toMatchObject({ pct: 93.9, provisional: false, gradedBy: 'ai' });
+    expect(r.results.sp).toMatchObject({ pct: 78.9, provisional: false, gradedBy: 'ai' });
     expect(r.verdict).toBe('pass');
     expect(r.provisional).toBe(false);
   });
 
-  it('self-graded → gradedBy self, final; a 62 % writing beside four passes → pass-borderline', () => {
+  it('self-graded → gradedBy self, final; the weighted total decides pass / fail at 70 %', () => {
     const self = {
       ...offline,
-      points: 62,
+      points: 33 * 0.4,
       gradingStatus: 'self-graded',
       grading: { v: 1 as const, self: { criteria: [] } },
     };
-    const speaking = { ...self, subtestId: 'speaking', points: 80 };
+    const speaking = { ...self, subtestId: 'sp', points: 38 * 0.4 };
+    // (100 + 100 + 40 + 40) / 4 = 70 → pass exactly at the threshold
     const r = recomputeResults(EXAM, objective, [self, speaking], 'full');
-    expect(r.results.writing).toMatchObject({ pct: 62, provisional: false, gradedBy: 'self' });
-    expect(r.verdict).toBe('pass-borderline');
+    expect(r.results.wr).toMatchObject({ pct: 40, provisional: false, gradedBy: 'self' });
+    expect(r.verdict).toBe('pass');
+    const worse = recomputeResults(
+      EXAM,
+      objective,
+      [{ ...self, points: 33 * 0.3 }, speaking],
+      'full',
+    );
+    expect(worse.verdict).toBe('fail'); // (100 + 100 + 30 + 40) / 4 = 67.5
   });
 
   it('a provisional speaking beside final writing → verdict present but provisional', () => {
     const ai = {
       ...offline,
-      points: 90,
+      points: 30,
       gradingStatus: 'scored',
       grading: { v: 1 as const, ai: { criteria: [], tips: [] } },
     };
-    const spk = { ...offline, subtestId: 'speaking', points: 70 };
+    const spk = { ...offline, subtestId: 'sp', points: 30 };
     const r = recomputeResults(EXAM, objective, [ai, spk], 'full');
     expect(r.verdict).toBe('pass');
     expect(r.provisional).toBe(true);
@@ -321,7 +335,7 @@ describe('recomputeResults', () => {
 
   it('single-subtest scope: results update, verdict stays null', () => {
     const r = recomputeResults(EXAM, null, [offline], 'subtest');
-    expect(r.results.writing!.pct).toBe(57.3);
+    expect(r.results.wr!.pct).toBe(57.6);
     expect(r.verdict).toBeNull();
   });
 });

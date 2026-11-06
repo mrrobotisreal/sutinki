@@ -5,6 +5,7 @@ import { Alert, BackHandler } from 'react-native';
 
 import { invalidateExams } from '@/db/hooks';
 import { repos } from '@/db';
+import { isGateTagged, practiceExams } from '../gate';
 import {
   onSessionEnded,
   recordExamDeckSession,
@@ -293,7 +294,14 @@ async function buildQueue(
     });
     const exams = new Map<string, Awaited<ReturnType<typeof repos.exams.getExam>>>();
     const out: DrillEntry[] = [];
+    // UT17 Decision 9: a gate-tagged pack's items never surface in practice (deck included).
+    const gatePacks = new Set(
+      (await repos.exams.listExams({}))
+        .filter((e) => isGateTagged(e.packTags))
+        .map((e) => e.packId),
+    );
     for (const card of cards) {
+      if (gatePacks.has(card.packId)) continue;
       // T89 (decision 9): a hotel course card resolves its item from course_items.
       // A missing item is skipped, as a removed exam item is (§12).
       if (card.examId === 'course') {
@@ -312,7 +320,7 @@ async function buildQueue(
   }
   // lightning: every lexgram item of every installed drill exam, weighted draw
   const level = params.level ?? 'A1';
-  const drills = await repos.exams.listExams({ mode: 'drill', level });
+  const drills = practiceExams(await repos.exams.listExams({ mode: 'drill', level }), new Set());
   const candidates: DrillEntry[] = [];
   for (const s of drills) {
     if (!s.exam) continue;

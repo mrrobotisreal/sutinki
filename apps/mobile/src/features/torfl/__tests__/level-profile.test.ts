@@ -22,12 +22,7 @@ import {
   thresholdLine,
   torflLevelOf,
 } from '../level-profile';
-import {
-  TORFL_LEVELS as LEGACY_LEVELS,
-  TORFL_PROFILES as LEGACY_PROFILES,
-} from '../legacy-torfl-profile';
 import { PACE_SEC, LIGHTNING_PACE_SEC, paceFor, lightningPaceSec } from '../pace';
-import { BORDERLINE_PCT, PASS_PCT } from '../verdict';
 
 describe('the five Іспит levels', () => {
   it('EXAM_LEVELS is A1…C1 and the Sumrak alias is the same table', () => {
@@ -212,44 +207,5 @@ describe('copy builders', () => {
     expect(lightningCaption('A1')).toBe('20 завдань у швидкому темпі — 30 секунд на завдання');
     expect(lightningCaption('B1', 21)).toBe('21 завдання у швидкому темпі — 30 секунд на завдання');
     expect(lightningPaceNote('B1')).toBe('Темп тренування — 30 с на завдання.');
-  });
-});
-
-describe('LEGACY Sumrak TORFL A1/A2 profiles (legacy-torfl-profile.ts, used by verdict.ts)', () => {
-  const a1 = LEGACY_PROFILES.A1;
-  const a2 = LEGACY_PROFILES.A2;
-
-  it('levels and thresholds', () => {
-    expect([...LEGACY_LEVELS]).toEqual(['A1', 'A2']);
-    expect(a1.passPct).toBe(66);
-    expect(a1.borderlinePct).toBe(60);
-    expect(a2.passPct).toBe(66);
-    expect(PASS_PCT).toBe(66);
-    expect(BORDERLINE_PCT).toBe(60);
-  });
-
-  it('pace and lexgram exam', () => {
-    expect(a1.pace).toEqual({ lexgram: 34, reading: 96, listening: 90 });
-    expect(a1.lexgramExam).toEqual({ minutes: 40, items: 70 });
-    expect(a2.pace).toEqual({ lexgram: 30, reading: 100, listening: 72 });
-    expect(a2.lexgramExam).toEqual({ minutes: 50, items: 100 });
-    expect(Math.round((40 * 60) / 70)).toBe(34);
-  });
-
-  it('identity, keys and old achievement ids', () => {
-    expect(a1.code).toBe('ТЭУ');
-    expect(a1.chipLabel).toBe('ТРКИ-А1');
-    expect(a1.category).toBe('torfl');
-    expect(a2.category).toBe('torfl-a2');
-    expect(a2.examDateKey).toBe('torfl.examDateA2');
-    expect(a1.achievements.lexgram90).toBe('torfl-lexgram-90');
-    expect(a2.achievements.margin).toBe('torfl-a2-margin');
-  });
-
-  it('speaking numbers', () => {
-    expect(a1.speakingCapMs).toEqual({ 1: 30_000, 2: 40_000 });
-    expect(a2.speakingCapMs).toEqual({ 1: 45_000, 2: 60_000 });
-    expect(a1.fluencyBands).toEqual({ full: 70, good: 45, weak: 25 });
-    expect(a2.monologueDefaults).toEqual({ prepSec: 600, answerSec: 300 });
   });
 });

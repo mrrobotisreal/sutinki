@@ -1,0 +1,31 @@
+{
+  "_synthetic": true,
+  "_note": "Hand-written (UT17b); replace with a live capture via /dev-exam-capture (ready-for-human).",
+  "input": {
+    "task": "monologue",
+    "promptUk": "Моя родина",
+    "questionsUk": [
+      "Хто у вашій родині?",
+      "Де вони живуть?",
+      "Що вони роблять?",
+      "Що ви любите робити разом?"
+    ],
+    "minSentences": 12,
+    "maxSentences": 15,
+    "transcript": "у мене невелика родина мама тато і сестра мама працює вчителькою тато працює інженером сестра ще вчиться в школі вони живуть в аризона я живу в колорадо ми часто розмовляємо по телефону на вихідних ми любимо готувати разом і дивитися фільми",
+    "assistTranscript": "У мене невелика родина: мама, тато і сестра. Мама працює вчителькою, тато працює інженером, сестра ще вчиться в школі. Вони живуть в Арізоні, я живу в Колорадо. Ми часто розмовляємо по телефону. На вихідних ми любимо готувати разом і дивитися фільми.",
+    "modelAnswer": null,
+    "level": "A2"
+  },
+  "model": "synthetic",
+  "ms": 0,
+  "choices": [
+    {
+      "message": {
+        "content": "{\n  \"criteria\": [\n    {\n      \"id\": \"content\",\n      \"score\": 36,\n      \"max\": 40,\n      \"comment\": \"All four guiding points are answered; the last is brief.\"\n    },\n    {\n      \"id\": \"structure\",\n      \"score\": 17,\n      \"max\": 20,\n      \"comment\": \"Organised talk with an ending; about 13 phrases.\"\n    },\n    {\n      \"id\": \"competence\",\n      \"score\": 30,\n      \"max\": 40,\n      \"comment\": \"Mostly correct; «вчиться в школі» is natural but «в Арізоні» should be locative «в Арізоні» (the transcript has «в аризона»), and «по телефону» is a calque of the Russian preposition (prefer «телефоном»).\"\n    }\n  ],\n  \"corrected\": \"У мене невелика родина: мама, тато і сестра. Мама працює вчителькою, тато — інженером, сестра ще вчиться в школі. Вони живуть в Арізоні, я — в Колорадо. Ми часто розмовляємо телефоном. На вихідних ми любимо готувати разом і дивитися фільми.\",\n  \"changes\": [\n    {\n      \"before\": \"по телефону\",\n      \"after\": \"телефоном\",\n      \"explanation\": \"Russian calque «по телефону»; Ukrainian uses the instrumental «телефоном».\"\n    },\n    {\n      \"before\": \"в аризона\",\n      \"after\": \"в Арізоні\",\n      \"explanation\": \"After «в» for a location use the locative.\"\n    }\n  ],\n  \"tips\": [\n    \"Avoid «по телефону»; say «розмовляємо телефоном».\",\n    \"Add one personal detail about each family member.\"\n  ]\n}"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": null
+}
