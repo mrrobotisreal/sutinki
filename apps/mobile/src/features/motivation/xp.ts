@@ -45,7 +45,7 @@ export const XP_TABLE = {
   examSubtestFinished: 15,
   /** A full TORFL mock finished (T71). */
   examFullFinished: 60,
-  /** The first pass / pass-borderline verdict ever (T71). */
+  /** The first pass / verdict ever (T71). */
   examFirstPass: 100,
   /**
    * T40 typing trainer: XP for a finished 2-minute round, by WPM bracket —

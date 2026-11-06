@@ -259,7 +259,7 @@ describe('T72 end to end on the real schema', () => {
     );
   });
 
-  it('a borderline writing beside four passes → pass-borderline; a fail names the retakes', async () => {
+  it('a 62 % writing is carried by the total (no per-section floor); a weak total fails', async () => {
     const { attempt } = await sitFullMock('Пока.', true);
     // The weak-gpt fixture scores 74.5; make the chat return a 62 % grade instead.
     const sixtyTwo = JSON.stringify({
@@ -277,12 +277,12 @@ describe('T72 end to end on the real schema', () => {
     await processGradingQueue(queueDeps({ chat: async () => ({ content: sixtyTwo, model: 'm' }) }));
     let r = await injectSpeaking(attempt.id, 80);
     expect(r.results.writing!.pct).toBe(62);
-    expect(r.verdict).toBe('pass-borderline');
+    expect(r.verdict).toBe('pass');
 
     // and a second attempt where speaking fails too
     const second = await sitFullMock('Пока.', true);
     await processGradingQueue(queueDeps({ chat: async () => ({ content: sixtyTwo, model: 'm' }) }));
-    r = await injectSpeaking(second.attempt.id, 40);
+    r = await injectSpeaking(second.attempt.id, 10);
     expect(r.verdict).toBe('fail');
   });
 

@@ -302,7 +302,7 @@ export async function recordExamDeckSession(): Promise<number> {
 
 /**
  * An exam mock finished (T71, §7.5): 15 XP per scored section, +60 for a
- * full mock, +100 the first time a verdict is pass / pass-borderline; the
+ * full mock, +100 the first time a verdict is pass /; the
  * achievements `exam-<l>-first-mock` and — when a verdict exists —
  * `exam-<l>-would-pass` / `exam-<l>-margin`. XP lands in ONE
  * `bumpDailyActivity` (the caller invokes this once per attempt and stores
@@ -317,7 +317,7 @@ export async function recordExamFinished(
   opts: { excludeAttemptId?: string } = {},
 ): Promise<{ xp: number; achievements: ExamAchievementId[] }> {
   let firstPass = false;
-  if (input.verdict === 'pass' || input.verdict === 'pass-borderline') {
+  if (input.verdict === 'pass') {
     const earlier = await repos.exams.listAttempts({
       status: 'finished',
       limit: 500,
@@ -327,7 +327,7 @@ export async function recordExamFinished(
       (a) =>
         a.id !== opts.excludeAttemptId &&
         a.mode === 'mock' &&
-        (a.verdict === 'pass' || a.verdict === 'pass-borderline'),
+        a.verdict === 'pass',
     );
   }
   const full: ExamRewardInput = { ...input, firstPass };

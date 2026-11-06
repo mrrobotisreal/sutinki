@@ -109,7 +109,7 @@ describe('recordExamFinished', () => {
       expect.arrayContaining(['exam-a1-first-mock', 'exam-a1-would-pass', 'exam-a1-margin']),
     );
     listAttempts.mockResolvedValue([
-      { id: 'old', mode: 'mock', status: 'finished', verdict: 'pass-borderline' },
+      { id: 'old', mode: 'mock', status: 'finished', verdict: 'pass' },
       { id: 'me', mode: 'mock', status: 'finished', verdict: 'pass' },
     ]);
     const second = await recordExamFinished(pass, { excludeAttemptId: 'me' });

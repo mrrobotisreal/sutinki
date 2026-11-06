@@ -774,11 +774,9 @@ function AttemptRow({
   const verdictText =
     attempt.verdict === 'pass'
       ? 'склав би'
-      : attempt.verdict === 'pass-borderline'
-        ? 'склав би (на межі)'
-        : attempt.verdict === 'fail'
-          ? 'не склав би'
-          : null;
+      : attempt.verdict === 'fail'
+        ? 'не склав би'
+        : null;
   const scope =
     attempt.mode === 'mock' ? (attempt.scope === 'full' ? ' · увесь іспит' : ' · один розділ') : '';
   const Row = onOpen ? Pressable : View;

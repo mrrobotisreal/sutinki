@@ -293,7 +293,7 @@ describe('recomputeResults', () => {
     expect(r.provisional).toBe(false);
   });
 
-  it('self-graded → gradedBy self, final; a 62 % writing beside four passes → pass-borderline', () => {
+  it('self-graded → gradedBy self, final; a 62 % writing beside four passes → pass', () => {
     const self = {
       ...offline,
       points: 62,
@@ -303,7 +303,7 @@ describe('recomputeResults', () => {
     const speaking = { ...self, subtestId: 'speaking', points: 80 };
     const r = recomputeResults(EXAM, objective, [self, speaking], 'full');
     expect(r.results.writing).toMatchObject({ pct: 62, provisional: false, gradedBy: 'self' });
-    expect(r.verdict).toBe('pass-borderline');
+    expect(r.verdict).toBe('pass');
   });
 
   it('a provisional speaking beside final writing → verdict present but provisional', () => {

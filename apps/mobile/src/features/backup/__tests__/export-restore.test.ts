@@ -474,7 +474,7 @@ async function seedSource(db: SutinkiDB) {
       resultsJson: JSON.stringify({
         lexgram: { points: 4, maxPoints: 5, pct: 80, provisional: false, gradedBy: 'offline' },
       }),
-      verdict: 'pass-borderline',
+      verdict: 'pass',
       xpAwarded: 60,
       pinned: true,
     },
