@@ -1,18 +1,19 @@
 """Independent per-track staleness estimator for ALL tracks (no Whisper, no restamp): at every audio pause >=120 ms,
 the word that CTC identity says follows it must START within a few ms of the energy onset, and the word before must END
 at the energy offset. Reports median/p90 of (published stamp - energy edge). Calibrated against the frozen truth (README).
-usage: pausecheck.py AFTER_DIR_or_'-' out.json  (AFTER_DIR: also score restamped packs)"""
+usage: pausecheck.py AFTER_DIR_or_'-' out.json [ENGINE_DIR=ctc] pack:track ...  (AFTER_DIR: also score restamped packs;
+aligner outputs read from $W/<ENGINE_DIR>/<pack>__<track>.json)"""
 import sys,json,glob,statistics as S,os
 sys.path.insert(0,__file__.rsplit('/',1)[0])
 from lib import *
 from build_truth_edges import edges
 AFT=sys.argv[1].rstrip("/")+"/" if sys.argv[1]!="-" else "-"; res={}
-jobs=json.load(open('/tmp/t80/jobs-all.json'))
-for j in jobs:
-    base=os.path.basename(j['out']).replace('.ctc.json',''); pack,tid=base.split('__')
+ENG=sys.argv[3]; keys=sys.argv[4:]
+for k in keys:
+    pack,tid=k.split(':'); base=pack+'__'+tid
     d=pack_json(pack); st,a=find(d,tid)
     words=words_of(st); order=[w for w,_ in words]
-    c={w['id']:(w['startMs'],w['endMs'],w['aligned']) for w in json.load(open(j['out']))['words']}
+    c=ctc(pack,tid,ENG)
     db=frame_db(audio_path(pack,a)); floor=float(np.percentile(db,5)); pauses=edges(db,floor)
     om=stamps_map(a); nm=stamps_map(find(pack_json(pack,AFT),tid)[1]) if AFT!='-' else None
     r={'oldS':[],'oldE':[],'newS':[],'newE':[]}

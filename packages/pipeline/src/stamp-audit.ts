@@ -124,7 +124,19 @@ export interface PythonAlignerOptions {
   /** Result cache dir (default $SUTINKI_ALIGN_CACHE or ~/.cache/sutinki-align). */
   cacheDir?: string;
   device?: string;
-  engine?: 'ctc-ru' | 'whisper';
+  /** Default: `ctc-uk` for Ukrainian, `ctc-ru` for `language: 'ru'` (upstream-merge compat only). */
+  engine?: 'ctc-uk' | 'ctc-ru' | 'whisper';
+  /** Language of the pack's words (default `uk`; the pack schema has no language field — Sutinki is Ukrainian). */
+  language?: 'uk' | 'ru';
+  /** HF id or local path (default $SUTINKI_ALIGN_MODEL, else the pinned default in tools/forced_align.py). */
+  model?: string;
+  /** Model revision (default $SUTINKI_ALIGN_REVISION, else the pinned default). */
+  revision?: string;
+}
+
+/** Engine implied by a language when none is given. */
+export function defaultEngine(language: 'uk' | 'ru'): 'ctc-uk' | 'ctc-ru' {
+  return language === 'ru' ? 'ctc-ru' : 'ctc-uk';
 }
 
 /**
@@ -145,15 +157,20 @@ export function pythonAligner(opts: PythonAlignerOptions = {}): Aligner {
   const python = opts.python ?? process.env.SUTINKI_ALIGN_PYTHON ?? 'python3';
   const cacheDir =
     opts.cacheDir ?? process.env.SUTINKI_ALIGN_CACHE ?? join(homedir(), '.cache', 'sutinki-align');
-  const engine = opts.engine ?? 'ctc-ru';
+  const language = opts.language ?? 'uk';
+  const engine = opts.engine ?? defaultEngine(language);
+  const model = opts.model ?? process.env.SUTINKI_ALIGN_MODEL ?? '';
+  const revision = opts.revision ?? process.env.SUTINKI_ALIGN_REVISION ?? '';
   return (audioFile, words) => {
-    if (engine === 'ctc-ru' && words.some((w) => UK_ONLY.test(w.text))) {
-      throw new Error('Russian CTC model cannot align Ukrainian (UT15)');
+    if (engine === 'ctc-ru' && (language !== 'ru' || words.some((w) => UK_ONLY.test(w.text)))) {
+      throw new Error('Russian CTC model cannot align Ukrainian (use --language ru only for Russian text)');
     }
+    if (engine === 'ctc-uk' && language !== 'uk') throw new Error('ctc-uk aligns Ukrainian only');
+    // The cache key carries engine + language + model + revision, so swapping the model never serves stale stamps.
     const key = createHash('sha256')
       .update(readFileSync(audioFile))
       .update(JSON.stringify(words))
-      .update(engine)
+      .update(`${engine}|${language}|${model}|${revision}`)
       .digest('hex');
     const cached = join(cacheDir, `${key}.json`);
     if (existsSync(cached)) return (JSON.parse(readFileSync(cached, 'utf8')) as AlignOut).words;
@@ -174,6 +191,10 @@ export function pythonAligner(opts: PythonAlignerOptions = {}): Aligner {
           outFile,
           '--engine',
           engine,
+          '--language',
+          language,
+          ...(model ? ['--model', model] : []),
+          ...(revision ? ['--revision', revision] : []),
           '--device',
           opts.device ?? process.env.SUTINKI_ALIGN_DEVICE ?? 'cpu',
         ],

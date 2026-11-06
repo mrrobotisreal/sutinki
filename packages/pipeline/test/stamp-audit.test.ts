@@ -1,4 +1,4 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -8,6 +8,7 @@ import {
   assertOnlyTimestampsChanged,
   auditPack,
   lemmaLint,
+  defaultEngine,
   pythonAligner,
   runStampAudit,
   STAMP_AUDIT_SKIPPED,
@@ -323,6 +324,9 @@ describe('UP07 audit modes (Ukrainian: report-only until UT15)', () => {
     const a = pythonAligner({ engine: 'ctc-ru', python: '/nonexistent/python' });
     expect(() => a('x.opus', [{ id: 's:0', text: "п'ять" }])).toThrow(/cannot align Ukrainian/);
     expect(() => a('x.opus', [{ id: 's:0', text: 'ґанок' }])).toThrow(/cannot align Ukrainian/);
+    // even plain-Cyrillic Ukrainian text is refused when the pack language is uk
+    const b = pythonAligner({ engine: 'ctc-ru', language: 'uk', python: '/nonexistent/python' });
+    expect(() => b('x.opus', [{ id: 's:0', text: 'вода' }])).toThrow(/cannot align Ukrainian/);
   });
 
   it('publish in report mode publishes a failing pack, notes it in BUILD_NOTES.md', () => {
@@ -446,3 +450,121 @@ describe('keep-healthy-track policy', () => {
     expect(tracks).toEqual(['trk']);
   });
 });
+
+// ─────────────────────────────── UT15 ───────────────────────────────
+const FA = join(import.meta.dirname, '..', 'tools', 'forced_align.py');
+/** Run forced_align.py's pure helpers under python3 -I (no torch needed). */
+function py(code: string): unknown {
+  const r = spawnSync(
+    'python3',
+    [
+      '-I',
+      '-c',
+      `import importlib.util,json,sys\nsp=importlib.util.spec_from_file_location('fa',${JSON.stringify(FA)})\nfa=importlib.util.module_from_spec(sp);sp.loader.exec_module(fa)\n${code}`,
+    ],
+    { encoding: 'utf8' },
+  );
+  if (r.status !== 0) throw new Error(r.stderr);
+  return JSON.parse(r.stdout);
+}
+
+describe('UT15 Ukrainian aligner (forced_align.py clean/interpolate, engine choice, env names)', () => {
+  const clean = (w: string, apos: string | null = null, lang = 'uk') =>
+    py(`print(json.dumps(fa.clean(${JSON.stringify(w)}, ${JSON.stringify(lang)}, ${apos === null ? 'None' : JSON.stringify(apos)})))`);
+
+  it('keeps ґ ї є і and never folds them to Russian letters', () => {
+    expect(clean('Ґанок')).toBe('ґанок');
+    expect(clean('їжак')).toBe('їжак');
+    expect(clean('Європа')).toBe('європа');
+    expect(clean('ліки')).toBe('ліки');
+  });
+  it('drops apostrophes when the model has no apostrophe token', () => {
+    expect(clean("п'ять")).toBe('пять');
+    expect(clean('м’ясо')).toBe('мясо');
+    expect(clean('мʼясо')).toBe('мясо');
+  });
+  it('maps every apostrophe spelling to the model token', () => {
+    expect(clean("п'ять", "'")).toBe("п'ять");
+    expect(clean('м’ясо', "'")).toBe("м'ясо");
+    expect(clean('мʼясо', '’')).toBe('м’ясо');
+    expect(clean('обʼєкт', "'")).toBe("об'єкт");
+  });
+  it('strips hyphens, digits, Latin and punctuation: «по-перше» → «поперше»', () => {
+    expect(clean('по-перше')).toBe('поперше');
+    expect(clean('2026')).toBe('');
+    expect(clean('Wi-Fi')).toBe('');
+    expect(clean('«так»,')).toBe('так');
+  });
+  it('NFC-normalises decomposed input (й, ї)', () => {
+    expect(clean('їжа')).toBe('їжа'); // і + U+0308
+    expect(clean('мий')).toBe('мий'); // и + U+0306
+  });
+  it('--language ru keeps the upstream а–я/ё alphabet', () => {
+    expect(clean('Ёлка', null, 'ru')).toBe('ёлка');
+    expect(clean('їжак', null, 'ru')).toBe('жак');
+  });
+  it('words with no alignable letters are interpolated between aligned neighbours', () => {
+    const out = py(`o=[{"id":"a","startMs":100,"endMs":300,"aligned":True},{"id":"b","startMs":0,"endMs":0,"aligned":False},{"id":"c","startMs":0,"endMs":0,"aligned":False},{"id":"d","startMs":700,"endMs":900,"aligned":True}]
+fa.interpolate(o,1000)
+print(json.dumps(o))`) as { id: string; startMs: number; endMs: number }[];
+    expect(out[1]).toMatchObject({ startMs: 300, endMs: 500 });
+    expect(out[2]).toMatchObject({ startMs: 500, endMs: 700 });
+  });
+  it('the apostrophe token is taken from the model vocab (ASCII, typographic, none)', () => {
+    expect(py(`print(json.dumps(fa.apostrophe_token({"'":1,"а":2})))`)).toBe("'");
+    expect(py(`print(json.dumps(fa.apostrophe_token({"’":1,"а":2})))`)).toBe('’');
+    expect(py(`print(json.dumps(fa.apostrophe_token({"а":2})))`)).toBeNull();
+  });
+  it('engine follows the language: uk → ctc-uk, ru → ctc-ru', () => {
+    expect(defaultEngine('uk')).toBe('ctc-uk');
+    expect(defaultEngine('ru')).toBe('ctc-ru');
+  });
+  it('ctc-uk refuses Russian; ctc-ru needs language ru', () => {
+    const u = pythonAligner({ engine: 'ctc-uk', language: 'ru', python: '/nonexistent/python' });
+    expect(() => u('x.opus', [{ id: 's:0', text: 'вода' }])).toThrow(/Ukrainian only/);
+  });
+  it('cache key carries engine, language, model and revision', () => {
+    const cache = mkdtempSync(join(tmpdir(), 'sutinki-ut15cache-'));
+    dirs.push(cache);
+    const audio = join(cache, 'a.bin');
+    writeFileSync(audio, 'x');
+    // a fake "python" that writes a valid aligner result to the --out argument
+    const fake = join(cache, 'fakepy.sh');
+    writeFileSync(
+      fake,
+      '#!/bin/sh\nwhile [ $# -gt 0 ]; do [ "$1" = --out ] && o="$2"; shift; done\n' +
+        'echo \'{"engine":"x","words":[{"id":"s:0","startMs":1,"endMs":2,"aligned":true}]}\' > "$o"\n',
+      { mode: 0o755 },
+    );
+    const words = [{ id: 's:0', text: 'вода' }];
+    const run = (o: Parameters<typeof pythonAligner>[0]) =>
+      pythonAligner({ python: fake, cacheDir: cache, ...o })(audio, words);
+    const n = () => readdirSyncSafe(cache).filter((f) => /^[0-9a-f]{64}\.json$/.test(f)).length;
+    run({ model: 'A' });
+    expect(n()).toBe(1);
+    run({ model: 'A' });
+    expect(n()).toBe(1); // cache hit
+    run({ model: 'B' });
+    expect(n()).toBe(2);
+    run({ model: 'A', revision: 'r2' });
+    expect(n()).toBe(3);
+    run({ model: 'A', engine: 'whisper' });
+    expect(n()).toBe(4);
+  });
+  it('env names are SUTINKI_ALIGN_* (no SUMRAK_ALIGN in the aligner sources)', () => {
+    const src = readFileSync(join(import.meta.dirname, '..', 'src', 'stamp-audit.ts'), 'utf8');
+    for (const n of ['PYTHON', 'DEVICE', 'CACHE', 'MODEL', 'REVISION'])
+      expect(src).toContain(`SUTINKI_ALIGN_${n}`);
+    expect(src).not.toMatch(/SUMRAK_ALIGN/);
+    expect(readFileSync(FA, 'utf8')).not.toMatch(/SUMRAK_ALIGN/);
+  });
+});
+
+import { readdirSync } from 'node:fs';
+function readdirSyncSafe(d: string): string[] {
+  try {
+    return readdirSync(d);
+  } catch {
+    return [];
+  }
+}

@@ -6,7 +6,7 @@ from lib import *
 base=json.load(open(sys.argv[1])); keys=list(base['tracks']); out=base
 for key in keys:
     pack,tid=key.split(':'); d=pack_json(pack); st,a=find(d,tid); words=words_of(st)
-    wh=whisper_match(words,json.load(open(f'/tmp/t80b/wh3/{pack}__{tid}.wh.json'))); old=stamps_map(a)
+    wh=whisper_match(words,json.load(open(f'{W}wh/{pack}__{tid}.wh.json'))); old=stamps_map(a)
     ids=[w for w,_ in words if w in wh and w in old]; txt=dict(words)
     have={(b['id'],b['kind']) for b in base['boundaries'] if b['track']==tid}
     n=0
