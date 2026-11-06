@@ -11,3 +11,5 @@ apps/mobile/drizzle/meta/
 # recorded AI responses — byte-stable fixtures (T02 rule)
 apps/mobile/src/features/ai/__tests__/__fixtures__/
 .worktrees/
+# frozen truth set: sha256-pinned, byte-stable (UT15)
+packages/pipeline/tools/stamp-truth/truth-set-uk-v1.json

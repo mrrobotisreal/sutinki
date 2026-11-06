@@ -7,10 +7,14 @@ Votes (two of three must agree for a boundary to be frozen):
       <= onset+150 / its end >= offset-150: Whisper times are known to straddle the pause so only 'consistent with' is required),
   (c) the OLD published stamp, only where that old track is healthy (|median(whisper-old)| <= 60 ms), within 100 ms.
 Energy+whisper-consistency are two votes by construction; (c) is the third, used for tracks where it is valid.
-usage: build_truth.py out.json pack:trackId ...   (needs /tmp/t80b/wh3/<pack>__<track>.wh.json)"""
+usage: build_truth.py out.json pack:trackId ...   (needs $W/wh/<pack>__<track>.wh.json from wh_large.py and $W/ctc/<pack>__<track>.json from forced_align.py)"""
 import sys,json,statistics as S
 sys.path.insert(0,__file__.rsplit('/',1)[0])
 from lib import *
+# UT15: on Ukrainian narration Whisper large-v3 word STARTS straddle the preceding pause (median ~400 ms early), so the
+# identity vote only requires 'consistent with' (start <= onset+150, as in the docstring) within this look-back; the TIME
+# of the boundary is always the energy edge.
+START_STRADDLE_MS=900
 def edges(db,floor,minsil=24):
     sil=floor+14; quiet=db<sil; n=len(db); f=0; pauses=[]
     while f<n:
@@ -27,11 +31,11 @@ def edges(db,floor,minsil=24):
             f=g
         else: f+=1
     return pauses
-out={'built':'T80b','method':__doc__,'tracks':{},'boundaries':[]}
+out={'built':'UT15','method':__doc__,'tracks':{},'boundaries':[]}
 for spec in sys.argv[2:]:
     pack,tid=spec.split(':')
     d=pack_json(pack); st,a=find(d,tid); words=words_of(st)
-    wh=whisper_match(words,json.load(open(f'/tmp/t80b/wh3/{pack}__{tid}.wh.json')))
+    wh=whisper_match(words,json.load(open(f'{W}wh/{pack}__{tid}.wh.json')))
     old=stamps_map(a); db=frame_db(audio_path(pack,a)); floor=float(np.percentile(db,5))
     healthy=abs(S.median([wh[k][0]-old[k][0] for k in wh if k in old]))<=60
     matched=set(wh); pidx={w:i for i,(w,_) in enumerate(words)}
@@ -52,10 +56,10 @@ for spec in sys.argv[2:]:
         out['boundaries'].append({'pack':pack,'track':tid,'id':wid,'text':txt,'kind':kind,'ms':int(edge),'whisper':list(ww),'old':c,'oldAgrees':c is not None and abs(c-edge)<=100}); n+=1
     # Identity from TWO aligners (Whisper large-v3 and the CTC pass must name the same word as the first/last word at the
     # pause edge, and Whisper must place it within 200 ms of the edge); TIME from the audio energy edge.
-    cc=ctc(pack,tid); order=[w for w,_ in words]
+    cc=ctc(pack,tid,os.environ.get('TRUTH_ENGINE','ctc')); order=[w for w,_ in words]
     for offE,onE in pauses:
         nxt=next((w for w in order if cc[w][2] and cc[w][0]>=onE-150),None)
-        if nxt and nxt in wh and len(norm(dict(words)[nxt]))>=3 and abs(wh[nxt][0]-onE)<=120 and db[onE//5+2]>floor+25 and cc[nxt][0]-onE<=700:
+        if nxt and nxt in wh and len(norm(dict(words)[nxt]))>=3 and -START_STRADDLE_MS<=wh[nxt][0]-onE<=150 and db[onE//5+2]>floor+25 and cc[nxt][0]-onE<=700:
             add(nxt,dict(words)[nxt],'start',onE,wh[nxt])
         prv=next((w for w in reversed(order) if cc[w][2] and cc[w][1]<=offE+150),None)
         if prv and prv in wh and len(norm(dict(words)[prv]))>=3 and abs(wh[prv][1]-offE)<=150 and offE-cc[prv][1]<=700:
