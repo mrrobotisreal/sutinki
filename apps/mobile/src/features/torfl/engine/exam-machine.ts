@@ -11,6 +11,7 @@ import {
 } from '../model';
 import { buildLayout, flatIndexOf } from './layout';
 import { speakingTaskOf, type SpeakingTask } from '../grading/speaking';
+import { profileFor } from '../level-profile';
 
 /**
  * The mock-exam engine (T71, TORFL_EXAM_PREP §8.1) — a PURE reducer in the
@@ -36,12 +37,14 @@ import { speakingTaskOf, type SpeakingTask } from '../grading/speaking';
  *   grades offline + enqueues the AI grade).
  * - Speaking (T73, TORFL §8.4) is linear over the three tasks with its own
  *   cursor `state.speaking`: task 1 / 2 items go `prompt` (the examiner line
- *   plays once; `AUDIO_ENDED`) → `recording` (`START_REC`; the recorder hook
- *   stops on the endpointer / cap / «Закончить», transcribes and sends
- *   `REC_DONE {answer}`) → the next item; task 3 goes `choose` (two topics)
- *   → `CHOOSE_TOPIC` → `prep` (8:00 wall-clock) → `PREP_DONE` / the deadline
- *   → `answer` (a fixed 2:00 window; the deadline emits `STOP_REC` and waits
- *   in `processing` for `REC_DONE`). Every part has a time budget
+ *   plays once; `AUDIO_ENDED`) → `ready` (T77: the item WAITS with no timer; the mic
+ *   never opens by itself) → `TAP_REC` → `recording` (`START_REC`; the recorder hook
+ *   stops ONLY on «Готово» / the task cap (`phaseDeadlineAt`, a TICK emits
+ *   `STOP_REC`) — never on silence — transcribes and sends `REC_DONE {answer}`) →
+ *   the next item; task 3 goes `choose` (two topics) → `CHOOSE_TOPIC` → `prep`
+ *   (8:00 wall-clock) → `PREP_DONE` / the deadline → `ready-answer` (waits for
+ *   «Начать ответ») → `TAP_REC` → `answer` (a fixed 2:00 window; the deadline emits
+ *   `STOP_REC` and waits in `processing` for `REC_DONE`). Every part has a time budget
  *   (`part.timeSec`): when it runs out the current recording is stopped and
  *   the part's remaining items are skipped. `SKIP_ITEM` skips the current
  *   item without a response. The 20-min subtest deadline governs overall.
@@ -130,6 +133,8 @@ export type ExamEvent =
   | { type: 'CHOOSE_TOPIC'; itemId: string; now: number }
   /** Task 3: «Готов» during prep (the deadline does the same through TICK). */
   | { type: 'PREP_DONE'; now: number }
+  /** T77: the candidate tapped the mic (task 1 / 2 `ready`) or «Начать ответ» (task 3 `ready-answer`). */
+  | { type: 'TAP_REC'; now: number }
   /** «Пропустить»: the current item gets no response. */
   | { type: 'SKIP_ITEM'; now: number }
   /** The recorder hook finished (stopped → transcribed → persisted): store the answer and move on. */
@@ -155,7 +160,7 @@ export type ExamEffect =
   | { type: 'ABANDON' }
   // Speaking (T73): the recorder hook drives from `state.speaking`; these are the engine's record of intent.
   | { type: 'START_REC'; itemId: string; task: SpeakingTask; capMs: number; fixedWindow: boolean }
-  | { type: 'STOP_REC' }
+  | { type: 'STOP_REC'; reason?: 'skip' | 'deadline' }
   // Declared in T71, unused (the executor enqueues at SCORE_SUBTEST):
   | { type: 'ENQUEUE_GRADING'; subtestId: string };
 
@@ -172,8 +177,26 @@ export function isPlaceholderKind(_kind: ExamSubtestKind): boolean {
   return false;
 }
 
-/** Task 1 / task 2 answer caps (§8.4): 30 s replies, 40 s situations. The endpointer stops earlier on silence. */
+/**
+ * Task 1 / task 2 answer caps (§8.4): 30 s replies, 40 s situations — the A1 values, pinned equal to
+ * the A1 profile by a test. The endpointer stops earlier on silence. Level-aware code asks
+ * `speakingCapMsFor(level, task)` (T76: A2 = 45 s / 60 s).
+ */
 export const SPEAKING_CAP_MS: Record<1 | 2, number> = { 1: 30_000, 2: 40_000 };
+
+/** The answer cap of a task-1 / task-2 item at `level`, from the level profile (T76). */
+export function speakingCapMsFor(level: string | null | undefined, task: 1 | 2): number {
+  return profileFor(level).speakingCapMs[task];
+}
+
+/** The prep / answer window (s) of a monologue: the item's own, else the level profile's default (T76). */
+export function monologueWindows(
+  level: string | null | undefined,
+  item: { prepSec?: number; answerSec?: number },
+): { prepSec: number; answerSec: number } {
+  const d = profileFor(level).monologueDefaults;
+  return { prepSec: item.prepSec ?? d.prepSec, answerSec: item.answerSec ?? d.answerSec };
+}
 
 // --- construction / persistence ------------------------------------------------------
 
@@ -406,6 +429,24 @@ function enterSpeakingPart(
     ? now + windowSec(ctx, part.timeSec, part.timeSec) * 1000
     : undefined;
   if (task === 3) {
+    // T76 (A2-9): a part with exactly ONE monologue has nothing to choose — straight to prep.
+    const monologues = items.filter((i) => i.kind === 'speaking-monologue');
+    if (monologues.length === 1) {
+      const only = monologues[0]!;
+      const win = monologueWindows(
+        ctx.exam.level,
+        only as { prepSec?: number; answerSec?: number },
+      );
+      return {
+        task,
+        phase: 'prep',
+        itemId: only.id,
+        chosenId: only.id,
+        partIdx,
+        partDeadlineAt,
+        phaseDeadlineAt: now + windowSec(ctx, win.prepSec, win.prepSec) * 1000,
+      };
+    }
     return { task, phase: 'choose', itemId: null, partIdx, partDeadlineAt };
   }
   return { task, phase: 'prompt', itemId: first.id, partIdx, partDeadlineAt };
@@ -457,7 +498,7 @@ function speakingStep(
   };
 }
 
-function startRec(sp: ExamSpeakingState): ExamEffect {
+function startRec(ctx: ExamCtx, sp: ExamSpeakingState): ExamEffect {
   if (sp.task === 3) {
     return { type: 'START_REC', itemId: sp.itemId ?? '', task: 3, capMs: 0, fixedWindow: true };
   }
@@ -465,7 +506,7 @@ function startRec(sp: ExamSpeakingState): ExamEffect {
     type: 'START_REC',
     itemId: sp.itemId ?? '',
     task: sp.task as 1 | 2,
-    capMs: SPEAKING_CAP_MS[sp.task as 1 | 2],
+    capMs: speakingCapMsFor(ctx.exam.level, sp.task as 1 | 2),
     fixedWindow: false,
   };
 }
@@ -484,7 +525,10 @@ function speakingTick(
     if (recording) {
       return {
         state: { ...state, speaking: { ...sp, phase: 'processing', partExpired: true } },
-        effects: [{ type: 'STOP_REC' }, { type: 'PERSIST_STATE', urgent: true }],
+        effects: [
+          { type: 'STOP_REC', reason: 'deadline' },
+          { type: 'PERSIST_STATE', urgent: true },
+        ],
       };
     }
     if (sp.phase === 'processing') return NOOP(state);
@@ -492,13 +536,31 @@ function speakingTick(
     const next = enterSpeakingPart(ctx, subtest, (sp.partIdx ?? 0) + 1, now, effects);
     return speakingStep(ctx, state, subtest, next, now, effects);
   }
+  // T77: the task-1 / task-2 answer cap (the only thing besides «Готово» that ends a recording).
+  if (
+    sp.task !== 3 &&
+    sp.phase === 'recording' &&
+    sp.phaseDeadlineAt !== undefined &&
+    now >= sp.phaseDeadlineAt
+  ) {
+    return {
+      state: { ...state, speaking: { ...sp, phase: 'processing', phaseDeadlineAt: undefined } },
+      effects: [
+        { type: 'STOP_REC', reason: 'deadline' },
+        { type: 'PERSIST_STATE', urgent: true },
+      ],
+    };
+  }
   // Task 3 windows.
   if (sp.task === 3 && sp.phaseDeadlineAt !== undefined && now >= sp.phaseDeadlineAt) {
     if (sp.phase === 'prep') return reduce(ctx, state, { type: 'PREP_DONE', now });
     if (sp.phase === 'answer') {
       return {
         state: { ...state, speaking: { ...sp, phase: 'processing', phaseDeadlineAt: undefined } },
-        effects: [{ type: 'STOP_REC' }, { type: 'PERSIST_STATE', urgent: true }],
+        effects: [
+          { type: 'STOP_REC', reason: 'deadline' },
+          { type: 'PERSIST_STATE', urgent: true },
+        ],
       };
     }
   }
@@ -653,7 +715,8 @@ export function reduce(ctx: ExamCtx, state: ExamRunState, event: ExamEvent): Tra
         phase: 'prep',
         itemId: item.id,
         chosenId: item.id,
-        phaseDeadlineAt: event.now + windowSec(ctx, item.prepSec, 480) * 1000,
+        phaseDeadlineAt:
+          event.now + windowSec(ctx, monologueWindows(ctx.exam.level, item).prepSec, 480) * 1000,
       };
       return {
         state: withSpeaking(state, subtest, next),
@@ -666,15 +729,50 @@ export function reduce(ctx: ExamCtx, state: ExamRunState, event: ExamEvent): Tra
       if (state.phase !== 'running' || !subtest || !sp || sp.phase !== 'prep') return NOOP(state);
       const item = partItems(subtest, sp.partIdx ?? 0).find((i) => i.id === sp.itemId);
       if (!item || item.kind !== 'speaking-monologue') return NOOP(state);
+      // T77: prep ends in `ready-answer` — no deadline, no mic; the answer window starts at his tap.
       const next: ExamSpeakingState = {
         ...sp,
-        phase: 'answer',
-        phaseDeadlineAt: event.now + windowSec(ctx, item.answerSec, 120) * 1000,
+        phase: 'ready-answer',
+        phaseDeadlineAt: undefined,
+        readyAt: event.now,
       };
       return {
         state: withSpeaking(state, subtest, next),
-        effects: [startRec(next), { type: 'PERSIST_STATE', urgent: true }],
+        effects: [{ type: 'PERSIST_STATE', urgent: true }],
       };
+    }
+
+    case 'TAP_REC': {
+      const sp = state.speaking;
+      if (state.phase !== 'running' || !subtest || !sp) return NOOP(state);
+      if (sp.phase === 'ready-answer') {
+        const item = partItems(subtest, sp.partIdx ?? 0).find((i) => i.id === sp.itemId);
+        if (!item || item.kind !== 'speaking-monologue') return NOOP(state);
+        const next: ExamSpeakingState = {
+          ...sp,
+          phase: 'answer',
+          phaseDeadlineAt:
+            event.now +
+            windowSec(ctx, monologueWindows(ctx.exam.level, item).answerSec, 120) * 1000,
+        };
+        return {
+          state: withSpeaking(state, subtest, next),
+          effects: [startRec(ctx, next), { type: 'PERSIST_STATE', urgent: true }],
+        };
+      }
+      if (sp.phase === 'ready' && sp.task !== 3 && sp.itemId) {
+        const capMs = speakingCapMsFor(ctx.exam.level, sp.task as 1 | 2);
+        const next: ExamSpeakingState = {
+          ...sp,
+          phase: 'recording',
+          phaseDeadlineAt: event.now + capMs,
+        };
+        return {
+          state: withSpeaking(state, subtest, next),
+          effects: [startRec(ctx, next), { type: 'PERSIST_STATE', urgent: true }],
+        };
+      }
+      return NOOP(state);
     }
 
     case 'SKIP_ITEM': {
@@ -682,7 +780,9 @@ export function reduce(ctx: ExamCtx, state: ExamRunState, event: ExamEvent): Tra
       if (state.phase !== 'running' || !subtest || !sp) return NOOP(state);
       if (sp.phase === 'processing') return NOOP(state);
       const effects: ExamEffect[] = [];
-      if (sp.phase === 'recording' || sp.phase === 'answer') effects.push({ type: 'STOP_REC' });
+      if (sp.phase === 'recording' || sp.phase === 'answer') {
+        effects.push({ type: 'STOP_REC', reason: 'skip' });
+      }
       // Skipping during the topic choice / prep skips the whole monologue.
       const skipPart = sp.task === 3;
       const next = skipPart
@@ -810,12 +910,13 @@ export function reduce(ctx: ExamCtx, state: ExamRunState, event: ExamEvent): Tra
       if (state.phase !== 'running') return NOOP(state);
       const sp = state.speaking;
       if (sp && subtest?.kind === 'speaking') {
-        // The examiner's line (task 1) / the situation (task 2) finished → the mic opens.
+        // The examiner's line (task 1) / the situation (task 2) finished → the item WAITS (T77):
+        // the mic never opens by itself; the candidate thinks, then taps (`TAP_REC`).
         if (sp.phase !== 'prompt' || !sp.itemId) return NOOP(state);
-        const next: ExamSpeakingState = { ...sp, phase: 'recording' };
+        const next: ExamSpeakingState = { ...sp, phase: 'ready', readyAt: event.now };
         return {
           state: { ...state, speaking: next },
-          effects: [startRec(next), { type: 'PERSIST_STATE', urgent: false }],
+          effects: [{ type: 'PERSIST_STATE', urgent: true }],
         };
       }
       if (state.audio.phase !== 'playing') return NOOP(state);
@@ -933,5 +1034,11 @@ export function speakingWindowMs(state: ExamRunState, now: number): number {
   const sp = state.speaking;
   if (!sp) return 0;
   const at = sp.phaseDeadlineAt ?? sp.partDeadlineAt;
+  return at === undefined ? 0 : Math.max(0, at - now);
+}
+
+/** Remaining ms of the current PART's time budget (0 when the part has none). */
+export function speakingPartMs(state: ExamRunState, now: number): number {
+  const at = state.speaking?.partDeadlineAt;
   return at === undefined ? 0 : Math.max(0, at - now);
 }

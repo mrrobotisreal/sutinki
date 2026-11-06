@@ -761,6 +761,90 @@ model (Settings → Speech recognition); the screen says so otherwise.
 | Exam pack missing after sync                | the phone's build predates `0015_exams` (Gate B) → install ≥ v1.6.2 (10) and sync again                                           |
 | «Мои ответы» is empty                       | no `torfl`-tagged prompts installed → sync the prompts pack (dev: import `a1-torfl-prompts-fixture`)                              |
 
+### 9.9 A2 (ТБУ) — «ТРКИ-А2» (M19, T75 + T76)
+
+A second, fully separate shelf: Library chip **«ТРКИ-А2»** (category `torfl-a2`),
+its own hub (`/torfl?level=A2`, `sumrak://torfl?level=A2`), readiness, exam deck,
+history and exam date (`torfl.examDateA2`). Design
+`../../docs/design/TORFL_A2_EXAM_PREP.md`, ADR-0021.
+
+- **THE LEVEL RULE:** every TORFL surface takes a level. An exam's level is
+  `exams.level`; attempts / responses / deck cards inherit it by join; prompts
+  packs use `packs.level`. A missing or unknown `?level=` = A1. The A1 hub, deck
+  and history never see an A2 row (and vice versa).
+- **Format (level profile `features/torfl/level-profile.ts`):** pass rule = A1's
+  (every subtest >= 66 %, at most one in [60 %, 66 %)). Mock order Письмо ->
+  Лексика. Грамматика (100 x 1) -> Чтение (30 x 6) -> Аудирование (25 x 6, every
+  text twice) -> Говорение. «Молния» pace 30 s.
+- **Письмо = two tasks, equal weight:** a letter (>= 10 sentences, 3-5 questions)
+  and a messenger note (`write-note`, >= 5 sentences: reason / day / time /
+  place), a «Задание 1 · Задание 2» stepper under one 50-min timer. Each response
+  row is worth `subtest.maxPoints / n` (50 + 50), in the offline score, the AI
+  fold, the results recompute and the review (every task listed; each has its own
+  «Повторить оценку» / «Самопроверка»). The results row stays «предварительно»
+  while any task is provisional. This applies to any multi-task writing subtest.
+- **Говорение:** tasks 1-2 caps 45 s / 60 s; **task 3 is ONE topic** — the runner
+  skips the choose step and goes straight to prep, windows from the item
+  (`prepSec` / `answerSec`, A2 = 600 / 300) else the level profile. All timing
+  copy is generated. The offline monologue scorer reads the profile's fluency
+  bands and an A2 verb-stem list (`A2_VERB_STEMS`, corpus-tested).
+- **Чтение P3:** 15 items share one long passage; the panel keeps its scroll per
+  passage across items and has a «▲ к началу» chip.
+- **AI grading** is level-aware (`level` + `taskTopic` on the prompt inputs): the
+  A2 prompt carries the 2010 sample's expert criteria on the unchanged JSON
+  contract; A1 prompts are byte-identical (golden test).
+- **Gate B-A2:** A2 **exam** and **prompts** packs publish only once EVERY syncing
+  phone (S24U + S25) runs an installed release containing T75 + T76. An older
+  build files them under a raw chip «torfl-a2» **and in the unscoped A1 hub**.
+  The A2 lexicon (a plain `stories` pack) and the «Экзамен» A2 scenario rung have
+  no gate.
+- **Troubleshooting:** A2 rows (or an A2 exam) in the A1 hub = a build older than
+  the T76 release -> install it and re-sync. Only the first writing task shows =
+  a pre-T76 build. A choose step before task 3 in an A2 mock = pre-T76 build.
+- **Dev:** DB debug imports `a2-exam-fixture` / `a2-torfl-prompts-fixture`;
+  «Delete exam fixture» removes them. `__DEV__` route `/dev-exam-capture`
+  re-captures the A2 grading fixtures through the app's own AI path.
+
+### 9.10 Speaking flow + instruction language (T77)
+
+**You start, you stop.** Nothing in `features/torfl/` opens the mic by itself or
+stops a recording on silence (a source-scan test, `no-endpointing.test.ts`,
+forbids importing the M17 endpointer; M17 scenarios keep theirs).
+
+- Mock tasks 1 / 2: the examiner line (or situation) plays, the item then WAITS
+  in engine phase `ready` (no timer, no auto-advance; persisted, so a kill
+  resumes in `ready`). The mic opens on `TAP_REC` (tap the mic; a long press
+  also starts). The recording ends only on «Готово», the task cap (A1 30 s /
+  40 s, A2 45 s / 60 s from the level profile, a countdown shows in the last
+  10 s; the engine's `phaseDeadlineAt` + the recorder's own clock both stop it)
+  or the part / subtest budget. A pause, however long, stops nothing.
+- Task 3: prep ends (the 8:00 / 10:00 deadline or «Готов») in `ready-answer`;
+  the fixed 2:00 / 5:00 answer window starts at the tap on «Начать ответ».
+- Practice (`/torfl/speak`), «Билеты» and the mock use the same recorder hook
+  (no endpointer); «Мои ответы» rehearsal is the pronunciation recorder, which
+  never endpointed.
+- Analytics: `exam_speaking_rec_started {task, waitMs}`,
+  `exam_speaking_rec_stopped {task, reason: done|cap|deadline|skip, durationMs}`,
+  `torfl_instruction_lang_toggled {to, screen}` (all with `level`).
+
+**RU | EN instructions.** The header toggle on the instruction, speaking,
+writing, «Билеты», practice and debrief screens flips every INSTRUCTION string
+(`features/torfl/copy.ts`, `{ ru, en }`, + `speaking/timing-copy.ts`);
+examiner lines, situations, topics, passages and scripts are never translated.
+Persisted as `torfl.prefs.instructionLang` (`'ru'` default; the old
+`showEnglishInstructions` boolean just heals away). `instruction-copy.test.ts`
+fails when a Cyrillic literal appears in those screens outside the copy table.
+
+**Dev WAV injection (S25 / agents).** In a `__DEV__` build, if
+`files/dev-exam.wav` exists (16 kHz mono 16-bit PCM; push with
+`adb push` to `/data/local/tmp` then `run-as <pkg> cp` into `files/`), the exam
+recorder skips the mic and uses it as the recording on stop (the real
+transcribe / stash / grade path runs). Delete the file afterwards.
+
+**ISS-004.** An exam with no objective item (the `sp-*` / `sp-letters` drill
+sets) routes its start button to `/torfl/speak`, «Билеты» or `/torfl/writing`
+(`practice-route.ts`), never to the empty drill runner.
+
 ### 9.8 Dev tools
 
 Settings → Developer → **DB debug**: import the `a1-exam-fixture` (a 5-subtest

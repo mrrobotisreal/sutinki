@@ -22,10 +22,16 @@ import { MicButton } from '@/features/scenario/stage/mic-button';
 import { recordExamDrillFinished } from '@/features/motivation/service';
 import { scheduleExamBundle } from '@/features/scenario/recordings/bundle-service';
 import { useReduceMotion } from '@/store/motion-prefs';
-import { track } from '@/services/analytics';
+import { trackTorfl } from '@/services/analytics';
 import { logError } from '@/services/error-log';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { instructionCopy } from '../copy';
+import { monologueWindows } from '../engine/exam-machine';
+import { useInstructionLang } from '../instruction-lang';
+import { LangToggle } from '../lang-toggle';
+import { minutesLang, recordingLine } from './timing-copy';
+import type { TorflLevel } from '../level-profile';
 import { formatClock, timerTone } from '../engine/rules';
 import { pumpGradingQueue, useGradingQueue } from '../grading/queue';
 import {
@@ -53,6 +59,7 @@ type Phase =
   | { kind: 'deck' }
   | { kind: 'revealed'; ticket: MonologueTicket }
   | { kind: 'prep'; ticket: MonologueTicket; deadlineAt: number; attemptId: string }
+  | { kind: 'ready-answer'; ticket: MonologueTicket; attemptId: string }
   | { kind: 'answer'; ticket: MonologueTicket; deadlineAt: number; attemptId: string }
   | { kind: 'processing'; ticket: MonologueTicket; attemptId: string }
   | {
@@ -67,23 +74,32 @@ type Phase =
  * «Билеты» (T73, TORFL §10) — route `/torfl/tickets`: a face-down ticket
  * flips to reveal a random `speaking-monologue` topic from every installed
  * exam pack (weighted to the least practised), then the task-3 flow —
- * prep 8:00 with the questions, a notes field and lookup → the fixed 2:00
- * answer → offline score + the AI queue → the debrief card with the model
+ * prep 8:00 with the questions, a notes field and lookup → «Начать ответ»
+ * (T77: the answer never starts by itself; the window starts at his tap) → the fixed 2:00
+ * answer (stops at «Готово» or the window) → offline score + the AI queue → the debrief card with the model
  * monologue. A `drill`-scope attempt per ticket (10 XP). `torfl_ticket_drawn`.
  */
-export function TicketsScreen() {
+export function TicketsScreen({ level = 'A1' }: { level?: TorflLevel }) {
+  // T76: prep / answer windows = the ticket's own, else the level profile's defaults.
+  const windows = React.useCallback(
+    (item: { prepSec?: number; answerSec?: number }) => monologueWindows(level, item),
+    [level],
+  );
   const { tokens } = useAppTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const reduceMotion = useReduceMotion();
-  const exams = useExams();
+  const exams = useExams({ level });
   const gates = useHubGates();
+  const lang = useInstructionLang();
+  const c = instructionCopy(lang);
   const [phase, setPhase] = React.useState<Phase>({ kind: 'deck' });
   const phaseRef = React.useRef(phase);
   React.useEffect(() => {
     phaseRef.current = phase;
   });
   const [now, setNow] = React.useState(() => Date.now());
+  const readyAtRef = React.useRef(0);
   const [notes, setNotes] = React.useState('');
   const [lookupOpen, setLookupOpen] = React.useState(false);
   const gradedVersion = useGradingQueue((s) => s.gradedVersion);
@@ -93,9 +109,9 @@ export function TicketsScreen() {
 
   // How often each ticket was answered (any scope) → the draw weights.
   const counts = useQuery({
-    queryKey: ['torfl', 'ticket-counts', gradedVersion],
+    queryKey: ['torfl', 'ticket-counts', level, gradedVersion],
     queryFn: async () => {
-      const attempts = await repos.exams.listAttempts({ status: 'finished', limit: 500 });
+      const attempts = await repos.exams.listAttempts({ status: 'finished', limit: 500, level });
       const map = new Map<string, number>();
       for (const a of attempts) {
         const d = await repos.exams.getAttempt(a.id);
@@ -147,9 +163,9 @@ export function TicketsScreen() {
   const draw = React.useCallback(() => {
     const t = drawTicket(tickets);
     if (!t) return;
-    track('torfl_ticket_drawn', { topic: t.item.topic });
+    trackTorfl('torfl_ticket_drawn', { topic: t.item.topic, level });
     setPhase({ kind: 'revealed', ticket: t });
-  }, [tickets]);
+  }, [tickets, level]);
 
   const recorder = useExamRecorder({
     onDone: (itemId, answer) => {
@@ -163,7 +179,7 @@ export function TicketsScreen() {
           )?.exam;
           const subtest = exam?.subtests.find((s) => s.id === p.ticket.subtestId);
           if (!exam || !subtest) return;
-          const grade = gradeSpeakingOffline(p.ticket.item, answer)!;
+          const grade = gradeSpeakingOffline(p.ticket.item, answer, { level })!;
           const share = responseShare(subtest, p.ticket.item);
           const online = await hasApiKey();
           const grading: ExamGrading = {
@@ -201,7 +217,7 @@ export function TicketsScreen() {
             null,
             0,
           );
-          track('exam_speaking_scored', { task: 3, source: 'offline', pct: grade.pct });
+          trackTorfl('exam_speaking_scored', { task: 3, source: 'offline', pct: grade.pct, level });
           await recordExamDrillFinished().catch(() => 0);
           scheduleExamBundle(p.attemptId);
           void invalidateExams();
@@ -215,7 +231,7 @@ export function TicketsScreen() {
           if (online) void pumpGradingQueue();
         } catch (err) {
           logError('manual', err);
-          Alert.alert('Не удалось сохранить ответ', 'Попробуй ещё раз.');
+          Alert.alert(c.practiceSaveFailTitle, c.practiceSaveFailBody);
           setPhase({ kind: 'revealed', ticket: p.ticket });
         }
       })();
@@ -238,18 +254,18 @@ export function TicketsScreen() {
       setPhase({
         kind: 'prep',
         ticket: t,
-        deadlineAt: Date.now() + t.item.prepSec * 1000,
+        deadlineAt: Date.now() + windows(t.item).prepSec * 1000,
         attemptId: attempt.id,
       });
     } catch (err) {
       logError('manual', err);
     }
-  }, [phase]);
+  }, [phase, windows]);
 
   const startAnswer = React.useCallback(async () => {
     const p = phaseRef.current;
-    if (p.kind !== 'prep') return;
-    const deadlineAt = Date.now() + p.ticket.item.answerSec * 1000;
+    if (p.kind !== 'ready-answer') return;
+    const deadlineAt = Date.now() + windows(p.ticket.item).answerSec * 1000;
     setPhase({ kind: 'answer', ticket: p.ticket, deadlineAt, attemptId: p.attemptId });
     await recorder.start({
       itemId: p.ticket.item.id,
@@ -257,8 +273,18 @@ export function TicketsScreen() {
       capMs: 0,
       fixedWindow: true,
       attemptId: p.attemptId,
+      level,
+      waitMs: Date.now() - readyAtRef.current,
     });
-  }, [recorder]);
+  }, [recorder, windows, level]);
+
+  // Prep ended (deadline or «Готов»): wait for the tap, no timer, no mic.
+  const endPrep = React.useCallback(() => {
+    const p = phaseRef.current;
+    if (p.kind !== 'prep') return;
+    readyAtRef.current = Date.now();
+    setPhase({ kind: 'ready-answer', ticket: p.ticket, attemptId: p.attemptId });
+  }, []);
 
   // the 1 s clock: prep deadline → answer; answer deadline → stop
   React.useEffect(() => {
@@ -267,14 +293,14 @@ export function TicketsScreen() {
       const at = Date.now();
       setNow(at);
       const p = phaseRef.current;
-      if (p.kind === 'prep' && at >= p.deadlineAt) void startAnswer();
+      if (p.kind === 'prep' && at >= p.deadlineAt) endPrep();
       if (p.kind === 'answer' && at >= p.deadlineAt) {
         setPhase({ kind: 'processing', ticket: p.ticket, attemptId: p.attemptId });
-        recorder.stop('manual');
+        recorder.stop('done');
       }
     }, 1000);
     return () => clearInterval(id);
-  }, [phase.kind, recorder, startAnswer]);
+  }, [phase.kind, recorder, endPrep]);
 
   React.useEffect(
     () => () => {
@@ -295,17 +321,18 @@ export function TicketsScreen() {
           onPress={() => router.back()}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Назад"
+          accessibilityLabel={c.back}
           className="h-10 w-10 items-center justify-center rounded-full active:bg-surface-2"
         >
           <Ionicons name="arrow-back" size={22} color={tokens.textMuted} />
         </Pressable>
         <View className="flex-1">
-          <Text className="font-ui-medium">Билеты</Text>
+          <Text className="font-ui-medium">{c.tickets}</Text>
           <Text variant="caption" className="text-xs">
-            Задание 3 · монолог · {tickets.length} {tickets.length === 1 ? 'тема' : 'тем'}
+            {c.ticketsSub(tickets.length)}
           </Text>
         </View>
+        <LangToggle screen="tickets" level={level} />
         {phase.kind === 'prep' || phase.kind === 'answer' ? (
           <Text
             className={`font-ui-bold text-lg tabular-nums ${
@@ -344,11 +371,9 @@ export function TicketsScreen() {
                     className="flex-1 items-center justify-center gap-2 rounded-3xl border-2 border-accent bg-surface active:bg-surface-2"
                   >
                     <Ionicons name="albums-outline" size={36} color={tokens.accent} />
-                    <Text className="font-reading-bold text-xl">Тянуть билет</Text>
+                    <Text className="font-reading-bold text-xl">{c.drawTicket}</Text>
                     <Text variant="caption">
-                      {tickets.length === 0
-                        ? 'Темы появятся вместе с экзаменами'
-                        : 'Случайная тема монолога'}
+                      {tickets.length === 0 ? c.ticketsEmpty : c.ticketRandom}
                     </Text>
                   </Pressable>
                 </Animated.View>
@@ -360,13 +385,17 @@ export function TicketsScreen() {
                   ]}
                 >
                   <View className="flex-1 justify-center gap-2 rounded-3xl border-2 border-accent bg-accent-soft px-5 py-4">
-                    <Text variant="caption">Билет</Text>
+                    <Text variant="caption">{c.ticket}</Text>
                     <Text className="font-reading-bold text-2xl" testID="ticket-topic">
                       {phase.kind === 'revealed' ? phase.ticket.item.topicTitle.uk : ''}
                     </Text>
                     <Text variant="caption">
                       {phase.kind === 'revealed'
-                        ? `${phase.ticket.item.questions.length} вопрос(ов) · ${phase.ticket.item.minSentences}–${phase.ticket.item.maxSentences} предложений`
+                        ? c.topicStats(
+                            phase.ticket.item.questions.length,
+                            phase.ticket.item.minSentences,
+                            phase.ticket.item.maxSentences,
+                          )
                         : ''}
                     </Text>
                   </View>
@@ -388,7 +417,7 @@ export function TicketsScreen() {
                   className={`items-center rounded-full px-5 py-3.5 ${gate ? 'bg-surface-2' : 'bg-accent active:opacity-80'}`}
                 >
                   <Text className={`font-ui-bold ${gate ? 'text-text-muted' : 'text-bg'}`}>
-                    Начать подготовку · {Math.round(phase.ticket.item.prepSec / 60)} мин
+                    {c.startPrep(Math.round(windows(phase.ticket.item).prepSec / 60))}
                   </Text>
                 </Pressable>
                 <Pressable
@@ -397,7 +426,7 @@ export function TicketsScreen() {
                   testID="ticket-redraw"
                   className="items-center py-2"
                 >
-                  <Text className="font-ui-medium text-text-muted">Вернуть в колоду</Text>
+                  <Text className="font-ui-medium text-text-muted">{c.returnToDeck}</Text>
                 </Pressable>
               </>
             ) : null}
@@ -412,19 +441,18 @@ export function TicketsScreen() {
                 </Text>
               ))}
               <Text variant="caption">
-                {phase.ticket.item.minSentences}–{phase.ticket.item.maxSentences} предложений.
-                Заметки не оцениваются.
+                {c.sentencesNotes(phase.ticket.item.minSentences, phase.ticket.item.maxSentences)}
               </Text>
             </View>
             <View className="flex-row items-center justify-between px-1">
-              <Text variant="caption">Заметки</Text>
+              <Text variant="caption">{c.notes}</Text>
               <Pressable
                 onPress={() => setLookupOpen(true)}
                 accessibilityRole="button"
                 className="flex-row items-center gap-1.5 rounded-full border border-border px-3 py-1.5 active:bg-surface-2"
               >
                 <Ionicons name="book-outline" size={14} color={tokens.accent} />
-                <Text className="font-ui-medium text-sm text-accent">Словарь</Text>
+                <Text className="font-ui-medium text-sm text-accent">{c.dictionary}</Text>
               </Pressable>
             </View>
             <TextInput
@@ -432,22 +460,26 @@ export function TicketsScreen() {
               onChangeText={setNotes}
               multiline
               textAlignVertical="top"
-              placeholder="Ключевые слова, план ответа…"
+              placeholder={c.notesPlaceholder}
               placeholderTextColor={tokens.textMuted}
               className="min-h-[140px] rounded-2xl border border-border bg-surface px-4 py-3 font-reading text-base leading-6 text-text"
             />
             <Pressable
               onPress={() =>
-                Alert.alert('Начать ответ?', 'Запись пойдёт сразу: 2 минуты.', [
-                  { text: 'Ещё подготовлюсь', style: 'cancel' },
-                  { text: 'Готов', onPress: () => void startAnswer() },
-                ])
+                Alert.alert(
+                  c.prepConfirmTitle,
+                  c.prepConfirmBody(minutesLang(windows(phase.ticket.item).answerSec, lang)),
+                  [
+                    { text: c.morePrep, style: 'cancel' },
+                    { text: c.ready, onPress: endPrep },
+                  ],
+                )
               }
               accessibilityRole="button"
               testID="ticket-prep-done"
               className="items-center rounded-full bg-accent px-5 py-3.5 active:opacity-80"
             >
-              <Text className="font-ui-bold text-bg">Готов — отвечать</Text>
+              <Text className="font-ui-bold text-bg">{c.prepDone}</Text>
             </Pressable>
             <WritingLookupSheet
               open={lookupOpen}
@@ -456,7 +488,9 @@ export function TicketsScreen() {
               onClose={() => setLookupOpen(false)}
             />
           </>
-        ) : phase.kind === 'answer' || phase.kind === 'processing' ? (
+        ) : phase.kind === 'ready-answer' ||
+          phase.kind === 'answer' ||
+          phase.kind === 'processing' ? (
           <>
             <View className="gap-2 rounded-2xl border border-border bg-surface px-4 py-4">
               <Text className="font-reading-bold text-2xl">{phase.ticket.item.topicTitle.uk}</Text>
@@ -474,19 +508,47 @@ export function TicketsScreen() {
             <View className="items-center gap-3 py-4">
               <MicButton
                 state={
-                  phase.kind === 'answer' && recorder.phase === 'recording'
-                    ? 'recording'
-                    : 'processing'
+                  phase.kind === 'ready-answer'
+                    ? 'ready'
+                    : phase.kind === 'answer' && recorder.phase === 'recording'
+                      ? 'recording'
+                      : 'processing'
                 }
                 level={recorder.level}
                 holdPrimary={false}
-                onTap={() => undefined}
-                onHoldStart={() => undefined}
+                onTap={() => {
+                  if (phase.kind === 'ready-answer') void startAnswer();
+                  else if (phase.kind === 'answer') {
+                    setPhase({
+                      kind: 'processing',
+                      ticket: phase.ticket,
+                      attemptId: phase.attemptId,
+                    });
+                    recorder.stop('done');
+                  }
+                }}
+                onHoldStart={() => {
+                  if (phase.kind === 'ready-answer') void startAnswer();
+                }}
                 onHoldEnd={() => undefined}
               />
-              <Text variant="caption">
-                {phase.kind === 'answer' ? 'Идёт запись — 2 минуты' : 'Распознаю…'}
+              <Text variant="caption" testID="ticket-mic-hint">
+                {phase.kind === 'ready-answer'
+                  ? c.startAnswerHint(minutesLang(windows(phase.ticket.item).answerSec, lang))
+                  : phase.kind === 'answer'
+                    ? recordingLine(windows(phase.ticket.item).answerSec, lang)
+                    : c.recognising}
               </Text>
+              {phase.kind === 'ready-answer' ? (
+                <Pressable
+                  onPress={() => void startAnswer()}
+                  accessibilityRole="button"
+                  testID="ticket-start-answer"
+                  className="min-w-[200px] items-center rounded-full bg-accent px-6 py-3.5 active:opacity-80"
+                >
+                  <Text className="font-ui-bold text-bg">{c.startAnswer}</Text>
+                </Pressable>
+              ) : null}
               {phase.kind === 'answer' ? (
                 <Pressable
                   onPress={() => {
@@ -495,13 +557,13 @@ export function TicketsScreen() {
                       ticket: phase.ticket,
                       attemptId: phase.attemptId,
                     });
-                    recorder.stop('manual');
+                    recorder.stop('done');
                   }}
                   accessibilityRole="button"
                   testID="ticket-finish"
-                  className="rounded-full border border-border px-5 py-2 active:bg-surface-2"
+                  className="min-w-[160px] items-center rounded-full bg-accent px-6 py-3 active:opacity-80"
                 >
-                  <Text className="font-ui-medium">Закончить</Text>
+                  <Text className="font-ui-bold text-bg">{c.done}</Text>
                 </Pressable>
               ) : null}
             </View>
@@ -529,10 +591,11 @@ export function TicketsScreen() {
                     onRetry={undefined}
                     onPractice={() => setPhase({ kind: 'deck' })}
                     onModelStory={(storyId) => {
-                      track('torfl_text_opened', {
+                      trackTorfl('torfl_text_opened', {
                         packId: phase.ticket.packId,
                         storyId,
                         from: 'review',
+                        level,
                       });
                       router.push({
                         pathname: '/reader/[packId]/[storyId]',
@@ -550,7 +613,7 @@ export function TicketsScreen() {
                     testID="ticket-again"
                     className="flex-1 items-center rounded-full border border-border px-5 py-3 active:bg-surface-2"
                   >
-                    <Text className="font-ui-medium">Ещё билет</Text>
+                    <Text className="font-ui-medium">{c.anotherTicket}</Text>
                   </Pressable>
                   <Pressable
                     onPress={() => router.back()}
@@ -558,7 +621,7 @@ export function TicketsScreen() {
                     testID="ticket-done"
                     className="flex-1 items-center rounded-full bg-accent px-5 py-3 active:opacity-80"
                   >
-                    <Text className="font-ui-bold text-bg">Готово</Text>
+                    <Text className="font-ui-bold text-bg">{c.done}</Text>
                   </Pressable>
                 </View>
               </>

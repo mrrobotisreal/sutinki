@@ -18,12 +18,16 @@ import { useHubGates } from '@/features/scenario/hub-gates';
 import { MicButton } from '@/features/scenario/stage/mic-button';
 import { recordExamDrillFinished } from '@/features/motivation/service';
 import { scheduleExamBundle } from '@/features/scenario/recordings/bundle-service';
-import { track } from '@/services/analytics';
+import { trackTorfl } from '@/services/analytics';
 import { logError } from '@/services/error-log';
 import { useAppTheme } from '@/theme/use-app-theme';
 
+import { instructionCopy } from '../copy';
 import { fileExists } from '../drill/drill-item';
-import { SPEAKING_CAP_MS } from '../engine/exam-machine';
+import { useInstructionLang } from '../instruction-lang';
+import { LangToggle } from '../lang-toggle';
+import { speakingCapMsFor } from '../engine/exam-machine';
+import { torflLevelOf } from '../level-profile';
 import { formatClock } from '../engine/rules';
 import { pumpGradingQueue, useGradingQueue } from '../grading/queue';
 import {
@@ -52,8 +56,8 @@ type Phase =
 /**
  * Speaking practice (T73, TORFL §8.4 practice) — route `/torfl/speak?packId&
  * examId&itemId`: ONE task-1 / task-2 item untimed — the examiner line
- * can be replayed, the mic opens on tap (the same endpointer + cap as the
- * mock), the answer is recorded / transcribed / scored offline at once
+ * can be replayed, the mic opens on YOUR tap and stops only on «Готово» or the
+ * task cap (T77: no silence endpointing — a pause never ends the recording), the answer is recorded / transcribed / scored offline at once
  * and shown with the model answer through the debrief card, then the AI
  * grade through the queue. A `drill`-scope attempt finished immediately
  * (10 XP, the drill rule). «Ещё раз» records a new attempt.
@@ -72,6 +76,8 @@ export function SpeakingPracticeScreen() {
   }>();
   const exam = useExam(packId, examId);
   const gates = useHubGates();
+  const lang = useInstructionLang();
+  const c = instructionCopy(lang);
   const [phase, setPhase] = React.useState<Phase>({ kind: 'ready' });
   const phaseRef = React.useRef(phase);
   React.useEffect(() => {
@@ -119,7 +125,7 @@ export function SpeakingPracticeScreen() {
           const attemptId = attemptIdRef.current;
           if (!attemptId) return;
           const subtest = located.subtest;
-          const grade = gradeSpeakingOffline(item, answer)!;
+          const grade = gradeSpeakingOffline(item, answer, { level: exam.data?.level })!;
           const share = responseShare(subtest, item);
           const online = await hasApiKey();
           const grading: ExamGrading = {
@@ -157,7 +163,12 @@ export function SpeakingPracticeScreen() {
             null,
             0,
           );
-          track('exam_speaking_scored', { task, source: 'offline', pct: grade.pct });
+          trackTorfl('exam_speaking_scored', {
+            task,
+            source: 'offline',
+            pct: grade.pct,
+            level: torflLevelOf(exam.data?.level),
+          });
           await recordExamDrillFinished().catch(() => 0);
           scheduleExamBundle(attemptId);
           void invalidateExams();
@@ -165,7 +176,7 @@ export function SpeakingPracticeScreen() {
           if (online) void pumpGradingQueue();
         } catch (err) {
           logError('manual', err);
-          Alert.alert('Не удалось сохранить ответ', 'Попробуй ещё раз.');
+          Alert.alert(c.practiceSaveFailTitle, c.practiceSaveFailBody);
           setPhase({ kind: 'ready' });
         }
       })();
@@ -189,15 +200,16 @@ export function SpeakingPracticeScreen() {
       await recorder.start({
         itemId: item.id,
         task,
-        capMs: SPEAKING_CAP_MS[task],
+        capMs: speakingCapMsFor(exam.data?.level, task),
         fixedWindow: false,
         attemptId: attempt.id,
+        level: torflLevelOf(exam.data?.level),
       });
     } catch (err) {
       logError('manual', err);
       setPhase({ kind: 'ready' });
     }
-  }, [located, item, packId, examId, recorder, task, prompt]);
+  }, [located, item, packId, examId, recorder, task, prompt, exam.data]);
 
   React.useEffect(() => {
     if (recorder.phase === 'processing' && phaseRef.current.kind === 'recording') {
@@ -225,11 +237,11 @@ export function SpeakingPracticeScreen() {
   if (!exam.data || !item || !located) {
     return (
       <View className="flex-1 items-center justify-center gap-3 bg-bg px-8">
-        <QueryError message="Задание не найдено." onRetry={() => router.back()} />
+        <QueryError message={c.taskNotFound} onRetry={() => router.back()} />
       </View>
     );
   }
-  const gate = speakingGateMessage(gates);
+  const gate = speakingGateMessage(gates, lang);
   const entry =
     phase.kind === 'done' && response.data
       ? (speakingDebriefEntries(exam.data, located.subtest.id, [response.data]).find(
@@ -249,19 +261,20 @@ export function SpeakingPracticeScreen() {
           onPress={() => router.back()}
           hitSlop={8}
           accessibilityRole="button"
-          accessibilityLabel="Назад"
+          accessibilityLabel={c.back}
           className="h-10 w-10 items-center justify-center rounded-full active:bg-surface-2"
         >
           <Ionicons name="arrow-back" size={22} color={tokens.textMuted} />
         </Pressable>
         <View className="flex-1">
           <Text className="font-ui-medium" numberOfLines={1}>
-            Говорение · тренировка
+            {c.practiceTitle}
           </Text>
           <Text variant="caption" className="text-xs">
-            {TASK_LABEL[task].uk} · без таймера
+            {TASK_LABEL[task][lang]} · {c.untimed}
           </Text>
         </View>
+        <LangToggle screen="practice-speaking" level={torflLevelOf(exam.data?.level)} />
       </View>
       <ScrollView
         contentContainerClassName="gap-4 px-4"
@@ -275,7 +288,7 @@ export function SpeakingPracticeScreen() {
                   onPress={() => (prompt.playing ? prompt.stop() : prompt.play(1))}
                   disabled={!promptAudio.data || phase.kind === 'recording'}
                   accessibilityRole="button"
-                  accessibilityLabel="Play the examiner line"
+                  accessibilityLabel={c.playExaminerA11y}
                   testID="practice-play-prompt"
                   className="h-12 w-12 items-center justify-center rounded-full bg-accent-soft"
                 >
@@ -287,11 +300,11 @@ export function SpeakingPracticeScreen() {
                 </Pressable>
                 <View className="flex-1">
                   <Text className="font-ui-medium">
-                    {task === 1 ? 'Вопрос экзаменатора' : 'Ситуация'}
+                    {task === 1 ? c.examinerQuestion : c.situation}
                   </Text>
                   <Text variant="caption">
-                    Можно слушать сколько угодно
-                    {promptAudio.data?.synthetic ? ' · синтез' : ''}
+                    {c.listenAnyTime}
+                    {promptAudio.data?.synthetic ? c.synthetic : ''}
                   </Text>
                 </View>
               </View>
@@ -322,23 +335,38 @@ export function SpeakingPracticeScreen() {
                 level={recorder.level}
                 holdPrimary={false}
                 onTap={() => {
-                  if (phase.kind === 'recording') recorder.stop('manual');
+                  if (phase.kind === 'recording') recorder.stop('done');
                   else if (phase.kind === 'ready') void startRecording();
                 }}
                 onHoldStart={() => {
                   if (phase.kind === 'ready') void startRecording();
                 }}
                 onHoldEnd={() => {
-                  if (phase.kind === 'recording') recorder.stop('hold');
+                  // Release never stops: you start, you stop («Готово»).
                 }}
               />
               <Text variant="caption" testID="practice-mic-hint">
                 {phase.kind === 'recording'
-                  ? `Говори · нажми, чтобы закончить · до ${formatClock(SPEAKING_CAP_MS[task])}`
+                  ? c.practiceHintRecording(formatClock(speakingCapMsFor(exam.data?.level, task)))
                   : phase.kind === 'processing'
-                    ? 'Распознаю…'
-                    : 'Нажми и отвечай'}
+                    ? c.recognising
+                    : c.practiceHintReady}
               </Text>
+              {phase.kind === 'recording' ? (
+                <>
+                  <Text className="font-ui-bold tabular-nums" testID="practice-rec-clock">
+                    {formatClock(recorder.elapsedMs)}
+                  </Text>
+                  <Pressable
+                    onPress={() => recorder.stop('done')}
+                    accessibilityRole="button"
+                    testID="practice-finish"
+                    className="min-w-[160px] items-center rounded-full bg-accent px-6 py-3 active:opacity-80"
+                  >
+                    <Text className="font-ui-bold text-bg">{c.done}</Text>
+                  </Pressable>
+                </>
+              ) : null}
             </View>
           </>
         ) : entry ? (
@@ -366,7 +394,7 @@ export function SpeakingPracticeScreen() {
                 testID="practice-again"
                 className="flex-1 items-center rounded-full border border-border px-5 py-3 active:bg-surface-2"
               >
-                <Text className="font-ui-medium">Ещё раз</Text>
+                <Text className="font-ui-medium">{c.again}</Text>
               </Pressable>
               <Pressable
                 onPress={() => router.back()}
@@ -374,7 +402,7 @@ export function SpeakingPracticeScreen() {
                 testID="practice-done"
                 className="flex-1 items-center rounded-full bg-accent px-5 py-3 active:opacity-80"
               >
-                <Text className="font-ui-bold text-bg">Готово</Text>
+                <Text className="font-ui-bold text-bg">{c.done}</Text>
               </Pressable>
             </View>
           </>

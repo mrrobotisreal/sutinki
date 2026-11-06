@@ -18,8 +18,10 @@ import { ExamMatrixSheet } from './exam-matrix-sheet';
 import { loadItemAssets, type ExamPassage, type ItemAssets } from './items/exam-audio';
 import { ChoiceItemView } from './items/choice-item-view';
 import { ListeningPlayer } from './items/listening-player';
+import { clearPassageOffsets } from './items/passage-scroll';
 import { PassagePanel } from './items/passage-panel';
 import { TypedItemView } from './items/typed-item-view';
+import type { TorflLevel } from './level-profile';
 import type { ExamAnswer } from './model';
 import type { TorflPrefs } from './settings-core';
 import { SUBTEST_LABELS } from './topics';
@@ -44,6 +46,7 @@ const TIMER_TONE_CLASS = {
  */
 export function ExamObjectiveScreen({
   packId,
+  level = 'A1',
   subtest,
   run,
   cursor,
@@ -60,6 +63,8 @@ export function ExamObjectiveScreen({
   onLookup,
 }: {
   packId: string;
+  /** T75 (THE LEVEL RULE): the exam's level for `exam_lookup_used`. */
+  level?: TorflLevel;
   subtest: ExamSubtest;
   run: Pick<ExamRunState, 'answers' | 'flagged' | 'playCounts' | 'audio'>;
   cursor: RunSubtest;
@@ -78,6 +83,8 @@ export function ExamObjectiveScreen({
   const { tokens } = useAppTheme();
   const insets = useSafeAreaInsets();
   const [matrixOpen, setMatrixOpen] = React.useState(false);
+  // T76: a fresh sitting starts every shared passage at the top.
+  React.useEffect(() => clearPassageOffsets, []);
   const layout = React.useMemo(() => buildLayout(subtest), [subtest]);
   const linear = subtest.navigation === 'linear';
   const flat = cursor.flat;
@@ -180,6 +187,7 @@ export function ExamObjectiveScreen({
           <MockItem
             key={item.id}
             packId={packId}
+            level={level}
             subtest={subtest}
             item={item}
             number={number}
@@ -300,6 +308,7 @@ function NavButton({
 /** One item in a mock: the (reading) passage, the kind's no-feedback view, the ⚑ toggle. */
 function MockItem({
   packId,
+  level,
   subtest,
   item,
   number,
@@ -314,6 +323,7 @@ function MockItem({
   onLookup,
 }: {
   packId: string;
+  level: TorflLevel;
   subtest: ExamSubtest;
   item: ExamItem;
   number: number;
@@ -370,6 +380,7 @@ function MockItem({
           sentences={passage.sentences}
           lookup={lookup}
           subtestKind={subtest.kind}
+          level={level}
           onLookup={onLookup}
         />
       ) : null}
