@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
+  appendFileSync,
   cpSync,
   existsSync,
   mkdirSync,
@@ -10,6 +11,13 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+import {
+  formatAuditTable,
+  runStampAudit,
+  STAMP_AUDIT_REPORT_NOTE,
+  type Aligner,
+  type StampAuditMode,
+} from './stamp-audit.ts';
 import {
   ManifestSchema,
   safeParsePack,
@@ -33,6 +41,19 @@ import {
 export interface PublishOptions {
   push?: boolean;
   message?: string;
+  /**
+   * T80 gate: audit every timestamped story track against its audio and
+   * refuse on failure. The CLI always passes one; library callers (tests)
+   * omit it to skip the audit.
+   */
+  stampAudit?: Aligner;
+  /**
+   * UP07: `enforce` (upstream behaviour: refuse on failure), `report` (Sutinki default for Ukrainian: print + note in
+   * BUILD_NOTES.md, never refuse, never throw), `off`. Default `enforce` when a `stampAudit` aligner is given.
+   */
+  stampAuditMode?: StampAuditMode;
+  /** Publish despite a failing stamp audit; the override is logged to `<packDir>/BUILD_NOTES.md`. */
+  allowStampRisk?: boolean;
 }
 
 export interface PublishSummary {
@@ -144,6 +165,30 @@ export function runPublish(
     throw new Error(`${packFile} is not a valid pack:\n${details}`);
   }
   const pack = parsed.data;
+
+  // 1b. T80 stamp-accuracy gate: stamps must match the audio they ship with.
+  if (opts.stampAudit && opts.stampAuditMode !== 'off') {
+    const mode = opts.stampAuditMode ?? 'enforce';
+    const res = runStampAudit(mode, pack, packDir, opts.stampAudit);
+    if (mode === 'report' && res.audit && !res.audit.ok) {
+      appendFileSync(
+        join(packDir, 'BUILD_NOTES.md'),
+        `\n## ${new Date().toISOString()} — published ${pack.id} v${pack.version}: ${STAMP_AUDIT_REPORT_NOTE}\n\n\`\`\`\n${formatAuditTable(res.audit)}\n\`\`\`\n`,
+      );
+    }
+    if (res.refuse && res.audit) {
+      const table = formatAuditTable(res.audit);
+      if (!opts.allowStampRisk) {
+        throw new Error(
+          `stamp audit FAILED for ${pack.id} — fix with \`pipeline restamp\`, or override with --allow-stamp-risk:\n${table}`,
+        );
+      }
+      appendFileSync(
+        join(packDir, 'BUILD_NOTES.md'),
+        `\n## ${new Date().toISOString()} — published ${pack.id} v${pack.version} with --allow-stamp-risk\n\n\`\`\`\n${table}\n\`\`\`\n`,
+      );
+    }
+  }
 
   // 2. Collect + hash the pack's files from the source dir.
   const relPaths = packFileList(pack, packDir);

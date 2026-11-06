@@ -12,6 +12,7 @@ import { normalizeUk } from '@/db/normalize';
 import type { AddResult } from '@/db/repositories/bank';
 import type { TokenRow } from '@/db/repositories/content';
 import type { ClassificationEventProps } from '@/features/library/categories';
+import { clipVoiceId } from '@/features/tts/clip-voice';
 import { track } from '@/services/analytics';
 import { getSpeechService, speak } from '@/services/speech';
 import { useLookupPrefs } from '@/store/lookup-prefs';
@@ -36,10 +37,9 @@ interface WordPopupProps {
   target: WordPopupTarget | null;
   onClose: () => void;
   /**
-   * T10: narration word-segment playback for the speaker button. When the
-   * tapped word has a stamp on the loaded track, the button plays exactly
-   * that slice; otherwise it falls back to the speech service (a no-op with
-   * a disabled look until T11 registers Piper).
+   * Reader narration handle (T79 «в предложении» + T85 pause-before-speak).
+   * Absent on non-reader surfaces (the dialogue player), where the speaker
+   * simply speaks without touching narration.
    */
   segments?: WordSegmentPlayer | null;
 }
@@ -104,7 +104,10 @@ function WordPopupSheet({
     if (!bankStatus.data || !encounterOnLookup || encounterLoggedRef.current) return;
     encounterLoggedRef.current = true;
     void repos.bank
-      .addEncounter(bankStatus.data.id, token.text, { sentenceId: target.sentenceId })
+      .addEncounter(bankStatus.data.id, token.text, {
+        sentenceId: target.sentenceId,
+        tokenIndex: token.tokenIndex,
+      })
       .then(() => {
         track('encounter_recorded', {
           via: 'tap-lookup',
@@ -117,6 +120,7 @@ function WordPopupSheet({
     bankStatus.data,
     encounterOnLookup,
     token.text,
+    token.tokenIndex,
     target.sentenceId,
     target.eventProps,
     effectiveLemma,
@@ -145,6 +149,7 @@ function WordPopupSheet({
         pos: token.pos ?? undefined,
         level: (token.level as CefrLevel | null) ?? undefined,
         sentenceId: target.sentenceId,
+        tokenIndex: token.tokenIndex,
         sourceStoryId: target.storyId,
         note: token.note ?? undefined,
         needsEnrichment: !token.translation,
@@ -188,17 +193,26 @@ function WordPopupSheet({
   }, [formsBusy, bankStatus.data, addToBank, onClose, router]);
   const showLemma = token.lemma && normalizeUk(token.lemma) !== normalizeUk(token.text);
 
-  // Speaker: prefer the exact narration slice of THIS surface form (T10);
-  // else the speech service (Piper once T11 lands). Neither → disabled look.
-  const hasSegment = segments?.hasSegment(target.sentenceId, token.tokenIndex) ?? false;
-  const canSpeak = hasSegment || getSpeechService().available;
+  // T85: the speaker says the exact form tapped (token.text, not the lemma)
+  // with Piper, never a story slice. Narration pauses first so the two do not
+  // talk over each other. The «в предложении» button still plays the narration sentence.
+  const canSpeak = getSpeechService().available;
   const handleSpeak = React.useCallback(() => {
-    if (hasSegment) {
-      segments!.playSegment(target.sentenceId, token.tokenIndex);
-    } else {
-      void speak(token.lemma ?? token.text);
-    }
-  }, [hasSegment, segments, target.sentenceId, token]);
+    segments?.pauseNarration();
+    const voiceId = clipVoiceId();
+    void speak(token.text, { voiceId });
+    track('popup_word_spoken', {
+      sentenceId: target.sentenceId,
+      tokenIndex: token.tokenIndex,
+      voiceId: voiceId ?? 'system',
+    });
+  }, [segments, target.sentenceId, token]);
+
+  // T79: replay the whole source sentence so a slightly-off word stamp is recoverable by ear.
+  const hasContext = segments?.hasContext(target.sentenceId) ?? false;
+  const handleContext = React.useCallback(() => {
+    segments?.playContext(target.sentenceId);
+  }, [segments, target.sentenceId]);
 
   return (
     <Modal visible transparent animationType="slide" onRequestClose={onClose}>
@@ -214,6 +228,18 @@ function WordPopupSheet({
             )}
           </View>
           {token.level && <LevelChip level={token.level} />}
+          {hasContext && (
+            <Pressable
+              onPress={handleContext}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Play in sentence"
+              className="h-11 flex-row items-center gap-1 rounded-full bg-surface-2 px-3 active:bg-border"
+            >
+              <Ionicons name="play" size={16} color={theme.accent} />
+              <RNText className="font-ui-medium text-xs text-text">в предложении</RNText>
+            </Pressable>
+          )}
           <Pressable
             onPress={canSpeak ? handleSpeak : undefined}
             disabled={!canSpeak}

@@ -2,7 +2,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import * as React from 'react';
-import { ActivityIndicator, FlatList, Pressable, View, type ViewToken } from 'react-native';
+import {
+  ActivityIndicator,
+  BackHandler,
+  FlatList,
+  Pressable,
+  View,
+  type ViewToken,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ukPending } from '@/config/flags';
@@ -11,7 +18,10 @@ import { repos } from '@/db';
 import { useBookmarksForStory, useStoryDetail, useStoryProgress } from '@/db/hooks';
 import type { SentenceWithTokens, TokenRow } from '@/db/repositories/content';
 import { track, trackTorfl } from '@/services/analytics';
+import { useQueuePrefs } from '@/store/queue-prefs';
 import { useReaderPrefs } from '@/store/reader-prefs';
+import { requestWidgetRefresh } from '@/features/motivation/widget-bus';
+import { safeBack } from '@/lib/safe-back';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 import { ExplainSheet } from '@/features/ai/explain-sheet';
@@ -97,6 +107,16 @@ interface ReaderScreenProps {
  */
 export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: ReaderScreenProps) {
   const router = useRouter();
+
+  // T84: hardware back from a deep-linked reader (widget) must never dead-end.
+  React.useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (router.canGoBack()) return false;
+      router.replace('/(tabs)');
+      return true;
+    });
+    return () => sub.remove();
+  }, [router]);
   const insets = useSafeAreaInsets();
   const { tokens } = useAppTheme();
   const queryClient = useQueryClient();
@@ -250,7 +270,11 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
     const idx = pendingIdxRef.current;
     if (idx == null) return;
     pendingIdxRef.current = null;
-    void repos.reading.savePosition(packId, storyId, idx).then(invalidateProgress);
+    void repos.reading.savePosition(packId, storyId, idx).then(() => {
+      invalidateProgress();
+      // T84: the widget's «continue reading» follows the last-read story.
+      requestWidgetRefresh();
+    });
   }, [packId, storyId, invalidateProgress]);
 
   const schedulePositionSave = React.useCallback(
@@ -289,6 +313,8 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
           void recordStoryFinished();
         }
         invalidateProgress();
+        // T84: a finished part moves the widget on to the next part.
+        requestWidgetRefresh();
       });
     },
     [packId, storyId, invalidateProgress, clsProps],
@@ -456,7 +482,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
           newWords: added,
           level: torflLevelOf(detail.data?.pack.level),
         });
-        setBankToast(bankTopicToast(added));
+        setBankToast(bankTopicToast(added, useQueuePrefs.getState().prefs.newPerDay));
         for (const key of [
           'bank-items',
           'bank-count',
@@ -579,7 +605,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
           This story is no longer installed. It may have been removed with its pack.
         </Text>
         <Pressable
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
           className="mt-2 rounded-full border border-border bg-surface px-5 py-2 active:bg-surface-2"
         >
           <Text className="text-accent">Back to library</Text>
@@ -695,7 +721,7 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
         <ChromeButton
           icon="chevron-back"
           label="Back"
-          onPress={() => router.back()}
+          onPress={() => safeBack(router)}
           tint={tokens.text}
         />
         <View className="flex-row gap-2">
@@ -751,7 +777,11 @@ export function ReaderScreen({ packId, storyId, from, initialSentenceIdx }: Read
         onClose={() => setPopupTarget(null)}
         segments={narration.segments}
       />
-      <PhraseCardSheet target={phraseTarget} onClose={() => setPhraseTarget(null)} />
+      <PhraseCardSheet
+        target={phraseTarget}
+        onClose={() => setPhraseTarget(null)}
+        segments={narration.segments}
+      />
       <ExplainSheet target={explainTarget} onClose={() => setExplainTarget(null)} />
     </View>
   );

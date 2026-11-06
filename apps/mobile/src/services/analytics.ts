@@ -66,7 +66,7 @@ export type AnalyticsEvent =
   | 'packs_screen_opened'
   // T10 narration + karaoke. Since M14 (T46) narration_* and
   // karaoke_fallback_sentence_mode carry `category` + `genre` via
-  // useNarration's `eventProps` option (word_segment_played does not).
+  // useNarration's `eventProps` option (popup_word_spoken / phrase_spoken do not).
   | 'narration_track_loaded'
   | 'narration_play'
   | 'narration_pause'
@@ -75,7 +75,14 @@ export type AnalyticsEvent =
   | 'narration_track_switched'
   | 'narration_finished'
   | 'karaoke_fallback_sentence_mode'
-  | 'word_segment_played'
+  // T85 reader speakers (ids and counts only, never text). The word popup and the
+  // phrase sheet speak through Piper; `voiceId` is the picked id or 'system'.
+  | 'popup_word_spoken'
+  | 'phrase_spoken'
+  | 'phrase_context_played'
+  // T79 slice player. Props: surface slug + numbers (lead/seek/stop ms, rate).
+  | 'word_slice_played'
+  | 'word_slice_context_played'
   // T11 on-device TTS (sherpa-onnx Piper) + voice model manager
   | 'tts_voice_download_started'
   | 'tts_voice_download_completed'
@@ -84,6 +91,8 @@ export type AnalyticsEvent =
   | 'tts_voice_selected'
   | 'tts_voice_loaded'
   | 'tts_spoken'
+  // T78 transient audio focus for short learning clips
+  | 'learning_audio_focus'
   | 'tts_piper_fallback'
   | 'dev_tts_speak'
   // T12 ASR model manager + pronunciation practice
@@ -166,6 +175,7 @@ export type AnalyticsEvent =
   | 'listening_session_abandoned'
   | 'listening_replay'
   | 'listening_audio_resolved'
+  | 'listening_answered'
   | 'daily_session_started'
   | 'daily_session_empty'
   | 'daily_session_composed'
@@ -320,6 +330,15 @@ export type AnalyticsEvent =
   | 'family_rung_switched'
   | 'family_next_rung_shown'
   | 'family_next_rung_tapped'
+  // T86 Library accordion + «Проблема трьох тіл» series. Props are ids, slugs and counts only.
+  // library_section_toggled {kind: 'pack'|'family'|'book'|'chapter', key, expanded};
+  // library_collapse_all {expanded, sections}; library_series_viewed {series, books, chapters}
+  // (once per visit); reader_next_chapter_opened {series, fromChapter, toChapter, level}
+  // (fired from Today's card, the only emitter — the reader has no next-chapter button).
+  | 'library_section_toggled'
+  | 'library_collapse_all'
+  | 'library_series_viewed'
+  | 'reader_next_chapter_opened'
   // T31 ambient room scenes. Props carry the scene name / a boolean only.
   | 'room_scene_shown'
   | 'reduce_motion_toggled'
@@ -530,6 +549,11 @@ export type AnalyticsEvent =
   // card_action {kind: suspend|unsuspend|bury|unbury|reset, direction,
   // from: item-detail|leech-inbox}; review_log_exported {rows}.
   | 'fsrs_retention_changed'
+  // T82 «Почему столько?». Numbers/slugs only.
+  | 'due_breakdown_viewed'
+  | 'new_budget_changed'
+  | 'sibling_bury_changed'
+  | 'due_snapshot'
   | 'fsrs_params_applied'
   | 'fsrs_params_rejected'
   | 'fsrs_params_reverted'

@@ -5,18 +5,24 @@ import * as React from 'react';
 import { Pressable, Text as RNText, ScrollView, View } from 'react-native';
 
 import { ukPending } from '@/config/flags';
+import { repos } from '@/db';
+import { trackDueSnapshotOnce } from '@/features/review/due-snapshot';
 import { QueryError } from '@/components/query-error';
 import { Text } from '@/components/ui/text';
 import {
   useDialogues,
-  useDueCardCount,
+  useDueBreakdown,
   useScenarios,
   usePackClassification,
+  usePacks,
   useProductionDueCount,
   useStories,
   useStoryProgressList,
 } from '@/db/hooks';
+import { backlogLine, splitLine } from '@/features/review/due-core';
+import { DueBreakdownSheet } from '@/features/review/due-breakdown-sheet';
 import { classificationEventProps } from '@/features/library/categories';
+import { parseSeriesTags } from '@/features/library/series';
 import { GoalRingCard } from '@/features/motivation/goal-ring-card';
 import { NotificationPromptCard } from '@/features/motivation/notification-prompt-card';
 import { QuestCard } from '@/features/motivation/quest-card';
@@ -30,6 +36,7 @@ import { profileFor } from '@/features/torfl/level-profile';
 import { isLevelActive, levelOrder, type ExamDates } from '@/features/torfl/levels-today';
 import { describeStep } from '@/features/torfl/today';
 import { track } from '@/services/analytics';
+import { resolveContinueTarget } from '@/features/reader/continue-target';
 import { useAppTheme } from '@/theme/use-app-theme';
 
 /**
@@ -43,7 +50,8 @@ export function TodayScreen() {
   const queryClient = useQueryClient();
   const { tokens } = useAppTheme();
 
-  const due = useDueCardCount();
+  const due = useDueBreakdown();
+  const [breakdownOpen, setBreakdownOpen] = React.useState(false);
   const productionDue = useProductionDueCount();
   const progressList = useStoryProgressList();
   const stories = useStories();
@@ -69,6 +77,7 @@ export function TodayScreen() {
     React.useCallback(() => {
       track('tab_viewed', { tab: 'Сьогодні' });
       void queryClient.invalidateQueries({ queryKey: ['due-count'] });
+      void trackDueSnapshotOnce(repos);
       void queryClient.invalidateQueries({ queryKey: ['daily-activity'] });
       void queryClient.invalidateQueries({ queryKey: ['motivation'] });
       void queryClient.invalidateQueries({ queryKey: ['story-progress'] });
@@ -81,19 +90,33 @@ export function TodayScreen() {
     }, [queryClient]),
   );
 
-  const dueCount = due.data ?? 0;
+  const dueCount = due.data?.total ?? 0;
+  const reviewDue = due.data?.reviewDue ?? 0;
+  const newToday = due.data?.newToday ?? 0;
+  const backlog = backlogLine(due.data?.newBacklog ?? 0);
   const pronDueCount = productionDue.data ?? 0;
 
-  const continueTarget = React.useMemo(() => {
-    const inProgress = (progressList.data ?? [])
-      .filter((p) => p.finishedAt == null)
-      .sort((a, b) => b.updatedAt - a.updatedAt)[0];
-    if (!inProgress) return null;
-    const story = (stories.data ?? []).find(
-      (s) => s.packId === inProgress.packId && s.id === inProgress.storyId,
-    );
-    return story ? { progress: inProgress, story } : null;
-  }, [progressList.data, stories.data]);
+  // T84: the same «last read → resume, or the next part once finished» rule
+  // the home-screen widget uses (`resolveContinueTarget`).
+  // T86: the series step needs each pack's series placement (tags + level).
+  const packs = usePacks();
+  const seriesOf = React.useMemo(() => {
+    const placements = new Map<string, { series: string; chapter: number; level: string }>();
+    for (const pack of packs.data ?? []) {
+      const placed = parseSeriesTags(pack.tags);
+      if (placed)
+        placements.set(pack.id, {
+          series: placed.series,
+          chapter: placed.chapter,
+          level: pack.level,
+        });
+    }
+    return (packId: string) => placements.get(packId) ?? null;
+  }, [packs.data]);
+  const continueTarget = React.useMemo(
+    () => resolveContinueTarget(progressList.data ?? [], stories.data ?? [], seriesOf),
+    [progressList.data, stories.data, seriesOf],
+  );
 
   // T27: «Діалог» card — first installed dialogue not yet finished once;
   // disappears after any finished run (V2 §3.3).
@@ -149,10 +172,24 @@ export function TodayScreen() {
 
       {/* what's due */}
       <View className="rounded-xl border border-border bg-surface p-4">
-        <View className="flex-row items-baseline gap-2">
-          <RNText className="font-ui-bold text-4xl text-text">{dueCount}</RNText>
-          <Text variant="muted">{dueCount === 1 ? 'card due' : 'cards due'}</Text>
-        </View>
+        <Pressable
+          onPress={() => setBreakdownOpen(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Почему столько?"
+          className="active:opacity-70"
+        >
+          <View className="flex-row items-baseline gap-2">
+            <RNText className="font-ui-bold text-4xl text-text">{dueCount}</RNText>
+            <Text variant="muted">{dueCount === 1 ? 'card due' : 'cards due'}</Text>
+            <Ionicons name="information-circle-outline" size={16} color={tokens.textMuted} />
+          </View>
+          {dueCount > 0 && <Text variant="caption">{splitLine(reviewDue, newToday)}</Text>}
+          {backlog !== null && (
+            <Text variant="caption" className="mt-0.5">
+              {backlog}
+            </Text>
+          )}
+        </Pressable>
         {dueCount > 0 ? (
           <Pressable
             // T14: the default action is the unified daily session (mixed modes).
@@ -170,6 +207,8 @@ export function TodayScreen() {
           </Text>
         )}
       </View>
+
+      <DueBreakdownSheet open={breakdownOpen} onClose={() => setBreakdownOpen(false)} />
 
       {/* speaking practice (T12) — production cards are due only to this session */}
       {pronDueCount > 0 && (
@@ -362,13 +401,22 @@ export function TodayScreen() {
       {/* where I left off */}
       {continueTarget && (
         <Pressable
-          onPress={() =>
-            router.push(
-              `/reader/${continueTarget.progress.packId}/${continueTarget.progress.storyId}?from=today`,
-            )
-          }
+          onPress={() => {
+            // T86: a series step into the next chapter, same level.
+            const from = continueTarget.fromPackId ? seriesOf(continueTarget.fromPackId) : null;
+            const to = seriesOf(continueTarget.packId);
+            if (from && to) {
+              track('reader_next_chapter_opened', {
+                series: from.series,
+                fromChapter: from.chapter,
+                toChapter: to.chapter,
+                level: to.level,
+              });
+            }
+            router.push(`/reader/${continueTarget.packId}/${continueTarget.storyId}?from=today`);
+          }}
           accessibilityRole="button"
-          accessibilityLabel={`Continue reading ${continueTarget.story.titleUk}`}
+          accessibilityLabel={`Continue reading ${continueTarget.title}`}
           className="rounded-xl border border-border bg-surface p-4 active:bg-surface-2"
         >
           <Text variant="caption" className="uppercase tracking-wider">
@@ -376,7 +424,7 @@ export function TodayScreen() {
           </Text>
           <View className="mt-2 flex-row items-center justify-between gap-3">
             <RNText className="flex-1 font-reading text-xl text-text" numberOfLines={1}>
-              {continueTarget.story.titleUk}
+              {continueTarget.title}
             </RNText>
             <Ionicons name="chevron-forward" size={18} color={tokens.textMuted} />
           </View>

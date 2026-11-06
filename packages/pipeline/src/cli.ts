@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { formatIssue, DraftError } from './errors.ts';
 import { runAnnotate } from './annotate.ts';
 import { renderBranchMap, renderScenarioBranchMap } from './branch-map.ts';
@@ -15,8 +17,18 @@ import { DEFAULT_MODEL_ID, ElevenLabsClient } from './elevenlabs.ts';
 import { resolveElevenKey } from './env.ts';
 import { runModelsMirror } from './models.ts';
 import { runPublish } from './publish.ts';
+import {
+  auditPack,
+  formatAuditTable,
+  alignerPreflight,
+  runStampAudit,
+  type StampAuditMode,
+  pythonAligner,
+  restampPack,
+  type PackAudit,
+} from './stamp-audit.ts';
 import { runValidate } from './validate.ts';
-import type { Pack } from '@sutinki/schema';
+import { safeParsePack, type Pack } from '@sutinki/schema';
 
 /**
  * CLI entrypoint. annotate/validate are offline (T08); audio is explicitly
@@ -69,6 +81,11 @@ Usage:
                             voice) for every choice + scripted player line
                             (dialogues) and for accept[0] of every
                             expectation (scenarios, → expect.coachAudio)
+      --restamp             (finalize) re-stamp every story track from its Opus by
+                            forced alignment (T80). OFF by default in Sutinki (UP07):
+                            the only engine is the Russian CTC model, which cannot
+                            align Ukrainian; provider stamps are kept until UT15.
+      --no-restamp          (finalize) keep the provider's character-time stamps (default)
       --mouth-only          no rendering: recompute the mouth track of every
                             already-rendered scenario line in <pack-dir>/
                             pack.json from the Opus on disk (T57 tuning);
@@ -87,8 +104,27 @@ Usage:
       run, so tracks/nodes/lines can be finalized in batches).
 
   pipeline publish <pack-dir> --content <sutinki-content-dir> [--push] [-m msg]
+                   [--allow-stamp-risk] [--skip-stamp-audit] [--stamp-audit enforce|report|off]
       Copy the pack into the content repo, recompute hashes, update
-      manifest.json, and commit. Pushes only with --push.
+      manifest.json, and commit. Pushes only with --push. Runs stamp-audit
+      first, in --stamp-audit mode (default "report" in Sutinki, UP07: prints
+      the table, notes «report-only (UT15 pending)» in <pack-dir>/BUILD_NOTES.md,
+      prints «stamp audit skipped: no Ukrainian aligner (UT15)» when no
+      aligner venv exists, and NEVER refuses). "enforce" refuses on failure
+      (--allow-stamp-risk logs the override); "off" = --skip-stamp-audit.
+
+  pipeline stamp-audit <pack-dir|pack.json>... [--track id] [--json out.json]
+      T80: offline word-stamp accuracy audit over the real audio (forced
+      alignment; no network, no API key). Per track: median / p95 |offset|,
+      step, drift, end-clip risk, token-index + lemma lint. REPORT-ONLY in
+      Sutinki (UP07): exit 0 and a «skipped» line without a Ukrainian
+      aligner; --enforce restores Sumrak's exit 1 over the thresholds (median > 40 ms, p95 > 120 ms, any step > 250 ms, drift >
+      20 ms/min, any structural/lemma hit).
+
+  pipeline restamp <pack-dir|pack.json> [--track id] [-o out.json]
+      T80: recompute every word stamp from the PUBLISHED audio (forced
+      alignment + energy snapping). Changes only audio[].timestamps
+      (asserted); writes in place unless -o is given. Never re-renders.
 
   pipeline models mirror --content <sutinki-content-dir> [--push] [-m msg]
       Mirror the app's pinned speech-model archives (2 Piper uk_UA voices into
@@ -293,6 +329,7 @@ async function audioCommand(args: string[]): Promise<void> {
   let scenarios: string[] | undefined;
   let playerAudio = false;
   let mouthOnly = false;
+  let restampFlag = false; // UP07: Sutinki keeps provider stamps until UT15 (the Russian CTC model cannot align Ukrainian)
   let yes = false;
   let extras: string | undefined;
   const seeds: Record<string, number> = {};
@@ -327,6 +364,8 @@ async function audioCommand(args: string[]): Promise<void> {
     else if (arg === '--scenarios') scenarios = next().split(',').filter(Boolean);
     else if (arg === '--player-audio') playerAudio = true;
     else if (arg === '--mouth-only') mouthOnly = true;
+    else if (arg === '--no-restamp') restampFlag = false;
+    else if (arg === '--restamp') restampFlag = true;
     else if (arg === '--yes' || arg === '-y') yes = true;
     else if (arg === '--model') model = next();
     else if (arg === '--extras') extras = next();
@@ -358,6 +397,7 @@ async function audioCommand(args: string[]): Promise<void> {
 
   const filters = { stories, tracks, dialogues, scenarios, playerAudio };
   try {
+    if (restampFlag && !audition && !mouthOnly) alignerPreflight();
     // Cost gate BEFORE the client exists — an unconfirmed run fires nothing.
     const plan = planAudioRun(drafts, {
       ...filters,
@@ -406,6 +446,9 @@ async function audioCommand(args: string[]): Promise<void> {
       );
     } else {
       const summary = await runFinalize(drafts, out, client, {
+        restamp: restampFlag
+          ? pythonAligner({ device: process.env.SUTINKI_ALIGN_DEVICE })
+          : undefined,
         seeds,
         defaultSeed,
         ...filters,
@@ -449,6 +492,9 @@ function publishCommand(args: string[]): void {
   let content: string | undefined;
   let push = false;
   let message: string | undefined;
+  let allowStampRisk = false;
+  let skipStampAudit = false;
+  let stampMode: StampAuditMode = 'report';
   for (let i = 0; i < args.length; i++) {
     const arg = args[i]!;
     const next = (): string => {
@@ -456,7 +502,14 @@ function publishCommand(args: string[]): void {
       if (v === undefined) fail(`missing value for ${arg}\n\n${USAGE}`, 2);
       return v;
     };
-    if (arg === '--content') content = next();
+    if (arg === '--allow-stamp-risk') allowStampRisk = true;
+    else if (arg === '--skip-stamp-audit') skipStampAudit = true;
+    else if (arg === '--stamp-audit') {
+      const v = next();
+      if (v !== 'enforce' && v !== 'report' && v !== 'off')
+        fail(`--stamp-audit takes enforce|report|off\n\n${USAGE}`, 2);
+      stampMode = v as StampAuditMode;
+    } else if (arg === '--content') content = next();
     else if (arg === '--push') push = true;
     else if (arg === '-m' || arg === '--message') message = next();
     else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
@@ -467,7 +520,13 @@ function publishCommand(args: string[]): void {
   if (content === undefined) fail(`publish needs --content <sutinki-content-dir>\n\n${USAGE}`, 2);
 
   try {
-    const summary = runPublish(packDir, content, { push, message });
+    const summary = runPublish(packDir, content, {
+      push,
+      message,
+      allowStampRisk,
+      stampAuditMode: stampMode,
+      ...(skipStampAudit ? {} : { stampAudit: pythonAligner() }),
+    });
     if (summary.outcome === 'unchanged') {
       console.log(`= ${summary.packId} v${summary.version} already published, nothing to do`);
       return;
@@ -531,6 +590,79 @@ async function modelsCommand(args: string[]): Promise<void> {
   }
 }
 
+function packFileOf(arg: string): string {
+  return arg.endsWith('.json') ? arg : `${arg.replace(/\/$/, '')}/pack.json`;
+}
+
+function loadPackFor(arg: string): { pack: Pack; dir: string; file: string } {
+  const file = packFileOf(arg);
+  const parsed = safeParsePack(JSON.parse(readFileSync(file, 'utf8')));
+  if (!parsed.success) fail(`${file} is not a valid pack`, 1);
+  return { pack: parsed.data, dir: dirname(file), file };
+}
+
+function stampAuditCommand(args: string[]): void {
+  const targets: string[] = [];
+  let track: string | undefined;
+  let jsonOut: string | undefined;
+  let enforce = false;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!;
+    if (arg === '--enforce') enforce = true;
+    else if (arg === '--track') track = args[++i];
+    else if (arg === '--json') jsonOut = args[++i];
+    else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
+    else targets.push(arg);
+  }
+  if (targets.length === 0) fail(`stamp-audit needs at least one pack\n\n${USAGE}`, 2);
+  const aligner = pythonAligner();
+  const audits: PackAudit[] = [];
+  try {
+    for (const t of targets) {
+      const { pack, dir } = loadPackFor(t);
+      if (!enforce) {
+        // UP07: report-only for Ukrainian (exit 0) — see runStampAudit.
+        const res = runStampAudit('report', pack, dir, aligner);
+        if (res.audit) {
+          audits.push(res.audit);
+          if (res.audit.ok) console.log(formatAuditTable(res.audit));
+        }
+        continue;
+      }
+      const audit = auditPack(pack, dir, aligner, { trackId: track });
+      audits.push(audit);
+      console.log(formatAuditTable(audit));
+    }
+  } catch (e) {
+    fail(e instanceof Error ? e.message : String(e), 1);
+  }
+  if (jsonOut) writeFileSync(jsonOut, `${JSON.stringify(audits, null, 1)}\n`);
+  if (enforce && audits.some((a) => !a.ok)) process.exit(1);
+}
+
+function restampCommand(args: string[]): void {
+  let target: string | undefined;
+  let track: string | undefined;
+  let outFile: string | undefined;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!;
+    if (arg === '--track') track = args[++i];
+    else if (arg === '-o' || arg === '--out') outFile = args[++i];
+    else if (arg.startsWith('-')) fail(`unknown option "${arg}"\n\n${USAGE}`, 2);
+    else if (target === undefined) target = arg;
+    else fail(`restamp takes exactly one pack\n\n${USAGE}`, 2);
+  }
+  if (target === undefined) fail(`restamp needs a pack\n\n${USAGE}`, 2);
+  try {
+    const { pack, dir, file } = loadPackFor(target);
+    const { pack: next, tracks } = restampPack(pack, dir, pythonAligner(), { trackId: track });
+    writeFileSync(outFile ?? file, `${JSON.stringify(next, null, 2)}\n`);
+    console.log(`✓ restamped ${tracks.length} track(s) of ${pack.id} → ${outFile ?? file}`);
+  } catch (e) {
+    fail(e instanceof Error ? e.message : String(e), 1);
+  }
+}
+
 async function main(): Promise<void> {
   const [command, ...rest] = process.argv.slice(2);
   switch (command) {
@@ -545,6 +677,12 @@ async function main(): Promise<void> {
       break;
     case 'publish':
       publishCommand(rest);
+      break;
+    case 'stamp-audit':
+      stampAuditCommand(rest);
+      break;
+    case 'restamp':
+      restampCommand(rest);
       break;
     case 'models':
       await modelsCommand(rest);

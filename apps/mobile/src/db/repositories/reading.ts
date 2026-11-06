@@ -1,6 +1,9 @@
-import { and, desc, eq, isNull, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
-import { stories, storyProgress } from '../schema';
+import { parseSeriesTags } from '@/features/library/series';
+import { resolveContinueTarget, type ContinueTarget } from '@/features/reader/continue-target';
+
+import { packs, stories, storyProgress } from '../schema';
 import type { SutinkiDB } from '../types';
 
 export type StoryProgressRow = typeof storyProgress.$inferSelect;
@@ -65,26 +68,45 @@ export function createReadingRepo(db: SutinkiDB) {
     },
 
     /**
-     * The Today «Continue reading» target (T40 widget): the most recently
-     * updated UNFINISHED progress row whose story still exists — the same rule
-     * as today-screen's `continueTarget`, with the title joined in one query.
+     * The «Continue reading» target (T40 widget, T84 rule): what Mitch LAST
+     * READ — resume it, or once it is finished the next story of its pack —
+     * via the pure `resolveContinueTarget` (shared with Today's card).
      */
-    async getContinueTarget(): Promise<{ packId: string; storyId: string; title: string } | null> {
-      const rows = await db
-        .select({
-          packId: storyProgress.packId,
-          storyId: storyProgress.storyId,
-          title: stories.titleUk,
-        })
-        .from(storyProgress)
-        .innerJoin(
-          stories,
-          and(eq(stories.packId, storyProgress.packId), eq(stories.id, storyProgress.storyId)),
-        )
-        .where(isNull(storyProgress.finishedAt))
-        .orderBy(desc(storyProgress.updatedAt))
-        .limit(1);
-      return rows[0] ?? null;
+    async getContinueTarget(): Promise<ContinueTarget | null> {
+      const [progress, storyRows] = await Promise.all([
+        db
+          .select({
+            packId: storyProgress.packId,
+            storyId: storyProgress.storyId,
+            updatedAt: storyProgress.updatedAt,
+            finishedAt: storyProgress.finishedAt,
+          })
+          .from(storyProgress),
+        db
+          .select({
+            packId: stories.packId,
+            id: stories.id,
+            orderIdx: stories.orderIdx,
+            titleUk: stories.titleUk,
+          })
+          .from(stories),
+      ]);
+      // T86 series step: the widget shares Today's rule, so it needs the packs'
+      // series placement too (tags + level).
+      const packRows = await db
+        .select({ id: packs.id, tags: packs.tags, level: packs.level })
+        .from(packs);
+      const placements = new Map<string, { series: string; chapter: number; level: string }>();
+      for (const pack of packRows) {
+        const placed = parseSeriesTags(pack.tags);
+        if (placed)
+          placements.set(pack.id, {
+            series: placed.series,
+            chapter: placed.chapter,
+            level: pack.level,
+          });
+      }
+      return resolveContinueTarget(progress, storyRows, (packId) => placements.get(packId) ?? null);
     },
 
     /** Idempotent — returns true only on the first finish (for stats/analytics). */

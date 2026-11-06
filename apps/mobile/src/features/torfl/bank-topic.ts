@@ -1,4 +1,4 @@
-import { pluralUk } from '@/lib/uk-plural';
+import { bulkBankToast, NEW_PER_DAY_DEFAULT } from '@/features/review/due-core';
 import { isTorflCategory } from './level-profile';
 
 /**
@@ -18,13 +18,12 @@ export function canBankTopic(pack: { category: string | null; tags: readonly str
   return isTorflCategory(pack.category) && pack.tags.includes(LEXICON_TAG);
 }
 
-const WORDS = ['слово', 'слова', 'слів'] as const;
-
-/** «+12 слів у словнику» / «+0 слів — усі слова вже у словнику». */
-export function bankTopicToast(added: number): string {
-  return added === 0
-    ? '+0 слів — усі слова вже у словнику'
-    : `+${added} ${pluralUk(added, WORDS)} у словнику`;
+/**
+ * «+87 слів у Словнику · по 10 на день» / «+0 слів — усі слова вже в Словнику».
+ * T82: new words join the queue at the daily budget, the toast says so.
+ */
+export function bankTopicToast(added: number, perDay: number = NEW_PER_DAY_DEFAULT): string {
+  return bulkBankToast(added, perDay);
 }
 
 /** `torfl_topic_banked.topic` = the story id slug minus the lexicon's `lx-` prefix. */

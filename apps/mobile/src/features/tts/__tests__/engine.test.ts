@@ -1,10 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
 import { SYSTEM_VOICE_ID } from '../catalog';
-import { clampRate, pickEngine, pickSpeaker } from '../engine';
+import { clampRate, pickClipVoiceId, pickEngine, pickSpeaker } from '../engine';
 
 const LADA = 'piper-uk-lada';
 const MEDIUM = 'piper-uk-ukrainian-tts';
+
+describe('pickClipVoiceId (T85)', () => {
+  it('returns the selected voice when it is an installed Piper voice', () => {
+    expect(pickClipVoiceId(MEDIUM, [LADA, MEDIUM])).toBe(MEDIUM);
+  });
+
+  it('system selected + Piper installed → first installed in catalog order', () => {
+    expect(pickClipVoiceId(SYSTEM_VOICE_ID, [MEDIUM, LADA])).toBe(LADA);
+  });
+
+  it('selected Piper not installed + another installed → that other one', () => {
+    expect(pickClipVoiceId(MEDIUM, [LADA])).toBe(LADA);
+  });
+
+  it('none installed → undefined', () => {
+    expect(pickClipVoiceId(LADA, [])).toBeUndefined();
+    expect(pickClipVoiceId(SYSTEM_VOICE_ID, [])).toBeUndefined();
+  });
+});
 
 describe('pickEngine', () => {
   it('uses the selected piper voice when installed', () => {

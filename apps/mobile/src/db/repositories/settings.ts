@@ -41,6 +41,11 @@ export const SETTING_KEYS = {
    * secure-store only ('sutinki.backup.syncd.token'), same rule as the PAT.
    */
   syncdConfig: 'backup.syncd',
+  /**
+   * Retired by T85: no longer read (the «Хибний звук?» flag was removed with the
+   * story-slice listening audio). Kept so old rows and backups stay harmless.
+   */
+  listeningAudioFlags: 'listening.audioFlags',
   /** Content sync source (T07): { owner, repo, branch } — the PAT lives in secure-store, never here. */
   contentRepo: 'sync.contentRepo',
   /** boolean (T07, default true): only download narration audio on Wi-Fi. */
@@ -99,6 +104,12 @@ export const SETTING_KEYS = {
    * unknown-but-well-formed slug is kept (forward-compatible).
    */
   libraryFilter: 'library.filter',
+  /**
+   * Library accordion expansion (T86, THREE_BODY_SERIES.md §2 rule 4):
+   * { v: 1, keys: string[] } of expanded section keys — Zod-validated on read
+   * (store/library-expansion.ts); malformed heals to [] (all collapsed).
+   */
+  libraryExpanded: 'library.expanded',
   /**
    * Словарь sort (T50, WORD_FORMS §2.4): { v: 1, key: BankSortKey,
    * familiarity: 'least' | 'most' }, defaults { 'added-asc', 'least' } —
@@ -251,6 +262,15 @@ export const SETTING_KEYS = {
    * parseStoredParams; a malformed row heals to defaults.
    */
   fsrsParams: 'fsrs.params',
+  /**
+   * Queue prefs (T82): { v: 1, newPerDay: 0–50 (default 10), buryRelated:
+   * boolean (default true) } — the daily new-WORD budget and sibling bury.
+   * Healed field-by-field on read (features/review/due-core.ts parseQueuePrefs);
+   * store/queue-prefs.ts owns the writes. No migration.
+   */
+  queuePrefs: 'review.queuePrefs',
+  /** Local day key ('YYYY-MM-DD') of the last `due_snapshot` event (T82). */
+  dueSnapshotDay: 'review.dueSnapshotDay',
 } as const;
 
 /** Key-value settings, JSON-encoded values. */
