@@ -2,9 +2,12 @@
  * Ukrainian verb heuristic for the speaking sentence estimate (UT17b) — PURE data + one predicate. ASR has no
  * punctuation, so sentences ≈ clauses capped by the verb count (+ slack). Small and explainable on purpose: a
  * token is a verb when it is a whole known form, or starts with a known stem (≤ 4 extra letters) AND still ends
- * like a verb. Nouns stay out (a test asserts a noun corpus is rejected). Stems are `normalizeUk` output
+ * like a verb; UISS-010 adds the generated whole-form set (`verbs-uk.generated.ts`, every A1 core VERB lemma
+ * fully inflected). Nouns stay out (a test asserts a noun corpus is rejected). Stems are `normalizeUk` output
  * (lower-case, ґ→г, apostrophe → ʼ); a stem is a PREFIX.
  */
+
+import { GENERATED_VERB_FORMS } from './verbs-uk.generated';
 
 const STEMS = [
   'жив',
@@ -356,6 +359,8 @@ const PAST_ENDINGS = ['в', 'ла', 'ло', 'ли', 'вся', 'лась', 'ло�
 export function looksLikeVerb(token: string): boolean {
   const t = token.replace(/'/g, 'ʼ');
   if (FORMS.has(t) || FORMS.has(token)) return true;
+  // UISS-010: whole inflected forms generated from the A1 core VERB lemmas (scripts/gen-verbs-uk.mjs).
+  if (GENERATED_VERB_FORMS.has(t)) return true;
   if (t.length < 3) return false;
   const stemHit = STEMS.some((s) => s.length >= 2 && t.startsWith(s) && t.length - s.length <= 4);
   if (!stemHit) return false;
@@ -369,6 +374,68 @@ export function looksLikeVerb(token: string): boolean {
   );
 }
 
+/**
+ * Ukrainian drops the present-tense copula, so a correct answer is full of verbless sentences («Це площа»,
+ * «Там тепло й сонячно»). Each of these is one clause head: the demonstrative «це», and a predicative adverb
+ * (weather / state). A run of them («тепло й сонячно») counts once.
+ */
+const CLAUSE_HEADS = new Set([
+  'це',
+  // location adverbs that open a verbless existential sentence («Поруч синє море»)
+  'поруч',
+  'навколо',
+  'ліворуч',
+  'праворуч',
+  'позаду',
+  'попереду',
+]);
+/** «На фото діти…» / «У неї валіза…»: the head is the 2nd word of the pair, unless a verb follows at once. */
+const PAIR_HEADS: ReadonlyMap<string, string> = new Map([
+  ['фото', 'на'],
+  ['неї', 'у'],
+  ['нього', 'у'],
+  ['нас', 'у'],
+  ['них', 'у'],
+]);
+const PRON_SUBJECT = new Set(['я', 'ми', 'ви', 'ти', 'вона', 'він', 'вони']);
+const PREDICATIVE = new Set([
+  'тепло',
+  'холодно',
+  'жарко',
+  'прохолодно',
+  'сонячно',
+  'хмарно',
+  'вітряно',
+  'гарно',
+  'красиво',
+  'тихо',
+  'шумно',
+  'весело',
+  'цікаво',
+  'смачно',
+  'добре',
+  'погано',
+  'темно',
+  'світло',
+  'далеко',
+  'близько',
+  'приємно',
+]);
+const JOINERS = new Set(['й', 'і', 'та', 'та й', 'але', 'а']);
+
 export function countVerbs(tokens: readonly string[]): number {
-  return tokens.filter(looksLikeVerb).length;
+  let n = 0;
+  let prevPred = false; // previous token (or token before a joiner) was a predicative adverb
+  let afterJoin = false;
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i]!;
+    const pairOf = PAIR_HEADS.get(t);
+    if (pairOf && tokens[i - 1] === pairOf && !PRON_SUBJECT.has(tokens[i + 1] ?? '')) n += 1;
+    const isPred = PREDICATIVE.has(t);
+    if (looksLikeVerb(t) || CLAUSE_HEADS.has(t)) n += 1;
+    else if (isPred && !(prevPred || afterJoin)) n += 1;
+    afterJoin = JOINERS.has(t) && prevPred;
+    prevPred = isPred;
+  }
+  return n;
 }
