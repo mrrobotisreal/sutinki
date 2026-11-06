@@ -105,7 +105,7 @@ export function ExamIntroScreen({
             <Text
               className={cn('font-ui-medium text-xs', mock ? 'text-accent' : 'text-text-muted')}
             >
-              {MODE_LABELS[data.mode]} · ТРКИ-{data.level}
+              {MODE_LABELS[data.mode]} · Іспит · {data.level}
             </Text>
           </View>
           <Text className="font-reading-bold text-2xl leading-9">{data.title.uk}</Text>
