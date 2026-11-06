@@ -47,7 +47,13 @@ describe('the five Іспит levels', () => {
   it('no label mixes Cyrillic and Latin letters inside one word', () => {
     for (const level of EXAM_LEVELS) {
       const p = UKR_PROFILES[level];
-      for (const text of [p.chipLabel, p.nameUk, p.nameEn, hubCardTitle(level), hubSubtitle(level)]) {
+      for (const text of [
+        p.chipLabel,
+        p.nameUk,
+        p.nameEn,
+        hubCardTitle(level),
+        hubSubtitle(level),
+      ]) {
         for (const word of text.split(/[\s·,]+/)) {
           const cyr = /\p{Script=Cyrillic}/u.test(word);
           const lat = /\p{Script=Latin}/u.test(word);

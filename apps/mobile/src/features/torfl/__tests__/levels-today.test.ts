@@ -24,17 +24,47 @@ describe('levelOrder', () => {
     expect(levelOrder({ A1: '2026-12-01', A2: null })).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
   });
   it('both dated, A2 sooner → A2 first', () => {
-    expect(levelOrder({ A1: '2027-03-01', A2: '2026-12-01' })).toEqual(['A2', 'A1', 'B1', 'B2', 'C1']);
+    expect(levelOrder({ A1: '2027-03-01', A2: '2026-12-01' })).toEqual([
+      'A2',
+      'A1',
+      'B1',
+      'B2',
+      'C1',
+    ]);
   });
   it('both dated, A1 sooner → A1 first', () => {
-    expect(levelOrder({ A1: '2026-11-01', A2: '2027-02-01' })).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
+    expect(levelOrder({ A1: '2026-11-01', A2: '2027-02-01' })).toEqual([
+      'A1',
+      'A2',
+      'B1',
+      'B2',
+      'C1',
+    ]);
   });
   it('equal dates → A1 then A2', () => {
-    expect(levelOrder({ A1: '2026-12-01', A2: '2026-12-01' })).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
+    expect(levelOrder({ A1: '2026-12-01', A2: '2026-12-01' })).toEqual([
+      'A1',
+      'A2',
+      'B1',
+      'B2',
+      'C1',
+    ]);
   });
   it('a past date counts as nearest (overdue first)', () => {
-    expect(levelOrder({ A1: '2026-01-01', A2: '2026-12-01' })).toEqual(['A1', 'A2', 'B1', 'B2', 'C1']);
-    expect(levelOrder({ A1: '2026-12-01', A2: '2026-01-01' })).toEqual(['A2', 'A1', 'B1', 'B2', 'C1']);
+    expect(levelOrder({ A1: '2026-01-01', A2: '2026-12-01' })).toEqual([
+      'A1',
+      'A2',
+      'B1',
+      'B2',
+      'C1',
+    ]);
+    expect(levelOrder({ A1: '2026-12-01', A2: '2026-01-01' })).toEqual([
+      'A2',
+      'A1',
+      'B1',
+      'B2',
+      'C1',
+    ]);
   });
   it('a dated level precedes an undated one regardless of the fixed order', () => {
     expect(levelOrder({ A1: null, A2: '2030-01-01' })).toEqual(['A2', 'A1', 'B1', 'B2', 'C1']);

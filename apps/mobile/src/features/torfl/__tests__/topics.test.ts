@@ -11,7 +11,10 @@ import {
   topicLabel,
 } from '../topics';
 
-const GRAMMAR_SLUGS: readonly string[] = Array.from({ length: 38 }, (_, i) => `g${String(i + 1).padStart(2, '0')}`);
+const GRAMMAR_SLUGS: readonly string[] = Array.from(
+  { length: 38 },
+  (_, i) => `g${String(i + 1).padStart(2, '0')}`,
+);
 // Copied from packages/pipeline/src/exam-topics.ts (the app does not import the pipeline).
 const PIPELINE_TOPICS = {
   lexgram: GRAMMAR_SLUGS,
@@ -114,7 +117,9 @@ describe('topics (Іспит taxonomy, UT16b)', () => {
 describe('bank a topic (pure)', () => {
   it('gated to an Іспит shelf + tag ukr-exam:lexicon', async () => {
     const { canBankTopic } = await import('../bank-topic');
-    expect(canBankTopic({ category: 'ukr-exam-a1', tags: ['ukr-exam', 'ukr-exam:lexicon'] })).toBe(true);
+    expect(canBankTopic({ category: 'ukr-exam-a1', tags: ['ukr-exam', 'ukr-exam:lexicon'] })).toBe(
+      true,
+    );
     expect(canBankTopic({ category: 'ukr-exam-b1', tags: ['ukr-exam'] })).toBe(false);
     expect(canBankTopic({ category: null, tags: ['ukr-exam:lexicon'] })).toBe(false);
     expect(canBankTopic({ category: 'stories', tags: ['family:tall-dog'] })).toBe(false);

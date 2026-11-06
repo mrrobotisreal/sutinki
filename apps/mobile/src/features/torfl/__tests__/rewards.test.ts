@@ -48,10 +48,12 @@ describe('examAchievements', () => {
     expect(examAchievements({ ...v, pcts: { ...four(85), speaking: 79.9 } })).not.toContain(
       'exam-a1-margin',
     );
-    expect(examAchievements({ ...v, pcts: { listening: 90, reading: 90, writing: 90 } })).not.toContain(
+    expect(
+      examAchievements({ ...v, pcts: { listening: 90, reading: 90, writing: 90 } }),
+    ).not.toContain('exam-a1-margin');
+    expect(examAchievements({ ...v, verdict: null, pcts: four(90) })).not.toContain(
       'exam-a1-margin',
     );
-    expect(examAchievements({ ...v, verdict: null, pcts: four(90) })).not.toContain('exam-a1-margin');
   });
   it('nothing scored → nothing unlocked', () => {
     expect(examAchievements({ ...base, scoredSubtests: 0, pcts: {} })).toEqual([]);

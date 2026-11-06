@@ -8,7 +8,13 @@ describe('canBankTopic (T69, UT16b)', () => {
   });
 
   it('every Іспит shelf (ukr-exam-a1…c1) tagged ukr-exam:lexicon banks', () => {
-    for (const category of ['ukr-exam-a1', 'ukr-exam-a2', 'ukr-exam-b1', 'ukr-exam-b2', 'ukr-exam-c1']) {
+    for (const category of [
+      'ukr-exam-a1',
+      'ukr-exam-a2',
+      'ukr-exam-b1',
+      'ukr-exam-b2',
+      'ukr-exam-c1',
+    ]) {
       expect(canBankTopic({ category, tags: [LEXICON_TAG] })).toBe(true);
     }
   });

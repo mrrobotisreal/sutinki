@@ -1,4 +1,10 @@
-import { ExamSchema, type ChoiceItem, type Exam, type MatchingItem, type TypedItem } from '@sutinki/schema';
+import {
+  ExamSchema,
+  type ChoiceItem,
+  type Exam,
+  type MatchingItem,
+  type TypedItem,
+} from '@sutinki/schema';
 import { a1TorflPack as examPackJson } from '@/features/torfl/__tests__/helpers/inline-exam';
 import { Rating } from 'ts-fsrs';
 import { describe, expect, it } from 'vitest';
@@ -293,10 +299,18 @@ describe('scoreMatching (per-pair partial credit)', () => {
   } as MatchingItem;
 
   it('all pairs right = full', () => {
-    expect(scoreMatching(item, [2, 0, 4, 1], 8)).toEqual({ points: 8, maxPoints: 8, outcome: 'full' });
+    expect(scoreMatching(item, [2, 0, 4, 1], 8)).toEqual({
+      points: 8,
+      maxPoints: 8,
+      outcome: 'full',
+    });
   });
   it('some pairs right = half with proportional points', () => {
-    expect(scoreMatching(item, [2, 0, 3, 5], 8)).toEqual({ points: 4, maxPoints: 8, outcome: 'half' });
+    expect(scoreMatching(item, [2, 0, 3, 5], 8)).toEqual({
+      points: 4,
+      maxPoints: 8,
+      outcome: 'half',
+    });
     expect(scoreMatching(item, [2, null, null, null], 8)).toEqual({
       points: 2,
       maxPoints: 8,
@@ -304,7 +318,11 @@ describe('scoreMatching (per-pair partial credit)', () => {
     });
   });
   it('none right = wrong; nothing picked = blank', () => {
-    expect(scoreMatching(item, [0, 1, 2, 3], 8)).toEqual({ points: 0, maxPoints: 8, outcome: 'wrong' });
+    expect(scoreMatching(item, [0, 1, 2, 3], 8)).toEqual({
+      points: 0,
+      maxPoints: 8,
+      outcome: 'wrong',
+    });
     expect(scoreMatching(item, [null, null, null, null], 8)).toEqual({
       points: 0,
       maxPoints: 8,

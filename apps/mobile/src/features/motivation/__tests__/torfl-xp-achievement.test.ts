@@ -89,10 +89,14 @@ describe('exam-<level>-deck-100', () => {
     await sweepAchievements();
     expect(unlockedIds().filter((id) => id.endsWith('-deck-100'))).toEqual([]);
   });
-  it('unlocks every level at 100 (idempotency is the stats repo\'s unlock); the count is per level', async () => {
+  it("unlocks every level at 100 (idempotency is the stats repo's unlock); the count is per level", async () => {
     countCardsInReview.mockResolvedValue(100);
     await sweepAchievements();
-    expect(unlockedIds().filter((id) => id.endsWith('-deck-100')).sort()).toEqual([
+    expect(
+      unlockedIds()
+        .filter((id) => id.endsWith('-deck-100'))
+        .sort(),
+    ).toEqual([
       'exam-a1-deck-100',
       'exam-a2-deck-100',
       'exam-b1-deck-100',

@@ -133,9 +133,17 @@ describe('computeReadiness', () => {
       drills: { listening: { answered: 1, correct: 1 } },
     });
     expect(one.find((r) => r.kind === 'reading')!.label).toBe('пробний іспит учора');
-    expect(one.find((r) => r.kind === 'listening')!.label).toBe('оцінка за тренуваннями · 1 відповідь');
-    const two = computeReadiness({ now: NOW, mocks: {}, drills: { listening: { answered: 3, correct: 1 } } });
-    expect(two.find((r) => r.kind === 'listening')!.label).toBe('оцінка за тренуваннями · 3 відповіді');
+    expect(one.find((r) => r.kind === 'listening')!.label).toBe(
+      'оцінка за тренуваннями · 1 відповідь',
+    );
+    const two = computeReadiness({
+      now: NOW,
+      mocks: {},
+      drills: { listening: { answered: 3, correct: 1 } },
+    });
+    expect(two.find((r) => r.kind === 'listening')!.label).toBe(
+      'оцінка за тренуваннями · 3 відповіді',
+    );
   });
   it('same-day mock reads «сьогодні»', () => {
     const rows = computeReadiness({
@@ -228,9 +236,7 @@ describe('weakestTopic + recommendToday', () => {
     expect(recommendToday({ ...base, rows, lastMockAt: NOW - 2 * DAY })?.kind).not.toBe('mock');
     expect(recommendToday({ ...base, rows, mockInstalled: false })?.kind).not.toBe('mock');
     // an unknown objective subtest blocks it
-    expect(recommendToday({ ...base, rows: rowsOf({ reading: 75 }) })?.kind).not.toBe(
-      'mock',
-    );
+    expect(recommendToday({ ...base, rows: rowsOf({ reading: 75 }) })?.kind).not.toBe('mock');
   });
   it('4. falls back to the weakest topic anywhere, then the first drill', () => {
     const rows = rowsOf({ reading: 75, listening: 75 });

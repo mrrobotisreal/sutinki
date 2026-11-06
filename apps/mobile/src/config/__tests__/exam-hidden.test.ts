@@ -60,7 +60,13 @@ describe('UK_PENDING.exam hide-list', () => {
   // UT16b: the five «Іспит · A1…C1» shelves arrive hidden behind the same flag.
   it('every «Іспит» Library chip is filtered while pending (all five shelves)', () => {
     const exam = Object.keys(CATEGORIES).filter((k) => k.startsWith('ukr-exam-'));
-    expect(exam).toEqual(['ukr-exam-a1', 'ukr-exam-a2', 'ukr-exam-b1', 'ukr-exam-b2', 'ukr-exam-c1']);
+    expect(exam).toEqual([
+      'ukr-exam-a1',
+      'ukr-exam-a2',
+      'ukr-exam-b1',
+      'ukr-exam-b2',
+      'ukr-exam-c1',
+    ]);
     for (const slug of exam) expect(isTorflCategory(slug)).toBe(true);
     const lib = read('features/library/library-screen.tsx');
     expect(lib).toMatch(/ukPending\('exam'\) && isTorflCategory\(storedCategory\)/);

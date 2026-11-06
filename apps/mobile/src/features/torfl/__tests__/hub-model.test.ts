@@ -105,8 +105,16 @@ describe('readiness placeholder', () => {
       'writing',
       'speaking',
     ]);
-    expect(placeholderReadiness('B2').map((r) => r.kind)).toEqual(['reading', 'writing', 'speaking']);
-    expect(placeholderReadiness('C1').map((r) => r.kind)).toEqual(['reading', 'writing', 'speaking']);
+    expect(placeholderReadiness('B2').map((r) => r.kind)).toEqual([
+      'reading',
+      'writing',
+      'speaking',
+    ]);
+    expect(placeholderReadiness('C1').map((r) => r.kind)).toEqual([
+      'reading',
+      'writing',
+      'speaking',
+    ]);
   });
 });
 
@@ -287,7 +295,9 @@ describe('intro', () => {
     const rules = mockRules(mock);
     expect(rules.some((r) => r.includes('звучить двічі'))).toBe(true);
     expect(rules).toContain('Словник (пошук слова) дозволено: Письмо, Чтение.');
-    expect(rules.some((r) => r.startsWith('Без словника:') && r.includes('Аудирование'))).toBe(true);
+    expect(rules.some((r) => r.startsWith('Без словника:') && r.includes('Аудирование'))).toBe(
+      true,
+    );
     expect(rules.some((r) => r.includes('монолог'))).toBe(true);
     expect(rules[0]).toContain('Під час іспиту');
   });
