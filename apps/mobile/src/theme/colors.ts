@@ -26,6 +26,15 @@ export interface ColorTokens {
   gold: string;
   /** Backdrop/shadow wash base (always used WITH an alpha) — scene layers (T31). */
   scrim: string;
+  /**
+   * T84: the streak flame grades the day (Today + widget, Mitch's spec) —
+   * pale yellow (started) → bright yellow (1 ring) → bright orange (2) →
+   * bright orange-red with a glow (all). Kotlin mirror: WidgetPalette.
+   */
+  flamePale: string;
+  flameYellow: string;
+  flameOrange: string;
+  flameRed: string;
 }
 
 export const colors: Record<ThemeScheme, ColorTokens> = {
@@ -44,6 +53,11 @@ export const colors: Record<ThemeScheme, ColorTokens> = {
     trackWarm: '#D9A441',
     gold: '#E9C032',
     scrim: '#000000',
+    // Names inherited from Sumrak; values = Sutinki cool->hot ramp (blue -> white -> gold).
+    flamePale: '#BFD4FF',
+    flameYellow: '#7FA8FF',
+    flameOrange: '#F2F2F2',
+    flameRed: '#E9C032',
   },
   light: {
     bg: '#F7F5F2',
@@ -60,5 +74,9 @@ export const colors: Record<ThemeScheme, ColorTokens> = {
     trackWarm: '#8B6233',
     gold: '#8A6A00',
     scrim: '#000000',
+    flamePale: '#9DB8F0',
+    flameYellow: '#3D6FD6',
+    flameOrange: '#C9C9C9',
+    flameRed: '#B8920A',
   },
 };

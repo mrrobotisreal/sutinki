@@ -7,6 +7,9 @@ import { SETTING_KEYS } from '@/db/repositories/settings';
 import type { AudioTrackRow } from '@/db/repositories/content';
 import type { ClassificationEventProps } from '@/features/library/categories';
 import { track as trackEvent } from '@/services/analytics';
+import { getSpeechService } from '@/services/speech';
+import { runSpan } from '@/features/audio/slice-window';
+import { useSlicePlayer } from '@/features/audio/use-slice-player';
 
 import {
   activeSentenceAt,
@@ -14,7 +17,6 @@ import {
   buildKaraokeIndex,
   mapPositionAcrossTracks,
   seekTargetForSentence,
-  tokenKey,
   type ActiveWord,
   type KaraokeIndex,
   type KaraokeSentenceInput,
@@ -58,9 +60,12 @@ function sanitizePrefs(raw: unknown): NarrationPrefs {
 export type SeekMethod = 'scrub' | 'sentence' | 'auto';
 
 export interface WordSegmentPlayer {
-  hasSegment(sentenceId: string, tokenIndex: number): boolean;
-  /** Play just this word's slice of the current track (pauses narration). */
-  playSegment(sentenceId: string, tokenIndex: number): void;
+  /** T85: pause the narration before a Piper word/phrase clip speaks over it. */
+  pauseNarration(): void;
+  /** T79: the sentence has stamps on the loaded track («▶ в предложении»). */
+  hasContext(sentenceId: string): boolean;
+  /** T79: play the whole source sentence (first stamp − lead-in … last + lead-out). */
+  playContext(sentenceId: string): void;
 }
 
 export interface Narration {
@@ -194,8 +199,6 @@ export function useNarration({
 
   // ---- player lifecycle ---------------------------------------------------
   const playerRef = React.useRef<AudioPlayer | null>(null);
-  const segmentPlayerRef = React.useRef<AudioPlayer | null>(null);
-  const segmentTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const rateRef = React.useRef(1);
   const lockScreenActiveRef = React.useRef(false);
 
@@ -454,46 +457,44 @@ export function useNarration({
     [effectiveTrackId],
   );
 
-  // ---- word segments (popup speaker, work item 7) -------------------------
-  const stopSegment = React.useCallback(() => {
-    if (segmentTimerRef.current) {
-      clearTimeout(segmentTimerRef.current);
-      segmentTimerRef.current = null;
-    }
-    segmentPlayerRef.current?.pause();
-  }, []);
+  // ---- word segments (reader speakers) ------------------------------------
+  // T85: word/phrase speakers no longer slice narration; they speak through
+  // Piper and only pause the narration here. «в предложении» still plays the
+  // real sentence via the shared T79 slice player.
+  const slice = useSlicePlayer('popup', 'word-popup');
+  const { stop: stopSlice, play: playSlice } = slice;
+  const stopSegment = stopSlice;
 
   const segments = React.useMemo<WordSegmentPlayer>(
     () => ({
-      hasSegment: (sentenceId, tokenIndex) =>
-        indexRef.current?.stampByToken.has(tokenKey(sentenceId, tokenIndex)) ?? false,
-      playSegment: (sentenceId, tokenIndex) => {
+      pauseNarration: () => {
+        // Mirror of toggle()'s pause half: only pause a playing narration.
+        // A «в предложении» sentence still playing stops too, so the clip never overlaps it.
+        stopSlice();
+        const player = playerRef.current;
+        if (player?.playing) player.pause();
+      },
+      hasContext: (sentenceId) =>
+        indexRef.current?.stamps.some((s) => s.sentenceId === sentenceId) ?? false,
+      playContext: (sentenceId) => {
         const idx = indexRef.current;
         const uri = currentTrack?.localUri;
         if (!idx || !uri) return;
-        const stamp = idx.stampByToken.get(tokenKey(sentenceId, tokenIndex));
-        if (!stamp) return;
-        // Never fight the narration for the same word.
+        const span = runSpan(idx.stamps, (s) => s.sentenceId === sentenceId);
+        if (!span) return;
         playerRef.current?.pause();
-        stopSegment();
-        if (!segmentPlayerRef.current) {
-          segmentPlayerRef.current = createAudioPlayer({ uri }, { updateInterval: 60000 });
-        } else {
-          segmentPlayerRef.current.replace({ uri });
-        }
-        const seg = segmentPlayerRef.current;
-        seg.setPlaybackRate(1, 'high');
-        // Small lead-in/out so clipped consonants don't get chopped.
-        const startMs = Math.max(0, stamp.startMs - 40);
-        const endMs = stamp.endMs + 60;
-        void seg.seekTo(startMs / 1000).then(() => {
-          seg.play();
-          segmentTimerRef.current = setTimeout(() => seg.pause(), endMs - startMs);
+        void getSpeechService().stop(); // a Piper word/phrase clip never talks over the sentence
+        void playSlice({
+          uri,
+          startMs: span.startMs,
+          endMs: span.endMs,
+          prev: span.prev,
+          next: span.next,
         });
-        trackEvent('word_segment_played', { sentenceId, tokenIndex });
+        trackEvent('word_slice_context_played', { surface: 'popup' });
       },
     }),
-    [currentTrack, stopSegment],
+    [currentTrack, playSlice, stopSlice],
   );
 
   // ---- teardown -----------------------------------------------------------
@@ -506,8 +507,6 @@ export function useNarration({
         player.remove();
         playerRef.current = null;
       }
-      segmentPlayerRef.current?.remove();
-      segmentPlayerRef.current = null;
     };
   }, [stopSegment]);
 

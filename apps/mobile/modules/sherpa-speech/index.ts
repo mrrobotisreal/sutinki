@@ -6,11 +6,16 @@ import { NativeModule, requireNativeModule } from 'expo';
  * throws, so feature logic that needs testing must not import it directly.
  */
 
+/** T78: outcome of an AUDIOFOCUS_GAIN_TRANSIENT request. */
+export type FocusResult = 'granted' | 'delayed' | 'failed';
+
 export interface SpeakResult {
   /** False when the utterance was cancelled before audio, or text produced none. */
   started: boolean;
   /** Time from the speak() call to the first audible chunk (the §6 latency number). */
   firstAudioMs?: number;
+  /** T78: transient audio-focus outcome the native speak() took before its first sample. */
+  focus?: FocusResult;
   cancelled?: boolean;
 }
 
@@ -100,6 +105,9 @@ declare class SherpaSpeechNativeModule extends NativeModule<SherpaSpeechEvents> 
   /** `sid` = speaker id within the loaded voice (0 for single-speaker models). */
   speak(text: string, sid: number, rate: number): Promise<SpeakResult>;
   stop(): void;
+  /** T78: ref-counted AUDIOFOCUS_GAIN_TRANSIENT (own request, not expo-audio's). Pair with abandonTransientFocus. */
+  requestTransientFocus(): Promise<FocusResult>;
+  abandonTransientFocus(): void;
   synthesizeToFile(
     text: string,
     sid: number,

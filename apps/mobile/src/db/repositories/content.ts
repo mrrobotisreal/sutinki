@@ -212,6 +212,15 @@ export function createContentRepo(db: SutinkiDB) {
         .orderBy(asc(tokens.tokenIndex));
     },
 
+    /** T81: every distinct surface form (normalized) the packs show for a lemma — listening form-tolerant grading. */
+    async findTokenFormsByLemma(lemma: string): Promise<string[]> {
+      const rows = await db
+        .selectDistinct({ textNorm: tokens.textNorm })
+        .from(tokens)
+        .where(and(eq(tokens.lemmaNorm, normalizeUk(lemma)), eq(tokens.isPunct, false)));
+      return rows.map((r) => r.textNorm);
+    },
+
     /** All sentences containing a lemma (apostrophe/ґ-tolerant) — cloze generation (T13). */
     async findSentencesWithLemma(lemma: string): Promise<SentenceRow[]> {
       const norm = normalizeUk(lemma);
